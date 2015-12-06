@@ -7,7 +7,6 @@ namespace Spectrum.Bootstrap
     public static class Loader
     {
         private static string _managerDllPath = "../Spectrum/Spectrum.Manager.dll";
-        private static object _managerObject;
 
         public static void StartManager()
         {
@@ -41,17 +40,12 @@ namespace Spectrum.Bootstrap
                     Console.WriteLine("[STAGE1] Spectrum: Invalid plug-in manager assembly loaded.");
                     return;
                 }
-                _managerObject = Activator.CreateInstance(managerType);
+                Updater.ManagerObject = Activator.CreateInstance(managerType);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[STAGE1] Spectrum: Critical exception handled. Read below:\n{ex}");
             }
-        }
-
-        public static void UpdateManager()
-        {
-
         }
     }
 }
