@@ -10,5 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)spectrum-banner-512px.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Wiki\AssemblyList.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Wiki\img_AssemblyList.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Wiki\img_AwakeMethod.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Wiki\img_NewInstruction.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Wiki\img_OperandWindow.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Wiki\img_ReferenceList.png" />
   </ItemGroup>
 </Project>
