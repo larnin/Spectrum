@@ -17,11 +17,7 @@ namespace Spectrum.Bootstrap
                 return;
 
             AllocConsole();
-
-            _originalStream = Console.Out;
-            _outputWriter = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
-            Console.SetOut(_outputWriter);
-
+            RecreateOutputStream();
             _allocated = true;
         }
 
@@ -34,6 +30,13 @@ namespace Spectrum.Bootstrap
 
             Console.SetOut(_originalStream);
             _allocated = false;
+        }
+
+        private static void RecreateOutputStream()
+        {
+            _originalStream = Console.Out;
+            _outputWriter = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
+            Console.SetOut(_outputWriter);
         }
 
         [DllImport("kernel32.dll")]
