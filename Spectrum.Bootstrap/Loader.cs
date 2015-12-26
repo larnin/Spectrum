@@ -6,7 +6,8 @@ namespace Spectrum.Bootstrap
 {
     public static class Loader
     {
-        private static string _managerDllPath = "../Spectrum/Spectrum.Manager.dll";
+        // relative to Distance.exe
+        private static string _managerDllPath = "Distance_Data/Spectrum/Spectrum.Manager.dll";
 
         public static void StartManager()
         {
@@ -33,7 +34,7 @@ namespace Spectrum.Bootstrap
             try
             {
                 var managerAssembly = Assembly.LoadFrom(_managerDllPath);
-                var managerType = managerAssembly.GetType("Spectrum.Manager", false);
+                var managerType = managerAssembly.GetType("Spectrum.Manager.Manager", false);
 
                 if (managerType == null)
                 {
