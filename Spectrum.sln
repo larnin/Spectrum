@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrum.Manager", "Spectru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrum.API", "Spectrum.API\Spectrum.API.csproj", "{A9CFD86D-1604-4C80-B02B-E60AD98BA86F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrum.Prism", "Spectrum.Prism\Spectrum.Prism.csproj", "{5AAA2550-9AC2-474E-A74A-1F21AD378367}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Spectrum.Branding\Spectrum.Branding.projitems*{85e10305-2cc9-4fdc-ac48-c680be878bd8}*SharedItemsImports = 13
@@ -32,6 +34,10 @@ Global
 		{A9CFD86D-1604-4C80-B02B-E60AD98BA86F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9CFD86D-1604-4C80-B02B-E60AD98BA86F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9CFD86D-1604-4C80-B02B-E60AD98BA86F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AAA2550-9AC2-474E-A74A-1F21AD378367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AAA2550-9AC2-474E-A74A-1F21AD378367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AAA2550-9AC2-474E-A74A-1F21AD378367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AAA2550-9AC2-474E-A74A-1F21AD378367}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
