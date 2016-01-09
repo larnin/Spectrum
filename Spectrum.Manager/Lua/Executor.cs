@@ -21,25 +21,30 @@ namespace Spectrum.Manager.Lua
             {
                 try
                 {
-                    Console.Write($"Executing {path}... ");
                     Lua.DoFile(path);
-                    Console.WriteLine("OK.");
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine($"Failure:\n{ex.Message}\nInner: {ex.InnerException?.Message}");
+                    Console.WriteLine($"Failure:\n{ex.Message}\nInner: {ex.InnerException?.Message}\nFile: {path}");
                 }
             }
         }
 
         private void InitializeLua()
         {
-            Console.Write("Initializing Lua subsystem... ");
-            Lua = new NLua.Lua();
-            Lua.LoadCLRPackage();
+            try
+            {
+                Console.Write("Trying to initializa Lua... ");
+                Lua = new NLua.Lua();
+                Lua.LoadCLRPackage();
 
-            Lua.DoString("print(_VERSION)");
-            Console.WriteLine();
+                Lua.DoString("print(_VERSION)");
+                Console.WriteLine("Lua has been executed successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lua initialization failed. See output_log.txt for data, and the exception below:\n{ex}");
+            }
         }
     }
 }
