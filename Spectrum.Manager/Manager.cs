@@ -1,5 +1,5 @@
 ﻿using Spectrum.Manager.Lua;
-using Spectrum.LuaHelper;
+using Spectrum.Manager.Resources;
 
 namespace Spectrum.Manager
 {
@@ -8,15 +8,12 @@ namespace Spectrum.Manager
         private Loader LuaLoader { get; }
         private Executor LuaExecutor { get; }
 
-        private Entry LuaHelperEntry { get; }
-
         public Manager()
         {
-            LuaLoader = new Loader("Distance_Data/Spectrum/Scripts");
+            LuaLoader = new Loader(DefaultValues.ScriptDirectory);
             LuaLoader.LoadScripts();
 
             LuaExecutor = new Executor(LuaLoader);
-            LuaHelperEntry = new Entry(LuaExecutor.Lua);
 
             LuaExecutor.ExecuteAllScripts();
         }
