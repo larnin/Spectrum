@@ -43,7 +43,7 @@ namespace Spectrum.Prism
             InsertSpectrumInitCode();
             InsertSpectrumUpdateCode();
 
-            ColoredOutput.WriteInformation("Writing modified file.");
+            ColoredOutput.WriteInformation("Writing modified file...");
             _distanceAssemblyDefinition.Write(_distanceAssemblyFilename);
 
             ColoredOutput.WriteSuccess("Dispersion complete. Spectrum should now be visible.");
@@ -53,7 +53,7 @@ namespace Spectrum.Prism
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             var version = Assembly.GetExecutingAssembly().GetName().Version;
-            Console.WriteLine($"Prism patcher for Spectrum {version.Major}.{version.Minor}.{version.Build}.{version.Revision}");
+            Console.WriteLine($"Prism patcher for Spectrum. Version {version.Major}.{version.Minor}.{version.Build}.{version.Revision}");
             Console.WriteLine("------------------------------------------");
             Console.ResetColor();
         }
