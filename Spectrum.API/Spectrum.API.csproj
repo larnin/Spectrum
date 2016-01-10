@@ -11,7 +11,7 @@
     <AssemblyName>Spectrum.API</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AssemblyVersion>1.0.2.5852</AssemblyVersion>
+    <AssemblyVersion>1.0.3.5853</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,8 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PluginInterfaces\IIdentifiable.cs" />
-    <Compile Include="PluginInterfaces\ILoadable.cs" />
+    <Compile Include="PluginInterfaces\IPlugin.cs" />
     <Compile Include="PluginInterfaces\IUpdatable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Version.cs" />

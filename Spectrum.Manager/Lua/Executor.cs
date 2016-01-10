@@ -15,8 +15,6 @@ namespace Spectrum.Manager.Lua
 
         public void ExecuteAllScripts()
         {
-            Console.WriteLine("Lua execution started.");
-
             foreach (var path in LuaLoader.ScriptPaths)
             {
                 try
@@ -34,12 +32,11 @@ namespace Spectrum.Manager.Lua
         {
             try
             {
-                Console.Write("Trying to initializa Lua... ");
+                Console.Write("Trying to initialize Lua... ");
                 Lua = new NLua.Lua();
                 Lua.LoadCLRPackage();
 
                 Lua.DoString("print(_VERSION)");
-                Console.WriteLine("Lua has been executed successfully.");
             }
             catch (Exception ex)
             {

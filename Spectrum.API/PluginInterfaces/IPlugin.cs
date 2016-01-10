@@ -1,11 +1,13 @@
 ﻿namespace Spectrum.API.PluginInterfaces
 {
-    public interface IIdentifiable
+    public interface IPlugin
     {
-        string Name { get; }
+        string FriendlyName { get; }
         string Author { get; }
         string Contact { get; }
-
         int CompatibleAPILevel { get; }
+
+        void Initialize(params object[] args);
+        void Shutdown(params object[] args);
     }
 }
