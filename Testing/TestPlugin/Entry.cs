@@ -3,7 +3,7 @@ using Spectrum.API.PluginInterfaces;
 
 namespace TestPlugin
 {
-    public class Entry : IPlugin, IUpdatable
+    public class Entry : IPlugin
     {
         public string FriendlyName => "TestPluginNotUpdatable";
         public string Author => "Ciastex";
@@ -19,11 +19,6 @@ namespace TestPlugin
         public void Shutdown(params object[] args)
         {
             Console.WriteLine("TestPlugin Shutting Down!");
-        }
-
-        public void Update()
-        {
-            Console.WriteLine("TestPlugin updated!");
         }
     }
 }

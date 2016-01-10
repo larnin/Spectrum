@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <AssemblyVersion>1.0.45.5853</AssemblyVersion>
+    <AssemblyVersion>1.0.53.5854</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logging\SubsystemLog.cs" />
     <Compile Include="Lua\Executor.cs" />
     <Compile Include="Lua\Loader.cs" />
     <Compile Include="Managed\PluginContainer.cs" />
