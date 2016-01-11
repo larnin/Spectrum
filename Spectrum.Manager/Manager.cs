@@ -9,6 +9,7 @@ namespace Spectrum.Manager
 {
     public class Manager
     {
+        //todo write logs for subsystems
         private Loader LuaLoader { get; set; }
         private Executor LuaExecutor { get; set; }
 
@@ -63,8 +64,8 @@ namespace Spectrum.Manager
         {
             if (CanLoadScripts)
             {
-                LuaExecutor = new Executor(LuaLoader);
                 Console.WriteLine("Executing all scripts...");
+                LuaExecutor = new Executor(LuaLoader);
                 LuaExecutor.ExecuteAllScripts();
             }
         }
