@@ -11,7 +11,7 @@
     <AssemblyName>Spectrum.Bootstrap</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AssemblyVersion>1.0.15.5854</AssemblyVersion>
+    <AssemblyVersion>1.0.16.5884</AssemblyVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
