@@ -19,7 +19,7 @@ namespace Spectrum.Manager.Managed
             PluginDirectory = pluginDirectory;
             PluginContainer = pluginContainer;
 
-            Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.PluginLoaderLogFileName));
+            Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.PluginLoaderLogFileName), true);
             Log.Info("New startup...");
         }
 
@@ -44,7 +44,8 @@ namespace Spectrum.Manager.Managed
                     continue;
                 }
 
-                foreach (var exportedType in asm.GetExportedTypes())
+                var exportedTypes = asm.GetExportedTypes();
+                foreach (var exportedType in exportedTypes)
                 {
                     // All plugins MUST have a type named Entry.
                     if (exportedType.Name == "Entry")

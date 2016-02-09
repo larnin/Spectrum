@@ -17,7 +17,7 @@ namespace Spectrum.Manager.Lua
             ScriptFolder = scriptFolder;
             ScriptPaths = new List<string>();
 
-            Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.LuaLoaderLogFileName));
+            Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.LuaLoaderLogFileName), true);
             Log.Info("New startup...");
         }
 

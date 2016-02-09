@@ -1,15 +1,21 @@
 ﻿using System;
+using System.IO;
+using Spectrum.Manager.Logging;
+using Spectrum.Manager.Resources;
 
 namespace Spectrum.Manager.Lua
 {
     class Executor
     {
         private Loader LuaLoader { get; }
+        private SubsystemLog Log { get; }
         public NLua.Lua Lua { get; set; }
 
         public Executor(Loader luaLoader)
         {
             LuaLoader = luaLoader;
+            Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.LuaExecutorLogFileName), true);
+
             InitializeLua();
         }
 
@@ -21,9 +27,10 @@ namespace Spectrum.Manager.Lua
                 {
                     Lua.DoFile(path);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Failure:\n{ex.Message}\nInner: {ex.InnerException?.Message}\nFile: {path}");
+                    Log.Exception(ex);
+                    Log.Error($"    Failure:\n{ex.Message}\n    Inner: {ex.InnerException?.Message}\n    File: {path}");
                 }
             }
         }
@@ -32,15 +39,16 @@ namespace Spectrum.Manager.Lua
         {
             try
             {
-                Console.Write("Trying to initialize Lua... ");
+                Log.Info("Initializing Lua... ", true);
                 Lua = new NLua.Lua();
                 Lua.LoadCLRPackage();
 
-                Lua.DoString("print(_VERSION)");
+                var version = (string)Lua.DoString("return _VERSION")[0];
+                Log.WriteLine(version);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lua initialization failed. See output_log.txt for data, and the exception below:\n{ex}");
+                Log.Exception(ex);
             }
         }
     }

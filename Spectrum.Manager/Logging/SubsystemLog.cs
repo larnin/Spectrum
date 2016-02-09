@@ -6,13 +6,15 @@ namespace Spectrum.Manager.Logging
     class SubsystemLog
     {
         private string FilePath { get; }
+        private bool WriteToConsole { get; }
 
-        public SubsystemLog(string filePath)
+        public SubsystemLog(string filePath, bool writeToConsole = false)
         {
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
             FilePath = filePath;
+            WriteToConsole = writeToConsole;
         }
 
         public void Error(string message)
@@ -20,9 +22,18 @@ namespace Spectrum.Manager.Logging
             WriteLine($"[!][{DateTime.Now}] {message}");
         }
 
-        public void Info(string message)
+        public void Info(string message, bool noNewLine = false)
         {
-            WriteLine($"[i][{DateTime.Now}] {message}");
+            var msg = $"[i][{DateTime.Now}] {message}";
+
+            if (noNewLine)
+            {
+                Write(msg);
+            }
+            else
+            {
+                WriteLine(msg);
+            }
         }
 
         public void Exception(Exception e)
@@ -36,11 +47,29 @@ namespace Spectrum.Manager.Logging
             }
         }
 
-        private void WriteLine(string text)
+        public void WriteLine(string text)
         {
             using (var sw = new StreamWriter(FilePath, true))
             {
                 sw.WriteLine(text);
+            }
+
+            if (WriteToConsole)
+            {
+                Console.WriteLine(text);
+            }
+        }
+
+        private void Write(string text)
+        {
+            using (var sw = new StreamWriter(FilePath, true))
+            {
+                sw.Write(text);
+            }
+
+            if (WriteToConsole)
+            {
+                Console.Write(text);
             }
         }
     }
