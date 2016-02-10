@@ -20,7 +20,7 @@ namespace Spectrum.Manager.Managed
             PluginContainer = pluginContainer;
 
             Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.PluginLoaderLogFileName), true);
-            Log.Info("New startup...");
+            Log.Info("Plugin loader starting up...");
         }
 
         public void LoadPlugins()
@@ -30,21 +30,35 @@ namespace Spectrum.Manager.Managed
 
             foreach (var path in filePaths)
             {
+                var fileName = Path.GetFileName(path);
+
                 Assembly asm;
                 try
                 {
-                    Log.Info($"Now loading library file: '{path}'");
+                    Log.Info($"Now loading library file: '{fileName}'");
                     asm = Assembly.LoadFrom(path);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Exception occured while loading library file: '{path}'. Check the log for details.");
+                    Console.WriteLine($"Exception occured while loading library file: '{fileName}'. Check the log for details.");
                     Log.Exception(e);
 
                     continue;
                 }
 
-                var exportedTypes = asm.GetExportedTypes();
+                Type[] exportedTypes;
+                try
+                {
+                    exportedTypes = asm.GetExportedTypes();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Exception occured while validating library file: '{fileName}'. Check the log for details.");
+                    Log.Exception(e);
+
+                    continue;
+                }
+
                 foreach (var exportedType in exportedTypes)
                 {
                     // All plugins MUST have a type named Entry.
@@ -86,11 +100,11 @@ namespace Spectrum.Manager.Managed
                                 }
                                 else
                                 {
-                                    Log.Error("Did NOT load the plugin: '{path}'. A plugin with this name has already been loaded once.");
+                                    Log.Error($"Did NOT load the plugin: '{fileName}'. A plugin with this name has already been loaded once.");
                                 }
                                 continue;
                             }
-                            Log.Error($"'{path}' is not a valid plugin. Does not implement common IPlugin interface.");
+                            Log.Error($"'{fileName}' is not a valid plugin. Does not implement common IPlugin interface.");
                         }
                         catch (Exception e)
                         {
@@ -99,7 +113,7 @@ namespace Spectrum.Manager.Managed
                     }
                     else
                     {
-                        Log.Error($"'{path}' is not a valid plugin. No valid entry point detected.");
+                        Log.Error($"'{fileName}' is not a valid plugin. No valid entry point detected.");
                     }
                 }
             }
