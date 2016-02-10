@@ -29,7 +29,6 @@ namespace Spectrum.Manager.Lua
                 }
                 catch (Exception ex)
                 {
-                    Log.Exception(ex);
                     Log.Error($"    Failure:\n{ex.Message}\n    Inner: {ex.InnerException?.Message}\n    File: {path}");
                 }
             }
@@ -48,6 +47,7 @@ namespace Spectrum.Manager.Lua
             }
             catch (Exception ex)
             {
+                Log.Error("An exception occured while initializing Lua. Check the log for details.");
                 Log.Exception(ex);
             }
         }
