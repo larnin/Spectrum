@@ -48,8 +48,6 @@ namespace Spectrum.Manager
         {
             if (CanLoadScripts)
             {
-                Console.WriteLine("Initializing scripts...");
-
                 LuaLoader = new Loader(ScriptDirectory);
                 LuaLoader.LoadScripts();
             }
@@ -63,7 +61,6 @@ namespace Spectrum.Manager
         {
             if (CanLoadScripts)
             {
-                Console.WriteLine("Executing all scripts...");
                 LuaExecutor = new Executor(LuaLoader);
                 LuaExecutor.ExecuteAllScripts();
             }
@@ -71,8 +68,6 @@ namespace Spectrum.Manager
 
         private void LoadExtensions()
         {
-            Console.WriteLine("Initializing extensions...");
-
             ManagedPluginContainer = new PluginContainer();
             ManagedPluginLoader = new PluginLoader(PluginDirectory, ManagedPluginContainer);
             ManagedPluginLoader.LoadPlugins();
@@ -80,7 +75,6 @@ namespace Spectrum.Manager
 
         private void StartExtensions()
         {
-            Console.WriteLine("Starting up all loaded extensions...");
             foreach (var pluginInfo in ManagedPluginContainer)
             {
                 pluginInfo.Plugin.Initialize(this);
