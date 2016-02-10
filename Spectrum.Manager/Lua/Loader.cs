@@ -18,17 +18,13 @@ namespace Spectrum.Manager.Lua
             ScriptPaths = new List<string>();
 
             Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.LuaLoaderLogFileName), true);
-            Log.Info("New startup...");
+            Log.Info("Lua loader starting up...");
         }
 
         public void LoadScripts()
         {
             ScriptPaths = Directory.GetFiles(ScriptFolder, "*.lua").ToList();
-
-            foreach (var path in ScriptPaths)
-            {
-                Log.Info($"Loaded script: '{Path.GetFileName(path)}'.");
-            }
+            Log.Info($"Loaded {ScriptPaths.Count} scripts.");
         }
     }
 }
