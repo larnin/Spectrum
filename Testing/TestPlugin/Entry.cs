@@ -1,8 +1,6 @@
 ﻿using System;
 using Spectrum.API.PluginInterfaces;
 
-using Version = Spectrum.API.Version;
-
 namespace TestPlugin
 {
     public class Entry : IPlugin
@@ -15,7 +13,7 @@ namespace TestPlugin
 
         public void Initialize(params object[] args)
         {
-            Console.WriteLine($"TestPlugin running on Distance version {Version.DistanceBuild}");
+            Console.WriteLine(nameof(Entry));
         }
 
         public void Shutdown(params object[] args)
