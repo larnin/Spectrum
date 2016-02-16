@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
+using Spectrum.API;
 using Spectrum.Manager.Logging;
-using Spectrum.Manager.Resources;
 
 namespace Spectrum.Manager.Lua
 {
@@ -14,7 +14,7 @@ namespace Spectrum.Manager.Lua
         public Executor(Loader luaLoader)
         {
             LuaLoader = luaLoader;
-            Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.LuaExecutorLogFileName), true);
+            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaExecutorLogFileName), true);
 
             InitializeLua();
         }

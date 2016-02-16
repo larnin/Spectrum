@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
+using Spectrum.API;
+using Spectrum.API.Configuration;
 using Spectrum.API.PluginInterfaces;
 using Spectrum.Manager.Lua;
 using Spectrum.Manager.Managed;
-using Spectrum.Manager.Resources;
 
 namespace Spectrum.Manager
 {
@@ -23,8 +25,8 @@ namespace Spectrum.Manager
 
         public Manager()
         {
-            ScriptDirectory = DefaultValues.ScriptDirectory;
-            PluginDirectory = DefaultValues.PluginDirectory;
+            ScriptDirectory = Defaults.ScriptDirectory;
+            PluginDirectory = Defaults.PluginDirectory;
 
             TryInitializeLua();
             StartLua();

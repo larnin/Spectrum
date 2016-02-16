@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using Spectrum.API;
 using Spectrum.API.PluginInterfaces;
 using Spectrum.Manager.Logging;
-using Spectrum.Manager.Resources;
 
 namespace Spectrum.Manager.Managed
 {
@@ -19,7 +19,7 @@ namespace Spectrum.Manager.Managed
             PluginDirectory = pluginDirectory;
             PluginContainer = pluginContainer;
 
-            Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.PluginLoaderLogFileName), true);
+            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.PluginLoaderLogFileName), true);
             Log.Info("Plugin loader starting up...");
         }
 

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Spectrum.API;
 using Spectrum.Manager.Logging;
-using Spectrum.Manager.Resources;
 
 namespace Spectrum.Manager.Lua
 {
@@ -17,7 +17,7 @@ namespace Spectrum.Manager.Lua
             ScriptFolder = scriptFolder;
             ScriptPaths = new List<string>();
 
-            Log = new SubsystemLog(Path.Combine(DefaultValues.LogDirectory, DefaultValues.LuaLoaderLogFileName), true);
+            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaLoaderLogFileName), true);
             Log.Info("Lua loader starting up...");
         }
 
