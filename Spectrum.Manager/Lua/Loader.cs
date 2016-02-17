@@ -10,12 +10,15 @@ namespace Spectrum.Manager.Lua
     {
         private SubsystemLog Log { get; }
         public string ScriptFolder { get; }
-        public List<string> ScriptPaths { get; private set; }
+        public string OnDemandScriptFolder { get; }
 
-        public Loader(string scriptFolder)
+        public List<string> ScriptPaths { get; private set; }
+        public List<string> OnDemandScriptPaths { get; private set; } 
+
+        public Loader(string scriptFolder, string onDemandScriptFolder)
         {
             ScriptFolder = scriptFolder;
-            ScriptPaths = new List<string>();
+            OnDemandScriptFolder = onDemandScriptFolder;
 
             Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaLoaderLogFileName), true);
             Log.Info("Lua loader starting up...");
@@ -24,7 +27,10 @@ namespace Spectrum.Manager.Lua
         public void LoadScripts()
         {
             ScriptPaths = Directory.GetFiles(ScriptFolder, "*.lua").ToList();
-            Log.Info($"Loaded {ScriptPaths.Count} scripts.");
+            Log.Info($"Loaded {ScriptPaths.Count} startup scripts.");
+
+            OnDemandScriptPaths = Directory.GetFiles(OnDemandScriptFolder, "*.lua").ToList();
+            Log.Info($"Loaded {OnDemandScriptPaths.Count} on-demand scripts.");
         }
     }
 }

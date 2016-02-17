@@ -22,20 +22,18 @@ namespace Spectrum.Manager.Lua
 
         public void ExecuteScript(string name)
         {
-            foreach (var path in LuaLoader.ScriptPaths)
+            foreach (var path in LuaLoader.OnDemandScriptPaths)
             {
                 var fileName = Path.GetFileName(path);
                 if (fileName == name)
                 {
-                    Log.WriteLine($"On-demand script execution: '{path}'");
-
                     try
                     {
                         Lua.DoFile(path);
                     }
                     catch (Exception ex)
                     {
-                        Log.Error($"    Failure:\n{ex.Message}\n    Inner: {ex.InnerException?.Message}\n    File: {path}");
+                        Log.Error($"Failure:\n{ex.Message}\n    Inner: {ex.InnerException?.Message}\n    File: {path}");
                     }
                 }
             }
@@ -51,7 +49,7 @@ namespace Spectrum.Manager.Lua
                 }
                 catch (Exception ex)
                 {
-                    Log.Error($"    Failure:\n{ex.Message}\n    Inner: {ex.InnerException?.Message}\n    File: {path}");
+                    Log.Error($"Failure:\n{ex.Message}\n    Inner: {ex.InnerException?.Message}\n    File: {path}");
                 }
             }
         }

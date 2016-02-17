@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Spectrum.API;
 using Spectrum.API.Configuration;
+using Spectrum.API.Input;
 using Spectrum.API.PluginInterfaces;
 using Spectrum.Manager.Lua;
 using Spectrum.Manager.Managed;
@@ -17,19 +19,25 @@ namespace Spectrum.Manager
         private PluginLoader ManagedPluginLoader { get; set; }
 
         private string ScriptDirectory { get; }
+        private string OnDemandScriptDirectory { get; }
         private string PluginDirectory { get; }
+
+        private Dictionary<Hotkey, string> ScriptHotkeys { get; set; }
 
         public bool CanLoadScripts => Directory.Exists(ScriptDirectory);
         public bool CanLoadPlugins => Directory.Exists(PluginDirectory);
-        public Settings Settings { get; private set; }
 
+        public Settings Settings { get; private set; }
+        public Settings ScriptHotkeySettings { get; private set; }
 
         public Manager()
         {
             InitializeSettings();
+            InitializeScriptHotkeys();
 
             ScriptDirectory = Defaults.ScriptDirectory;
             PluginDirectory = Defaults.PluginDirectory;
+            OnDemandScriptDirectory = Defaults.OnDemandScriptDirectory;
 
             if (Settings.GetValue<bool>("LoadScripts"))
             {
@@ -46,6 +54,17 @@ namespace Spectrum.Manager
 
         public void UpdateExtensions()
         {
+            if (ScriptHotkeys.Count > 0)
+            {
+                foreach (var hotkey in ScriptHotkeys)
+                {
+                    if (hotkey.Key.IsPressed)
+                    {
+                        LuaExecutor.ExecuteScript(hotkey.Value);
+                    }
+                }    
+            }
+
             if (ManagedPluginContainer != null)
             {
                 foreach (var pluginInfo in ManagedPluginContainer)
@@ -83,11 +102,29 @@ namespace Spectrum.Manager
             Settings.Save();
         }
 
+        private void InitializeScriptHotkeys()
+        {
+            try
+            {
+                ScriptHotkeySettings = new Settings(typeof(Manager), "Hotkeys");
+                ScriptHotkeys = new Dictionary<Hotkey, string>();
+
+                foreach (var s in ScriptHotkeySettings)
+                {
+                    ScriptHotkeys.Add(new Hotkey(s.Key), s.Value);
+                }
+            }
+            catch
+            {
+                Console.WriteLine("MANAGER: Couldn't load script hotkeys.");
+            }
+        }
+
         private void TryInitializeLua()
         {
             if (CanLoadScripts)
             {
-                LuaLoader = new Loader(ScriptDirectory);
+                LuaLoader = new Loader(ScriptDirectory, OnDemandScriptDirectory);
                 LuaLoader.LoadScripts();
             }
             else
