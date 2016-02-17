@@ -41,9 +41,16 @@ namespace Spectrum.API.Configuration
             }
         }
 
-        public Settings(Type type)
+        public Settings(Type type, string postfix = "")
         {
-            FileName = $"{type.Assembly.GetName().Name}.scx";
+            if (string.IsNullOrEmpty(postfix))
+            {
+                FileName = $"{type.Assembly.GetName().Name}.scx";
+            }
+            else
+            {
+                FileName = $"{type.Assembly.GetName().Name}.{postfix}.scx";
+            }
 
             if (!SettingsExist())
             {
