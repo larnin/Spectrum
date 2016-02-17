@@ -7,17 +7,38 @@ namespace Spectrum.API.Input
     {
         public static bool IsKeyPressed(string key)
         {
-            return UnityEngine.Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), key));
+            try
+            {
+                return UnityEngine.Input.GetKey((KeyCode)Enum.Parse(typeof(KeyCode), key));
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static bool IsKeyDown(string key)
         {
-            return UnityEngine.Input.GetKeyDown((KeyCode)Enum.Parse(typeof(KeyCode), key));
+            try
+            {
+                return UnityEngine.Input.GetKeyDown((KeyCode)Enum.Parse(typeof(KeyCode), key));
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static bool IsKeyUp(string key)
         {
-            return UnityEngine.Input.GetKeyUp((KeyCode)Enum.Parse(typeof(KeyCode), key));
+            try
+            {
+                return UnityEngine.Input.GetKeyUp((KeyCode)Enum.Parse(typeof(KeyCode), key));
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
