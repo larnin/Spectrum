@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Spectrum.API;
+using Spectrum.API.Configuration;
 using Spectrum.API.PluginInterfaces;
 using Spectrum.Manager.Lua;
 using Spectrum.Manager.Managed;
@@ -20,28 +21,66 @@ namespace Spectrum.Manager
 
         public bool CanLoadScripts => Directory.Exists(ScriptDirectory);
         public bool CanLoadPlugins => Directory.Exists(PluginDirectory);
+        public Settings Settings { get; private set; }
+
 
         public Manager()
         {
+            InitializeSettings();
+
             ScriptDirectory = Defaults.ScriptDirectory;
             PluginDirectory = Defaults.PluginDirectory;
 
-            TryInitializeLua();
-            StartLua();
+            if (Settings.GetValue<bool>("LoadScripts"))
+            {
+                TryInitializeLua();
+                StartLua();
+            }
 
-            LoadExtensions();
-            StartExtensions();
+            if (Settings.GetValue<bool>("LoadPlugins"))
+            {
+                LoadExtensions();
+                StartExtensions();
+            }
         }
 
         public void UpdateExtensions()
         {
-            foreach (var pluginInfo in ManagedPluginContainer)
+            if (ManagedPluginContainer != null)
             {
-                if (pluginInfo.Enabled && pluginInfo.IsUpdatable)
+                foreach (var pluginInfo in ManagedPluginContainer)
                 {
-                    ((IUpdatable)pluginInfo.Plugin).Update();
+                    if (pluginInfo.Enabled && pluginInfo.IsUpdatable)
+                    {
+                        ((IUpdatable)pluginInfo.Plugin).Update();
+                    }
                 }
             }
+        }
+
+        private void InitializeSettings()
+        {
+            try
+            {
+                Settings = new Settings(typeof(Manager));
+                if (Settings["FirstRun"] == string.Empty || Settings.GetValue<bool>("FirstRun"))
+                {
+                    RecreateSettings();
+                }
+            }
+            catch
+            {
+                Console.WriteLine("MANAGER: Couldn't load settings. Defaults loaded.");
+            }
+        }
+
+        private void RecreateSettings()
+        {
+            Settings["FirstRun"] = "false";
+            Settings["LoadPlugins"] = "true";
+            Settings["LoadScripts"] = "true";
+
+            Settings.Save();
         }
 
         private void TryInitializeLua()
