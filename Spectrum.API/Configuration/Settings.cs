@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Spectrum.API.Configuration
 {
-    public class Settings
+    public class Settings : IEnumerable<KeyValuePair<string, string>>
     {
         private string FilePath => Path.Combine(Defaults.SettingsDirectory, FileName);
         private Dictionary<string, string> Entries { get; set; }
@@ -230,6 +231,16 @@ namespace Spectrum.API.Configuration
             }
 
             return version;
+        }
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            return Entries.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
