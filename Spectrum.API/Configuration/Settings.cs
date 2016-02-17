@@ -61,6 +61,7 @@ namespace Spectrum.API.Configuration
             }
             catch
             {
+                Console.WriteLine($"WARNING: Settings entry '{key}' COULD NOT be parsed due to invalid format!");
                 return default(T);
             }
         }
