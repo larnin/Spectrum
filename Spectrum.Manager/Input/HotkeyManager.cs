@@ -21,7 +21,7 @@ namespace Spectrum.Manager.Input
             ActionHotkeys = new Dictionary<Hotkey, Action>();
             ScriptHotkeys = new Dictionary<Hotkey, string>();
 
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.HotkeyManagerLogFileName), true);
+            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.HotkeyManagerLogFileName));
             Manager = manager;
         }
 

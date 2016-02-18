@@ -15,7 +15,7 @@ namespace Spectrum.Manager.Lua
         public Executor(ILoader luaLoader)
         {
             LuaLoader = (Loader)luaLoader;
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaExecutorLogFileName), true);
+            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaExecutorLogFileName));
 
             InitializeLua();
         }

@@ -19,7 +19,7 @@ namespace Spectrum.Manager.Managed
             PluginDirectory = pluginDirectory;
             PluginContainer = pluginContainer;
 
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.PluginLoaderLogFileName), true);
+            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.PluginLoaderLogFileName));
             Log.Info("Plugin loader starting up...");
         }
 

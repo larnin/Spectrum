@@ -8,13 +8,13 @@ namespace Spectrum.Manager.Logging
         private string FilePath { get; }
         private bool WriteToConsole { get; }
 
-        public SubsystemLog(string filePath, bool writeToConsole = false)
+        public SubsystemLog(string filePath)
         {
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
             FilePath = filePath;
-            WriteToConsole = writeToConsole;
+            WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole");
         }
 
         public void Error(string message)

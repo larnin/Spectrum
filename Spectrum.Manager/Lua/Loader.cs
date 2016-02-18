@@ -21,7 +21,7 @@ namespace Spectrum.Manager.Lua
             ScriptFolder = scriptFolder;
             OnDemandScriptFolder = onDemandScriptFolder;
 
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaLoaderLogFileName), true);
+            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaLoaderLogFileName));
             Log.Info("Lua loader starting up...");
         }
 
