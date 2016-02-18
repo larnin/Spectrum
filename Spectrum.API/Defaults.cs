@@ -8,6 +8,7 @@
         public const string LogDirectory = "Distance_Data/Spectrum/Logs";
         public const string SettingsDirectory = "Distance_Data/Spectrum/Settings";
 
+        public const string HotkeyManagerLogFileName = "HotkeyManager.log";
         public const string LuaExecutorLogFileName = "LuaExecutor.log";
         public const string LuaLoaderLogFileName = "LuaLoader.log";
         public const string PluginLoaderLogFileName = "PluginLoader.log";

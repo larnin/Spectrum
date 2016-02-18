@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Spectrum.API;
 using Spectrum.API.Configuration;
 using Spectrum.API.Input;
 using Spectrum.API.Interfaces.Plugins;
 using Spectrum.API.Interfaces.Systems;
+using Spectrum.Manager.Input;
 using Spectrum.Manager.Lua;
 using Spectrum.Manager.Managed;
 
@@ -15,6 +15,7 @@ namespace Spectrum.Manager
     {
         public ILoader LuaLoader { get; set; }
         public IExecutor LuaExecutor { get; set; }
+        public IHotkeyManager Hotkeys { get; set; }
 
         private PluginContainer ManagedPluginContainer { get; set; }
         private PluginLoader ManagedPluginLoader { get; set; }
@@ -22,9 +23,6 @@ namespace Spectrum.Manager
         private string ScriptDirectory { get; }
         private string OnDemandScriptDirectory { get; }
         private string PluginDirectory { get; }
-
-        private Dictionary<Hotkey, string> ScriptHotkeys { get; set; }
-        private Dictionary<Hotkey, Action> ActionHotkeys { get; set; }
 
         public bool CanLoadScripts => Directory.Exists(ScriptDirectory);
         public bool CanLoadPlugins => Directory.Exists(PluginDirectory);
@@ -35,8 +33,9 @@ namespace Spectrum.Manager
         public Manager()
         {
             InitializeSettings();
+
+            Hotkeys = new HotkeyManager(this);
             InitializeScriptHotkeys();
-            ActionHotkeys = new Dictionary<Hotkey, Action>();
 
             ScriptDirectory = Defaults.ScriptDirectory;
             PluginDirectory = Defaults.PluginDirectory;
@@ -57,27 +56,7 @@ namespace Spectrum.Manager
 
         public void UpdateExtensions()
         {
-            if (ScriptHotkeys.Count > 0)
-            {
-                foreach (var hotkey in ScriptHotkeys)
-                {
-                    if (hotkey.Key.IsPressed)
-                    {
-                        LuaExecutor.Execute(hotkey.Value);
-                    }
-                }    
-            }
-
-            if (ActionHotkeys.Count > 0)
-            {
-                foreach (var hotkey in ActionHotkeys)
-                {
-                    if (hotkey.Key.IsPressed)
-                    {
-                        hotkey.Value.Invoke();
-                    }
-                }
-            }
+            ((HotkeyManager)Hotkeys).Update();
 
             if (ManagedPluginContainer != null)
             {
@@ -89,24 +68,6 @@ namespace Spectrum.Manager
                     }
                 }
             }
-        }
-
-        public void AddHotkey(Hotkey hotkey, Action action)
-        {
-            if (ScriptHotkeys.ContainsKey(hotkey))
-            {
-                Console.WriteLine($"MANAGER: Warning. The hotkey '{hotkey}' you were trying to assign was already assigned to a script '{ScriptHotkeys[hotkey]}.");
-                Console.WriteLine("         Spectrum will not re-assign this hotkey.");
-                return;
-            }
-
-            if (ActionHotkeys.ContainsKey(hotkey))
-            {
-                Console.WriteLine($"MANAGER: Warning. The hotkey '{hotkey}' you were trying to assign was already assigned to an existing action.");
-                Console.WriteLine("         Spectrum will not re-assign this hotkey.");
-                return;
-            }
-            ActionHotkeys.Add(hotkey, action);
         }
 
         private void InitializeSettings()
@@ -139,19 +100,10 @@ namespace Spectrum.Manager
             try
             {
                 ScriptHotkeySettings = new Settings(typeof(Manager), "Hotkeys");
-                ScriptHotkeys = new Dictionary<Hotkey, string>();
 
                 foreach (var s in ScriptHotkeySettings)
                 {
-                    var hotkey = new Hotkey(s.Key);
-
-                    if (ScriptHotkeys.ContainsKey(hotkey))
-                    {
-                        Console.WriteLine($"MANAGER: Warning. The hotkey '{hotkey}' has already been assigned to '{ScriptHotkeys[hotkey]}'.");
-                        Console.WriteLine("         Spectrum will not re-assign this hotkey.");
-                        continue;
-                    }
-                    ScriptHotkeys.Add(hotkey, s.Value);
+                    Hotkeys.Bind(s.Key, s.Value);
                 }
             }
             catch
