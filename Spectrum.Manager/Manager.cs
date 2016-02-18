@@ -24,6 +24,7 @@ namespace Spectrum.Manager
         private string PluginDirectory { get; }
 
         private Dictionary<Hotkey, string> ScriptHotkeys { get; set; }
+        private Dictionary<Hotkey, Action> ActionHotkeys { get; set; }
 
         public bool CanLoadScripts => Directory.Exists(ScriptDirectory);
         public bool CanLoadPlugins => Directory.Exists(PluginDirectory);
@@ -35,6 +36,7 @@ namespace Spectrum.Manager
         {
             InitializeSettings();
             InitializeScriptHotkeys();
+            ActionHotkeys = new Dictionary<Hotkey, Action>();
 
             ScriptDirectory = Defaults.ScriptDirectory;
             PluginDirectory = Defaults.PluginDirectory;
@@ -66,6 +68,17 @@ namespace Spectrum.Manager
                 }    
             }
 
+            if (ActionHotkeys.Count > 0)
+            {
+                foreach (var hotkey in ActionHotkeys)
+                {
+                    if (hotkey.Key.IsPressed)
+                    {
+                        hotkey.Value.Invoke();
+                    }
+                }
+            }
+
             if (ManagedPluginContainer != null)
             {
                 foreach (var pluginInfo in ManagedPluginContainer)
@@ -76,6 +89,24 @@ namespace Spectrum.Manager
                     }
                 }
             }
+        }
+
+        public void AddHotkey(Hotkey hotkey, Action action)
+        {
+            if (ScriptHotkeys.ContainsKey(hotkey))
+            {
+                Console.WriteLine($"MANAGER: Warning. The hotkey '{hotkey}' you were trying to assign was already assigned to a script '{ScriptHotkeys[hotkey]}.");
+                Console.WriteLine("         Spectrum will not re-assign this hotkey.");
+                return;
+            }
+
+            if (ActionHotkeys.ContainsKey(hotkey))
+            {
+                Console.WriteLine($"MANAGER: Warning. The hotkey '{hotkey}' you were trying to assign was already assigned to an existing action.");
+                Console.WriteLine("         Spectrum will not re-assign this hotkey.");
+                return;
+            }
+            ActionHotkeys.Add(hotkey, action);
         }
 
         private void InitializeSettings()
@@ -112,7 +143,15 @@ namespace Spectrum.Manager
 
                 foreach (var s in ScriptHotkeySettings)
                 {
-                    ScriptHotkeys.Add(new Hotkey(s.Key), s.Value);
+                    var hotkey = new Hotkey(s.Key);
+
+                    if (ScriptHotkeys.ContainsKey(hotkey))
+                    {
+                        Console.WriteLine($"MANAGER: Warning. The hotkey '{hotkey}' has already been assigned to '{ScriptHotkeys[hotkey]}'.");
+                        Console.WriteLine("         Spectrum will not re-assign this hotkey.");
+                        continue;
+                    }
+                    ScriptHotkeys.Add(hotkey, s.Value);
                 }
             }
             catch

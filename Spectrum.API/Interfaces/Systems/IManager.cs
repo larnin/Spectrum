@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Spectrum.API.Input;
 
 namespace Spectrum.API.Interfaces.Systems
 {
@@ -9,5 +7,7 @@ namespace Spectrum.API.Interfaces.Systems
     {
         ILoader LuaLoader { get; }
         IExecutor LuaExecutor { get; }
+
+        void AddHotkey(Hotkey hotkey, Action action);
     }
 }
