@@ -20,6 +20,8 @@ namespace Spectrum.Manager
         private PluginContainer ManagedPluginContainer { get; set; }
         private PluginLoader ManagedPluginLoader { get; set; }
 
+        private Settings ScriptHotkeySettings { get; set; }
+
         private string ScriptDirectory { get; }
         private string OnDemandScriptDirectory { get; }
         private string PluginDirectory { get; }
@@ -27,7 +29,6 @@ namespace Spectrum.Manager
         public bool CanLoadScripts => Directory.Exists(ScriptDirectory);
         public bool CanLoadPlugins => Directory.Exists(PluginDirectory);
 
-        public Settings ScriptHotkeySettings { get; private set; }
 
         public Manager()
         {
