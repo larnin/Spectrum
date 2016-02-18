@@ -47,10 +47,13 @@
     <Compile Include="Defaults.cs" />
     <Compile Include="Input\Hotkey.cs" />
     <Compile Include="Input\Keyboard.cs" />
-    <Compile Include="PluginInterfaces\IPlugin.cs" />
-    <Compile Include="PluginInterfaces\IUpdatable.cs" />
+    <Compile Include="Interfaces\Plugins\IPlugin.cs" />
+    <Compile Include="Interfaces\Plugins\IUpdatable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Version.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\Systems\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,7 +4,7 @@ using System.IO;
 using Spectrum.API;
 using Spectrum.API.Configuration;
 using Spectrum.API.Input;
-using Spectrum.API.PluginInterfaces;
+using Spectrum.API.Interfaces.Plugins;
 using Spectrum.Manager.Lua;
 using Spectrum.Manager.Managed;
 

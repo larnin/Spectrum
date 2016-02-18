@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 using Spectrum.API;
-using Spectrum.API.PluginInterfaces;
+using Spectrum.API.Interfaces.Plugins;
 using Spectrum.Manager.Logging;
 
 namespace Spectrum.Manager.Managed

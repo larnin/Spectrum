@@ -1,5 +1,5 @@
 ﻿using System;
-using Spectrum.API.PluginInterfaces;
+using Spectrum.API.Interfaces.Plugins;
 
 namespace TestPlugin
 {

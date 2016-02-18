@@ -1,4 +1,4 @@
-﻿namespace Spectrum.API.PluginInterfaces
+﻿namespace Spectrum.API.Interfaces.Plugins
 {
     public interface IPlugin
     {
