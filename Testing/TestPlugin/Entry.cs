@@ -1,5 +1,6 @@
 ﻿using System;
 using Spectrum.API.Interfaces.Plugins;
+using Spectrum.API.Interfaces.Systems;
 
 namespace TestPlugin
 {
@@ -11,12 +12,12 @@ namespace TestPlugin
 
         public int CompatibleAPILevel => 1;
 
-        public void Initialize(params object[] args)
+        public void Initialize(IManager manager)
         {
             Console.WriteLine(nameof(Entry));
         }
 
-        public void Shutdown(params object[] args)
+        public void Shutdown()
         {
             Console.WriteLine("TestPlugin Shutting Down!");
         }
