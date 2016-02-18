@@ -1,4 +1,6 @@
-﻿namespace Spectrum.API.Interfaces.Plugins
+﻿using Spectrum.API.Interfaces.Systems;
+
+namespace Spectrum.API.Interfaces.Plugins
 {
     public interface IPlugin
     {
@@ -7,7 +9,7 @@
         string Contact { get; }
         int CompatibleAPILevel { get; }
 
-        void Initialize(params object[] args);
-        void Shutdown(params object[] args);
+        void Initialize(IManager manager);
+        void Shutdown();
     }
 }
