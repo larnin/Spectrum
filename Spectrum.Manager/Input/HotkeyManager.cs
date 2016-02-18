@@ -14,9 +14,9 @@ namespace Spectrum.Manager.Input
         private Dictionary<Hotkey, string> ScriptHotkeys { get; }
 
         private SubsystemLog Log { get; }
-        private IManager Manager { get; }
+        private Manager Manager { get; }
 
-        public HotkeyManager(IManager manager)
+        public HotkeyManager(Manager manager)
         {
             ActionHotkeys = new Dictionary<Hotkey, Action>();
             ScriptHotkeys = new Dictionary<Hotkey, string>();
