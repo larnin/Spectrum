@@ -27,7 +27,6 @@ namespace Spectrum.Manager
         public bool CanLoadScripts => Directory.Exists(ScriptDirectory);
         public bool CanLoadPlugins => Directory.Exists(PluginDirectory);
 
-        public Settings Settings { get; private set; }
         public Settings ScriptHotkeySettings { get; private set; }
 
         public Manager()
@@ -41,13 +40,13 @@ namespace Spectrum.Manager
             PluginDirectory = Defaults.PluginDirectory;
             OnDemandScriptDirectory = Defaults.OnDemandScriptDirectory;
 
-            if (Settings.GetValue<bool>("LoadScripts"))
+            if (Global.Settings.GetValue<bool>("LoadScripts"))
             {
                 TryInitializeLua();
                 StartLua();
             }
 
-            if (Settings.GetValue<bool>("LoadPlugins"))
+            if (Global.Settings.GetValue<bool>("LoadPlugins"))
             {
                 LoadExtensions();
                 StartExtensions();
@@ -74,8 +73,8 @@ namespace Spectrum.Manager
         {
             try
             {
-                Settings = new Settings(typeof(Manager));
-                if (Settings["FirstRun"] == string.Empty || Settings.GetValue<bool>("FirstRun"))
+                Global.Settings = new Settings(typeof(Manager));
+                if (Global.Settings["FirstRun"] == string.Empty || Global.Settings.GetValue<bool>("FirstRun"))
                 {
                     RecreateSettings();
                 }
@@ -88,11 +87,12 @@ namespace Spectrum.Manager
 
         private void RecreateSettings()
         {
-            Settings["FirstRun"] = "false";
-            Settings["LoadPlugins"] = "true";
-            Settings["LoadScripts"] = "true";
+            Global.Settings["FirstRun"] = "false";
+            Global.Settings["LoadPlugins"] = "true";
+            Global.Settings["LoadScripts"] = "true";
+            Global.Settings["LogToConsole"] = "true";
 
-            Settings.Save();
+            Global.Settings.Save();
         }
 
         private void InitializeScriptHotkeys()
