@@ -2,11 +2,12 @@
 using System.IO;
 using System.Linq;
 using Spectrum.API;
+using Spectrum.API.Interfaces.Systems;
 using Spectrum.Manager.Logging;
 
 namespace Spectrum.Manager.Lua
 {
-    public class Loader
+    public class Loader : ILoader
     {
         private SubsystemLog Log { get; }
         public string ScriptFolder { get; }
@@ -24,7 +25,7 @@ namespace Spectrum.Manager.Lua
             Log.Info("Lua loader starting up...");
         }
 
-        public void LoadScripts()
+        public void LoadAll()
         {
             ScriptPaths = Directory.GetFiles(ScriptFolder, "*.lua").ToList();
             Log.Info($"Loaded {ScriptPaths.Count} startup scripts.");

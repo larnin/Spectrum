@@ -1,26 +1,27 @@
 ﻿using System;
 using System.IO;
 using Spectrum.API;
+using Spectrum.API.Interfaces.Systems;
 using Spectrum.Manager.Logging;
 
 namespace Spectrum.Manager.Lua
 {
-    class Executor
+    class Executor : IExecutor
     {
         private Loader LuaLoader { get; }
         private SubsystemLog Log { get; }
         public NLua.Lua Lua { get; set; }
 
-        public Executor(Loader luaLoader)
+        public Executor(ILoader luaLoader)
         {
-            LuaLoader = luaLoader;
+            LuaLoader = (Loader)luaLoader;
             Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaExecutorLogFileName), true);
 
             InitializeLua();
         }
 
 
-        public void ExecuteScript(string name)
+        public void Execute(string name)
         {
             foreach (var path in LuaLoader.OnDemandScriptPaths)
             {
@@ -39,7 +40,7 @@ namespace Spectrum.Manager.Lua
             }
         }
 
-        public void ExecuteAllScripts()
+        public void ExecuteAll()
         {
             foreach (var path in LuaLoader.ScriptPaths)
             {

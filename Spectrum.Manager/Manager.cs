@@ -5,15 +5,16 @@ using Spectrum.API;
 using Spectrum.API.Configuration;
 using Spectrum.API.Input;
 using Spectrum.API.Interfaces.Plugins;
+using Spectrum.API.Interfaces.Systems;
 using Spectrum.Manager.Lua;
 using Spectrum.Manager.Managed;
 
 namespace Spectrum.Manager
 {
-    public class Manager
+    public class Manager : IManager
     {
-        private Loader LuaLoader { get; set; }
-        private Executor LuaExecutor { get; set; }
+        public ILoader LuaLoader { get; set; }
+        public IExecutor LuaExecutor { get; set; }
 
         private PluginContainer ManagedPluginContainer { get; set; }
         private PluginLoader ManagedPluginLoader { get; set; }
@@ -60,7 +61,7 @@ namespace Spectrum.Manager
                 {
                     if (hotkey.Key.IsPressed)
                     {
-                        LuaExecutor.ExecuteScript(hotkey.Value);
+                        LuaExecutor.Execute(hotkey.Value);
                     }
                 }    
             }
@@ -125,7 +126,7 @@ namespace Spectrum.Manager
             if (CanLoadScripts)
             {
                 LuaLoader = new Loader(ScriptDirectory, OnDemandScriptDirectory);
-                LuaLoader.LoadScripts();
+                LuaLoader.LoadAll();
             }
             else
             {
@@ -138,7 +139,7 @@ namespace Spectrum.Manager
             if (CanLoadScripts)
             {
                 LuaExecutor = new Executor(LuaLoader);
-                LuaExecutor.ExecuteAllScripts();
+                LuaExecutor.ExecuteAll();
             }
         }
 
