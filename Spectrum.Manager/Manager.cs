@@ -103,7 +103,10 @@ namespace Spectrum.Manager
 
                 foreach (var s in ScriptHotkeySettings)
                 {
-                    Hotkeys.Bind(s.Key, s.Value);
+                    if (!string.IsNullOrEmpty(s.Key) && !string.IsNullOrEmpty(s.Value))
+                    {
+                        Hotkeys.Bind(s.Key, s.Value);
+                    }
                 }
             }
             catch
