@@ -28,7 +28,6 @@ namespace Spectrum.Manager
         public bool CanLoadScripts => Directory.Exists(ScriptDirectory);
         public bool CanLoadPlugins => Directory.Exists(PluginDirectory);
 
-
         public Manager()
         {
             InitializeSettings();
@@ -79,9 +78,9 @@ namespace Spectrum.Manager
                     RecreateSettings();
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                Console.WriteLine("MANAGER: Couldn't load settings. Defaults loaded.");
+                Console.WriteLine($"MANAGER: Couldn't load settings. Defaults loaded. Exception below.\n{ex}");
             }
         }
 
