@@ -2,7 +2,6 @@
 using System.IO;
 using Spectrum.API;
 using Spectrum.API.Configuration;
-using Spectrum.API.Input;
 using Spectrum.API.Interfaces.Plugins;
 using Spectrum.API.Interfaces.Systems;
 using Spectrum.Manager.Input;
