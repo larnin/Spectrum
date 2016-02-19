@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Defaults.cs" />
+    <Compile Include="Game\Audio.cs" />
     <Compile Include="Input\Hotkey.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Interfaces\Plugins\IPlugin.cs" />
