@@ -46,6 +46,9 @@
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Defaults.cs" />
     <Compile Include="Game\Audio.cs" />
+    <Compile Include="Game\EventArgs\Audio\CustomMusicChangedEventArgs.cs" />
+    <Compile Include="Game\EventArgs\Audio\MIDINoteEventArgs.cs" />
+    <Compile Include="Game\EventArgs\Audio\MusicGridEventArgs.cs" />
     <Compile Include="Input\Hotkey.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Interfaces\Plugins\IPlugin.cs" />

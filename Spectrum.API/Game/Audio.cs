@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using Spectrum.API.Game.EventArgs.Audio;
 
 namespace Spectrum.API.Game
 {
@@ -93,6 +95,40 @@ namespace Spectrum.API.Game
         {
             get { return G.Sys.AudioManager_.CurrentCustomMusicDirectory_; }
             set { G.Sys.AudioManager_.SetCustomMusicDirectory(value); }
+        }
+
+        public static event EventHandler<CustomMusicChangedEventArgs> CustomMusicChanged;
+        public static event EventHandler<MIDINoteEventArgs> MIDINote;
+        public static event EventHandler MusicBeat;
+        public static event EventHandler<MusicGridEventArgs> MusicGridProgress;
+        public static event EventHandler MusicSegmentEnded;
+
+        static Audio()
+        {
+            Events.Audio.CustomMusicChanged.Subscribe(data =>
+            {
+                CustomMusicChanged?.Invoke(default(object), new CustomMusicChangedEventArgs(data.newTrackName_));
+            });
+
+            Events.Audio.MIDIEvent.Subscribe(data =>
+            {
+                MIDINote?.Invoke(default(object), new MIDINoteEventArgs(data.note_, data.velocity_));
+            });
+
+            Events.Audio.MusicBeatEvent.Subscribe(data =>
+            {
+                MusicBeat?.Invoke(default(object), System.EventArgs.Empty);
+            });
+
+            Events.Audio.MusicGridEvent.Subscribe(data =>
+            {
+                MusicGridProgress?.Invoke(default(object), new MusicGridEventArgs(data.barCount_, data.beatCount_));
+            });
+
+            Events.Audio.MusicSegmentEnd.Subscribe(data =>
+            {
+                MusicSegmentEnded?.Invoke(default(object), System.EventArgs.Empty);
+            });
         }
 
         public static void NextCustomSong()
