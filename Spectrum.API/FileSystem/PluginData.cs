@@ -17,5 +17,21 @@ namespace Spectrum.API.FileSystem
                 Directory.CreateDirectory(DirectoryPath);
             }
         }
+
+        public string CreateFile(string fileName)
+        {
+            var targetFilePath = Path.Combine(DirectoryPath, fileName);
+
+            try
+            {
+                File.Create(targetFilePath).Dispose();
+                return targetFilePath;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"API: Couldn't create a PluginData file for path {targetFilePath}. Exception below:\n{ex}");
+                return "";
+            }
+        }
     }
 }
