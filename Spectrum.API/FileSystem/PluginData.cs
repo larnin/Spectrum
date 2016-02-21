@@ -33,5 +33,21 @@ namespace Spectrum.API.FileSystem
                 return "";
             }
         }
+
+        public string CreateDirectory(string directoryName)
+        {
+            var targetDirectoryPath = Path.Combine(DirectoryPath, directoryName);
+
+            try
+            {
+                Directory.CreateDirectory(targetDirectoryPath);
+                return targetDirectoryPath;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"API: Couldn't create a PluginData directory for path {targetDirectoryPath}. Exception below:\n{ex}");
+                return string.Empty;
+            }
+        }
     }
 }
