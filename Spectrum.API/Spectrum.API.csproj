@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Defaults.cs" />
+    <Compile Include="FileSystem\PluginData.cs" />
     <Compile Include="Game\Audio.cs" />
     <Compile Include="Game\EventArgs\Audio\CustomMusicChangedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Audio\MIDINoteEventArgs.cs" />
