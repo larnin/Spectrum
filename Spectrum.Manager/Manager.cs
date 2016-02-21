@@ -62,7 +62,8 @@ namespace Spectrum.Manager
                 {
                     if (pluginInfo.Enabled && pluginInfo.IsUpdatable)
                     {
-                        ((IUpdatable)pluginInfo.Plugin).Update();
+                        var plugin = pluginInfo.Plugin as IUpdatable;
+                        plugin?.Update();
                     }
                 }
             }
