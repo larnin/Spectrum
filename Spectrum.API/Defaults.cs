@@ -5,6 +5,7 @@
         public const string ScriptDirectory = "Distance_Data/Spectrum/Scripts";
         public const string OnDemandScriptDirectory = "Distance_Data/Spectrum/Scripts/OnDemand";
         public const string PluginDirectory = "Distance_Data/Spectrum/Plugins";
+        public const string PluginDataDirectory = "Distance_Data/Spectrum/PluginData";
         public const string LogDirectory = "Distance_Data/Spectrum/Logs";
         public const string SettingsDirectory = "Distance_Data/Spectrum/Settings";
 
