@@ -30,7 +30,7 @@ namespace Spectrum.API.FileSystem
             catch(Exception ex)
             {
                 Console.WriteLine($"API: Couldn't create a PluginData file for path {targetFilePath}. Exception below:\n{ex}");
-                return "";
+                return string.Empty;
             }
         }
 
