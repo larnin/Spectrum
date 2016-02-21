@@ -50,7 +50,6 @@
     <Compile Include="Game\EventArgs\Audio\MIDINoteEventArgs.cs" />
     <Compile Include="Game\EventArgs\Audio\MusicGridEventArgs.cs" />
     <Compile Include="Game\Race.cs" />
-    <Compile Include="Game\Vehicle.cs" />
     <Compile Include="Input\Hotkey.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Interfaces\Plugins\IPlugin.cs" />
