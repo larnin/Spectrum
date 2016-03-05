@@ -11,7 +11,7 @@
     <AssemblyName>Spectrum.API</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AssemblyVersion>1.0.44.5893</AssemblyVersion>
+    <AssemblyVersion>1.0.50.5909</AssemblyVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -54,6 +54,8 @@
     <Compile Include="Game\MainMenu.cs" />
     <Compile Include="Game\Network\Server.cs" />
     <Compile Include="Game\Race.cs" />
+    <Compile Include="Game\Vehicle.cs" />
+    <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Input\Hotkey.cs" />
     <Compile Include="Input\Keyboard.cs" />
     <Compile Include="Interfaces\Plugins\IPlugin.cs" />
