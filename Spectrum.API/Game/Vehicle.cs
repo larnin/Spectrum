@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Spectrum.API.Game.EventArgs.Vehicle;
 using Spectrum.API.Helpers;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -19,6 +20,7 @@ namespace Spectrum.API.Game
         private static bool CanOperateOnScreen => VehicleScreenLogic != null;
 
         public static event EventHandler CheckpointPassed;
+        public static event EventHandler<TrickCompleteEventArgs> TrickCompleted;
 
         static Vehicle()
         {
@@ -26,7 +28,19 @@ namespace Spectrum.API.Game
 
             Events.Car.CheckpointHit.SubscribeAll((sender, data) =>
             {
-                CheckpointPassed?.Invoke(null, System.EventArgs.Empty);
+                if (sender.name == "LocalCar")
+                {
+                    CheckpointPassed?.Invoke(null, System.EventArgs.Empty);
+                }
+            });
+
+            Events.Car.TrickComplete.SubscribeAll((sender, data) =>
+            {
+                if (sender.name == "LocalCar")
+                {
+                    var eventArgs = new TrickCompleteEventArgs(data.boost_, data.boostPercent_, data.boostTime_, data.cooldownPercent_, data.points_, data.rechargeAmount_);
+                    TrickCompleted?.Invoke(null, eventArgs);
+                }
             });
         }
 
@@ -135,11 +149,6 @@ namespace Spectrum.API.Game
             {
                 VehicleScreenLogic.SetFinalCountdown(timeLeft);
             }
-        }
-
-        public static void Test()
-        {
-
         }
 
         private static void RenewVehicleObjectReferences()
