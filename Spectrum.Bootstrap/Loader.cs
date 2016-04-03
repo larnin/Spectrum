@@ -6,8 +6,14 @@ namespace Spectrum.Bootstrap
 {
     public static class Loader
     {
-        // relative to Distance.exe
-        private static string _managerDllPath = "Distance_Data/Spectrum/Spectrum.Manager.dll";
+        private static string ManagerDllPath
+        {
+            get
+            {
+                var bootstrapLocation = Assembly.GetExecutingAssembly().Location;
+                return Path.Combine(Path.GetDirectoryName(bootstrapLocation), "../Spectrum/Spectrum.Manager.dll");
+            }
+        }
 
         public static void StartManager()
         {
@@ -31,15 +37,16 @@ namespace Spectrum.Bootstrap
                 }
             }
 
-            if (!File.Exists(_managerDllPath))
+            if (!File.Exists(ManagerDllPath))
             {
-                Console.WriteLine($"[STAGE1] Spectrum: Can't find the plug-in manager at path {_managerDllPath}.");
+                Console.WriteLine($"[STAGE1] Spectrum: Can't find the plug-in manager at path {ManagerDllPath}.");
                 return;
             }
+            Console.WriteLine($"Located Spectrum manager at {ManagerDllPath}");
 
             try
             {
-                var managerAssembly = Assembly.LoadFrom(_managerDllPath);
+                var managerAssembly = Assembly.LoadFrom(ManagerDllPath);
                 var managerType = managerAssembly.GetType("Spectrum.Manager.Manager", false);
 
                 if (managerType == null)
