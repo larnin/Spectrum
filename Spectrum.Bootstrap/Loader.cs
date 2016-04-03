@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -15,8 +15,14 @@ namespace Spectrum.Bootstrap
             {
                 if (arg == StartupArguments.AllocateConsole)
                 {
-                    ConsoleAllocator.Create();
-
+                    if (IsMonoPlatform() && IsUnix())
+                    {
+                        Console.WriteLine("Running on non-Windows platform. Skipping AllocConsole()...");
+                    }
+                    else
+                    {
+                        ConsoleAllocator.Create();
+                    }
                     var version = Assembly.GetAssembly(typeof(Loader)).GetName().Version;
 
                     Console.WriteLine($"Spectrum Extension System for Distance. Version {version.Major}.{version.Minor}.{version.Build}.{version.Revision}.");
@@ -46,6 +52,25 @@ namespace Spectrum.Bootstrap
             catch (Exception ex)
             {
                 Console.WriteLine($"[STAGE1] Spectrum: Critical exception handled. Read below:\n{ex}");
+            }
+        }
+
+        private static bool IsMonoPlatform()
+        {
+            var platformID = (int)Environment.OSVersion.Platform;
+            return platformID == 4 || platformID == 6 || platformID == 128;
+        }
+
+        private static bool IsUnix()
+        {
+            var platformID = Environment.OSVersion.Platform;
+            switch (platformID)
+            {
+                case PlatformID.MacOSX:
+                case PlatformID.Unix:
+                    return true;
+                default:
+                    return false;
             }
         }
     }
