@@ -87,7 +87,7 @@ namespace Spectrum.Manager
 
             if (!Directory.Exists(Defaults.PluginDirectory))
             {
-                Directory.CreateDirectory("Plugin directory does not exist. Creating...");
+                Console.WriteLine("Plugin directory does not exist. Creating...");
                 Directory.CreateDirectory(Defaults.PluginDirectory);
             }
         }
