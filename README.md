@@ -10,7 +10,7 @@ even think about. It's being constantly updated by one of the Distance community
 members.
 
 ### Installation
-Please refer to [![this Wiki](http://not-yet.implemented)](http://not-yet.implemented) page about Spectrum installation process.
+Please refer to [this Wiki](https://github.com/Ciastex/Spectrum/wiki/Installing-Spectrum) page about Spectrum installation process.
 
 ### Building Spectrum
 Please refer to [![this Wiki](http://not-yet.implemented)](http://not-yet.implemented) page on building Spectrum from source.
