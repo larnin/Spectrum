@@ -7,12 +7,12 @@ namespace Spectrum.API
     {
         private static string BasePath => Assembly.GetExecutingAssembly().Location;
 
-        public string ScriptDirectory => Path.Combine(BasePath, "Scripts");
-        public string OnDemandScriptDirectory => Path.Combine(ScriptDirectory, "OnDemand");
-        public string PluginDirectory => Path.Combine(BasePath, "Plugins");
-        public string PluginDataDirectory => Path.Combine(BasePath, "PluginData");
-        public string LogDirectory = Path.Combine(BasePath, "Logs");
-        public string SettingsDirectory => Path.Combine(BasePath, "Settings");
+        public static string ScriptDirectory => Path.Combine(BasePath, "Scripts");
+        public static string OnDemandScriptDirectory => Path.Combine(ScriptDirectory, "OnDemand");
+        public static string PluginDirectory => Path.Combine(BasePath, "Plugins");
+        public static string PluginDataDirectory => Path.Combine(BasePath, "PluginData");
+        public static string LogDirectory = Path.Combine(BasePath, "Logs");
+        public static string SettingsDirectory => Path.Combine(BasePath, "Settings");
 
         public const string HotkeyManagerLogFileName = "HotkeyManager.log";
         public const string LuaExecutorLogFileName = "LuaExecutor.log";
