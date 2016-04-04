@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 using Spectrum.API;
@@ -13,6 +13,8 @@ namespace Spectrum.Manager.Managed
         private PluginContainer PluginContainer { get; }
 
         private SubsystemLog Log { get; }
+
+        private int _loadedPlugins;
 
         public PluginLoader(string pluginDirectory, PluginContainer pluginContainer)
         {
@@ -97,6 +99,8 @@ namespace Spectrum.Manager.Managed
                                              $"   APILevel: {pluginInfo.Plugin.CompatibleAPILevel}\n" +
                                              $"   Contact: {pluginInfo.Plugin.Contact}\n" +
                                              $"   Is updatable: {pluginInfo.IsUpdatable}");
+
+                                    _loadedPlugins++;
                                 }
                                 else
                                 {
@@ -117,6 +121,7 @@ namespace Spectrum.Manager.Managed
                     }
                 }
             }
+            Log.Info($"Load complete. Loaded {_loadedPlugins} plugins.");
         }
     }
 }
