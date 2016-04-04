@@ -49,6 +49,10 @@
     <Compile Include="Resources.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="install_windows.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="install_linux.sh" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
