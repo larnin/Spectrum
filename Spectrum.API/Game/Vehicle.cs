@@ -63,7 +63,7 @@ namespace Spectrum.API.Game
                 var field = VehicleScreenLogic.GetType().GetField("showingScreensaver_", BindingFlags.Instance | BindingFlags.NonPublic);
                 field?.SetValue(VehicleScreenLogic, false);
 
-                VehicleScreenLogic.screensaver_.SetActive(false);
+                VehicleScreenLogic.CarScreenSaverDisabled_ = true;
             }
         }
 
@@ -96,7 +96,7 @@ namespace Spectrum.API.Game
             {
                 var field = VehicleScreenLogic.GetType().GetField("showingScreensaver_", BindingFlags.Instance | BindingFlags.NonPublic);
                 field?.SetValue(VehicleScreenLogic, true);
-                VehicleScreenLogic.screensaver_.SetActive(true);
+                VehicleScreenLogic.CarScreenSaverDisabled_ = false;
             }
         }
 
