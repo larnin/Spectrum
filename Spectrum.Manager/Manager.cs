@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Reflection;
 using Spectrum.API;
 using Spectrum.API.Configuration;
 using Spectrum.API.Interfaces.Plugins;
