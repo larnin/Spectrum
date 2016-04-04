@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
+using System.Reflection;
 using Spectrum.API;
 using Spectrum.API.Configuration;
 using Spectrum.API.Interfaces.Plugins;
@@ -30,6 +31,7 @@ namespace Spectrum.Manager
 
         public Manager()
         {
+            CheckPaths();
             InitializeSettings();
 
             Hotkeys = new HotkeyManager(this);
@@ -49,6 +51,45 @@ namespace Spectrum.Manager
             {
                 LoadExtensions();
                 StartExtensions();
+            }
+        }
+
+        public void CheckPaths()
+        {
+            if (!Directory.Exists(Defaults.SettingsDirectory))
+            {
+                Console.WriteLine("Settings directory does not exist. Creating...");
+                Directory.CreateDirectory(Defaults.SettingsDirectory);
+            }
+
+            if (!Directory.Exists(Defaults.LogDirectory))
+            {
+                Console.WriteLine("Log directory does not exist. Creating...");
+                Directory.CreateDirectory(Defaults.LogDirectory);
+            }
+
+            if (!Directory.Exists(Defaults.ScriptDirectory))
+            {
+                Console.WriteLine("Lua autoload script directory does not exist. Creating...");
+                Directory.CreateDirectory(Defaults.ScriptDirectory);
+            }
+
+            if (!Directory.Exists(Defaults.OnDemandScriptDirectory))
+            {
+                Console.WriteLine("Lua on-demand script directory does not exist. Creating...");
+                Directory.CreateDirectory(Defaults.OnDemandScriptDirectory);
+            }
+
+            if (!Directory.Exists(Defaults.PluginDataDirectory))
+            {
+                Console.WriteLine("Plugin data directory does not exist. Creating...");
+                Directory.CreateDirectory(Defaults.PluginDataDirectory);
+            }
+
+            if (!Directory.Exists(Defaults.PluginDirectory))
+            {
+                Directory.CreateDirectory("Plugin directory does not exist. Creating...");
+                Directory.CreateDirectory(Defaults.PluginDirectory);
             }
         }
 
