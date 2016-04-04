@@ -1,13 +1,18 @@
-﻿namespace Spectrum.API
+using System.IO;
+using System.Reflection;
+
+namespace Spectrum.API
 {
     public class Defaults
     {
-        public const string ScriptDirectory = "Distance_Data/Spectrum/Scripts";
-        public const string OnDemandScriptDirectory = "Distance_Data/Spectrum/Scripts/OnDemand";
-        public const string PluginDirectory = "Distance_Data/Spectrum/Plugins";
-        public const string PluginDataDirectory = "Distance_Data/Spectrum/PluginData";
-        public const string LogDirectory = "Distance_Data/Spectrum/Logs";
-        public const string SettingsDirectory = "Distance_Data/Spectrum/Settings";
+        private static string BasePath => Assembly.GetExecutingAssembly().Location;
+
+        public string ScriptDirectory => Path.Combine(BasePath, "Scripts");
+        public string OnDemandScriptDirectory => Path.Combine(ScriptDirectory, "OnDemand");
+        public string PluginDirectory => Path.Combine(BasePath, "Plugins");
+        public string PluginDataDirectory => Path.Combine(BasePath, "PluginData");
+        public string LogDirectory = Path.Combine(BasePath, "Logs");
+        public string SettingsDirectory => Path.Combine(BasePath, "Settings");
 
         public const string HotkeyManagerLogFileName = "HotkeyManager.log";
         public const string LuaExecutorLogFileName = "LuaExecutor.log";
