@@ -19,6 +19,9 @@ namespace Spectrum.API.Game
         private static CarScreenLogic VehicleScreenLogic { get; set; }
         private static bool CanOperateOnScreen => VehicleScreenLogic != null;
 
+        private static HoverScreenEmitter HoverScreenEmitter { get; set; }
+        private static bool CanOperateOnHoverScreen => HoverScreenEmitter != null;
+
         public static event EventHandler CheckpointPassed;
         public static event EventHandler<TrickCompleteEventArgs> TrickCompleted;
 
@@ -141,6 +144,21 @@ namespace Spectrum.API.Game
             WriteScreenText(text, 0.0753f, 10, 0.0f, true, string.Empty);
         }
 
+        public static void SetHoverScreenText(string text, float displayTime)
+        {
+            RenewVehicleObjectReferences();
+
+            if (CanOperateOnHoverScreen)
+            {
+                HoverScreenEmitter.SetTrickText(new TrickyTextLogic.TrickText(displayTime, 0, TrickyTextLogic.TrickText.TextType.standard, text));
+            }
+        }
+
+        public static void SetHoverScreenText(string text)
+        {
+            SetHoverScreenText(text, 3.0f);
+        }
+
         public static void StartFinalCountdown(float timeLeft)
         {
             RenewVehicleObjectReferences();
@@ -158,6 +176,7 @@ namespace Spectrum.API.Game
             if (VehicleObject != null)
             {
                 VehicleLogic = VehicleObject.GetComponent<CarLogic>();
+                HoverScreenEmitter = VehicleObject.GetComponent<HoverScreenEmitter>();
             }
             FindLocalVehicleScreen();
         }
