@@ -13,8 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrum.API", "Spectrum.AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrum.Prism", "Spectrum.Prism\Spectrum.Prism.csproj", "{5AAA2550-9AC2-474E-A74A-1F21AD378367}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Spectrum.Dependencies", "Spectrum.Dependencies\Spectrum.Dependencies.shproj", "{79A9DC06-05C4-4B11-857E-1A122BCAC7D0}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Spectrum.Dependencies\Spectrum.Dependencies.projitems*{79a9dc06-05c4-4b11-857e-1a122bcac7d0}*SharedItemsImports = 13
 		Spectrum.Branding\Spectrum.Branding.projitems*{85e10305-2cc9-4fdc-ac48-c680be878bd8}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
