@@ -11,7 +11,7 @@ namespace Spectrum.Bootstrap
             get
             {
                 var bootstrapLocation = Assembly.GetExecutingAssembly().Location;
-                return Path.Combine(Path.GetDirectoryName(bootstrapLocation), "../Spectrum/Spectrum.Manager.dll");
+                return Path.Combine(Path.GetDirectoryName(bootstrapLocation), "..#Spectrum#Spectrum.Manager.dll".Replace('#', Path.DirectorySeparatorChar));
             }
         }
 
