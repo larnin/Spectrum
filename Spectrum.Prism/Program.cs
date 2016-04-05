@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -44,7 +44,15 @@ namespace Spectrum.Prism
             InsertSpectrumUpdateCode();
 
             ColoredOutput.WriteInformation("Writing modified file...");
-            _distanceAssemblyDefinition.Write(_distanceAssemblyFilename);
+
+            try
+            {
+                _distanceAssemblyDefinition.Write(_distanceAssemblyFilename);
+            }
+            catch
+            {
+                ColoredOutput.WriteError("Couldn't write back the patched file. Maybe it's in use?");
+            }
 
             ColoredOutput.WriteSuccess("Dispersion complete. Spectrum should now be visible.");
         }
@@ -98,6 +106,13 @@ namespace Spectrum.Prism
                 var initializationInstruction = ilProcessor.Create(OpCodes.Call, initMethodReference);
 
                 var lastAwakeInstruction = ilProcessor.Body.Instructions[ilProcessor.Body.Instructions.Count - 2];
+
+                if (lastAwakeInstruction.OpCode == OpCodes.Call)
+                {
+                    ColoredOutput.WriteError("This binary has already been patched.");
+                    Environment.Exit(1);
+                }
+
                 ilProcessor.InsertAfter(lastAwakeInstruction, initializationInstruction);
 
                 ColoredOutput.WriteSuccess("Initialization code inserted.");
@@ -119,6 +134,13 @@ namespace Spectrum.Prism
                 var updateInstruction = ilProcessor.Create(OpCodes.Call, updateMethodReference);
 
                 var originalReturnInstruction = ilProcessor.Body.Instructions[ilProcessor.Body.Instructions.Count - 1];
+
+                if (originalReturnInstruction.OpCode == OpCodes.Call)
+                {
+                    ColoredOutput.WriteError("This binary has already been patched.");
+                    Environment.Exit(1);
+                }
+
                 updateInstruction.Offset = originalReturnInstruction.Offset;
 
                 ilProcessor.Replace(originalReturnInstruction, updateInstruction);
