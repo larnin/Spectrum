@@ -5,7 +5,7 @@ using Spectrum.API.Helpers;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Spectrum.API.Game
+namespace Spectrum.API.Game.Vehicle
 {
     public class Vehicle
     {
