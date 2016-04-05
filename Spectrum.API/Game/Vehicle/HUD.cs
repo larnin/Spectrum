@@ -5,6 +5,8 @@ namespace Spectrum.API.Game.Vehicle
         private static HoverScreenEmitter HoverScreenEmitter { get; set; }
         private static bool CanOperateOnHoverScreen => HoverScreenEmitter != null;
 
+        internal HUD() { }
+
         public void SetHUDText(string text, float displayTime)
         {
             UpdateParentObject();

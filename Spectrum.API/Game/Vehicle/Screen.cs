@@ -9,7 +9,7 @@ namespace Spectrum.API.Game.Vehicle
 
         public int LineLength { get; set; } = 20;
 
-        public Screen()
+        internal Screen()
         {
             VehicleScreenLogic = Utilities.FindLocalVehicleScreen();
         }
