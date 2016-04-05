@@ -33,6 +33,11 @@ namespace Spectrum.Manager
             CheckPaths();
             InitializeSettings();
 
+            if (!Global.Settings.GetValue<bool>("Enabled"))
+            {
+                Console.WriteLine("Manager: Spectrum is disabled. Change 'Enabled' to 'true' in settings to restore extension framework.");
+            }
+
             Hotkeys = new HotkeyManager(this);
             InitializeScriptHotkeys();
 
@@ -131,6 +136,7 @@ namespace Spectrum.Manager
             Global.Settings["LoadPlugins"] = "true";
             Global.Settings["LoadScripts"] = "true";
             Global.Settings["LogToConsole"] = "true";
+            Global.Settings["Enabled"] = "true";
 
             Global.Settings.Save();
         }
