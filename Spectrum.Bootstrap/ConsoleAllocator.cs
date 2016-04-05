@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -21,6 +21,15 @@ namespace Spectrum.Bootstrap
             _allocated = true;
         }
 
+        public static void CreateUnix()
+        {
+            if (_allocated)
+                return;
+            
+            RecreateOutputStream();
+            _allocated = true;
+        }
+
         public static void Destroy()
         {
             if (!_allocated)
@@ -29,6 +38,15 @@ namespace Spectrum.Bootstrap
             FreeConsole();
 
             Console.SetOut(_originalStream);
+            _allocated = false;
+        }
+
+        public static void DestroyUnix()
+        {
+            if (!_allocated)
+                return;
+
+            RecreateOutputStream();
             _allocated = false;
         }
 

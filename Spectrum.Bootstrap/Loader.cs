@@ -23,6 +23,7 @@ namespace Spectrum.Bootstrap
                 {
                     if (IsMonoPlatform() && IsUnix())
                     {
+                        ConsoleAllocator.CreateUnix();
                         Console.WriteLine("Running on non-Windows platform. Skipping AllocConsole()...");
                     }
                     else
