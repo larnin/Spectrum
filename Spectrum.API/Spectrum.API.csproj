@@ -55,6 +55,7 @@
     <Compile Include="Game\MainMenu.cs" />
     <Compile Include="Game\Network\Server.cs" />
     <Compile Include="Game\Race.cs" />
+    <Compile Include="Game\Vehicle\HUD.cs" />
     <Compile Include="Game\Vehicle\Screen.cs" />
     <Compile Include="Game\Vehicle\Vehicle.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />

@@ -10,10 +10,8 @@ namespace Spectrum.API.Game.Vehicle
         private static CarLogic VehicleLogic { get; set; }
         private static bool CanOperateOnVehicle => VehicleLogic != null;
 
-        public Screen Screen { get; private set; }
-
-        private static HoverScreenEmitter HoverScreenEmitter { get; set; }
-        private static bool CanOperateOnHoverScreen => HoverScreenEmitter != null;
+        public static Screen Screen { get; private set; }
+        public static HUD HUD { get; private set; }
 
         public static event EventHandler CheckpointPassed;
         public static event EventHandler<TrickCompleteEventArgs> TrickCompleted;
@@ -21,6 +19,7 @@ namespace Spectrum.API.Game.Vehicle
         static Vehicle()
         {
             RenewVehicleObjectReferences();
+            Screen = new Screen();
 
             Events.Car.CheckpointHit.SubscribeAll((sender, data) =>
             {
@@ -40,21 +39,6 @@ namespace Spectrum.API.Game.Vehicle
             });
         }
 
-        public static void SetHoverScreenText(string text, float displayTime)
-        {
-            RenewVehicleObjectReferences();
-
-            if (CanOperateOnHoverScreen)
-            {
-                HoverScreenEmitter.SetTrickText(new TrickyTextLogic.TrickText(displayTime, 0, TrickyTextLogic.TrickText.TextType.standard, text));
-            }
-        }
-
-        public static void SetHoverScreenText(string text)
-        {
-            SetHoverScreenText(text, 3.0f);
-        }
-
         private static void RenewVehicleObjectReferences()
         {
             VehicleObject = GameObject.Find("LocalCar");
@@ -62,7 +46,7 @@ namespace Spectrum.API.Game.Vehicle
             if (VehicleObject != null)
             {
                 VehicleLogic = VehicleObject.GetComponent<CarLogic>();
-                HoverScreenEmitter = VehicleObject.GetComponent<HoverScreenEmitter>();
+                HUD = new HUD(VehicleObject);
             }
         }
     }
