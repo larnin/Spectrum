@@ -43,7 +43,7 @@ namespace Spectrum.Prism
             InsertSpectrumInitCode();
             InsertSpectrumUpdateCode();
 
-            ColoredOutput.WriteInformation("Writing modified file...");
+            ColoredOutput.WriteInformation("Writing the modified file...");
 
             try
             {
