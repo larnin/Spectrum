@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Spectrum.API;
 using Spectrum.API.Interfaces.Plugins;
@@ -61,6 +62,12 @@ namespace Spectrum.Manager.Managed
                     continue;
                 }
 
+                if (exportedTypes.FirstOrDefault(x => x.Name == "Entry") == null)
+                {
+                    Console.WriteLine($"No entry point detected. Skipping the file ${fileName}");
+                    continue;
+                }
+
                 foreach (var exportedType in exportedTypes)
                 {
                     // All plugins MUST have a type named Entry.
@@ -115,13 +122,9 @@ namespace Spectrum.Manager.Managed
                             Log.Exception(e);
                         }
                     }
-                    else
-                    {
-                        Log.Error($"'{fileName}' is not a valid plugin. No valid entry point detected.");
-                    }
                 }
             }
-            Log.Info($"Load complete. Loaded {_loadedPlugins} plugins.");
+            Log.Info($"Load complete. Loaded {_loadedPlugins} plugin(s).");
         }
     }
 }
