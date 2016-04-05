@@ -1,6 +1,3 @@
-using System;
-using UnityEngine;
-
 namespace Spectrum.API.Game.Vehicle
 {
     public class HUD
@@ -8,34 +5,25 @@ namespace Spectrum.API.Game.Vehicle
         private static HoverScreenEmitter HoverScreenEmitter { get; set; }
         private static bool CanOperateOnHoverScreen => HoverScreenEmitter != null;
 
-        public HUD(GameObject parentCarObject)
+        public void SetHUDText(string text, float displayTime)
         {
-            if (parentCarObject != null)
-            {
-                HoverScreenEmitter = parentCarObject.GetComponent<HoverScreenEmitter>();
-            }
-            else
-            {
-                Console.WriteLine("API.Game.Vehicle.HUD: Tried to assign a null game object.");
-            }
-        }
+            UpdateParentObject();
 
-        public void SetHoverScreenText(string text, float displayTime)
-        {
             if (CanOperateOnHoverScreen)
             {
                 HoverScreenEmitter.SetTrickText(new TrickyTextLogic.TrickText(displayTime, 0, TrickyTextLogic.TrickText.TextType.standard, text));
             }
         }
 
-        public void SetHoverScreenText(string text)
+        public void SetHUDText(string text)
         {
-            SetHoverScreenText(text, 3.0f);
+            SetHUDText(text, 3.0f);
         }
 
-        internal static void UpdateParentObject(GameObject newParentObject)
+        private void UpdateParentObject()
         {
-            HoverScreenEmitter = newParentObject.GetComponent<HoverScreenEmitter>();
+            var localCar = Utilities.FindLocalCar();
+            HoverScreenEmitter = localCar?.GetComponent<HoverScreenEmitter>();
         }
     }
 }
