@@ -18,8 +18,8 @@ namespace Spectrum.API.Game.Vehicle
 
         static Vehicle()
         {
-            RenewVehicleObjectReferences();
             Screen = new Screen();
+            HUD = new HUD(VehicleObject);
 
             Events.Car.CheckpointHit.SubscribeAll((sender, data) =>
             {
@@ -39,15 +39,10 @@ namespace Spectrum.API.Game.Vehicle
             });
         }
 
-        private static void RenewVehicleObjectReferences()
+        internal static void RenewObjectReferences()
         {
-            VehicleObject = GameObject.Find("LocalCar");
-
-            if (VehicleObject != null)
-            {
-                VehicleLogic = VehicleObject.GetComponent<CarLogic>();
-                HUD = new HUD(VehicleObject);
-            }
+            VehicleObject = Utilities.FindLocalCar();
+            HUD.UpdateParentObject(VehicleObject);
         }
     }
 }

@@ -32,5 +32,10 @@ namespace Spectrum.API.Game.Vehicle
         {
             SetHoverScreenText(text, 3.0f);
         }
+
+        internal static void UpdateParentObject(GameObject newParentObject)
+        {
+            HoverScreenEmitter = newParentObject.GetComponent<HoverScreenEmitter>();
+        }
     }
 }

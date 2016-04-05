@@ -1,13 +1,9 @@
-using System;
 using Spectrum.API.Helpers;
-using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Spectrum.API.Game.Vehicle
 {
     public class Screen
     {
-        private static GameObject VehicleScreenObject { get; set; }
         private static CarScreenLogic VehicleScreenLogic { get; set; }
         private static bool CanOperateOnScreen => VehicleScreenLogic != null;
 
@@ -15,12 +11,13 @@ namespace Spectrum.API.Game.Vehicle
 
         public Screen()
         {
-            FindLocalVehicleScreen();
+            VehicleScreenLogic = Utilities.FindLocalVehicleScreen();
         }
 
         public void Clear()
         {
-            FindLocalVehicleScreen();
+            Vehicle.RenewObjectReferences();
+            VehicleScreenLogic = Utilities.FindLocalVehicleScreen();
 
             if (CanOperateOnScreen)
             {
@@ -30,7 +27,8 @@ namespace Spectrum.API.Game.Vehicle
 
         public void SetTimeBarText(string text, string hexColor, float time)
         {
-            FindLocalVehicleScreen();
+            Vehicle.RenewObjectReferences();
+            VehicleScreenLogic = Utilities.FindLocalVehicleScreen();
 
             if (CanOperateOnScreen)
             {
@@ -40,7 +38,8 @@ namespace Spectrum.API.Game.Vehicle
 
         public void StartFinalCountdown(float timeLeft)
         {
-            FindLocalVehicleScreen();
+            Vehicle.RenewObjectReferences();
+            VehicleScreenLogic = Utilities.FindLocalVehicleScreen();
 
             if (CanOperateOnScreen)
             {
@@ -50,7 +49,8 @@ namespace Spectrum.API.Game.Vehicle
 
         public void WriteText(string text, float perCharacterInterval, int clearDelayUnits, float displayDelay, bool clearOnEnd, string timeBarText)
         {
-            FindLocalVehicleScreen();
+            Vehicle.RenewObjectReferences();
+            Utilities.FindLocalVehicleScreen();
 
             if (CanOperateOnScreen)
             {
@@ -77,25 +77,6 @@ namespace Spectrum.API.Game.Vehicle
         public void WriteScreenText(string text)
         {
             WriteText(text, 0.0753f, 10, 0.0f, true, string.Empty);
-        }
-
-        private void FindLocalVehicleScreen()
-        {
-            foreach (var gameObject in Object.FindObjectsOfType<GameObject>())
-            {
-                if (gameObject.name == "CarScreenGroup")
-                {
-                    var screenComponent = gameObject.GetComponent<CarScreenLogic>();
-                    if (screenComponent.CarLogic_.IsLocalCar_)
-                    {
-                        VehicleScreenObject = gameObject;
-                        VehicleScreenLogic = screenComponent;
-
-                        return;
-                    }
-                    Console.WriteLine("API: Found CarScreenGroup but it is not local.");
-                }
-            }
         }
     }
 }
