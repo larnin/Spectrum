@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Spectrum.API.Game.Vehicle
 {
-    public class Vehicle
+    public class LocalVehicle
     {
         private static GameObject VehicleObject { get; set; }
         private static CarLogic VehicleLogic { get; set; }
@@ -16,7 +16,7 @@ namespace Spectrum.API.Game.Vehicle
         public static event EventHandler CheckpointPassed;
         public static event EventHandler<TrickCompleteEventArgs> TrickCompleted;
 
-        static Vehicle()
+        static LocalVehicle()
         {
             Screen = new Screen();
             HUD = new HUD();

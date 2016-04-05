@@ -16,7 +16,7 @@ namespace Spectrum.API.Game.Vehicle
 
         public void Clear()
         {
-            Vehicle.RenewObjectReferences();
+            LocalVehicle.RenewObjectReferences();
             VehicleScreenLogic = Utilities.FindLocalVehicleScreen();
 
             if (CanOperateOnScreen)
@@ -27,7 +27,7 @@ namespace Spectrum.API.Game.Vehicle
 
         public void SetTimeBarText(string text, string hexColor, float time)
         {
-            Vehicle.RenewObjectReferences();
+            LocalVehicle.RenewObjectReferences();
             VehicleScreenLogic = Utilities.FindLocalVehicleScreen();
 
             if (CanOperateOnScreen)
@@ -38,7 +38,7 @@ namespace Spectrum.API.Game.Vehicle
 
         public void StartFinalCountdown(float timeLeft)
         {
-            Vehicle.RenewObjectReferences();
+            LocalVehicle.RenewObjectReferences();
             VehicleScreenLogic = Utilities.FindLocalVehicleScreen();
 
             if (CanOperateOnScreen)
@@ -49,7 +49,7 @@ namespace Spectrum.API.Game.Vehicle
 
         public void WriteText(string text, float perCharacterInterval, int clearDelayUnits, float displayDelay, bool clearOnEnd, string timeBarText)
         {
-            Vehicle.RenewObjectReferences();
+            LocalVehicle.RenewObjectReferences();
             Utilities.FindLocalVehicleScreen();
 
             if (CanOperateOnScreen)

@@ -57,7 +57,7 @@
     <Compile Include="Game\Race.cs" />
     <Compile Include="Game\Vehicle\HUD.cs" />
     <Compile Include="Game\Vehicle\Screen.cs" />
-    <Compile Include="Game\Vehicle\Vehicle.cs" />
+    <Compile Include="Game\Vehicle\LocalVehicle.cs" />
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Input\Hotkey.cs" />
     <Compile Include="Input\Keyboard.cs" />
