@@ -1,8 +1,8 @@
-﻿namespace Spectrum.API
+namespace Spectrum.API
 {
     public class Version
     {
-        public const int APILevel = 1;
+        public readonly static APILevel APILevel = APILevel.RadioWave;
 
         public static int DistanceBuild
         {
