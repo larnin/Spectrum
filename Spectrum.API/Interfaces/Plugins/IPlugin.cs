@@ -1,4 +1,4 @@
-﻿using Spectrum.API.Interfaces.Systems;
+using Spectrum.API.Interfaces.Systems;
 
 namespace Spectrum.API.Interfaces.Plugins
 {
@@ -7,7 +7,7 @@ namespace Spectrum.API.Interfaces.Plugins
         string FriendlyName { get; }
         string Author { get; }
         string Contact { get; }
-        int CompatibleAPILevel { get; }
+        APILevel CompatibleAPILevel { get; }
 
         void Initialize(IManager manager);
         void Shutdown();

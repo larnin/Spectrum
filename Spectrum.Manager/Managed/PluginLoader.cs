@@ -5,6 +5,7 @@ using System.Reflection;
 using Spectrum.API;
 using Spectrum.API.Interfaces.Plugins;
 using Spectrum.Manager.Logging;
+using Version = Spectrum.API.Version;
 
 namespace Spectrum.Manager.Managed
 {
@@ -106,6 +107,11 @@ namespace Spectrum.Manager.Managed
                                     Plugin = plugin,
                                     IsUpdatable = false
                                 };
+
+                                if (pluginInfo.Plugin.CompatibleAPILevel != Version.APILevel)
+                                {
+                                    Log.Info("The plugin is not built for the current API level. It may have an unexpected behavior.");
+                                }
 
                                 // Plugin MAY also implement IUpdatable interface.
                                 if (typeof (IUpdatable).IsAssignableFrom(exportedType))
