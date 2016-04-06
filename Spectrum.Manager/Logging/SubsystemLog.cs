@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace Spectrum.Manager.Logging
@@ -47,6 +47,17 @@ namespace Spectrum.Manager.Logging
             }
         }
 
+        public void ExceptionSilent(Exception e)
+        {
+            WriteLineSilent($"[e][{DateTime.Now}] {e.Message}");
+            WriteLineSilent($"   Target site: {e.TargetSite}");
+            WriteLineSilent("   Stack trace:");
+            foreach (var s in e.StackTrace.Split('\n'))
+            {
+                WriteLineSilent($"      {s}");
+            }
+        }
+
         public void WriteLine(string text)
         {
             using (var sw = new StreamWriter(FilePath, true))
@@ -57,6 +68,14 @@ namespace Spectrum.Manager.Logging
             if (WriteToConsole)
             {
                 Console.WriteLine(text);
+            }
+        }
+
+        private void WriteLineSilent(string text)
+        {
+            using (var sw = new StreamWriter(FilePath, true))
+            {
+                sw.WriteLine(text);
             }
         }
 

@@ -55,6 +55,13 @@ namespace Spectrum.Manager.Managed
                 {
                     exportedTypes = asm.GetExportedTypes();
                 }
+                catch (ReflectionTypeLoadException rtlex)
+                {
+                    Console.WriteLine($"Couldn't load the plugin '{fileName}'. Was it built for an earlier Spectrum version?");
+                    Log.ExceptionSilent(rtlex);
+
+                    continue;
+                }
                 catch (Exception e)
                 {
                     Console.WriteLine($"Exception occured while validating library file: '{fileName}'. Check the log for details.");
@@ -90,7 +97,7 @@ namespace Spectrum.Manager.Managed
                                 catch (TypeLoadException tlex)
                                 {
                                     Log.Error($"Couldn't load the plugin '{fileName}'. Was it built for an earlier Spectrum version?");
-                                    Log.Exception(tlex);
+                                    Log.ExceptionSilent(tlex);
                                     break;
                                 }
                                 catch(Exception ex)
