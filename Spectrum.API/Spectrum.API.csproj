@@ -44,6 +44,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APILevel.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Defaults.cs" />
     <Compile Include="FileSystem\PluginData.cs" />
