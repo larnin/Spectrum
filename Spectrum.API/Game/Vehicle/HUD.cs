@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Spectrum.API.Game.Vehicle
 {
     public class HUD
@@ -20,6 +22,14 @@ namespace Spectrum.API.Game.Vehicle
         public void SetHUDText(string text)
         {
             SetHUDText(text, 3.0f);
+        }
+
+        public void Clear()
+        {
+            HoverScreenEmitter hse = GameObject.Find("LocalCar")?.GetComponent<HoverScreenEmitter>();
+            HoverScreenParent hsp = Utilities.GetPrivate<HoverScreenParent>(hse, "hoverScreenParent_");
+            TrickyTextLogic ttl = hsp.trickyTextObj_.GetComponent<TrickyTextLogic>();
+            Utilities.GetPrivate<PriorityQueue<TrickyTextLogic.TrickText>>(ttl, "textList_").Clear();
         }
 
         private void UpdateParentObject()
