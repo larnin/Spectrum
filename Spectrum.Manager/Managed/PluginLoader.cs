@@ -80,7 +80,25 @@ namespace Spectrum.Manager.Managed
                             // All plugins MUST implement IPlugin interface.
                             if (typeof (IPlugin).IsAssignableFrom(exportedType))
                             {
-                                var plugin = (IPlugin) Activator.CreateInstance(exportedType);
+                                IPlugin plugin;
+
+                                try
+                                {
+                                    plugin = (IPlugin)Activator.CreateInstance(exportedType);
+                                }
+                                catch (TypeLoadException tlex)
+                                {
+                                    Log.Error($"Couldn't load the plugin '{fileName}'. Was it built for an earlier Spectrum version?");
+                                    Log.Exception(tlex);
+                                    break;
+                                }
+                                catch(Exception ex)
+                                {
+                                    Log.Error($"An unexpected exception occured while loading '{fileName}'. The plugin wasn't loaded. Check the log for details.");
+                                    Log.Exception(ex);
+                                    break;
+                                }
+
                                 var pluginInfo = new PluginInfo
                                 {
                                     Name = plugin.FriendlyName,
