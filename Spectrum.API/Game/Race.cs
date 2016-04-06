@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 namespace Spectrum.API.Game
@@ -29,16 +29,10 @@ namespace Spectrum.API.Game
 
         public static TimeSpan Elapsed()
         {
-            GameManager gm = GameObject.Find("GameManager")?.GetComponent<GameManager>();
-            PlayerManager pm = GameObject.Find("PlayerManager")?.GetComponent<PlayerManager>();
+            var playerIndex = G.Sys.PlayerManager_.Current_.inGameData_.LocalPlayerIndex_;
+            var mode = G.Sys.GameManager_.Mode_;
 
-            if (gm && pm) {
-                int p = pm.Current_.inGameData_.LocalPlayerIndex_;
-                GameMode mode = gm.Mode_;
-                return TimeSpan.FromSeconds(mode.GetDisplayTime(p));
-            }
-
-            return TimeSpan.Zero;
+            return TimeSpan.FromSeconds(mode.GetDisplayTime(playerIndex));
         }
     }
 }

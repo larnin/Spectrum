@@ -31,14 +31,14 @@ namespace Spectrum.API
 
         internal static T GetPrivate<T>(object o, string fieldname)
         {
-            FieldInfo field = o.GetType().GetField(fieldname, BindingFlags.Instance | BindingFlags.NonPublic);
-            return (T) field.GetValue(o);
+            var field = o.GetType().GetField(fieldname, BindingFlags.Instance | BindingFlags.NonPublic);
+            return (T) field?.GetValue(o);
         }
 
         internal static void SetPrivate<T>(object o, string fieldname, T value)
         {
-            FieldInfo field = o.GetType().GetField(fieldname, BindingFlags.Instance | BindingFlags.NonPublic);
-            field.SetValue(o, value);
+            var field = o.GetType().GetField(fieldname, BindingFlags.Instance | BindingFlags.NonPublic);
+            field?.SetValue(o, value);
         }
     }
 }
