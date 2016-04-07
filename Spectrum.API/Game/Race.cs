@@ -32,7 +32,10 @@ namespace Spectrum.API.Game
             var playerIndex = G.Sys.PlayerManager_.Current_.inGameData_.LocalPlayerIndex_;
             var mode = G.Sys.GameManager_.Mode_;
 
-            return TimeSpan.FromSeconds(mode.GetDisplayTime(playerIndex));
+            if(mode != null) 
+                return TimeSpan.FromSeconds(mode.GetDisplayTime(playerIndex));
+
+            return TimeSpan.Zero;
         }
     }
 }
