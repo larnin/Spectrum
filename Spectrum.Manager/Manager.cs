@@ -36,6 +36,7 @@ namespace Spectrum.Manager
             if (!Global.Settings.GetValue<bool>("Enabled"))
             {
                 Console.WriteLine("Manager: Spectrum is disabled. Change 'Enabled' to 'true' in settings to restore extension framework.");
+                return;
             }
 
             Hotkeys = new HotkeyManager(this);
