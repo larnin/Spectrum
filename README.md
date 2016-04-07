@@ -13,7 +13,7 @@ members.
 Please refer to [this Wiki](https://github.com/Ciastex/Spectrum/wiki/Installing-Spectrum) page about Spectrum installation process.
 
 ### Building Spectrum
-Please refer to [this Wiki](http://not-yet.implemented) page on building Spectrum from source.
+Please refer to [this Wiki](https://github.com/Ciastex/Spectrum/wiki/Building-Spectrum-from-source) page on building Spectrum from source.
 
 ### Getting unstable versions
 [AppVeyor artifacts](https://ci.appveyor.com/project/Ciastex/spectrum/build/artifacts) page contains the binaries for the latest commit.
