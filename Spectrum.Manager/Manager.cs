@@ -35,7 +35,7 @@ namespace Spectrum.Manager
 
             if (!Global.Settings.GetValue<bool>("Enabled"))
             {
-                Console.WriteLine("Manager: Spectrum is disabled. Change 'Enabled' to 'true' in settings to restore extension framework.");
+                Console.WriteLine("Manager: Spectrum is disabled. Set 'Enabled' entry to 'true' in settings to restore extension framework functionality.");
                 return;
             }
 
@@ -106,7 +106,7 @@ namespace Spectrum.Manager
             {
                 foreach (var pluginInfo in ManagedPluginContainer)
                 {
-                    if (pluginInfo.Enabled && pluginInfo.IsUpdatable)
+                    if (pluginInfo.Enabled && pluginInfo.UpdatesEveryFrame)
                     {
                         var plugin = pluginInfo.Plugin as IUpdatable;
                         plugin?.Update();

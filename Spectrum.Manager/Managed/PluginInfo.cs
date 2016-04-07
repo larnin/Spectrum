@@ -1,4 +1,4 @@
-﻿using Spectrum.API.Interfaces.Plugins;
+using Spectrum.API.Interfaces.Plugins;
 
 namespace Spectrum.Manager.Managed
 {
@@ -6,17 +6,17 @@ namespace Spectrum.Manager.Managed
     {
         public string Name { get; internal set; }
         public bool Enabled { get; set; }
-        public bool IsUpdatable { get; internal set; }
+        public bool UpdatesEveryFrame { get; internal set; }
 
         public IPlugin Plugin { get; internal set; }
 
         public PluginInfo() { }
 
-        public PluginInfo(string name, bool enabledByDefault, bool isUpdatable, IPlugin plugin)
+        public PluginInfo(string name, bool enabledByDefault, bool updatesEveryFrame, IPlugin plugin)
         {
             Name = name;
             Enabled = enabledByDefault;
-            IsUpdatable = isUpdatable;
+            UpdatesEveryFrame = updatesEveryFrame;
             Plugin = plugin;
         }
     }

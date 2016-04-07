@@ -112,7 +112,7 @@ namespace Spectrum.Manager.Managed
                                     Name = plugin.FriendlyName,
                                     Enabled = true,
                                     Plugin = plugin,
-                                    IsUpdatable = false
+                                    UpdatesEveryFrame = false
                                 };
 
                                 if (pluginInfo.Plugin.CompatibleAPILevel != Version.APILevel)
@@ -124,7 +124,7 @@ namespace Spectrum.Manager.Managed
                                 if (typeof (IUpdatable).IsAssignableFrom(exportedType))
                                 {
                                     Log.Info("The plugin is going to be updated every frame.");
-                                    pluginInfo.IsUpdatable = true;
+                                    pluginInfo.UpdatesEveryFrame = true;
                                 }
 
                                 if (PluginContainer.GetPluginByName(pluginInfo.Name) == null)
@@ -136,7 +136,7 @@ namespace Spectrum.Manager.Managed
                                              $"   Author: {pluginInfo.Plugin.Author}\n" +
                                              $"   APILevel: {pluginInfo.Plugin.CompatibleAPILevel}\n" +
                                              $"   Contact: {pluginInfo.Plugin.Contact}\n" +
-                                             $"   Is updatable: {pluginInfo.IsUpdatable}");
+                                             $"   Updates every frame: {pluginInfo.UpdatesEveryFrame}");
 
                                     _loadedPlugins++;
                                 }
