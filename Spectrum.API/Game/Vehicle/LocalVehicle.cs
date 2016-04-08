@@ -201,7 +201,7 @@ namespace Spectrum.API.Game.Vehicle
             UpdateObjectReferences();
             if (CanOperateOnVehicle)
             {
-                var jets = Utilities.GetPrivate<JetsGadget>(VehicleLogic.CarLogicLocal_, "_jetsGadget");
+                var jets = Utilities.GetPrivate<JetsGadget>(VehicleLogic.CarLogicLocal_, "jetsGadget_");
                 if (jets != null)
                 {
                     foreach (var flame in jets.flames_)
