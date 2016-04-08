@@ -1,6 +1,8 @@
 using System;
 using Spectrum.API.Game.EventArgs.Vehicle;
+using Spectrum.API.Helpers;
 using Spectrum.API.TypeWrappers;
+using UnityEngine;
 
 namespace Spectrum.API.Game.Vehicle
 {
@@ -192,6 +194,62 @@ namespace Spectrum.API.Game.Vehicle
                     }
                 }  
             });
+        }
+
+        public static void SetJetFlamesColor(string hexColor)
+        {
+            UpdateObjectReferences();
+            if (CanOperateOnVehicle)
+            {
+                var jets = Utilities.GetPrivate<JetsGadget>(VehicleLogic.CarLogicLocal_, "_jetsGadget");
+                if (jets != null)
+                {
+                    foreach (var flame in jets.flames_)
+                    {
+                        flame.flame_.SetCustomColor(hexColor.ToColor());
+                    }
+                }
+            }
+        }
+
+        public static void SetBoostFlameColor(string hexColor)
+        {
+            UpdateObjectReferences();
+            if (CanOperateOnVehicle)
+            {
+                var booster = Utilities.GetPrivate<BoostGadget>(VehicleLogic.CarLogicLocal_, "boostGadget_");
+                if (booster != null)
+                {
+                    foreach (var flame in booster.flames_)
+                    {
+                        flame.SetCustomColor(hexColor.ToColor());
+                    }
+                }
+            }
+        }
+
+        public static void SetWingTrailsColor(string hexColor)
+        {
+            UpdateObjectReferences();
+            if (CanOperateOnVehicle)
+            {
+                var wingsGadget = Utilities.GetPrivate<WingsGadget>(VehicleLogic.CarLogicLocal_, "wingsGadget_");
+                if (wingsGadget != null)
+                {
+                    var wingTrailHelpers = Utilities.GetPrivate<WingTrailHelper[]>(wingsGadget, "wingTrails_");
+                    if (wingTrailHelpers != null)
+                    {
+                        foreach (var wingTrailHelper in wingTrailHelpers)
+                        {
+                            var wingTrail = Utilities.GetPrivate<WingTrail>(wingTrailHelper, "wingTrail_");
+                            if (wingTrail != null)
+                            {
+                                wingTrail.GetComponent<Renderer>().material.color = hexColor.ToColor();
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private static void UpdateObjectReferences()
