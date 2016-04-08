@@ -54,7 +54,7 @@ namespace Spectrum.API.Game.Vehicle
         public static event EventHandler<DestroyedEventArgs> Destroyed;
         public static event EventHandler<DestroyedEventArgs> Exploded;
         public static event EventHandler<HonkEventArgs> Honked;
-        public static event EventHandler<ImpactEventArgs> Impacted;
+        public static event EventHandler<ImpactEventArgs> Collided;
         public static event EventHandler Jumped;
         public static event EventHandler SpecialModeEvent;
         public static event EventHandler<SplitEventArgs> Split;
@@ -119,7 +119,7 @@ namespace Spectrum.API.Game.Vehicle
                 if (sender.name == "LocalCar")
                 {
                     var eventArgs = new ImpactEventArgs(data.speed_, new Position(data.pos_.x, data.pos_.y, data.pos_.z), data.impactedCollider_.name);
-                    Impacted?.Invoke(null, eventArgs);
+                    Collided?.Invoke(null, eventArgs);
                 }
             });
 
