@@ -54,6 +54,7 @@ namespace Spectrum.API.Game.Vehicle
         public static event EventHandler<ImpactEventArgs> Collided;
         public static event EventHandler<DestroyedEventArgs> Destroyed;
         public static event EventHandler<DestroyedEventArgs> Exploded;
+        public static event EventHandler FinishHit;
         public static event EventHandler<HonkEventArgs> Honked;
         public static event EventHandler Jumped;
         public static event EventHandler SpecialModeEvent;
@@ -103,6 +104,11 @@ namespace Spectrum.API.Game.Vehicle
                     var eventArgs = new DestroyedEventArgs((DestructionCause)data.causeOfDeath);
                     Exploded?.Invoke(null, eventArgs);
                 }
+            });
+
+            Events.RaceEnd.LocalCarHitFinish.Subscribe(data =>
+            {
+                FinishHit?.Invoke(null, System.EventArgs.Empty);
             });
 
             Events.Car.Horn.SubscribeAll((sender, data) =>
@@ -163,7 +169,7 @@ namespace Spectrum.API.Game.Vehicle
                 {
                     if (data.open_)
                     {
-                        WingsOpen?.Invoke(null, System.EventArgs.Empty);
+                        WingsOpened?.Invoke(null, System.EventArgs.Empty);
                     }
                     else
                     {
