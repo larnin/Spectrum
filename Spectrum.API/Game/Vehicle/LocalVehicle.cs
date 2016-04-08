@@ -199,7 +199,7 @@ namespace Spectrum.API.Game.Vehicle
         public static void SetJetFlamesColor(string hexColor)
         {
             UpdateObjectReferences();
-            if (CanOperateOnVehicle)
+            if (CanOperateOnVehicle && VehicleLogic.CarLogicLocal_ != null)
             {
                 var jets = Utilities.GetPrivate<JetsGadget>(VehicleLogic.CarLogicLocal_, "jetsGadget_");
                 if (jets != null)
@@ -215,7 +215,7 @@ namespace Spectrum.API.Game.Vehicle
         public static void SetBoostFlameColor(string hexColor)
         {
             UpdateObjectReferences();
-            if (CanOperateOnVehicle)
+            if (CanOperateOnVehicle && VehicleLogic.CarLogicLocal_ != null)
             {
                 var booster = Utilities.GetPrivate<BoostGadget>(VehicleLogic.CarLogicLocal_, "boostGadget_");
                 if (booster != null)
@@ -231,7 +231,7 @@ namespace Spectrum.API.Game.Vehicle
         public static void SetWingTrailsColor(string hexColor)
         {
             UpdateObjectReferences();
-            if (CanOperateOnVehicle)
+            if (CanOperateOnVehicle && VehicleLogic.CarLogicLocal_ != null)
             {
                 var wingsGadget = Utilities.GetPrivate<WingsGadget>(VehicleLogic.CarLogicLocal_, "wingsGadget_");
                 if (wingsGadget != null)
