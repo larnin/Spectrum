@@ -51,15 +51,15 @@ namespace Spectrum.API.Game.Vehicle
         public static event EventHandler BeforeExploded;
         public static event EventHandler BeforeSplit;
         public static event EventHandler CheckpointPassed;
+        public static event EventHandler<ImpactEventArgs> Collided;
         public static event EventHandler<DestroyedEventArgs> Destroyed;
         public static event EventHandler<DestroyedEventArgs> Exploded;
         public static event EventHandler<HonkEventArgs> Honked;
-        public static event EventHandler<ImpactEventArgs> Collided;
         public static event EventHandler Jumped;
         public static event EventHandler SpecialModeEvent;
         public static event EventHandler<SplitEventArgs> Split;
         public static event EventHandler<TrickCompleteEventArgs> TrickCompleted;
-        public static event EventHandler WingsOpen;
+        public static event EventHandler WingsOpened;
         public static event EventHandler WingsClosed;
         public static event EventHandler WingsEnabled;
         public static event EventHandler WingsDisabled;
