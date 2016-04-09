@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -8,6 +8,7 @@ namespace Spectrum.API.Input
     {
         private List<string> Keys { get; }
         private bool WasFired { get; set; }
+        private bool IsOneTime { get; set; }
 
         public bool IsPressed
         {
@@ -28,7 +29,7 @@ namespace Spectrum.API.Input
 
                 if (pressed)
                 {
-                    if (!WasFired)
+                    if (!WasFired || !IsOneTime)
                     {
                         WasFired = true;
                         return true;
@@ -42,6 +43,11 @@ namespace Spectrum.API.Input
         public Hotkey(string hotkeyString)
         {
             Keys = Parse(hotkeyString);
+        }
+
+        public Hotkey(string hotkeyString, bool isOneTime) : this(hotkeyString)
+        {
+            IsOneTime = isOneTime;
         }
 
         private List<string> Parse(string hotkey)

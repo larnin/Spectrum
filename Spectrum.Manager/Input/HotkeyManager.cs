@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Spectrum.API;
@@ -41,6 +41,11 @@ namespace Spectrum.Manager.Input
             Bind(new Hotkey(hotkeyString), action);
         }
 
+        public void Bind(string hotkeyString, Action action, bool isOneTime)
+        {
+            Bind(new Hotkey(hotkeyString, isOneTime), action);
+        }
+
         public void Bind(Hotkey hotkey, string scriptFileName)
         {
             if (Exists(hotkey))
@@ -55,6 +60,11 @@ namespace Spectrum.Manager.Input
         public void Bind(string hotkeyString, string scriptFileName)
         {
             Bind(new Hotkey(hotkeyString), scriptFileName);
+        }
+
+        public void Bind(string hotkeyString, string scriptFileName, bool isOneTime)
+        {
+            Bind(new Hotkey(hotkeyString, isOneTime), scriptFileName);
         }
 
         public void Unbind(string hotkeyString)
