@@ -118,7 +118,7 @@ namespace Spectrum.API.Game.Vehicle
             {
                 if (sender.GetComponent<PlayerDataLocal>() != null)
                 {
-                    var eventArgs = new FinishedEventArgs((RaceEndType)data.finishType_);
+                    var eventArgs = new FinishedEventArgs((RaceEndType)data.finishType_, data.finishData_);
                     Finished?.Invoke(null, eventArgs);
                 }
             });
