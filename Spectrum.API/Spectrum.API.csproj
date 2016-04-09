@@ -57,6 +57,7 @@
     <Compile Include="Game\EventArgs\Network\PlayerEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\ServerCreatedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\DestroyedEventArgs.cs" />
+    <Compile Include="Game\EventArgs\Vehicle\FinishedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\HonkEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\ImpactEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\SplitEventArgs.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Game\Race.cs" />
     <Compile Include="Game\Vehicle\DestructionCause.cs" />
     <Compile Include="Game\Vehicle\HUD.cs" />
+    <Compile Include="Game\Vehicle\RaceEndType.cs" />
     <Compile Include="Game\Vehicle\Screen.cs" />
     <Compile Include="Game\Vehicle\LocalVehicle.cs" />
     <Compile Include="Game\Vehicle\Stats.cs" />

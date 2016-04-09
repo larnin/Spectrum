@@ -56,7 +56,8 @@ namespace Spectrum.API.Game.Vehicle
         public static event EventHandler<ImpactEventArgs> Collided;
         public static event EventHandler<DestroyedEventArgs> Destroyed;
         public static event EventHandler<DestroyedEventArgs> Exploded;
-        public static event EventHandler FinishHit;
+        public static event EventHandler BeforeFinished;
+        public static event EventHandler<FinishedEventArgs> Finished;
         public static event EventHandler<HonkEventArgs> Honked;
         public static event EventHandler Jumped;
         public static event EventHandler SpecialModeEvent;
@@ -110,7 +111,16 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.RaceEnd.LocalCarHitFinish.Subscribe(data =>
             {
-                FinishHit?.Invoke(null, System.EventArgs.Empty);
+                BeforeFinished?.Invoke(null, System.EventArgs.Empty);
+            });
+
+            Events.Player.Finished.SubscribeAll((sender, data) =>
+            {
+                if (sender.GetComponent<PlayerDataLocal>() != null)
+                {
+                    var eventArgs = new FinishedEventArgs((RaceEndType)data.finishType_);
+                    Finished?.Invoke(null, eventArgs);
+                }
             });
 
             Events.Car.Horn.SubscribeAll((sender, data) =>
