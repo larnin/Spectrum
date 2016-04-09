@@ -52,7 +52,7 @@ namespace Spectrum.API.Game.Vehicle
 
         public static event EventHandler BeforeExploded;
         public static event EventHandler BeforeSplit;
-        public static event EventHandler CheckpointPassed;
+        public static event EventHandler<CheckpointHitEventArgs> CheckpointPassed;
         public static event EventHandler<ImpactEventArgs> Collided;
         public static event EventHandler<DestroyedEventArgs> Destroyed;
         public static event EventHandler<DestroyedEventArgs> Exploded;
@@ -87,7 +87,8 @@ namespace Spectrum.API.Game.Vehicle
             {
                 if (sender.name == "LocalCar")
                 {
-                    CheckpointPassed?.Invoke(null, System.EventArgs.Empty);
+                    var eventArgs = new CheckpointHitEventArgs(data.checkpointIndex_, data.trackT_);
+                    CheckpointPassed?.Invoke(null, eventArgs);
                 }
             });
 

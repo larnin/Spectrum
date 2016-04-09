@@ -56,6 +56,7 @@
     <Compile Include="Game\EventArgs\Network\GameModeChangedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\PlayerEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\ServerCreatedEventArgs.cs" />
+    <Compile Include="Game\EventArgs\Vehicle\CheckpointHitEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\DestroyedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\FinishedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\HonkEventArgs.cs" />
