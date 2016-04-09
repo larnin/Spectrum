@@ -65,12 +65,12 @@ namespace Spectrum.API.Game.Vehicle
             WriteText(text, perCharacterInterval, clearDelayUnits, 0.0f, true, string.Empty);
         }
 
-        public void WriteScreenText(string text, string timeBarText)
+        public void WriteText(string text, string timeBarText)
         {
             WriteText(text, 0.0753f, 10, 0.0f, true, timeBarText);
         }
 
-        public void WriteScreenText(string text)
+        public void WriteText(string text)
         {
             WriteText(text, 0.0753f, 10, 0.0f, true, string.Empty);
         }
