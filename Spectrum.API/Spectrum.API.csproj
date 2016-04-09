@@ -53,6 +53,7 @@
     <Compile Include="Game\EventArgs\Audio\MIDINoteEventArgs.cs" />
     <Compile Include="Game\EventArgs\Audio\MusicGridEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\ChatMessageEventArgs.cs" />
+    <Compile Include="Game\EventArgs\Network\GameModeChangedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\PlayerEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\ServerCreatedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\DestroyedEventArgs.cs" />

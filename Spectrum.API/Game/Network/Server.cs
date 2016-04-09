@@ -11,6 +11,7 @@ namespace Spectrum.API.Game.Network
         public static event EventHandler<ServerCreatedEventArgs> ServerCreated;
         public static event EventHandler<PlayerEventArgs> PlayerJoined;
         public static event EventHandler<PlayerEventArgs> PlayerLeft;
+        public static event EventHandler<GameModeChangedEventArgs> GameModeChanged;
 
         static Server()
         {
@@ -39,6 +40,12 @@ namespace Spectrum.API.Game.Network
                     var eventArgs = new PlayerEventArgs(clientInfo.Username_, clientInfo.Ready_, (LevelCompatibility)clientInfo.LevelCompatabilityStatus_);
                     PlayerLeft?.Invoke(null, eventArgs);
                 }
+            });
+
+            Events.ServerToClient.SetGameMode.Subscribe(data =>
+            {
+                var eventArgs = new GameModeChangedEventArgs(data.mode_);
+                GameModeChanged?.Invoke(null, eventArgs);
             });
         }
 
