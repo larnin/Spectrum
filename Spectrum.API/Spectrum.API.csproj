@@ -53,6 +53,7 @@
     <Compile Include="Game\EventArgs\Audio\MIDINoteEventArgs.cs" />
     <Compile Include="Game\EventArgs\Audio\MusicGridEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\ChatMessageEventArgs.cs" />
+    <Compile Include="Game\EventArgs\Network\PlayerEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\ServerCreatedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\DestroyedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\HonkEventArgs.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Game\EventArgs\Vehicle\TrickCompleteEventArgs.cs" />
     <Compile Include="Game\MainMenu.cs" />
     <Compile Include="Game\Network\Chat.cs" />
+    <Compile Include="Game\Network\LevelCompatibility.cs" />
     <Compile Include="Game\Network\Server.cs" />
     <Compile Include="Game\Race.cs" />
     <Compile Include="Game\Vehicle\DestructionCause.cs" />
