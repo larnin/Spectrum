@@ -1,10 +1,13 @@
-﻿using System;
+using System;
+using Spectrum.API.Game.EventArgs.Network;
 using UnityEngine;
 
 namespace Spectrum.API.Game.Network
 {
     public class Server
     {
+        public static event EventHandler<ServerCreatedEventArgs> ServerCreated;
+
         public static void Create(string serverTitle, string password, int maxPlayerCount)
         {
             UnityEngine.Network.InitializeSecurity();
@@ -20,7 +23,11 @@ namespace Spectrum.API.Game.Network
                 var ncError = UnityEngine.Network.InitializeServer(maxPlayerCount - 1, 32323, true);
 
                 if (ncError == NetworkConnectionError.NoError)
+                {
+                    var eventArgs = new ServerCreatedEventArgs(serverTitle, password, maxPlayerCount);
+                    ServerCreated?.Invoke(null, eventArgs);
                     return;
+                }
 
                 G.Sys.MenuPanelManager_.ShowError(ncError.ToString(), "Failed to start server");
             }
