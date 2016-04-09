@@ -6,7 +6,16 @@ namespace Spectrum.API.Game.Network
 {
     public class Server
     {
+        public static event EventHandler LobbyInitialized;
         public static event EventHandler<ServerCreatedEventArgs> ServerCreated;
+
+        static Server()
+        {
+            Events.GameLobby.Initialized.Subscribe(data =>
+            {
+                LobbyInitialized?.Invoke(null, System.EventArgs.Empty);
+            });
+        }
 
         public static void Create(string serverTitle, string password, int maxPlayerCount)
         {
