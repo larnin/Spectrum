@@ -42,7 +42,7 @@ namespace Spectrum.API.Game.Network
         private static string ExtractMessageBody(string message)
         {
             // 1. [xxxxxx]user[xxxxxx]: body
-            return message.Substring(message.IndexOf(':') + 2); // 2 because we need to cut the leading space
+            return message.Substring(message.IndexOf(':') + 1).Trim();
         }
 
         private static bool IsSystemMessage(string message)
