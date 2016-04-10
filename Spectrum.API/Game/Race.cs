@@ -9,7 +9,13 @@ namespace Spectrum.API.Game
         public static event EventHandler Started;
         public static event EventHandler Loaded;
 
-        private static TimeSpan _started = TimeSpan.Zero;
+        public static TimeSpan ElapsedTime
+        {
+            get
+            {
+                return TimeSpan.FromSeconds(Timex.ModeTime_);
+            }
+        }
 
         static Race()
         {
@@ -27,15 +33,6 @@ namespace Spectrum.API.Game
             {
                 Loaded?.Invoke(default(object), System.EventArgs.Empty);
             });
-
-            Started += (sender, e) => {
-                _started = TimeSpan.FromSeconds(Time.timeSinceLevelLoad);
-            };
-        }
-
-        public static TimeSpan ElapsedTime()
-        {
-            return TimeSpan.FromSeconds(Time.timeSinceLevelLoad) - _started;
         }
     }
 }
