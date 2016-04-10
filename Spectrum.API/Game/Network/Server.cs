@@ -44,8 +44,11 @@ namespace Spectrum.API.Game.Network
 
             Events.ServerToClient.SetGameMode.Subscribe(data =>
             {
-                var eventArgs = new GameModeChangedEventArgs(data.mode_);
-                GameModeChanged?.Invoke(null, eventArgs);
+                if (G.Sys.NetworkingManager_.IsOnline_)
+                {
+                    var eventArgs = new GameModeChangedEventArgs(data.mode_);
+                    GameModeChanged?.Invoke(null, eventArgs);
+                }
             });
         }
 
