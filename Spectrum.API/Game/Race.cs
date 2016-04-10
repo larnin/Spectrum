@@ -33,7 +33,7 @@ namespace Spectrum.API.Game
             };
         }
 
-        public static TimeSpan Elapsed()
+        public static TimeSpan ElapsedTime()
         {
             return TimeSpan.FromSeconds(Time.timeSinceLevelLoad) - _started;
         }
