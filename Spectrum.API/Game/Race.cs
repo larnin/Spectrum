@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Spectrum.API.Game
 {
@@ -9,13 +8,7 @@ namespace Spectrum.API.Game
         public static event EventHandler Started;
         public static event EventHandler Loaded;
 
-        public static TimeSpan ElapsedTime
-        {
-            get
-            {
-                return TimeSpan.FromSeconds(Timex.ModeTime_);
-            }
-        }
+        public static TimeSpan ElapsedTime => TimeSpan.FromSeconds(Timex.ModeTime_);
 
         static Race()
         {
