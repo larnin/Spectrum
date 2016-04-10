@@ -13,10 +13,12 @@ namespace Spectrum.API
         public static string PluginDataDirectory => Path.Combine(BasePath, "PluginData");
         public static string LogDirectory => Path.Combine(BasePath, "Logs");
         public static string SettingsDirectory => Path.Combine(BasePath, "Settings");
+        public static string ResolverDirectory => Path.Combine(BasePath, "Dependencies");
 
         public const string HotkeyManagerLogFileName = "HotkeyManager.log";
         public const string LuaExecutorLogFileName = "LuaExecutor.log";
         public const string LuaLoaderLogFileName = "LuaLoader.log";
         public const string PluginLoaderLogFileName = "PluginLoader.log";
+        public const string DependencyResolverLogFileName = "DependencyResolver.log";
     }
 }

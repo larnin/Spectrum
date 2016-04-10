@@ -36,6 +36,7 @@
       <HintPath>..\packages\NLua_Safe.1.3.2.1\lib\net35\NLua.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Global.cs" />
@@ -43,6 +44,7 @@
     <Compile Include="Logging\SubsystemLog.cs" />
     <Compile Include="Lua\Executor.cs" />
     <Compile Include="Lua\Loader.cs" />
+    <Compile Include="Managed\ExternalDependencyResolver.cs" />
     <Compile Include="Managed\PluginContainer.cs" />
     <Compile Include="Managed\PluginInfo.cs" />
     <Compile Include="Managed\PluginLoader.cs" />

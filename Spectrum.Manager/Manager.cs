@@ -18,6 +18,7 @@ namespace Spectrum.Manager
 
         private PluginContainer ManagedPluginContainer { get; set; }
         private PluginLoader ManagedPluginLoader { get; set; }
+        private ExternalDependencyResolver ManagedDependencyResolver { get; set; }
 
         private Settings ScriptHotkeySettings { get; set; }
 
@@ -38,6 +39,7 @@ namespace Spectrum.Manager
                 Console.WriteLine("Manager: Spectrum is disabled. Set 'Enabled' entry to 'true' in settings to restore extension framework functionality.");
                 return;
             }
+            ManagedDependencyResolver = new ExternalDependencyResolver();
 
             Hotkeys = new HotkeyManager(this);
             InitializeScriptHotkeys();
@@ -95,6 +97,12 @@ namespace Spectrum.Manager
             {
                 Console.WriteLine("Plugin directory does not exist. Creating...");
                 Directory.CreateDirectory(Defaults.PluginDirectory);
+            }
+
+            if (!Directory.Exists(Defaults.ResolverDirectory))
+            {
+                Console.WriteLine("External dependency resolver directory does not exist. Creating...");
+                Directory.CreateDirectory(Defaults.ResolverDirectory);
             }
         }
 
