@@ -14,6 +14,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicSwitcher", "MusicSwitcher\MusicSwitcher.csproj", "{157E50C7-395B-45C4-A70D-85E44305147B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMod", "ServerMod\ServerMod.csproj", "{7EE4C9FC-1060-486E-86E4-5FB8FEF570FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitTracks", "SplitTracks\SplitTracks.csproj", "{B34CD7FD-67B0-4B3B-9770-F760A336C418}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitTracks", "SplitTracks\SplitTracks.csproj", "{B34CD7FD-67B0-4B3B-9770-F760A336C418}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
