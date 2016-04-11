@@ -50,6 +50,18 @@ namespace Spectrum.API.Game.Vehicle
             }
         }
 
+        public static Position WorldPosition
+        {
+            get
+            {
+                UpdateObjectReferences();
+                if (CanOperateOnVehicle)
+                    return new Position(VehicleLogic.gameObject.transform.position.x, VehicleLogic.gameObject.transform.position.y, VehicleLogic.gameObject.transform.position.z);
+
+                return new Position(-1, -1 , -1);
+            }
+        }
+
         public static event EventHandler BeforeExploded;
         public static event EventHandler BeforeSplit;
         public static event EventHandler<CheckpointHitEventArgs> CheckpointPassed;
