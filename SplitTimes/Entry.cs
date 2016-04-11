@@ -44,16 +44,14 @@ namespace SplitTimes
         private void Race_Started(object sender, EventArgs e)
         {
             _previousCheckpointTimes.Clear();
-            _bestCheckpointTimes = new Dictionary<int, SplitTime>();
+            _bestCheckpointTimes?.Clear();
             _bestTime = TimeSpan.Zero;
 
             if ((bool)Settings["SaveTimes"])
             {
-                _trackFolder = Path.Combine(
-                    Resource.GetValidFileNameToLower(G.Sys.PlayerManager_.Current_.profile_.Name_),
-                    Resource.GetValidFileNameToLower(G.Sys.GameManager_.Mode_.GameModeID_.ToString ())
-                );
-                _trackFolder = Path.Combine(_trackFolder, Resource.GetValidFileNameToLower(G.Sys.GameManager_.Level_.Name_));
+                _trackFolder = FileSystem.GetValidFileNameToLower(G.Sys.PlayerManager_.Current_.profile_.Name_, "_");
+                _trackFolder = Path.Combine(_trackFolder, FileSystem.GetValidFileNameToLower(G.Sys.GameManager_.Mode_.GameModeID_.ToString(), "_"));
+                _trackFolder = Path.Combine(_trackFolder, FileSystem.GetValidFileNameToLower(G.Sys.GameManager_.Level_.Name_, "_"));
 
                 _bestCheckpointTimes = ReadTimes("pb.txt");
                 if (_bestCheckpointTimes.ContainsKey(-1))
@@ -76,8 +74,6 @@ namespace SplitTimes
                 if ((bool)Settings["SaveAllTimes"])
                     WriteTimes(finished.RenderFilename());
             }
-
-            _previousCheckpointTimes.Clear();
         }
 
         private void LocalVehicle_CheckpointPassed(object sender, CheckpointHitEventArgs e)
