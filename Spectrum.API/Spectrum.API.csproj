@@ -88,6 +88,7 @@
     <Compile Include="Interfaces\Systems\IManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeWrappers\Position.cs" />
+    <Compile Include="TypeWrappers\Rotation.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Version.cs" />
   </ItemGroup>
