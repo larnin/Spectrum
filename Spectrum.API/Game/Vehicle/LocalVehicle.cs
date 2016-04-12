@@ -72,6 +72,7 @@ namespace Spectrum.API.Game.Vehicle
         public static event EventHandler<FinishedEventArgs> Finished;
         public static event EventHandler<HonkEventArgs> Honked;
         public static event EventHandler Jumped;
+        public static event EventHandler<RespawnEventArgs> Respawned;
         public static event EventHandler SpecialModeEvent;
         public static event EventHandler<SplitEventArgs> Split;
         public static event EventHandler<TrickCompleteEventArgs> TrickCompleted;
@@ -168,6 +169,18 @@ namespace Spectrum.API.Game.Vehicle
                 {
                     SpecialModeEvent?.Invoke(null, System.EventArgs.Empty);
                 }  
+            });
+
+            Events.Player.CarRespawn.SubscribeAll((sender, data) =>
+            {
+                if (sender.GetComponent<PlayerDataLocal>() != null)
+                {
+                    var pos = new Position(data.position_.x, data.position_.y, data.position_.z);
+                    var rot = new Rotation(data.rotation_.x, data.rotation_.y, data.rotation_.z);
+                    var eventArgs = new RespawnEventArgs(pos, rot, data.fastRespawn_);
+
+                    Respawned?.Invoke(null, eventArgs);
+                }
             });
 
             Events.Car.Split.SubscribeAll((sender, data) =>

@@ -62,6 +62,7 @@
     <Compile Include="Game\EventArgs\Vehicle\FinishedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\HonkEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\ImpactEventArgs.cs" />
+    <Compile Include="Game\EventArgs\Vehicle\RespawnEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\SplitEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\TrickCompleteEventArgs.cs" />
     <Compile Include="Game\Game.cs" />
