@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Spectrum.API
+namespace Spectrum.API.Utilities
 {
     internal static class Utilities
     {

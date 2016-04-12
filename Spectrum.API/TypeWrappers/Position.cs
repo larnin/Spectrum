@@ -63,5 +63,32 @@ namespace Spectrum.API.TypeWrappers
             var nearestPosition = GetNearest(position, name);
             return position.DistanceTo(nearestPosition);
         }
+
+        public static object GetNearestGameObjectOfName(Position position, string name)
+        {
+            var validObjects = new List<GameObject>();
+
+            foreach (var gameObject in Object.FindObjectsOfType<GameObject>())
+            {
+                if (gameObject.name == name)
+                {
+                    validObjects.Add(gameObject);
+                }
+            }
+
+            var distance = float.MaxValue;
+            GameObject returnObject = null;
+            foreach (var gameObject in validObjects)
+            {
+                var currentObjectDistance = GetNearestDistance(position, name);
+                if (currentObjectDistance < distance)
+                {
+                    distance = currentObjectDistance;
+                    returnObject = gameObject;
+                }
+            }
+
+            return returnObject;
+        }
     }
 }

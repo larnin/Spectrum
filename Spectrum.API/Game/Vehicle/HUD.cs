@@ -27,14 +27,14 @@ namespace Spectrum.API.Game.Vehicle
         public void Clear()
         {
             HoverScreenEmitter hse = GameObject.Find("LocalCar")?.GetComponent<HoverScreenEmitter>();
-            HoverScreenParent hsp = Utilities.GetPrivate<HoverScreenParent>(hse, "hoverScreenParent_");
+            HoverScreenParent hsp = Utilities.Utilities.GetPrivate<HoverScreenParent>(hse, "hoverScreenParent_");
             TrickyTextLogic ttl = hsp.trickyTextObj_.GetComponent<TrickyTextLogic>();
-            Utilities.GetPrivate<PriorityQueue<TrickyTextLogic.TrickText>>(ttl, "textList_").Clear();
+            Utilities.Utilities.GetPrivate<PriorityQueue<TrickyTextLogic.TrickText>>(ttl, "textList_").Clear();
         }
 
         private void UpdateParentObject()
         {
-            var localCar = Utilities.FindLocalCar();
+            var localCar = Utilities.Utilities.FindLocalCar();
             HoverScreenEmitter = localCar?.GetComponent<HoverScreenEmitter>();
         }
     }
