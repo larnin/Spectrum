@@ -19,5 +19,13 @@ namespace Spectrum.API.Game
         public static string LevelName => G.Sys.GameManager_.LevelName_;
         public static string LevelPath => G.Sys.GameManager_.LevelPath_;
         public static string SceneName => G.Sys.GameManager_.SceneName_;
+
+        public static void RestartLevel()
+        {
+            if (G.Sys.GameManager_.IsModeCreated_ && !G.Sys.GameManager_.IsLevelEditorMode_)
+            {
+                G.Sys.GameManager_.RestartLevel();
+            }
+        }
     }
 }
