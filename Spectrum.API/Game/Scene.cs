@@ -19,7 +19,7 @@ namespace Spectrum.API.Game
             Events.Scene.StartLoad.Subscribe(data =>
             {
                 var eventArgs = new SceneLoadedEventArgs(data.sceneName);
-                Loaded?.Invoke(null, eventArgs);
+                BeginLoading?.Invoke(null, eventArgs);
             });
         }
     }
