@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using Spectrum.API.Game.EventArgs.Game;
+using UnityEngine;
 
 namespace Spectrum.API.Game
 {
@@ -15,6 +16,41 @@ namespace Spectrum.API.Game
             {
                 var fieldInfo = G.Sys.GameManager_.GetType().GetField("isDevBuild_", BindingFlags.Instance | BindingFlags.NonPublic);
                 fieldInfo?.SetValue(G.Sys.GameManager_, value);
+            }
+        }
+
+        public static string WatermarkText
+        {
+            get
+            {
+                var gameObject = GameObject.Find("AlphaVersion");
+                if (gameObject == null)
+                {
+                    return string.Empty;
+                }
+
+                var labelComponent = gameObject.GetComponent<UILabel>();
+                return labelComponent?.text;
+            }
+
+            set
+            {
+                var gameObject = GameObject.Find("AlphaVersion");
+                if (gameObject == null)
+                {
+                    Console.WriteLine("API: Couldn't find AlphaVersion game object.");
+                    return;
+                }
+
+                var labelComponent = gameObject.GetComponent<UILabel>();
+                if (labelComponent != null)
+                {
+                    labelComponent.text = value;
+                }
+                else
+                {
+                    Console.WriteLine("API: AlphaVersion game object found, but no UILabel component exists.");
+                }
             }
         }
 
