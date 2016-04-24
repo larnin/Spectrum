@@ -23,6 +23,7 @@ namespace Spectrum.API.Game
         public static string SceneName => G.Sys.GameManager_.SceneName_;
 
         public static event EventHandler<GameModeFinishedEventArgs> ModeFinished;
+        public static event EventHandler ModeStarted;
 
         static Game()
         {
@@ -30,6 +31,11 @@ namespace Spectrum.API.Game
             {
                 var eventArgs = new GameModeFinishedEventArgs((Network.NetworkGroup)data.NetworkGroup_);
                 ModeFinished?.Invoke(null, eventArgs);
+            });
+
+            Events.GameMode.ModeStarted.Subscribe(data =>
+            {
+                ModeStarted?.Invoke(null, System.EventArgs.Empty);
             });
         }
 
