@@ -1,4 +1,6 @@
+using System;
 using System.Reflection;
+using Spectrum.API.Game.EventArgs.Game;
 
 namespace Spectrum.API.Game
 {
@@ -19,6 +21,17 @@ namespace Spectrum.API.Game
         public static string LevelName => G.Sys.GameManager_.LevelName_;
         public static string LevelPath => G.Sys.GameManager_.LevelPath_;
         public static string SceneName => G.Sys.GameManager_.SceneName_;
+
+        public static event EventHandler<GameModeFinishedEventArgs> ModeFinished;
+
+        static Game()
+        {
+            Events.GameMode.Finished.Subscribe(data =>
+            {
+                var eventArgs = new GameModeFinishedEventArgs((Network.NetworkGroup)data.NetworkGroup_);
+                ModeFinished?.Invoke(null, eventArgs);
+            });
+        }
 
         public static void RestartLevel()
         {

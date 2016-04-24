@@ -52,6 +52,7 @@
     <Compile Include="Game\EventArgs\Audio\CustomMusicChangedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Audio\MIDINoteEventArgs.cs" />
     <Compile Include="Game\EventArgs\Audio\MusicGridEventArgs.cs" />
+    <Compile Include="Game\EventArgs\Game\GameModeFinishedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\ChatActionEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\ChatMessageEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\GameModeChangedEventArgs.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Game\GameMode.cs" />
     <Compile Include="Game\Network\Chat.cs" />
     <Compile Include="Game\Network\LevelCompatibility.cs" />
+    <Compile Include="Game\Network\NetworkGroup.cs" />
     <Compile Include="Game\Network\Server.cs" />
     <Compile Include="Game\Race.cs" />
     <Compile Include="Game\Vehicle\DestructionCause.cs" />
