@@ -58,6 +58,7 @@
     <Compile Include="Game\EventArgs\Network\GameModeChangedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\PlayerEventArgs.cs" />
     <Compile Include="Game\EventArgs\Network\ServerCreatedEventArgs.cs" />
+    <Compile Include="Game\EventArgs\Scene\SceneLoadedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\CheckpointHitEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\DestroyedEventArgs.cs" />
     <Compile Include="Game\EventArgs\Vehicle\FinishedEventArgs.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Game\Network\NetworkGroup.cs" />
     <Compile Include="Game\Network\Server.cs" />
     <Compile Include="Game\Race.cs" />
+    <Compile Include="Game\Scene.cs" />
     <Compile Include="Game\Vehicle\DestructionCause.cs" />
     <Compile Include="Game\Vehicle\HUD.cs" />
     <Compile Include="Game\Vehicle\RaceEndType.cs" />
