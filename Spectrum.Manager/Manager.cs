@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Spectrum.API;
 using Spectrum.API.Configuration;
+using Spectrum.API.Game;
 using Spectrum.API.Interfaces.Plugins;
 using Spectrum.API.Interfaces.Systems;
 using Spectrum.Manager.Input;
@@ -47,6 +48,11 @@ namespace Spectrum.Manager
             ScriptDirectory = Defaults.ScriptDirectory;
             PluginDirectory = Defaults.PluginDirectory;
             OnDemandScriptDirectory = Defaults.OnDemandScriptDirectory;
+
+            Scene.Loaded += (sender, args) =>
+            {
+                Game.WatermarkText = $"Distance {API.Version.DistanceBuild} ([00AADD]Spectrum[-] {API.Version.APILevel.ToString()})";
+            };
 
             if (Global.Settings.GetValue<bool>("LoadScripts"))
             {
@@ -133,7 +139,7 @@ namespace Spectrum.Manager
                     RecreateSettings();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"MANAGER: Couldn't load settings. Defaults loaded. Exception below.\n{ex}");
             }
