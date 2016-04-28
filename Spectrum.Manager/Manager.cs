@@ -55,6 +55,11 @@ namespace Spectrum.Manager
                 Game.WatermarkText = $"Distance {API.Version.DistanceBuild} ([00AADD]Spectrum[-] {API.Version.APILevel.ToString()})";
             };
 
+            if(Global.Settings.GetValue<bool>("EnableDevMode"))
+            {
+                Game.IsDevelopmentModeActive = true;
+            }
+
             if (Global.Settings.GetValue<bool>("LoadScripts"))
             {
                 TryInitializeLua();
@@ -153,6 +158,7 @@ namespace Spectrum.Manager
             Global.Settings["LoadScripts"] = "true";
             Global.Settings["LogToConsole"] = "true";
             Global.Settings["ShowWatermark"] = "true";
+            Global.Settings["EnableDevMode"] = "true";
             Global.Settings["Enabled"] = "true";
 
             Global.Settings.Save();
