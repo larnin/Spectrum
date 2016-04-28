@@ -54,6 +54,27 @@ namespace Spectrum.API.Game
             }
         }
 
+        public static bool ShowWatermark
+        {
+            get
+            {
+                var gameObject = GameObject.Find("AlphaVersion");
+                if (gameObject == null)
+                    return false;
+
+                return gameObject.activeSelf;
+            }
+
+            set
+            {
+                var gameObject = GameObject.Find("AlphaVersion");
+                if (gameObject == null)
+                    return;
+
+                gameObject.SetActive(false);
+            }
+        }
+
         public static string LevelName => G.Sys.GameManager_.LevelName_;
         public static string LevelPath => G.Sys.GameManager_.LevelPath_;
         public static string SceneName => G.Sys.GameManager_.SceneName_;
