@@ -52,13 +52,12 @@ namespace Spectrum.Manager
             Scene.Loaded += (sender, args) =>
             {
                 Game.ShowWatermark = Global.Settings.GetValue<bool>("ShowWatermark");
-                Game.WatermarkText = $"Distance {API.Version.DistanceBuild} ([00AADD]Spectrum[-] {API.Version.APILevel.ToString()})";
-            };
 
-            if(Global.Settings.GetValue<bool>("EnableDevMode"))
-            {
-                Game.IsDevelopmentModeActive = true;
-            }
+                if (Game.ShowWatermark)
+                {
+                    Game.WatermarkText = $"Distance {API.Version.DistanceBuild} ([00AADD]Spectrum[-] {API.Version.APILevel.ToString()})";
+                }
+            };
 
             if (Global.Settings.GetValue<bool>("LoadScripts"))
             {
@@ -158,7 +157,6 @@ namespace Spectrum.Manager
             Global.Settings["LoadScripts"] = "true";
             Global.Settings["LogToConsole"] = "true";
             Global.Settings["ShowWatermark"] = "true";
-            Global.Settings["EnableDevMode"] = "true";
             Global.Settings["Enabled"] = "true";
 
             Global.Settings.Save();

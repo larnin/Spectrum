@@ -9,16 +9,6 @@ namespace Spectrum.API.Game
     {
         public static GameMode CurrentMode => (GameMode)G.Sys.GameManager_.Mode_.GameModeID_;
 
-        public static bool IsDevelopmentModeActive
-        {
-            get { return G.Sys.GameManager_.IsDevBuild_; }
-            set
-            {
-                var fieldInfo = G.Sys.GameManager_.GetType().GetField("isDevBuild_", BindingFlags.Instance | BindingFlags.NonPublic);
-                fieldInfo?.SetValue(G.Sys.GameManager_, value);
-            }
-        }
-
         public static string WatermarkText
         {
             get
@@ -71,7 +61,7 @@ namespace Spectrum.API.Game
                 if (gameObject == null)
                     return;
 
-                gameObject.SetActive(false);
+                gameObject.SetActive(value);
             }
         }
 
