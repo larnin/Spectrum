@@ -14,17 +14,17 @@ namespace Spectrum.API.Game
         {
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {
-                Finished?.Invoke(default(object), System.EventArgs.Empty);
+                Finished?.Invoke(null, System.EventArgs.Empty);
             });
 
             Events.GameMode.Go.Subscribe(data =>
             {
-                Started?.Invoke(default(object), System.EventArgs.Empty);
+                Started?.Invoke(null, System.EventArgs.Empty);
             });
 
             Events.GameMode.ModeStarted.Subscribe(data =>
             {
-                Loaded?.Invoke(default(object), System.EventArgs.Empty);
+                Loaded?.Invoke(null, System.EventArgs.Empty);
             });
         }
     }
