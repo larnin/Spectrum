@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Spectrum.API.Helpers
 {
-    internal static class StringExtensions
+    public static class StringExtensions
     {
         internal static string WordWrap(this string text, int lineLength)
         {
@@ -61,7 +61,7 @@ namespace Spectrum.API.Helpers
             return i + 1;
         }
 
-        internal static Color ToColor(this string hexString)
+        public static Color ToColor(this string hexString)
         {
             var actualColorString = hexString.StartsWith("#") ? hexString.Substring(1, hexString.Length - 1) : hexString;
 
