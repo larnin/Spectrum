@@ -8,6 +8,10 @@ namespace Spectrum.API.Game
     {
         public static GameMode CurrentMode => (GameMode)G.Sys.GameManager_.Mode_.GameModeID_;
 
+        public static string LevelName => G.Sys.GameManager_.LevelName_;
+        public static string LevelPath => G.Sys.GameManager_.LevelPath_;
+        public static string SceneName => G.Sys.GameManager_.SceneName_;
+
         public static string WatermarkText
         {
             get
@@ -57,16 +61,9 @@ namespace Spectrum.API.Game
             set
             {
                 var gameObject = GameObject.Find("AlphaVersion");
-                if (gameObject == null)
-                    return;
-
-                gameObject.SetActive(value);
+                gameObject?.SetActive(value);
             }
         }
-
-        public static string LevelName => G.Sys.GameManager_.LevelName_;
-        public static string LevelPath => G.Sys.GameManager_.LevelPath_;
-        public static string SceneName => G.Sys.GameManager_.SceneName_;
 
         public static event EventHandler<GameModeFinishedEventArgs> ModeFinished;
         public static event EventHandler ModeStarted;
