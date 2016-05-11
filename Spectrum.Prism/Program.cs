@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
+using Spectrum.Prism.IO;
+using Spectrum.Prism.Patches;
+using Spectrum.Prism.Runtime;
 
 namespace Spectrum.Prism
 {
-    class Program
+    internal class Program
     {
         private static string _distanceAssemblyFilename;
         private static string _bootstrapAssemblyFilename;
@@ -15,14 +17,16 @@ namespace Spectrum.Prism
         private static ModuleDefinition _distanceAssemblyDefinition;
         private static ModuleDefinition _bootstrapAssemblyDefinition;
 
-        static void Main(string[] args)
+        private static Patcher _patcher;
+
+        internal static void Main(string[] args)
         {
             WriteStartupHeader();
 
             if (!IsValidSyntax(args))
             {
                 ColoredOutput.WriteInformation($"Usage: {GetExecutingFileName()} <TARGET DLL> <BOOTSTRAP DLL>");
-                ErrorHandler.TerminateWithError("IOError: Invalid syntax provided.");
+                ErrorHandler.TerminateWithError("Invalid syntax provided.");
             }
 
             _distanceAssemblyFilename = args[0];
@@ -35,26 +39,11 @@ namespace Spectrum.Prism
                 ErrorHandler.TerminateWithError("Specified BOOTSTRAP DLL not found.");
 
             CreateBackup();
-            ColoredOutput.WriteInformation("Now performing dispersion...");
-            
-            _distanceAssemblyDefinition = ModuleLoader.LoadDistanceModule(_distanceAssemblyFilename);
-            _bootstrapAssemblyDefinition = ModuleLoader.LoadBootstrapModule(_bootstrapAssemblyFilename);
+            PreparePatches();
+            RunPatches();
 
-            InsertSpectrumInitCode();
-            InsertSpectrumUpdateCode();
-
-            ColoredOutput.WriteInformation("Writing the modified file...");
-
-            try
-            {
-                _distanceAssemblyDefinition.Write(_distanceAssemblyFilename);
-            }
-            catch
-            {
-                ColoredOutput.WriteError("Couldn't write back the patched file. Maybe it's in use?");
-            }
-
-            ColoredOutput.WriteSuccess("Dispersion complete. Spectrum should now be visible.");
+            ModuleWriter.SavePatchedFile(_distanceAssemblyDefinition, _distanceAssemblyFilename);
+            ColoredOutput.WriteSuccess("Patch process completed.");
         }
 
         private static void WriteStartupHeader()
@@ -95,65 +84,22 @@ namespace Spectrum.Prism
             }
         }
 
-        private static void InsertSpectrumInitCode()
+        private static void PreparePatches()
         {
-            try
-            {
-                var targetMethod = DispersionHelper.FindInitializationMethodDefinition(_distanceAssemblyDefinition);
-                var ilProcessor = targetMethod.Body.GetILProcessor();
+            ColoredOutput.WriteInformation("Preparing patches...");
 
-                var initMethodReference = DispersionHelper.ImportBootstrapMethodReference(_distanceAssemblyDefinition, _bootstrapAssemblyDefinition);
-                var initializationInstruction = ilProcessor.Create(OpCodes.Call, initMethodReference);
+            _distanceAssemblyDefinition = ModuleLoader.LoadDistanceModule(_distanceAssemblyFilename);
+            _bootstrapAssemblyDefinition = ModuleLoader.LoadBootstrapModule(_bootstrapAssemblyFilename);
+            _patcher = new Patcher(_bootstrapAssemblyDefinition, _distanceAssemblyDefinition);
 
-                var lastAwakeInstruction = ilProcessor.Body.Instructions[ilProcessor.Body.Instructions.Count - 2];
-
-                if (lastAwakeInstruction.OpCode == OpCodes.Call)
-                {
-                    ColoredOutput.WriteError("This binary has already been patched.");
-                    Environment.Exit(1);
-                }
-
-                ilProcessor.InsertAfter(lastAwakeInstruction, initializationInstruction);
-
-                ColoredOutput.WriteSuccess("Initialization code inserted.");
-            }
-            catch (Exception e)
-            {
-                ErrorHandler.TerminateWithError($"Couldn't insert initialization code. Exception details:\n{e}");
-            }
+            _patcher.AddPatch(new SpectrumInitCodePatch());
+            _patcher.AddPatch(new SpectrumUpdateCodePatch());
         }
 
-        private static void InsertSpectrumUpdateCode()
+        private static void RunPatches()
         {
-            try
-            {
-                var targetMethod = DispersionHelper.FindUpdateMethodDefinition(_distanceAssemblyDefinition);
-                var ilProcessor = targetMethod.Body.GetILProcessor();
-
-                var updateMethodReference = DispersionHelper.ImportUpdateMethodReference(_distanceAssemblyDefinition, _bootstrapAssemblyDefinition);
-                var updateInstruction = ilProcessor.Create(OpCodes.Call, updateMethodReference);
-
-                var originalReturnInstruction = ilProcessor.Body.Instructions[ilProcessor.Body.Instructions.Count - 1];
-
-                if (originalReturnInstruction.OpCode == OpCodes.Call)
-                {
-                    ColoredOutput.WriteError("This binary has already been patched.");
-                    Environment.Exit(1);
-                }
-
-                updateInstruction.Offset = originalReturnInstruction.Offset;
-
-                ilProcessor.Replace(originalReturnInstruction, updateInstruction);
-
-                var returnInstruction = ilProcessor.Create(OpCodes.Ret);
-                ilProcessor.InsertAfter(updateInstruction, returnInstruction);
-                
-                ColoredOutput.WriteSuccess("Update code inserted.");
-            }
-            catch (Exception e)
-            {
-                ErrorHandler.TerminateWithError($"Couldn't insert update code. Exception details:\n{e}");
-            }
+            ColoredOutput.WriteInformation("Running patches...");
+            _patcher.RunAll();
         }
     }
 }

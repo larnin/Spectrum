@@ -1,7 +1,7 @@
 ﻿using System;
 using Mono.Cecil;
 
-namespace Spectrum.Prism
+namespace Spectrum.Prism.IO
 {
     public class ModuleLoader
     {

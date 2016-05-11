@@ -1,4 +1,5 @@
 ﻿using System;
+using Spectrum.Prism.IO;
 
 namespace Spectrum.Prism
 {

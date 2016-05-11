@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using Mono.Cecil;
 
-namespace Spectrum.Prism
+namespace Spectrum.Prism.Runtime
 {
-    class DispersionHelper
+    public class PatchHelper
     {
         public static MethodDefinition FindInitializationMethodDefinition(ModuleDefinition targetModule)
         {

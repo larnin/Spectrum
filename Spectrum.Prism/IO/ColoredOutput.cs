@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Spectrum.Prism
+namespace Spectrum.Prism.IO
 {
-    class ColoredOutput
+    public class ColoredOutput
     {
         public static void WriteError(string message)
         {
