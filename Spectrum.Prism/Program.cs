@@ -47,7 +47,7 @@ namespace Spectrum.Prism
             if (!DistanceFileExists())
                 ErrorHandler.TerminateWithError("Specified TARGET DLL not found.");
 
-            if (!BootstrapFileExists())
+            if (!BootstrapFileExists() && (args.Contains("-s") || args.Contains("--source")))
                 ErrorHandler.TerminateWithError("Specified SOURCE DLL not found.");
 
             CreateBackup();
@@ -125,11 +125,16 @@ namespace Spectrum.Prism
             ColoredOutput.WriteInformation("Preparing patches...");
 
             _distanceAssemblyDefinition = ModuleLoader.LoadDistanceModule(_distanceAssemblyFilename);
-            _bootstrapAssemblyDefinition = ModuleLoader.LoadBootstrapModule(_bootstrapAssemblyFilename);
+
+            if (_bootstrapAssemblyDefinition != null)
+            {
+                _bootstrapAssemblyDefinition = ModuleLoader.LoadBootstrapModule(_bootstrapAssemblyFilename);
+            }
             _patcher = new Patcher(_bootstrapAssemblyDefinition, _distanceAssemblyDefinition);
 
             _patcher.AddPatch(new SpectrumInitCodePatch());
             _patcher.AddPatch(new SpectrumUpdateCodePatch());
+            _patcher.AddPatch(new DevModeEnablePatch());
         }
 
         private static void RunPatches()

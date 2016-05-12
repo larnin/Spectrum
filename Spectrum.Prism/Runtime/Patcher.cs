@@ -52,6 +52,7 @@ namespace Spectrum.Prism.Runtime
                 if (patch.Name == name)
                 {
                     RunPatch(patch);
+                    return;
                 }
             }
             ErrorHandler.TerminateWithError($"No patch '{name}' exists.");
