@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Mono.Cecil;
 using Spectrum.Prism.IO;
@@ -13,6 +14,7 @@ namespace Spectrum.Prism
     {
         private static string _distanceAssemblyFilename;
         private static string _bootstrapAssemblyFilename;
+        private static string _requestedPatchName;
 
         private static ModuleDefinition _distanceAssemblyDefinition;
         private static ModuleDefinition _bootstrapAssemblyDefinition;
@@ -25,18 +27,28 @@ namespace Spectrum.Prism
 
             if (!IsValidSyntax(args))
             {
-                ColoredOutput.WriteInformation($"Usage: {GetExecutingFileName()} <TARGET DLL> <BOOTSTRAP DLL>");
+                ColoredOutput.WriteInformation($"Usage: {GetExecutingFileName()} <-t (--target) Assembly-CSharp.dll> [options]");
+                ColoredOutput.WriteInformation("  Options:");
+                ColoredOutput.WriteInformation("    -t [--target]+: Specify the target Distance DLL you want to patch.");
+                ColoredOutput.WriteInformation("    -s [--source]+: Specify the source DLL you want to cross-reference.");
+                ColoredOutput.WriteInformation("    -p [--patch]+:  Run only patch with the specified name.");
                 ErrorHandler.TerminateWithError("Invalid syntax provided.");
             }
 
-            _distanceAssemblyFilename = args[0];
-            _bootstrapAssemblyFilename = args[1];
+            ParseArguments(args);
+
+            if (string.IsNullOrEmpty(_distanceAssemblyFilename))
+                ErrorHandler.TerminateWithError("Target DLL name not specified.");
+            if ((args.Contains("-p") || args.Contains("--patch")) && string.IsNullOrEmpty(_requestedPatchName))
+                ErrorHandler.TerminateWithError("Patch name not specified.");
+            if ((args.Contains("-s") || args.Contains("--source")) && string.IsNullOrEmpty(_bootstrapAssemblyFilename))
+                ErrorHandler.TerminateWithError("Source DLL name not specified.");
 
             if (!DistanceFileExists())
                 ErrorHandler.TerminateWithError("Specified TARGET DLL not found.");
 
             if (!BootstrapFileExists())
-                ErrorHandler.TerminateWithError("Specified BOOTSTRAP DLL not found.");
+                ErrorHandler.TerminateWithError("Specified SOURCE DLL not found.");
 
             CreateBackup();
             PreparePatches();
@@ -57,7 +69,31 @@ namespace Spectrum.Prism
 
         private static bool IsValidSyntax(ICollection<string> args)
         {
-            return args.Count == 2;
+            return args.Count >= 1 && (args.Contains("-t") || args.Contains("--target"));
+        }
+
+        private static void ParseArguments(string[] args)
+        {
+            for (var i = 0; i < args.Length; i++)
+            {
+                if ((args[i] == "-s" || args[i] == "--source") && (i + 1) < args.Length)
+                {
+                    _bootstrapAssemblyFilename = args[i + 1];
+                    i++;
+                }
+
+                if ((args[i] == "-t" || args[i] == "--target") && (i + 1) < args.Length)
+                {
+                    _distanceAssemblyFilename = args[i + 1];
+                    i++;
+                }
+
+                if ((args[i] == "-p" || args[i] == "--patch") && (i + 1) < args.Length)
+                {
+                    _requestedPatchName = args[i + 1];
+                    i++;
+                }
+            }
         }
 
         private static string GetExecutingFileName()
@@ -98,8 +134,16 @@ namespace Spectrum.Prism
 
         private static void RunPatches()
         {
-            ColoredOutput.WriteInformation("Running patches...");
-            _patcher.RunAll();
+            if (string.IsNullOrEmpty(_requestedPatchName))
+            {
+                ColoredOutput.WriteInformation("Running all patches...");
+                _patcher.RunAll();
+            }
+            else
+            {
+                ColoredOutput.WriteInformation($"Running the requested patch: '{_requestedPatchName}'");
+                _patcher.RunSpecific(_requestedPatchName);
+            }
         }
     }
 }

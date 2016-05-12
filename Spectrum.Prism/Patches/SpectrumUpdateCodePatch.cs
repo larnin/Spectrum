@@ -8,7 +8,8 @@ namespace Spectrum.Prism.Patches
 {
     public class SpectrumUpdateCodePatch : BasePatch
     {
-        public override string Name => "State update patch";
+        public override string Name => "SpectrumStateUpdate";
+        public override bool NeedsSource => true;
 
         public override void Run(ModuleDefinition sourceModule, ModuleDefinition targetModule)
         {

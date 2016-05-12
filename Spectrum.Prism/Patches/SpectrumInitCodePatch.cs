@@ -8,7 +8,8 @@ namespace Spectrum.Prism.Patches
 {
     public class SpectrumInitCodePatch : BasePatch
     {
-        public override string Name => "Initialization patch";
+        public override string Name => "SpectrumInit";
+        public override bool NeedsSource => true;
 
         public override void Run(ModuleDefinition sourceModule, ModuleDefinition targetModule)
         {

@@ -1,4 +1,5 @@
-﻿using Mono.Cecil;
+﻿using System;
+using Mono.Cecil;
 
 namespace Spectrum.Prism.IO
 {
@@ -10,7 +11,7 @@ namespace Spectrum.Prism.IO
             {
                 module.Write(fileName);
             }
-            catch
+            catch(Exception ex)
             {
                 ErrorHandler.TerminateWithError("Couldn't write back the patched file. Maybe it's in use?");
             }

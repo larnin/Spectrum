@@ -7,6 +7,7 @@ namespace Spectrum.Prism.Runtime
     public class BasePatch : IPatch
     {
         public virtual string Name => "BasePatch";
+        public virtual bool NeedsSource => false;
 
         public event EventHandler<PatchFailedEventArgs> PatchFailed;
         public event EventHandler<PatchSucceededEventArgs> PatchSucceeded;

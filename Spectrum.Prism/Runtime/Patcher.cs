@@ -41,7 +41,31 @@ namespace Spectrum.Prism.Runtime
         {
             foreach (var patch in Patches)
             {
+                RunPatch(patch);
+            }
+        }
+
+        public void RunSpecific(string name)
+        {
+            foreach (var patch in Patches)
+            {
+                if (patch.Name == name)
+                {
+                    RunPatch(patch);
+                }
+            }
+            ErrorHandler.TerminateWithError($"No patch '{name}' exists.");
+        }
+
+        private void RunPatch(IPatch patch)
+        {
+            if (patch.NeedsSource)
+            {
                 patch.Run(SourceModule, TargetModule);
+            }
+            else
+            {
+                patch.Run(TargetModule);
             }
         }
     }
