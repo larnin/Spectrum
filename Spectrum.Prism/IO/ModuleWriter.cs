@@ -1,5 +1,4 @@
-﻿using System;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 
 namespace Spectrum.Prism.IO
 {
@@ -11,9 +10,13 @@ namespace Spectrum.Prism.IO
             {
                 module.Write(fileName);
             }
-            catch(Exception ex)
+            catch (AssemblyResolutionException)
             {
-                ErrorHandler.TerminateWithError("Couldn't write back the patched file. Maybe it's in use?");
+                ErrorHandler.TerminateWithError("Can't find the required dependencies. Make sure you run Prism inside the 'Managed' directory.");
+            }
+            catch
+            {
+                ErrorHandler.TerminateWithError("Can't write back the modified assembly. Is it in use and/or you don't have write rights?");
             }
         }
     }
