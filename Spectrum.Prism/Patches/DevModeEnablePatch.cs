@@ -16,8 +16,8 @@ namespace Spectrum.Prism.Patches
         {
             try
             {
-                var targetType = moduleDefinition.GetType("GameManager");
-                var methodDefinition = targetType.Methods.Single(m => m.Name == "get_IsDevBuild_");
+                var targetType = moduleDefinition.GetType(Resources.GameManagerTypeName);
+                var methodDefinition = targetType.Methods.Single(m => m.Name == Resources.GameManagerDevModeEnableSetterName);
 
                 methodDefinition.Body.Instructions.Clear();
                 var ilProcessor = methodDefinition.Body.GetILProcessor();
