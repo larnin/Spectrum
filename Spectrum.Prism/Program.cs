@@ -126,7 +126,7 @@ namespace Spectrum.Prism
 
             _distanceAssemblyDefinition = ModuleLoader.LoadDistanceModule(_distanceAssemblyFilename);
 
-            if (_bootstrapAssemblyDefinition != null)
+            if (!string.IsNullOrEmpty(_bootstrapAssemblyFilename))
             {
                 _bootstrapAssemblyDefinition = ModuleLoader.LoadBootstrapModule(_bootstrapAssemblyFilename);
             }
