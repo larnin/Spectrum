@@ -41,6 +41,11 @@ namespace Spectrum.Prism.Runtime
         {
             foreach (var patch in Patches)
             {
+                if (SourceModule == null && patch.NeedsSource)
+                {
+                    ColoredOutput.WriteInformation($"Skipping '{patch.Name}' because no source module was provided.");
+                    continue;
+                }
                 RunPatch(patch);
             }
         }
