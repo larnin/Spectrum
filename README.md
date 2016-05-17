@@ -12,6 +12,9 @@ members.
 ### Installation
 Please refer to [this Wiki](https://github.com/Ciastex/Spectrum/wiki/Installing-Spectrum) page about Spectrum installation process.
 
+### Reporting a Bug
+Please refer to [this Wiki](https://github.com/Ciastex/Spectrum/wiki/Reporting-a-bug) page on how to make a good bug report.
+
 ### Building Spectrum
 Please refer to [this Wiki](https://github.com/Ciastex/Spectrum/wiki/Building-Spectrum-from-source) page on building Spectrum from source.
 
