@@ -29,15 +29,19 @@ namespace Spectrum.Manager
 
         public bool CanLoadScripts => Directory.Exists(ScriptDirectory);
         public bool CanLoadPlugins => Directory.Exists(PluginDirectory);
+        public bool IsEnabled { get; set; }
 
         public Manager()
         {
+            IsEnabled = true;
+
             CheckPaths();
             InitializeSettings();
 
             if (!Global.Settings.GetValue<bool>("Enabled"))
             {
                 Console.WriteLine("Manager: Spectrum is disabled. Set 'Enabled' entry to 'true' in settings to restore extension framework functionality.");
+                IsEnabled = false;
                 return;
             }
             ManagedDependencyResolver = new ExternalDependencyResolver();
@@ -119,6 +123,10 @@ namespace Spectrum.Manager
 
         public void UpdateExtensions()
         {
+            /* to prevent null references from bootstrap calls when manager is disabled */
+            if (!IsEnabled)
+                return;
+
             ((HotkeyManager)Hotkeys).Update();
 
             if (ManagedPluginContainer != null)
