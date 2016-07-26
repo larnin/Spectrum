@@ -5,7 +5,7 @@ using System.Reflection;
 using Spectrum.API;
 using Spectrum.API.Interfaces.Plugins;
 using Spectrum.Manager.Logging;
-using Version = Spectrum.API.Version;
+using SystemVersion = Spectrum.API.SystemVersion;
 
 namespace Spectrum.Manager.Managed
 {
@@ -115,7 +115,7 @@ namespace Spectrum.Manager.Managed
                                     UpdatesEveryFrame = false
                                 };
 
-                                if (pluginInfo.Plugin.CompatibleAPILevel != Version.APILevel)
+                                if (pluginInfo.Plugin.CompatibleAPILevel != SystemVersion.APILevel)
                                 {
                                     Log.Info("The plugin is not built for the current API level. It may have an unexpected behavior.");
                                 }

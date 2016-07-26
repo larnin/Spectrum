@@ -42,8 +42,9 @@
     <Compile Include="Global.cs" />
     <Compile Include="Input\HotkeyManager.cs" />
     <Compile Include="Logging\SubsystemLog.cs" />
-    <Compile Include="Lua\Executor.cs" />
-    <Compile Include="Lua\Loader.cs" />
+    <Compile Include="Lua\ScriptExecutor.cs" />
+    <Compile Include="Lua\ScriptLoader.cs" />
+    <Compile Include="Lua\ScriptSupport.cs" />
     <Compile Include="Managed\ExternalDependencyResolver.cs" />
     <Compile Include="Managed\PluginContainer.cs" />
     <Compile Include="Managed\PluginInfo.cs" />

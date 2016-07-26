@@ -132,7 +132,7 @@ namespace Spectrum.Manager.Input
                 {
                     if (hotkey.Key.IsPressed)
                     {
-                        Manager.LuaExecutor.Execute(hotkey.Value);
+                        Manager.Scripts.ExecuteScript(hotkey.Value);
                     }
                 }
             }

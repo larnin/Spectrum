@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Spectrum.API;
 using Spectrum.Manager.Logging;
@@ -20,7 +21,9 @@ namespace Spectrum.Manager.Managed
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            var dependencyAssembliesPaths = Directory.GetFiles(Defaults.ResolverDirectory, "*.dll");
+            var dependencyAssembliesPaths = Directory.GetFiles(Defaults.ResolverDirectory, "*.dll").ToList();
+            dependencyAssembliesPaths.AddRange(Directory.GetFiles(".", "*.dll"));
+            dependencyAssembliesPaths.AddRange(Directory.GetFiles("../Managed", "*.dll"));
 
             Log.Info($"Trying to resolve dependency assembly '{args.Name}'...");
             try

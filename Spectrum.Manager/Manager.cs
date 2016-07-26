@@ -13,23 +13,17 @@ namespace Spectrum.Manager
 {
     public class Manager : IManager
     {
-        public ILoader LuaLoader { get; set; }
-        public IExecutor LuaExecutor { get; set; }
-        public IHotkeyManager Hotkeys { get; set; }
-
         private PluginContainer ManagedPluginContainer { get; set; }
         private PluginLoader ManagedPluginLoader { get; set; }
         private ExternalDependencyResolver ManagedDependencyResolver { get; set; }
 
         private Settings ScriptHotkeySettings { get; set; }
 
-        private string ScriptDirectory { get; }
-        private string OnDemandScriptDirectory { get; }
-        private string PluginDirectory { get; }
+        public IHotkeyManager Hotkeys { get; set; }
+        public IScriptSupport Scripts { get; set; }
 
-        public bool CanLoadScripts => Directory.Exists(ScriptDirectory);
-        public bool CanLoadPlugins => Directory.Exists(PluginDirectory);
         public bool IsEnabled { get; set; }
+        public bool CanLoadPlugins => Directory.Exists(Defaults.PluginDirectory);
 
         public Manager()
         {
@@ -46,12 +40,11 @@ namespace Spectrum.Manager
             }
             ManagedDependencyResolver = new ExternalDependencyResolver();
 
+            Scripts = new ScriptSupport();
+            Scripts.AddGlobalAlias(this, "spectrum.manager");
+
             Hotkeys = new HotkeyManager(this);
             InitializeScriptHotkeys();
-
-            ScriptDirectory = Defaults.ScriptDirectory;
-            PluginDirectory = Defaults.PluginDirectory;
-            OnDemandScriptDirectory = Defaults.OnDemandScriptDirectory;
 
             Scene.Loaded += (sender, args) =>
             {
@@ -59,15 +52,9 @@ namespace Spectrum.Manager
 
                 if (Game.ShowWatermark)
                 {
-                    Game.WatermarkText = $"Distance {API.Version.DistanceBuild} ([00AADD]Spectrum[-] {API.Version.APILevel.ToString()})";
+                    Game.WatermarkText = $"Distance {SystemVersion.DistanceBuild} ([00AADD]Spectrum[-] {SystemVersion.APILevel.ToString()})";
                 }
             };
-
-            if (Global.Settings.GetValue<bool>("LoadScripts"))
-            {
-                TryInitializeLua();
-                StartLua();
-            }
 
             if (Global.Settings.GetValue<bool>("LoadPlugins"))
             {
@@ -190,32 +177,10 @@ namespace Spectrum.Manager
             }
         }
 
-        private void TryInitializeLua()
-        {
-            if (CanLoadScripts)
-            {
-                LuaLoader = new Loader(ScriptDirectory, OnDemandScriptDirectory);
-                LuaLoader.LoadAll();
-            }
-            else
-            {
-                Console.WriteLine($"Can't load or execute scripts. Directory '{ScriptDirectory}' does not exist.");
-            }
-        }
-
-        private void StartLua()
-        {
-            if (CanLoadScripts)
-            {
-                LuaExecutor = new Executor(LuaLoader);
-                LuaExecutor.ExecuteAll();
-            }
-        }
-
         private void LoadExtensions()
         {
             ManagedPluginContainer = new PluginContainer();
-            ManagedPluginLoader = new PluginLoader(PluginDirectory, ManagedPluginContainer);
+            ManagedPluginLoader = new PluginLoader(Defaults.PluginDirectory, ManagedPluginContainer);
             ManagedPluginLoader.LoadPlugins();
         }
 

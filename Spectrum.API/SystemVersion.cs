@@ -1,8 +1,8 @@
 namespace Spectrum.API
 {
-    public class Version
+    public class SystemVersion
     {
-        public readonly static APILevel APILevel = APILevel.MicroWave;
+        public static readonly APILevel APILevel = APILevel.InfraRed;
 
         public static int DistanceBuild
         {

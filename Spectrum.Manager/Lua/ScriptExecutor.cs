@@ -1,25 +1,31 @@
 ﻿using System;
 using System.IO;
 using Spectrum.API;
-using Spectrum.API.Interfaces.Systems;
 using Spectrum.Manager.Logging;
 
 namespace Spectrum.Manager.Lua
 {
-    class Executor : IExecutor
+    internal class ScriptExecutor
     {
-        private Loader LuaLoader { get; }
+        private NLua.Lua LuaState { get; }
+        private ScriptLoader LuaLoader { get; }
+
         private SubsystemLog Log { get; }
-        public NLua.Lua Lua { get; set; }
 
-        public Executor(ILoader luaLoader)
+        public ScriptExecutor(NLua.Lua luaState, ScriptLoader luaLoader)
         {
-            LuaLoader = (Loader)luaLoader;
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaExecutorLogFileName));
+            LuaState = luaState;
+            LuaLoader = luaLoader;
+            LuaLoader.StartupScriptsLoaded += LuaLoader_StartupScriptsLoaded;
 
-            InitializeLua();
+            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaExecutorLogFileName));
         }
 
+        private void LuaLoader_StartupScriptsLoaded(object sender, EventArgs e)
+        {
+            Log.Info("Reloading changed files...");
+            ExecuteAllStartupScripts();
+        }
 
         public void Execute(string name)
         {
@@ -30,7 +36,7 @@ namespace Spectrum.Manager.Lua
                 {
                     try
                     {
-                        Lua.DoFile(path);
+                        LuaState.DoFile(path);
                     }
                     catch (Exception ex)
                     {
@@ -40,36 +46,18 @@ namespace Spectrum.Manager.Lua
             }
         }
 
-        public void ExecuteAll()
+        public void ExecuteAllStartupScripts()
         {
             foreach (var path in LuaLoader.ScriptPaths)
             {
                 try
                 {
-                    Lua.DoFile(path);
+                    LuaState.DoFile(path);
                 }
                 catch (Exception ex)
                 {
                     Log.Error($"Failure:\n{ex.Message}\n    Inner: {ex.InnerException?.Message}\n    File: {path}");
                 }
-            }
-        }
-
-        private void InitializeLua()
-        {
-            try
-            {
-                Log.Info("Initializing Lua... ", true);
-                Lua = new NLua.Lua();
-                Lua.LoadCLRPackage();
-
-                var version = (string)Lua.DoString("return _VERSION")[0];
-                Log.WriteLine(version);
-            }
-            catch (Exception ex)
-            {
-                Log.Error("An exception occured while initializing Lua. Check the log for details.");
-                Log.Exception(ex);
             }
         }
     }

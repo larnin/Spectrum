@@ -2,8 +2,7 @@
 {
     public interface IManager
     {
-        ILoader LuaLoader { get; }
-        IExecutor LuaExecutor { get; }
+        IScriptSupport Scripts { get; }
         IHotkeyManager Hotkeys { get; }
     }
 }
