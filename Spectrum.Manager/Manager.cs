@@ -39,11 +39,12 @@ namespace Spectrum.Manager
                 return;
             }
             ManagedDependencyResolver = new ExternalDependencyResolver();
+            Hotkeys = new HotkeyManager(this);
 
             Scripts = new ScriptSupport();
             Scripts.AddGlobalAlias(this, "spectrum.manager");
-
-            Hotkeys = new HotkeyManager(this);
+            Scripts.AddGlobalAlias(Hotkeys, "spectrum.hotkeys");
+            
             InitializeScriptHotkeys();
 
             Scene.Loaded += (sender, args) =>
