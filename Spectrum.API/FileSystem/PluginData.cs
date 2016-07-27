@@ -27,11 +27,37 @@ namespace Spectrum.API.FileSystem
                 File.Create(targetFilePath).Dispose();
                 return targetFilePath;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"API: Couldn't create a PluginData file for path {targetFilePath}. Exception below:\n{ex}");
                 return string.Empty;
             }
+        }
+
+        public FileStream OpenFile(string fileName, FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
+        {
+            var targetFilePath = Path.Combine(DirectoryPath, fileName);
+
+            if (!File.Exists(targetFilePath))
+            {
+                Console.WriteLine($"API: The requested file: '{targetFilePath}' does not exist.");
+                return null;
+            }
+
+            try
+            {
+                return File.Open(targetFilePath, fileMode, fileAccess, fileShare);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"API: Couldn't open a PluginData file for path '{targetFilePath}'. Exception below:\n{ex}");
+                return null;
+            }
+        }
+
+        public FileStream OpenFile(string fileName)
+        {
+            return OpenFile(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
         }
 
         public string CreateDirectory(string directoryName)
@@ -43,7 +69,7 @@ namespace Spectrum.API.FileSystem
                 Directory.CreateDirectory(targetDirectoryPath);
                 return targetDirectoryPath;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"API: Couldn't create a PluginData directory for path {targetDirectoryPath}. Exception below:\n{ex}");
                 return string.Empty;
