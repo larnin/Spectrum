@@ -5,6 +5,11 @@ namespace Spectrum.API.Logging
 {
     public class Logger
     {
+        public ConsoleColor ErrorColor { get; set; } = ConsoleColor.Red;
+        public ConsoleColor WarningColor { get; set; } = ConsoleColor.Yellow;
+        public ConsoleColor InfoColor { get; set; } = ConsoleColor.White;
+        public ConsoleColor ExceptionColor { get; set; } = ConsoleColor.Magenta;
+
         public bool WriteToConsole { get; set; }
         public bool ColorizeLines { get; set; }
 
@@ -22,18 +27,24 @@ namespace Spectrum.API.Logging
         public void Error(string message)
         {
             if (ColorizeLines)
-                Console.ForegroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ErrorColor;
 
             WriteLine($"[!][{DateTime.Now}] {message}");
 
-            if(ColorizeLines)
+            if (ColorizeLines)
                 Console.ResetColor();
+        }
+
+        public void Warning(string message)
+        {
+            if (ColorizeLines)
+                Console.ForegroundColor = WarningColor;
         }
 
         public void Info(string message, bool noNewLine = false)
         {
             if (ColorizeLines)
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = InfoColor;
 
             var msg = $"[i][{DateTime.Now}] {message}";
 
@@ -46,18 +57,18 @@ namespace Spectrum.API.Logging
                 WriteLine(msg);
             }
 
-            if(ColorizeLines)
+            if (ColorizeLines)
                 Console.ResetColor();
         }
 
         public void Exception(Exception e)
         {
             if (ColorizeLines)
-                Console.ForegroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ExceptionColor;
 
             WriteLine($"[e][{DateTime.Now}] {e.Message}");
 
-            if(ColorizeLines)
+            if (ColorizeLines)
                 Console.ResetColor();
 
             WriteLine($"   Target site: {e.TargetSite}");
