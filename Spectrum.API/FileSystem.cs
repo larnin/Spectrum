@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
 
-namespace Spectrum.API.FileSystem
+namespace Spectrum.API
 {
-    public class PluginData
+    public class FileSystem
     {
         public string DirectoryName { get; }
         public string DirectoryPath => Path.Combine(Defaults.PluginDataDirectory, DirectoryName);
 
-        public PluginData(Type type)
+        public FileSystem(Type type)
         {
             DirectoryName = type.Assembly.GetName().Name;
 
@@ -106,6 +106,26 @@ namespace Spectrum.API.FileSystem
             {
                 Console.WriteLine($"API: Couldn't create a PluginData directory for path '{targetDirectoryPath}'. Exception below:\n{ex}");
                 return string.Empty;
+            }
+        }
+
+        public void RemoveDirectory(string directoryName)
+        {
+            var targetDirectoryPath = Path.Combine(DirectoryPath, directoryName);
+
+            if (!Directory.Exists(targetDirectoryPath))
+            {
+                Console.WriteLine($"API: Couldn't remove a PluginData directory for path '{targetDirectoryPath}'. Directory does not exist.");
+                return;
+            }
+
+            try
+            {
+                Directory.Delete(targetDirectoryPath, true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"API: Couldn't remove a PluginData directory for path '{targetDirectoryPath}'. Exception below:\n{ex}");
             }
         }
     }
