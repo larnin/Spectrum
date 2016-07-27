@@ -3,7 +3,7 @@ using System.IO;
 using NLua.Exceptions;
 using Spectrum.API;
 using Spectrum.API.Interfaces.Systems;
-using Spectrum.Manager.Logging;
+using Spectrum.API.Logging;
 
 namespace Spectrum.Manager.Lua
 {
@@ -17,11 +17,14 @@ namespace Spectrum.Manager.Lua
         public ScriptLoader Loader { get; private set; }
         public ScriptExecutor ExecutionEngine { get; private set; }
 
-        public SubsystemLog Log { get; }
+        public Logger Log { get; }
 
         public ScriptSupport()
         {
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaScriptSupportLogFileName));
+            Log = new Logger(Defaults.LuaScriptSupportLogFileName)
+            {
+                WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole")
+            };
 
             InitializeLua();
             LoadBasicPackages();

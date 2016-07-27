@@ -4,8 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Spectrum.API;
 using Spectrum.API.Interfaces.Plugins;
-using Spectrum.Manager.Logging;
-using SystemVersion = Spectrum.API.SystemVersion;
+using Spectrum.API.Logging;
 
 namespace Spectrum.Manager.Managed
 {
@@ -14,7 +13,7 @@ namespace Spectrum.Manager.Managed
         private string PluginDirectory { get; }
         private PluginContainer PluginContainer { get; }
 
-        private SubsystemLog Log { get; }
+        private Logger Log { get; }
 
         private int _loadedPlugins;
 
@@ -23,7 +22,10 @@ namespace Spectrum.Manager.Managed
             PluginDirectory = pluginDirectory;
             PluginContainer = pluginContainer;
 
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.PluginLoaderLogFileName));
+            Log = new Logger(Defaults.PluginLoaderLogFileName)
+            {
+                WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole")
+            };
             Log.Info("Plugin loader starting up...");
         }
 

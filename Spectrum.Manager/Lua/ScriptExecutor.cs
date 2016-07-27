@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Spectrum.API;
-using Spectrum.Manager.Logging;
+using Spectrum.API.Logging;
 
 namespace Spectrum.Manager.Lua
 {
@@ -10,7 +10,7 @@ namespace Spectrum.Manager.Lua
         private NLua.Lua LuaState { get; }
         private ScriptLoader LuaLoader { get; }
 
-        private SubsystemLog Log { get; }
+        private Logger Log { get; }
 
         public ScriptExecutor(NLua.Lua luaState, ScriptLoader luaLoader)
         {
@@ -18,7 +18,10 @@ namespace Spectrum.Manager.Lua
             LuaLoader = luaLoader;
             LuaLoader.StartupScriptsLoaded += LuaLoader_StartupScriptsLoaded;
 
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaExecutorLogFileName));
+            Log = new Logger(Defaults.LuaExecutorLogFileName)
+            {
+                WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole")
+            };
         }
 
         private void LuaLoader_StartupScriptsLoaded(object sender, EventArgs e)

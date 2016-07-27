@@ -4,7 +4,7 @@ using System.IO;
 using Spectrum.API;
 using Spectrum.API.Input;
 using Spectrum.API.Interfaces.Systems;
-using Spectrum.Manager.Logging;
+using Spectrum.API.Logging;
 
 namespace Spectrum.Manager.Input
 {
@@ -13,7 +13,7 @@ namespace Spectrum.Manager.Input
         private Dictionary<Hotkey, Action> ActionHotkeys { get; }
         private Dictionary<Hotkey, string> ScriptHotkeys { get; }
 
-        private SubsystemLog Log { get; }
+        private Logger Log { get; }
         private Manager Manager { get; }
 
         public HotkeyManager(Manager manager)
@@ -21,7 +21,10 @@ namespace Spectrum.Manager.Input
             ActionHotkeys = new Dictionary<Hotkey, Action>();
             ScriptHotkeys = new Dictionary<Hotkey, string>();
 
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.HotkeyManagerLogFileName));
+            Log = new Logger(Defaults.HotkeyManagerLogFileName)
+            {
+                WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole")
+            };
             Manager = manager;
         }
 

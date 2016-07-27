@@ -1,29 +1,40 @@
 using System;
 using System.IO;
 
-namespace Spectrum.Manager.Logging
+namespace Spectrum.API.Logging
 {
-    class SubsystemLog
+    public class Logger
     {
-        private string FilePath { get; }
-        private bool WriteToConsole { get; }
+        public bool WriteToConsole { get; set; }
+        public bool ColorizeLines { get; set; }
 
-        public SubsystemLog(string filePath)
+        private string FilePath { get; }
+
+        public Logger(string filePath)
         {
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
-            FilePath = filePath;
-            WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole");
+            ColorizeLines = true;
+            FilePath = Path.Combine(Defaults.LogDirectory, filePath);
         }
 
         public void Error(string message)
         {
+            if (ColorizeLines)
+                Console.ForegroundColor = ConsoleColor.Red;
+
             WriteLine($"[!][{DateTime.Now}] {message}");
+
+            if(ColorizeLines)
+                Console.ResetColor();
         }
 
         public void Info(string message, bool noNewLine = false)
         {
+            if (ColorizeLines)
+                Console.ForegroundColor = ConsoleColor.White;
+
             var msg = $"[i][{DateTime.Now}] {message}";
 
             if (noNewLine)
@@ -34,11 +45,21 @@ namespace Spectrum.Manager.Logging
             {
                 WriteLine(msg);
             }
+
+            if(ColorizeLines)
+                Console.ResetColor();
         }
 
         public void Exception(Exception e)
         {
+            if (ColorizeLines)
+                Console.ForegroundColor = ConsoleColor.Red;
+
             WriteLine($"[e][{DateTime.Now}] {e.Message}");
+
+            if(ColorizeLines)
+                Console.ResetColor();
+
             WriteLine($"   Target site: {e.TargetSite}");
             WriteLine("   Stack trace:");
             foreach (var s in e.StackTrace.Split('\n'))

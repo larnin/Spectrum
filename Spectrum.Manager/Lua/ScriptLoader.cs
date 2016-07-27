@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Spectrum.API;
-using Spectrum.Manager.Logging;
+using Spectrum.API.Logging;
 
 namespace Spectrum.Manager.Lua
 {
     public class ScriptLoader
     {
-        private SubsystemLog Log { get; }
+        private Logger Log { get; }
         private FileSystemWatcher ScriptChangeWatcher { get; }
 
         public string ScriptFolder { get; }
@@ -37,7 +37,10 @@ namespace Spectrum.Manager.Lua
             ScriptFolder = scriptFolder;
             OnDemandScriptFolder = onDemandScriptFolder;
 
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.LuaLoaderLogFileName));
+            Log = new Logger(Defaults.LuaLoaderLogFileName)
+            {
+                WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole")
+            };
             Log.Info("Lua loader starting up...");
         }
 

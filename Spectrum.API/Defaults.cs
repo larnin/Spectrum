@@ -21,5 +21,6 @@ namespace Spectrum.API
         public const string LuaLoaderLogFileName = "LuaLoader.log";
         public const string PluginLoaderLogFileName = "PluginLoader.log";
         public const string DependencyResolverLogFileName = "DependencyResolver.log";
+        public const string FileSystemLogFileName = "FileSystem.log";
     }
 }

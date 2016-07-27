@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Spectrum.API.Logging;
 
 namespace Spectrum.API
 {
@@ -7,6 +8,13 @@ namespace Spectrum.API
     {
         public string DirectoryName { get; }
         public string DirectoryPath => Path.Combine(Defaults.PluginDataDirectory, DirectoryName);
+
+        private static Logger Log { get; set; }
+
+        static FileSystem()
+        {
+            Log = new Logger(Defaults.FileSystemLogFileName);
+        }
 
         public FileSystem(Type type)
         {
@@ -30,7 +38,7 @@ namespace Spectrum.API
                 }
                 else
                 {
-                    Console.WriteLine($"API: Couldn't create a PluginData file for path '{targetFilePath}'. The file already exists.");
+                    Log.Error($"Couldn't create a PluginData file for path '{targetFilePath}'. The file already exists.");
                     return string.Empty;
                 }
             }
@@ -42,7 +50,8 @@ namespace Spectrum.API
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"API: Couldn't create a PluginData file for path {targetFilePath}. Exception below:\n{ex}");
+                Log.Error($"Couldn't create a PluginData file for path '{targetFilePath}'.");
+                Log.Exception(ex);
                 return string.Empty;
             }
         }
@@ -53,7 +62,7 @@ namespace Spectrum.API
 
             if (!File.Exists(targetFilePath))
             {
-                Console.WriteLine($"API: Couldn't delete a PluginData file for path '{targetFilePath}'. File does not exist.");
+                Log.Error($"Couldn't delete a PluginData file for path '{targetFilePath}'. File does not exist.");
                 return;
             }
 
@@ -63,7 +72,8 @@ namespace Spectrum.API
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"API: Couldn't delete a PluginData file for path '{targetFilePath}'. Exception below:\n{ex}");
+                Log.Error($"Couldn't delete a PluginData file for path '{targetFilePath}'.");
+                Log.Exception(ex);
             }
         }
 
@@ -73,7 +83,7 @@ namespace Spectrum.API
 
             if (!File.Exists(targetFilePath))
             {
-                Console.WriteLine($"API: The requested file: '{targetFilePath}' does not exist.");
+                Log.Error($"Couldn't open the file. The requested file: '{targetFilePath}' does not exist.");
                 return null;
             }
 
@@ -83,7 +93,9 @@ namespace Spectrum.API
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"API: Couldn't open a PluginData file for path '{targetFilePath}'. Exception below:\n{ex}");
+                Log.Error($"Couldn't open a PluginData file for path '{targetFilePath}'.");
+                Log.Exception(ex);
+
                 return null;
             }
         }
@@ -104,7 +116,8 @@ namespace Spectrum.API
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"API: Couldn't create a PluginData directory for path '{targetDirectoryPath}'. Exception below:\n{ex}");
+                Log.Error($"Couldn't create a PluginData directory for path '{targetDirectoryPath}'.");
+                Log.Exception(ex);
                 return string.Empty;
             }
         }
@@ -115,7 +128,7 @@ namespace Spectrum.API
 
             if (!Directory.Exists(targetDirectoryPath))
             {
-                Console.WriteLine($"API: Couldn't remove a PluginData directory for path '{targetDirectoryPath}'. Directory does not exist.");
+                Log.Error($"Couldn't remove a PluginData directory for path '{targetDirectoryPath}'. Directory does not exist.");
                 return;
             }
 
@@ -125,7 +138,8 @@ namespace Spectrum.API
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"API: Couldn't remove a PluginData directory for path '{targetDirectoryPath}'. Exception below:\n{ex}");
+                Log.Error($"Couldn't remove a PluginData directory for path '{targetDirectoryPath}'.");
+                Log.Exception(ex);
             }
         }
     }

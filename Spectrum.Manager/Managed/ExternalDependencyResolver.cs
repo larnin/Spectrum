@@ -3,17 +3,20 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Spectrum.API;
-using Spectrum.Manager.Logging;
+using Spectrum.API.Logging;
 
 namespace Spectrum.Manager.Managed
 {
     internal class ExternalDependencyResolver
     {
-        private SubsystemLog Log { get; }
+        private Logger Log { get; }
 
         internal ExternalDependencyResolver()
         {
-            Log = new SubsystemLog(Path.Combine(Defaults.LogDirectory, Defaults.DependencyResolverLogFileName));
+            Log = new Logger(Defaults.DependencyResolverLogFileName)
+            {
+                WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole")
+            };
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             Log.Info("External dependency resolver initialized.");

@@ -41,7 +41,6 @@
   <ItemGroup>
     <Compile Include="Global.cs" />
     <Compile Include="Input\HotkeyManager.cs" />
-    <Compile Include="Logging\SubsystemLog.cs" />
     <Compile Include="Lua\ScriptExecutor.cs" />
     <Compile Include="Lua\ScriptLoader.cs" />
     <Compile Include="Lua\ScriptSupport.cs" />
