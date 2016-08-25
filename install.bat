@@ -14,3 +14,5 @@ if exist "%DISTANCE_PATH%\Distance_Data\Spectrum\Spectrum.API.dll" (
 	del /S /Q "%DISTANCE_PATH%\Distance_Data\Spectrum\Spectrum.API.dll"
 )
 copy "%~dp0\Spectrum.API\bin\Debug\Spectrum.API.dll" "%DISTANCE_PATH%\Distance_Data\Spectrum\Spectrum.API.dll"
+
+set ERRORLEVEL=0
