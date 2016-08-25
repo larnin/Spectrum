@@ -6,7 +6,6 @@ using Spectrum.API.Game;
 using Spectrum.API.Interfaces.Plugins;
 using Spectrum.API.Interfaces.Systems;
 using Spectrum.Manager.Input;
-using Spectrum.Manager.Lua;
 using Spectrum.Manager.Managed;
 
 namespace Spectrum.Manager
@@ -17,10 +16,7 @@ namespace Spectrum.Manager
         private PluginLoader ManagedPluginLoader { get; set; }
         private ExternalDependencyResolver ManagedDependencyResolver { get; set; }
 
-        private Settings ScriptHotkeySettings { get; set; }
-
         public IHotkeyManager Hotkeys { get; set; }
-        public IScriptSupport Scripts { get; set; }
 
         public bool IsEnabled { get; set; }
         public bool CanLoadPlugins => Directory.Exists(Defaults.PluginDirectory);
@@ -40,13 +36,7 @@ namespace Spectrum.Manager
             }
             ManagedDependencyResolver = new ExternalDependencyResolver();
             Hotkeys = new HotkeyManager(this);
-
-            Scripts = new ScriptSupport();
-            Scripts.AddGlobalAlias(this, "spectrum.manager");
-            Scripts.AddGlobalAlias(Hotkeys, "spectrum.hotkeys");
             
-            InitializeScriptHotkeys();
-
             Scene.Loaded += (sender, args) =>
             {
                 Game.ShowWatermark = Global.Settings.GetValue<bool>("ShowWatermark");
@@ -78,18 +68,6 @@ namespace Spectrum.Manager
                 Directory.CreateDirectory(Defaults.LogDirectory);
             }
 
-            if (!Directory.Exists(Defaults.ScriptDirectory))
-            {
-                Console.WriteLine("Lua autoload script directory does not exist. Creating...");
-                Directory.CreateDirectory(Defaults.ScriptDirectory);
-            }
-
-            if (!Directory.Exists(Defaults.OnDemandScriptDirectory))
-            {
-                Console.WriteLine("Lua on-demand script directory does not exist. Creating...");
-                Directory.CreateDirectory(Defaults.OnDemandScriptDirectory);
-            }
-
             if (!Directory.Exists(Defaults.PluginDataDirectory))
             {
                 Console.WriteLine("Plugin data directory does not exist. Creating...");
@@ -111,7 +89,6 @@ namespace Spectrum.Manager
 
         public void UpdateExtensions()
         {
-            /* to prevent null references from bootstrap calls when manager is disabled */
             if (!IsEnabled)
                 return;
 
@@ -156,26 +133,6 @@ namespace Spectrum.Manager
             Global.Settings["Enabled"] = "true";
 
             Global.Settings.Save();
-        }
-
-        private void InitializeScriptHotkeys()
-        {
-            try
-            {
-                ScriptHotkeySettings = new Settings(typeof(Manager), "Hotkeys");
-
-                foreach (var s in ScriptHotkeySettings)
-                {
-                    if (!string.IsNullOrEmpty(s.Key) && !string.IsNullOrEmpty(s.Value))
-                    {
-                        Hotkeys.Bind(s.Key, s.Value);
-                    }
-                }
-            }
-            catch
-            {
-                Console.WriteLine("MANAGER: Couldn't load script hotkeys.");
-            }
         }
 
         private void LoadExtensions()

@@ -2,7 +2,6 @@
 {
     public interface IManager
     {
-        IScriptSupport Scripts { get; }
         IHotkeyManager Hotkeys { get; }
     }
 }

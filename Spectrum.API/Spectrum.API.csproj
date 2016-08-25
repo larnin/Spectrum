@@ -90,7 +90,6 @@
     <Compile Include="Interfaces\Plugins\IUpdatable.cs" />
     <Compile Include="Interfaces\Systems\IHotkeyManager.cs" />
     <Compile Include="Interfaces\Systems\IManager.cs" />
-    <Compile Include="Interfaces\Systems\IScriptSupport.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Utilities\Interop.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
