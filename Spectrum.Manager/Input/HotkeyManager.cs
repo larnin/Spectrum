@@ -12,17 +12,15 @@ namespace Spectrum.Manager.Input
         private Dictionary<Hotkey, Action> ActionHotkeys { get; }
 
         private Logger Log { get; }
-        private Manager Manager { get; }
 
-        public HotkeyManager(Manager manager)
+        public HotkeyManager()
         {
             ActionHotkeys = new Dictionary<Hotkey, Action>();
 
             Log = new Logger(Defaults.HotkeyManagerLogFileName)
             {
-                WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole")
+                WriteToConsole = Global.Settings.GetSection("Output").GetValue<bool>("LogToConsole")
             };
-            Manager = manager;
         }
 
         public void Bind(Hotkey hotkey, Action action)

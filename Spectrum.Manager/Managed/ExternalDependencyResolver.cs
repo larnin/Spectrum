@@ -15,7 +15,7 @@ namespace Spectrum.Manager.Managed
         {
             Log = new Logger(Defaults.DependencyResolverLogFileName)
             {
-                WriteToConsole = Global.Settings.GetValue<bool>("LogToConsole")
+                WriteToConsole = Global.Settings.GetSection("Output").GetValue<bool>("LogToConsole")
             };
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 

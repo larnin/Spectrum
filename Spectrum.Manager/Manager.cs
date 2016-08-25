@@ -28,18 +28,18 @@ namespace Spectrum.Manager
             CheckPaths();
             InitializeSettings();
 
-            if (!Global.Settings.GetValue<bool>("Enabled"))
+            if (!Global.Settings.GetSection("Execution").GetValue<bool>("Enabled"))
             {
                 Console.WriteLine("Manager: Spectrum is disabled. Set 'Enabled' entry to 'true' in settings to restore extension framework functionality.");
                 IsEnabled = false;
                 return;
             }
             ManagedDependencyResolver = new ExternalDependencyResolver();
-            Hotkeys = new HotkeyManager(this);
-            
+            Hotkeys = new HotkeyManager();
+
             Scene.Loaded += (sender, args) =>
             {
-                Game.ShowWatermark = Global.Settings.GetValue<bool>("ShowWatermark");
+                Game.ShowWatermark = Global.Settings.GetSection("Output").GetValue<bool>("ShowWatermark");
 
                 if (Game.ShowWatermark)
                 {
@@ -47,7 +47,7 @@ namespace Spectrum.Manager
                 }
             };
 
-            if (Global.Settings.GetValue<bool>("LoadPlugins"))
+            if (Global.Settings.GetSection("Execution").GetValue<bool>("LoadPlugins"))
             {
                 LoadExtensions();
                 StartExtensions();
@@ -112,9 +112,44 @@ namespace Spectrum.Manager
             try
             {
                 Global.Settings = new Settings(typeof(Manager));
-                if (Global.Settings["FirstRun"] == string.Empty || Global.Settings.GetValue<bool>("FirstRun"))
+
+                if (!Global.Settings.SectionExists("Output"))
                 {
                     RecreateSettings();
+                }
+                else
+                {
+                    if (!Global.Settings.GetSection("Output").ValueExists("LogToConsole"))
+                    {
+                        Global.Settings.GetSection("Output")["LogToConsole"] = true;
+                    }
+
+                    if (!Global.Settings.GetSection("Output").ValueExists("ShowWatermark"))
+                    {
+                        Global.Settings.GetSection("Output")["ShowWatermark"] = true;
+                    }
+                }
+
+                if (!Global.Settings.SectionExists("Execution"))
+                {
+                    RecreateSettings();
+                }
+                else
+                {
+                    if (!Global.Settings.GetSection("Execution").ValueExists("FirstRun"))
+                    {
+                        Global.Settings.GetSection("Execution")["FirstRun"] = false;
+                    }
+
+                    if (!Global.Settings.GetSection("Execution").ValueExists("LoadPlugins"))
+                    {
+                        Global.Settings.GetSection("Execution")["LoadPlugins"] = true;
+                    }
+
+                    if (!Global.Settings.GetSection("Execution").ValueExists("Enabled"))
+                    {
+                        Global.Settings.GetSection("Execution")["Enabled"] = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -125,14 +160,17 @@ namespace Spectrum.Manager
 
         private void RecreateSettings()
         {
-            Global.Settings["FirstRun"] = "false";
-            Global.Settings["LoadPlugins"] = "true";
-            Global.Settings["LoadScripts"] = "true";
-            Global.Settings["LogToConsole"] = "true";
-            Global.Settings["ShowWatermark"] = "true";
-            Global.Settings["Enabled"] = "true";
+            Global.Settings.Values.Clear();
+            Global.Settings.Sections.Clear();
 
-            Global.Settings.Save();
+            Global.Settings.AddSection("Output")["LogToConsole"] = true;
+            Global.Settings.GetSection("Output")["ShowWatermark"] = true;
+
+            Global.Settings.AddSection("Execution")["FirstRun"] = false;
+            Global.Settings.GetSection("Execution")["LoadPlugins"] = true;
+            Global.Settings.GetSection("Execution")["Enabled"] = true;
+
+            Global.Settings.Save(true);
         }
 
         private void LoadExtensions()

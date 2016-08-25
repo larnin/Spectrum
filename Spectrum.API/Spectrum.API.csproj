@@ -38,6 +38,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Spectrum.Dependencies\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="JsonFx, Version=2.0.1209.2802, Culture=neutral, PublicKeyToken=315052dd637f8a52, processorArchitecture=MSIL">
+      <HintPath>..\packages\JsonFx.2.0.1209.2802\lib\net35\JsonFx.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -46,8 +50,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="APILevel.cs" />
+    <Compile Include="Configuration\Section.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Defaults.cs" />
+    <Compile Include="Exceptions\SettingsException.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="Game\Audio.cs" />
     <Compile Include="Game\EventArgs\Audio\CustomMusicChangedEventArgs.cs" />
@@ -98,7 +104,9 @@
     <Compile Include="Utilities\Utilities.cs" />
     <Compile Include="SystemVersion.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
