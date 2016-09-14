@@ -17,13 +17,23 @@ namespace ServerMod
 
         public void Initialize(IManager manager)
         {
-            Chat.MessageSent += Chat_MessageSent;
-            Chat.MessageReceived += Chat_MessageReceived;
+            Events.Local.ChatSubmitMessage.Subscribe(data =>
+            {
+                Chat_MessageSent(G.Sys.PlayerManager_.Current_.profile_.Name_, data.message_);
+            });
+
+            Events.ClientToAllClients.ChatMessage.Subscribe(data =>
+            {
+                var author = ExtractMessageAuthor(data.message_);
+
+                if (author != G.Sys.PlayerManager_.Current_.profile_.Name_ && !IsSystemMessage(data.message_))
+                    Chat_MessageReceived(author, ExtractMessageBody(data.message_));
+            });
         }
 
-        private void Chat_MessageSent(object sender, Spectrum.API.Game.EventArgs.Network.ChatMessageEventArgs e)
+        private void Chat_MessageSent(string author, string message)
         {
-            if (!e.Message.StartsWith("!"))
+            if (!message.StartsWith("!"))
                 return;
 
             var client = Utilities.localClient();
@@ -33,8 +43,8 @@ namespace ServerMod
                 return;
             }
 
-            int pos = e.Message.IndexOf(' ');
-            string commandName = (pos > 0 ? e.Message.Substring(1, e.Message.IndexOf(' ')) : e.Message).Trim();
+            int pos = message.IndexOf(' ');
+            string commandName = (pos > 0 ? message.Substring(1, message.IndexOf(' ')) : message).Trim();
             cmd c = cmd.all.getCommand(commandName);
             if (c == null)
                 return;
@@ -42,23 +52,23 @@ namespace ServerMod
             if(!Utilities.isHost() && !c.canUseAsClient && c.perm != PermType.LOCAL)
                 return;
 
-            exec(c, client, pos > 0 ? e.Message.Substring(pos + 1).Trim() : "");
+            exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
         }
 
-        private void Chat_MessageReceived(object sender, Spectrum.API.Game.EventArgs.Network.ChatMessageEventArgs e)
+        private void Chat_MessageReceived(string author, string message)
         {
-            if (!e.Message.StartsWith("!"))
+            if (!message.StartsWith("!"))
                 return;
 
-            var client = Utilities.clientFromName(e.Author);
+            var client = Utilities.clientFromName(author);
             if (client == null)
             {
                 Utilities.sendMessage("Error: client can't be found");
                 return;
             }
                 
-            int pos = e.Message.IndexOf(' ');
-            string commandName = (pos > 0 ? e.Message.Substring(1, e.Message.IndexOf(' ')) : e.Message).Trim();
+            int pos = message.IndexOf(' ');
+            string commandName = (pos > 0 ? message.Substring(1, message.IndexOf(' ')) : message).Trim();
             cmd c = cmd.all.getCommand(commandName);
 
             if (c == null)
@@ -76,7 +86,7 @@ namespace ServerMod
                 return;
             }
 
-            exec(c, client, pos > 0 ? e.Message.Substring(pos + 1).Trim() : "");
+            exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
         }
 
         private void exec(cmd c, ClientPlayerInfo p, string message)
@@ -95,6 +105,43 @@ namespace ServerMod
         public void Shutdown()
         {
             
+        }
+
+        //take from newer spectrum version (stable can't use messages events)
+        private static string ExtractMessageAuthor(string message)
+        {
+            try
+            {
+                // 1. [xxxxxx]user[xxxxxx]: adfsafasf
+                var withoutFirstColorTag = message.Substring(message.IndexOf(']') + 1, message.Length - message.IndexOf(']') - 1);
+                // 2. user[xxxxxx]: adfsafasf
+                var withoutSecondColorTag = withoutFirstColorTag.Substring(0, withoutFirstColorTag.IndexOf('['));
+                // 3. user
+
+                return withoutSecondColorTag;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        private static bool IsSystemMessage(string message)
+        {
+            return message.Contains("[c]") && message.Contains("[/c]");
+        }
+
+        private static string ExtractMessageBody(string message)
+        {
+            try
+            {
+                // 1. [xxxxxx]user[xxxxxx]: body
+                return message.Substring(message.IndexOf(':') + 1).Trim();
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 __!! ServerMod only work on the current stable version 4491 !!__
 
-ServerMod is a plugin that adds some commands to the server, accessible by the host and players.\
+ServerMod is a plugin that adds some commands to the server, accessible by the host and players.  
 All the commands are prefixed by '!'.
 
 Commands have 3 permission levels:

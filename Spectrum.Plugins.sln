@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TutorialPlugin", "TutorialP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicSwitcher", "MusicSwitcher\MusicSwitcher.csproj", "{157E50C7-395B-45C4-A70D-85E44305147B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMod", "ServerMod\ServerMod.csproj", "{7EE4C9FC-1060-486E-86E4-5FB8FEF570FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{157E50C7-395B-45C4-A70D-85E44305147B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{157E50C7-395B-45C4-A70D-85E44305147B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{157E50C7-395B-45C4-A70D-85E44305147B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE4C9FC-1060-486E-86E4-5FB8FEF570FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE4C9FC-1060-486E-86E4-5FB8FEF570FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE4C9FC-1060-486E-86E4-5FB8FEF570FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE4C9FC-1060-486E-86E4-5FB8FEF570FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
