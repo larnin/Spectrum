@@ -19,14 +19,11 @@ namespace ServerMod.cmds
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if (message == "")
+            if (message == "" || !Utilities.isHost() || p == null)
             {
                 Utilities.sendMessage(G.Sys.NetworkingManager_.serverTitle_);
                 return;
             }
-
-            if (!Utilities.isHost() || p == null)
-                return;
 
             if(!p.IsLocal_)
             {

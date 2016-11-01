@@ -25,6 +25,12 @@ namespace ServerMod.cmds
             {
                 onCountdownStop();
             });
+
+            Events.Server.StartClientLate.Subscribe(data =>
+            {
+                if (Utilities.isOnline() && Utilities.isHost())
+                    onClientJoin(data.client_);
+            });
         }
 
         public override void help(ClientPlayerInfo p)
@@ -81,6 +87,15 @@ namespace ServerMod.cmds
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
+        private void onClientJoin(NetworkPlayer client)
+        {
+            if(!countdownStarted)
+                return;
+            int finalTime = (int)((countdownEndTime - DateTime.Now).TotalSeconds);
+            if (finalTime > 0)
+                StaticTargetedEvent<FinalCountdownActivate.Data>.Broadcast(client, new FinalCountdownActivate.Data(Timex.ModeTime_ + finalTime, finalTime));
+        }
+
         private void onModeFinish()
         {
             countdownStarted = false;
@@ -92,9 +107,12 @@ namespace ServerMod.cmds
                 return;
 
             int finalTime = (int)((countdownEndTime - DateTime.Now).TotalSeconds);
-            if(finalTime > 0)
+            if (finalTime > 0)
+            {
                 StaticTargetedEvent<FinalCountdownActivate.Data>.Broadcast(RPCMode.All, new FinalCountdownActivate.Data(Timex.ModeTime_ + finalTime, finalTime));
-            Utilities.sendMessage("Final countdown stoped");
+                return;
+            }
+            Utilities.sendMessage("Final countdown stopped");
         }
     }
 }

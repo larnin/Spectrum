@@ -9,23 +9,6 @@ namespace ServerMod
 {
     static class Utilities
     {
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
-            int n = list.Count*4;
-            while (n > 1)
-            {
-                byte[] box = new byte[1];
-                do provider.GetBytes(box);
-                while (!(box[0] < n * (Byte.MaxValue / n)));
-                int k = (box[0] % n);
-                n--;
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
-            }
-        }
-
         public static void sendMessage(string message)
         {
             //StaticEvent<ChatSubmitMessage.Data>.Broadcast(new ChatSubmitMessage.Data(message));
@@ -34,6 +17,11 @@ namespace ServerMod
             StaticTransceivedEvent<ChatMessage.Data>.Broadcast(new ChatMessage.Data((message).Colorize("[AAAAAA]")));
 #pragma warning restore CS0618 // Type or member is obsolete
                               //Console.WriteLine("Log : " + message);
+        }
+
+        public static bool isOnline()
+        {
+            return G.Sys.NetworkingManager_.IsOnline_;
         }
 
         public static bool isHost()

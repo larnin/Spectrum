@@ -46,7 +46,9 @@ namespace ServerMod.cmds
 
         private void onModeStart()
         {
-            if(autoSpecMode)
+            if (!Utilities.isOnline())
+                autoSpecMode = false;
+            if (autoSpecMode)
                 G.Sys.GameManager_.StartCoroutine(spectate());
         }
 

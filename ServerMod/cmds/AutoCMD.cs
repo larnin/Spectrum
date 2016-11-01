@@ -61,6 +61,8 @@ namespace ServerMod.cmds
 
         private void onModeStart()
         {
+            if (!Utilities.isOnline())
+                autoMode = false;
             index++;
             if (autoMode)
                 G.Sys.GameManager_.StartCoroutine(waitUtilEnd());

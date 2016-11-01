@@ -21,12 +21,19 @@ namespace ServerMod.cmds
             var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_.Playlist_;
             int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
 
+            if(index >= currentPlaylist.Count)
+            {
+                Utilities.sendMessage("There are no levels in the playlist !");
+                return;
+            }
+
             Utilities.sendMessage("Current and nexts levels:");
             for(int i = 0; i < maxLvls ; i++)
             {
-                if (i + index > currentPlaylist.Count)
+                if (i + index >= currentPlaylist.Count)
                     break;
-                Utilities.sendMessage(currentPlaylist[i + index].levelNameAndPath_.levelName_);
+                var map = currentPlaylist[i + index];
+                Utilities.sendMessage(map.levelNameAndPath_.levelName_ + " (" + G.Sys.GameManager_.GetModeName(map.mode_) + ")");
             }
 
             int moreCount = currentPlaylist.Count - (index + maxLvls);

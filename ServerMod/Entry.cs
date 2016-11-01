@@ -14,6 +14,9 @@ namespace ServerMod
         public string Author => "Nico";
         public string Contact => "SteamID: larnin";
         public APILevel CompatibleAPILevel => APILevel.MicroWave;
+        public string PluginVersion = "V0.2";
+
+        //private List<string> hostCommands = new List<string>();
 
         public void Initialize(IManager manager)
         {
@@ -25,40 +28,73 @@ namespace ServerMod
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
             {
                 var author = ExtractMessageAuthor(data.message_);
+                var steamName = G.Sys.Steamworks_.GetUserName().ToLower().Trim();
+                var profileName = G.Sys.PlayerManager_.Current_.profile_.Name_.ToLower().Trim();
 
-                if (author != G.Sys.PlayerManager_.Current_.profile_.Name_ && !IsSystemMessage(data.message_))
+                if (!IsSystemMessage(data.message_) && (author.ToLower().Trim() != steamName && author.ToLower().Trim() != profileName))
                     Chat_MessageReceived(author, ExtractMessageBody(data.message_));
             });
         }
 
         private void Chat_MessageSent(string author, string message)
         {
-            if (!message.StartsWith("!"))
-                return;
-
             var client = Utilities.localClient();
-            if(client == null)
-            {
+            if (client == null)
                 Console.WriteLine("Error: Local client can't be found !");
-                return;
+
+            if (message.StartsWith("%"))
+            {
+                if (Utilities.isHost())
+                    return;
+
+                int pos = message.IndexOf(' ');
+                string commandName = (pos > 0 ? message.Substring(1, message.IndexOf(' ')) : message.Substring(1).Trim());
+                cmd c = cmd.all.getCommand(commandName);
+                if (!c.canUseAsClient && c.perm != PermType.LOCAL)
+                {
+                    Utilities.sendMessage("You can't use that command as client");
+                    return;
+                }
+
+                exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
             }
+            else
+            {
+                if (!message.StartsWith("!"))
+                    return;
 
-            int pos = message.IndexOf(' ');
-            string commandName = (pos > 0 ? message.Substring(1, message.IndexOf(' ')) : message).Trim();
-            cmd c = cmd.all.getCommand(commandName);
-            if (c == null)
-                return;
+                if (message.ToLower().Trim() == "!plugin")
+                {
+                    printClient();
+                    return;
+                }
 
-            if(!Utilities.isHost() && !c.canUseAsClient && c.perm != PermType.LOCAL)
-                return;
+                if (!Utilities.isHost())
+                    return;
 
-            exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
+                int pos = message.IndexOf(' ');
+                string commandName = (pos > 0 ? message.Substring(1, message.IndexOf(' ')) : message.Substring(1)).Trim();
+                cmd c = cmd.all.getCommand(commandName);
+                if (c == null)
+                {
+                    Utilities.sendMessage("The command '" + commandName + "' don't exist.");
+                    return;
+                }
+
+                exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
+            }
         }
 
         private void Chat_MessageReceived(string author, string message)
         {
             if (!message.StartsWith("!"))
                 return;
+
+            if (message.ToLower().Trim() == "!plugin")
+            {
+                printClient();
+                return;
+            }
 
             var client = Utilities.clientFromName(author);
             if (client == null)
@@ -118,7 +154,7 @@ namespace ServerMod
                 var withoutSecondColorTag = withoutFirstColorTag.Substring(0, withoutFirstColorTag.IndexOf('['));
                 // 3. user
 
-                return withoutSecondColorTag;
+                return withoutSecondColorTag.Trim();
             }
             catch
             {
@@ -142,6 +178,11 @@ namespace ServerMod
             {
                 return string.Empty;
             }
+        }
+
+        private void printClient()
+        {
+            Utilities.sendMessage(Utilities.localClient().GetChatName() + " " + PluginVersion);
         }
     }
 }

@@ -17,21 +17,21 @@ namespace ServerMod
             cmds.Add(new HelpCMD());
             cmds.Add(new LevelCMD());
             cmds.Add(new ListCMD());
-            cmds.Add(new NameCMD());
+            //cmds.Add(new NameCMD()); // not supported
             cmds.Add(new PlayCMD());
             cmds.Add(new PlaylistCMD());
+            cmds.Add(new PluginCMD());
             cmds.Add(new ScoresCMD());
             cmds.Add(new ServerCMD());
             cmds.Add(new ShuffleCMD());
             cmds.Add(new SpecCMD());
+            cmds.Add(new TimelimitCMD());
         }
 
         public cmd getCommand(string name)
         {
             if (name.Length == 0)
                 return null;
-            if (name.StartsWith("!"))
-                name = name.Substring(1);
             name = name.ToLower();
 
             foreach(cmd c in cmds)

@@ -24,6 +24,13 @@ namespace ServerMod.cmds
                 help(p);
                 return;
             }
+
+            if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
+            {
+                Utilities.sendMessage("You can't manage the playlist in trackmogrify");
+                return;
+            }
+
             int id = 0;
             int.TryParse(message, out id);
 

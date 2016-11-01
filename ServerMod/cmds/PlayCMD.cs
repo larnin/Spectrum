@@ -16,6 +16,9 @@ namespace ServerMod.cmds
         public override void help(ClientPlayerInfo p)
         {
             Utilities.sendMessage("!play [lvl name]: Adds a level to the playlist as the next to be played.");
+            Utilities.sendMessage("!play [filter] : Use filters to find a level");
+            Utilities.sendMessage("Valid filters : -mode -m -name -n -author -a -index -i -all");
+            Utilities.sendMessage("The level must be know by the server to be show");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -32,38 +35,24 @@ namespace ServerMod.cmds
                 return;
             }
 
-            var set = G.Sys.LevelSets_.GetSet(G.Sys.GameManager_.ModeID_);
-            var list = set.GetAllLevelNameAndPathPairs();
-
-            List<LevelNameAndPathPair> validLevels = new List<LevelNameAndPathPair>();
-
-            foreach(var lvl in list)
+            if(G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                if(lvl.levelName_.ToLower() == message.ToLower())
-                {
-                    validLevels.Clear();
-                    validLevels.Add(lvl);
-                    break;
-                }
-                if (lvl.levelName_.ToLower().Contains(message.ToLower()))
-                    validLevels.Add(lvl);
-            }
-
-            if(validLevels.Count == 0)
-            {
-                Utilities.sendMessage("Can't find a level with the name '" + message + "'.");
+                Utilities.sendMessage("You can't manage the playlist in trackmogrify");
                 return;
             }
 
-            if(validLevels.Count > 1)
-            {
-                Utilities.sendMessage(validLevels.Count + " levels found :");
+            Modifiers m = LevelList.extractModifiers(message);
+            var list = LevelList.levels(m);
 
-                const int maxLvl = 10;
-                for (int i = 0 ; i < Math.Min(validLevels.Count, maxLvl) ; i++)
-                    Utilities.sendMessage(validLevels[i].levelName_);
-                if (validLevels.Count > maxLvl)
-                    Utilities.sendMessage("And " + (validLevels.Count - maxLvl) + " more ...");
+            if(list.Count == 0)
+            {
+                Utilities.sendMessage("Can't find a level with the filter '" + message + "'.");
+                return;
+            }
+
+            if(!m.all && list.Count() > 1 && m.index.Count == 0)
+            {
+                LevelList.printLevels(list, 10, true);
                 return;
             }
 
@@ -72,14 +61,20 @@ namespace ServerMod.cmds
 
             var currentPlaylist = playlist.Playlist_;
             int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
-            currentPlaylist.Insert(index+1, new LevelPlaylist.ModeAndLevelInfo(G.Sys.GameManager_.ModeID_, validLevels[0]));
+            Utilities.Shuffle(list, new Random());
+            foreach (var lvl in list)
+                currentPlaylist.Insert(index + 1, lvl);
             G.Sys.GameManager_.LevelPlaylist_.Clear();
 
             foreach (var lvl in currentPlaylist)
                 G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
             G.Sys.GameManager_.LevelPlaylist_.SetIndex(index);
 
-            Utilities.sendMessage("Level " + validLevels[0].levelName_ + " added to the playlist !");
+            string lvlsStr = "";
+            foreach (var lvl in list)
+                lvlsStr += lvl.levelNameAndPath_.levelName_ + ", ";
+
+            Utilities.sendMessage("Level(s) " + lvlsStr.Substring(0, lvlsStr.Count()-2) + " added to the playlist !");
         }
     }
 }
