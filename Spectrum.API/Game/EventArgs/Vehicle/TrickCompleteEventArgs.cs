@@ -2,23 +2,20 @@ namespace Spectrum.API.Game.EventArgs.Vehicle
 {
     public class TrickCompleteEventArgs : System.EventArgs
     {
-        public bool BoostActive { get; }
-        public float BoostPercent { get; }
-        public float BoostTime { get; }
+        public float CooldownAmount { get; }
+        public int PointsEarned { get; }
 
-        public float CooldownPercent { get; }
-        public float PointsEarned { get; }
+        public float WallRideMeters { get; }
+        public float CeilingRideMeters { get; }
+        public float GrindMeters { get; }
 
-        public float RechargeAmount { get; }
-
-        public TrickCompleteEventArgs(bool boostActive, float boostPercent, float boostTime, float cooldownPercent, float pointsEarned, float rechargeAmount)
+        public TrickCompleteEventArgs(float cooldownAmount, int pointsEarned, float wallRideMeters, float ceilingRideMeter, float grindMeters)
         {
-            BoostActive = boostActive;
-            BoostPercent = boostPercent;
-            BoostTime = boostTime;
-            CooldownPercent = cooldownPercent;
+            CooldownAmount = cooldownAmount;
             PointsEarned = pointsEarned;
-            RechargeAmount = rechargeAmount;
+            WallRideMeters = wallRideMeters;
+            CeilingRideMeters = ceilingRideMeter;
+            GrindMeters = grindMeters;
         }
     }
 }

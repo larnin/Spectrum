@@ -196,7 +196,7 @@ namespace Spectrum.API.Game.Vehicle
             {
                 if (sender.name == "LocalCar")
                 {
-                    var eventArgs = new TrickCompleteEventArgs(data.boost_, data.boostPercent_, data.boostTime_, data.cooldownPercent_, data.points_, data.rechargeAmount_);
+                    var eventArgs = new TrickCompleteEventArgs(data.cooldownAmount_, data.points_, data.wallRideMeters_, data.ceilingRideMeters_, data.grindMeters_);
                     TrickCompleted?.Invoke(null, eventArgs);
                 }
             });

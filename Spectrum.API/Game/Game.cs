@@ -10,7 +10,7 @@ namespace Spectrum.API.Game
 
         public static string LevelName => G.Sys.GameManager_.LevelName_;
         public static string LevelPath => G.Sys.GameManager_.LevelPath_;
-        public static string SceneName => G.Sys.GameManager_.SceneName_;
+        public static string SceneName => GameManager.SceneName_;
 
         public static string WatermarkText
         {
