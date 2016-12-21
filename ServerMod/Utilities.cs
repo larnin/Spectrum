@@ -44,12 +44,12 @@ namespace ServerMod
 
         public static bool isOnLobby()
         {
-            return G.Sys.GameManager_.SceneName_.Equals("MainMenu");
+            return GameManager.SceneName_.Equals("MainMenu");
         }
 
         public static bool isOnGamemode()
         {
-            return G.Sys.GameManager_.SceneName_.Equals("GameMode");
+            return GameManager.SceneName_.Equals("GameMode");
         }
 
         public static ClientPlayerInfo clientFromName(string name)

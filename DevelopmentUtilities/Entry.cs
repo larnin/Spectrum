@@ -72,8 +72,7 @@ namespace DevelopmentUtilities
             LocalVehicle.Split += (sender, args) => Console.WriteLine($"Split with a penetration factor of {args.Penetration} and split speed of {args.SeparationSpeed} units.");
             LocalVehicle.TrickCompleted += (sender, args) =>
             {
-                var boostActive = args.BoostActive ? "boost active" : "boost inactive";
-                Console.WriteLine($"Trick completed for a total of {args.PointsEarned} points with {boostActive}, at {args.BoostPercent} of maximum overheat with a total boost time of {args.BoostTime} units for a total of {args.RechargeAmount} recharge units and {args.CooldownPercent * 100} cooldown percent");
+                Console.WriteLine($"Trick completed for a total of {args.PointsEarned} points with {args.CeilingRideMeters} ceiling, {args.WallRideMeters} wall and {args.GrindMeters} grind ride meters for {args.CooldownAmount * 100} cooldown percent");
             };
             LocalVehicle.WingsEnabled += (sender, args) => Console.WriteLine("WingsEnabled");
             LocalVehicle.WingsDisabled += (sender, args) => Console.WriteLine("WingsDisabled");
@@ -128,12 +127,12 @@ namespace DevelopmentUtilities
 
         private void ValidateSettings()
         {
-            if (Settings["SceneDumperBriefHotkey"] == string.Empty)
+            if ((string)Settings["SceneDumperBriefHotkey"] == string.Empty)
             {
                 Settings["SceneDumperBriefHotkey"] = "LeftControl+Alpha0";
             }
 
-            if (Settings["SceneDumperDetailedHotkey"] == string.Empty)
+            if ((string)Settings["SceneDumperDetailedHotkey"] == string.Empty)
             {
                 Settings["SceneDumperDetailedHotkey"] = "LeftControl+Alpha9";
             }

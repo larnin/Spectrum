@@ -83,7 +83,7 @@ namespace ServerMod.cmds
                         Utilities.sendMessage("No more level in the playlist, automode stoped !");
                         autoMode = false;
                     }
-                    else G.Sys.GameManager_.GoToNextLevel();
+                    else G.Sys.GameManager_.GoToNextLevel(true);
                 }
                 else autoMode = false;
             }

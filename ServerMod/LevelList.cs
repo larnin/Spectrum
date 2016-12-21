@@ -188,7 +188,7 @@ namespace ServerMod
                 return "Refract";
 
             if(lvlInfo.levelType_ == LevelType.Workshop)
-                return G.Sys.Steamworks_.GetWorkshopCreatorName(lvlInfo.workshopCreatorID_);
+                return G.Sys.SteamworksManager_.GetSteamName(lvlInfo.workshopCreatorID_);
 
             return "";
         }

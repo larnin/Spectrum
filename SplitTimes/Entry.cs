@@ -97,7 +97,7 @@ namespace SplitTimes
 
         private void SplitTimes_ShowPressed()
         {
-            if (G.Sys.GameManager_.IsModeGo_ && !G.Sys.GameManager_.Paused_ && !G.Sys.PlayerManager_.Current_.inGameData_.Finished_)
+            if (G.Sys.GameManager_.IsModeGo_ && !G.Sys.GameManager_.PauseMenuOpen_ /*&& !G.Sys.PlayerManager_.Current_.inGameData_.Finished_*/)
             {
                 var times = GetTimeStrings();
                 times.Insert(0, new SplitTime(_previousCheckpointTimes.LastOrDefault(), Race.ElapsedTime, 0).RenderHud());

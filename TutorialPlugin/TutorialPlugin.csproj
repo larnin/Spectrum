@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="Spectrum.API, Version=1.0.51.5909, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Spectrum\Spectrum.API\bin\Debug\Spectrum.API.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\Distance\Spectrum\0.0154 - 5070\Spectrum\Spectrum.API.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

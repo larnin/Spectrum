@@ -14,7 +14,7 @@ namespace ServerMod
         public string Author => "Nico";
         public string Contact => "SteamID: larnin";
         public APILevel CompatibleAPILevel => APILevel.MicroWave;
-        public string PluginVersion = "V0.2";
+        public string PluginVersion = "V0.2.1";
 
         //private List<string> hostCommands = new List<string>();
 
@@ -28,7 +28,7 @@ namespace ServerMod
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
             {
                 var author = ExtractMessageAuthor(data.message_);
-                var steamName = G.Sys.Steamworks_.GetUserName().ToLower().Trim();
+                var steamName = G.Sys.SteamworksManager_.GetUserName().ToLower().Trim();
                 var profileName = G.Sys.PlayerManager_.Current_.profile_.Name_.ToLower().Trim();
 
                 if (!IsSystemMessage(data.message_) && (author.ToLower().Trim() != steamName && author.ToLower().Trim() != profileName))
@@ -104,7 +104,7 @@ namespace ServerMod
             }
                 
             int pos = message.IndexOf(' ');
-            string commandName = (pos > 0 ? message.Substring(1, message.IndexOf(' ')) : message).Trim();
+            string commandName = (pos > 0 ? message.Substring(1, message.IndexOf(' ')) : message.Substring(1)).Trim();
             cmd c = cmd.all.getCommand(commandName);
 
             if (c == null)
