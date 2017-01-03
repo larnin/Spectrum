@@ -21,11 +21,13 @@ namespace ServerMod
             cmds.Add(new PlayCMD());
             cmds.Add(new PlaylistCMD());
             cmds.Add(new PluginCMD());
+            cmds.Add(new RipCMD());
             cmds.Add(new ScoresCMD());
             cmds.Add(new ServerCMD());
             cmds.Add(new ShuffleCMD());
             cmds.Add(new SpecCMD());
             cmds.Add(new TimelimitCMD());
+            cmds.Add(new WinCMD());
         }
 
         public cmd getCommand(string name)

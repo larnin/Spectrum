@@ -99,7 +99,7 @@ namespace ServerMod
             var client = Utilities.clientFromName(author);
             if (client == null)
             {
-                Utilities.sendMessage("Error: client can't be found");
+                Console.WriteLine("Error: client can't be found");
                 return;
             }
                 
