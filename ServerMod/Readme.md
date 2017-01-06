@@ -1,4 +1,4 @@
-#### __!! ServerMod only work on the current stable version 4491 !!__  
+#### __!! ServerMod works for stable versions 5070, 5073 !!__  
 
 ServerMod is a plugin that adds some commands to the server, accessible by the host and players.
 All the commands are prefixed by '!'.
@@ -82,12 +82,16 @@ If only one level contains the name, it will be added to the playlist.
 If more than one level contains the name, it will display the matching levels (like !level).  
 The filter works exactly like the list command.
 
-
 #### Playlist:
 Permission: __ALL__  
 Use: !playlist  
 Shows the 10 next levels in the playlist.  
 The first one is the current level.
+
+#### Rip
+Permission : __ALL__  
+Use: !rip  
+Prints a losing sentence.
 
 #### Scores:
 Permission: __ALL__ (can also be used as client)  
@@ -124,6 +128,11 @@ Use: !timelimit [value]
 Works like the official command, it changes the max time for the next reverse tag maps.  
 The value must be between 30 and 1800 seconds (30 minutes)
 
+#### Win
+Permission: __ALL__  
+Use: !win  
+Prints a random winning sentence.
+
 # Filters
 Commands __level__ and __play__ can use filters to allow you to search maps.
 * __-name__ or __-n__ : Select maps that contains theses words on it's name.
@@ -133,12 +142,15 @@ Commands __level__ and __play__ can use filters to allow you to search maps.
     _(Soccer mode don't work perfectly)_
 * __-index__ or __-i__ : Use the map at the specified index (if you have 7 map on the result without that filter, -index 4 use the 4th map from theses 7 maps)  
 The index filter can be written multiple times to select many maps.
+* __-l__ or __-last__ : Use the result of the last !level or !play command
+* __-p__ or __-page__ : Show the specified page of level (10 level per page)
 * __-all__ : Only for the !play command, if you use this filter, all the found maps are added on the playlist  
 
 #### Examples
 __!play -a snowstate -m sprint -all__ : Adds all the maps that snowstate have created on the sprint gamemode to the playlist.  
 __!list -name epic level__ : List all the levels on the current gamemode that contains "epic level" on their name. It's equivalent as __!list epic level__  
 __!play -name up -mode challenge -index 1__ : Add the first level from challenge mode found that contains "up" in it's name.
+__!level -last -p 4__ : Shows the 4th page (result 30 to 39) of the last command.
 
 # Author contacts :
 Steam : http://steamcommunity.com/id/larnin/  

@@ -34,7 +34,7 @@ namespace ServerMod.cmds
 
             var m = LevelList.extractModifiers(message);
             var lvls = LevelList.levels(m);
-            LevelList.printLevels(lvls, 10, m.index.Count == 0);
+            LevelList.printLevels(lvls, m.page, 10, m.index.Count == 0);
         }
     }
 }

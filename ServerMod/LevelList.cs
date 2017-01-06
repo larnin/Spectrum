@@ -12,10 +12,14 @@ namespace ServerMod
         public string author = "";
         public List<int> index = new List<int>();
         public bool all = false;
+        public bool useLastList = false;
+        public int page = 0;
     }
     
     static class LevelList
     {
+        static List<LevelPlaylist.ModeAndLevelInfo> lastList = new List<LevelPlaylist.ModeAndLevelInfo>();
+
         static private List<GameModeID> validModes = new List<GameModeID>
             { GameModeID.Sprint
             , GameModeID.Challenge
@@ -26,7 +30,7 @@ namespace ServerMod
 
         static private List<string> validModesName = new List<string>
             { "sprint"
-            ,"challenge"
+            , "challenge"
             , "tag"
             , "soccer"
             , "style"
@@ -98,6 +102,17 @@ namespace ServerMod
                         if (int.TryParse(words[1], out index))
                             m.index.Add(index);
                     }
+                    else if(key == "p" || key == "page")
+                    {
+                        if (words.Count() < 2)
+                            continue;
+                        int page = 0;
+                        if (int.TryParse(words[1], out page))
+                            if(page > 0)
+                                m.page = page;
+                    }
+                    else if (key == "l" || key == "last")
+                        m.useLastList = true;
                     else if (key == "all")
                         m.all = true;
                 }
@@ -120,6 +135,18 @@ namespace ServerMod
 
             var set = G.Sys.LevelSets_.GetSet(m.mode);
             var lvls = set.GetAllLevelNameAndPathExceptMyLevelsPairs();
+
+            if(m.useLastList)
+            {
+                if (lastList.Count == 0)
+                    return lastList;
+                if (m.mode != lastList[0].mode_)
+                    return new List<LevelPlaylist.ModeAndLevelInfo>();
+                lvls.Clear();
+                foreach (var lvl in lastList)
+                    lvls.Add(lvl.levelNameAndPath_);
+            }
+
             List<LevelNameAndPathPair> nameFilteredList = new List<LevelNameAndPathPair>();
             if (m.name.Count() == 0)
                 nameFilteredList = lvls;
@@ -178,6 +205,7 @@ namespace ServerMod
             foreach (var lvl in authorFilteredList)
                 finalList.Add(new LevelPlaylist.ModeAndLevelInfo(m.mode, lvl));
 
+            lastList = finalList;
             return finalList;
         }
 
@@ -198,9 +226,41 @@ namespace ServerMod
             return new List<LevelPlaylist.ModeAndLevelInfo>(){ new LevelPlaylist.ModeAndLevelInfo(GameModeID.Trackmogrify, new LevelNameAndPathPair(name, ""))};
         }
 
-        public static void printLevels(List<LevelPlaylist.ModeAndLevelInfo> lvls, int maxLvl, bool showIndexs)
+        public static void printLevels(List<LevelPlaylist.ModeAndLevelInfo> lvls, int page, int lvlPerPage, bool showIndexs)
         {
+            bool showPage = page > 0;
+            if (page <= 0)
+                page = 1;
+            page--;
+            if (page * lvlPerPage > lvls.Count)
+                page = lvls.Count / lvlPerPage;
+            int minIndex = page * lvlPerPage;
+            int maxIndex = (page + 1) * lvlPerPage;
+            if (maxIndex > lvls.Count)
+            {
+                maxIndex = lvls.Count;
+                minIndex = maxIndex - lvlPerPage;
+            }
+            if (minIndex < 0)
+                minIndex = 0;
+
             if (lvls.Count > 0)
+            {
+                Utilities.sendMessage("Levels found :");
+                for (int i = minIndex; i < maxIndex; i++)
+                {
+                    if (showIndexs)
+                        Utilities.sendMessage("(" + (i + 1) + ") " + lvls[i].levelNameAndPath_.levelName_);
+                    else Utilities.sendMessage(lvls[i].levelNameAndPath_.levelName_);
+                }
+                if (! showPage && lvls.Count > maxIndex)
+                    Utilities.sendMessage("And " + (lvls.Count - maxIndex) + " more ...");
+                if (showPage)
+                    Utilities.sendMessage("Page " + (page + 1) + " / " + ((lvls.Count + lvlPerPage - 1) / lvlPerPage));
+            }
+            else Utilities.sendMessage("No levels found");
+
+            /*if (lvls.Count > 0)
             {
                 Utilities.sendMessage("Levels found :");
                 for (int i = 0; i < Math.Min(lvls.Count(), maxLvl); i++)
@@ -212,7 +272,7 @@ namespace ServerMod
                 if (lvls.Count > maxLvl)
                     Utilities.sendMessage("And " + (lvls.Count - maxLvl) + " more ...");
             }
-            else Utilities.sendMessage("No levels found");
+            else Utilities.sendMessage("No levels found");*/
         }
     }
 }

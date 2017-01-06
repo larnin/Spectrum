@@ -26,11 +26,11 @@ namespace ServerMod
 
         public static bool isHost()
         {
-            foreach(var player in G.Sys.PlayerManager_.PlayerList_)
+            /*foreach(var player in G.Sys.PlayerManager_.PlayerList_)
                 if (player.IsLocal_ && player.Index_ == 0)
                     return true;
-            return false;
-            //return G.Sys.NetworkingManager_.IsServer_;
+            return false;*/
+            return G.Sys.NetworkingManager_.IsServer_;
         }
 
         public static void Shuffle<T>(this IList<T> list, Random rnd)

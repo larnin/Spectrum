@@ -14,7 +14,7 @@ namespace ServerMod
         public string Author => "Nico";
         public string Contact => "SteamID: larnin";
         public APILevel CompatibleAPILevel => APILevel.MicroWave;
-        public string PluginVersion = "V0.2.1";
+        public string PluginVersion = "V0.3";
 
         //private List<string> hostCommands = new List<string>();
 
@@ -95,6 +95,9 @@ namespace ServerMod
                 printClient();
                 return;
             }
+
+            if (!Utilities.isHost())
+                return;
 
             var client = Utilities.clientFromName(author);
             if (client == null)

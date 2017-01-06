@@ -52,7 +52,8 @@ namespace ServerMod.cmds
 
             if(!m.all && list.Count() > 1 && m.index.Count == 0)
             {
-                LevelList.printLevels(list, 10, true);
+                LevelList.printLevels(list, m.page, 10, true);
+                //LevelList.printLevels(list, 10, true);
                 return;
             }
 
