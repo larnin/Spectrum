@@ -142,5 +142,15 @@ namespace Spectrum.API
                 Log.Exception(ex);
             }
         }
+
+        public static string GetValidFileName(string dirtyFileName, string replaceInvalidCharsWith = "_")
+        {
+            return Resource.GetValidFileName(dirtyFileName, replaceInvalidCharsWith);
+        }
+
+        public static string GetValidFileNameToLower(string dirtyFileName, string replaceInvalidCharsWith = "_")
+        {
+            return Resource.GetValidFileNameToLower(dirtyFileName, replaceInvalidCharsWith);
+        }
     }
 }
