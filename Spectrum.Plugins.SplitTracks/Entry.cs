@@ -196,11 +196,11 @@ namespace Spectrum.Plugins.SplitTracks
 
         private void ValidateSettings()
         {
-            if (Settings["ShowTimesHotkey"] as string == string.Empty)
+            if (!Settings.ValueExists("ShowTimesHotkey"))
                 Settings["ShowTimesHotkey"] = "LeftControl+X";
-            if (Settings["StartListHotkey"] as string == string.Empty)
+            if (!Settings.ValueExists("StartListHotkey"))
                 Settings["StartListHotkey"] = "LeftBracket";
-            if (Settings["EndListHotkey"] as string == string.Empty)
+            if (!Settings.ValueExists("EndListHotkey"))
                 Settings["EndListHotkey"] = "RightBracket";
 
             Settings.Save();

@@ -127,12 +127,12 @@ namespace Spectrum.Plugins.DevelopmentUtilities
 
         private void ValidateSettings()
         {
-            if ((string)Settings["SceneDumperBriefHotkey"] == string.Empty)
+            if (!Settings.ValueExists("SceneDumperBriefHotkey"))
             {
                 Settings["SceneDumperBriefHotkey"] = "LeftControl+Alpha0";
             }
 
-            if ((string)Settings["SceneDumperDetailedHotkey"] == string.Empty)
+            if (!Settings.ValueExists("SceneDumperDetailedHotkey"))
             {
                 Settings["SceneDumperDetailedHotkey"] = "LeftControl+Alpha9";
             }
