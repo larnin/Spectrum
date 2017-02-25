@@ -5,6 +5,7 @@ using System.Reflection;
 using Spectrum.API;
 using Spectrum.API.Interfaces.Plugins;
 using Spectrum.API.Logging;
+using Spectrum.API.Configuration;
 
 namespace Spectrum.Manager.Managed
 {
@@ -24,7 +25,7 @@ namespace Spectrum.Manager.Managed
 
             Log = new Logger(Defaults.PluginLoaderLogFileName)
             {
-                WriteToConsole = Global.Settings.GetSection("Output").GetValue<bool>("LogToConsole")
+                WriteToConsole = Global.Settings.GetItem<Section>("Output").GetItem<bool>("LogToConsole")
             };
             Log.Info("Plugin loader starting up...");
         }

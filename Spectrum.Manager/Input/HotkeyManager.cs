@@ -4,6 +4,7 @@ using Spectrum.API;
 using Spectrum.API.Input;
 using Spectrum.API.Interfaces.Systems;
 using Spectrum.API.Logging;
+using Spectrum.API.Configuration;
 
 namespace Spectrum.Manager.Input
 {
@@ -19,7 +20,7 @@ namespace Spectrum.Manager.Input
 
             Log = new Logger(Defaults.HotkeyManagerLogFileName)
             {
-                WriteToConsole = Global.Settings.GetSection("Output").GetValue<bool>("LogToConsole")
+                WriteToConsole = Global.Settings.GetItem<Section>("Output").GetItem<bool>("LogToConsole")
             };
         }
 

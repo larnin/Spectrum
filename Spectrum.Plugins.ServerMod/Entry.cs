@@ -13,7 +13,7 @@ namespace Spectrum.Plugins.ServerMod
         public string FriendlyName => "Server commands Mod";
         public string Author => "Nico";
         public string Contact => "SteamID: larnin";
-        public APILevel CompatibleAPILevel => APILevel.InfraRed;
+        public APILevel CompatibleAPILevel => APILevel.UltraViolet;
         public string PluginVersion = "V0.3";
 
         //private List<string> hostCommands = new List<string>();

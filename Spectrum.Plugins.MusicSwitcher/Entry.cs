@@ -12,7 +12,7 @@ namespace Spectrum.Plugins.MusicSwitcher
         public string FriendlyName => "Music Switcher";
         public string Author => "Ciastex";
         public string Contact => "ciastexx@live.com";
-        public APILevel CompatibleAPILevel => APILevel.InfraRed;
+        public APILevel CompatibleAPILevel => APILevel.UltraViolet;
 
         private Settings _settings;
 
@@ -99,27 +99,27 @@ namespace Spectrum.Plugins.MusicSwitcher
 
         private void ValidateSettings()
         {
-            if (!_settings.ValueExists("RepeatToggleHotkey"))
+            if (!_settings.ContainsKey("RepeatToggleHotkey"))
             {
                 _settings["RepeatToggleHotkey"] = "X+Backslash";
             }
 
-            if (!_settings.ValueExists("ShuffleToggleHotkey"))
+            if (!_settings.ContainsKey("ShuffleToggleHotkey"))
             {
                 _settings["ShuffleToggleHotkey"] = "X+Quote";
             }
 
-            if (!_settings.ValueExists("NextMusicTrackHotkey"))
+            if (!_settings.ContainsKey("NextMusicTrackHotkey"))
             {
                 _settings["NextMusicTrackHotkey"] = "X+RightBracket";
             }
 
-            if (!_settings.ValueExists("PrevMusicTrackHotkey"))
+            if (!_settings.ContainsKey("PrevMusicTrackHotkey"))
             {
                 _settings["PrevMusicTrackHotkey"] = "X+LeftBracket";
             }
 
-            if (!_settings.ValueExists("ToggleMP3MusicHotkey"))
+            if (!_settings.ContainsKey("ToggleMP3MusicHotkey"))
             {
                 _settings["ToggleMP3MusicHotkey"] = "X+Semicolon";
             }

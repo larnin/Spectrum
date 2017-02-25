@@ -18,7 +18,7 @@ namespace Spectrum.Plugins.SplitTracks
         public string FriendlyName => "Split tracks";
         public string Author => "Jonathan Vollebregt";
         public string Contact => "jnvsor@gmail.com";
-        public APILevel CompatibleAPILevel => APILevel.InfraRed;
+        public APILevel CompatibleAPILevel => APILevel.UltraViolet;
 
         private readonly List<SplitTrack> _previousTrackTimes = new List<SplitTrack>();
         private readonly List<TimeSpan> _bestTrackTimes = new List<TimeSpan>();
@@ -196,11 +196,11 @@ namespace Spectrum.Plugins.SplitTracks
 
         private void ValidateSettings()
         {
-            if (!Settings.ValueExists("ShowTimesHotkey"))
+            if (!Settings.ContainsKey("ShowTimesHotkey"))
                 Settings["ShowTimesHotkey"] = "LeftControl+X";
-            if (!Settings.ValueExists("StartListHotkey"))
+            if (!Settings.ContainsKey("StartListHotkey"))
                 Settings["StartListHotkey"] = "LeftBracket";
-            if (!Settings.ValueExists("EndListHotkey"))
+            if (!Settings.ContainsKey("EndListHotkey"))
                 Settings["EndListHotkey"] = "RightBracket";
 
             Settings.Save();

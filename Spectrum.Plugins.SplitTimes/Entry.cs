@@ -18,7 +18,7 @@ namespace Spectrum.Plugins.SplitTimes
         public string FriendlyName => "Split times";
         public string Author => "Jonathan Vollebregt";
         public string Contact => "jnvsor@gmail.com";
-        public APILevel CompatibleAPILevel => APILevel.InfraRed;
+        public APILevel CompatibleAPILevel => APILevel.UltraViolet;
 
         private readonly List<SplitTime> _previousCheckpointTimes = new List<SplitTime>();
         private Dictionary<int, SplitTime> _bestCheckpointTimes;
@@ -51,7 +51,7 @@ namespace Spectrum.Plugins.SplitTimes
             _bestCheckpointTimes?.Clear();
             _bestTime = TimeSpan.Zero;
 
-            if ((bool)Settings["SaveTimes"])
+            if (Settings.GetItem<bool>("SaveTimes"))
             {
                 _trackFolder = FileSystem.GetValidFileNameToLower(G.Sys.PlayerManager_.Current_.profile_.Name_, "_");
                 _trackFolder = Path.Combine(_trackFolder, FileSystem.GetValidFileNameToLower(G.Sys.GameManager_.Mode_.GameModeID_.ToString(), "_"));
@@ -73,11 +73,11 @@ namespace Spectrum.Plugins.SplitTimes
             var finished = new SplitTime(_previousCheckpointTimes.LastOrDefault(), TimeSpan.FromMilliseconds(e.FinalTime), -1);
             _previousCheckpointTimes.Add(finished);
 
-            if ((bool)Settings["SaveTimes"])
+            if (Settings.GetItem<bool>("SaveTimes"))
             {
                 if (_bestTime == TimeSpan.Zero || finished.Total < _bestTime)
                     WriteTimes("pb.txt");
-                if ((bool)Settings["SaveAllTimes"])
+                if (Settings.GetItem<bool>("SaveAllTimes"))
                     WriteTimes(finished.RenderFilename());
             }
         }
@@ -193,13 +193,13 @@ namespace Spectrum.Plugins.SplitTimes
 
         private void ValidateSettings()
         {
-            if (!Settings.ValueExists("ShowTimesHotkey"))
+            if (!Settings.ContainsKey("ShowTimesHotkey"))
                 Settings["ShowTimesHotkey"] = "LeftControl+X";
 
-            if (!Settings.ValueExists("SaveTimes"))
+            if (!Settings.ContainsKey("SaveTimes"))
                 Settings["SaveTimes"] = true;
 
-            if (!Settings.ValueExists("SaveAllTimes"))
+            if (!Settings.ContainsKey("SaveAllTimes"))
                 Settings["SaveAllTimes"] = false;
 
             Settings.Save();

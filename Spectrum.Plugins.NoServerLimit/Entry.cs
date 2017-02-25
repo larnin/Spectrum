@@ -14,7 +14,7 @@ namespace Spectrum.Plugins.NoServerLimit
         public string FriendlyName => "Server Limit Unlocker";
         public string Author => "Ciastex";
         public string Contact => "ciastexx@live.com";
-        public APILevel CompatibleAPILevel => APILevel.InfraRed;
+        public APILevel CompatibleAPILevel => APILevel.UltraViolet;
 
         private Settings _settings;
 
@@ -65,9 +65,9 @@ namespace Spectrum.Plugins.NoServerLimit
                             return;
                         }
 
-                        if (value > _settings.GetValue<int>("MaxPlayerCount"))
+                        if (value > _settings.GetItem<int>("MaxPlayerCount"))
                         {
-                            properInput.value = _settings.GetValue<int>("MaxPlayerCount").ToString();
+                            properInput.value = _settings.GetItem<int>("MaxPlayerCount").ToString();
                             return;
                         }
 
@@ -108,7 +108,7 @@ namespace Spectrum.Plugins.NoServerLimit
 
         private void ValidateSettings()
         {
-            if (!_settings.ValueExists("MaxPlayerCount"))
+            if (!_settings.ContainsKey("MaxPlayerCount"))
             {
                 _settings["MaxPlayerCount"] = 32;
             }

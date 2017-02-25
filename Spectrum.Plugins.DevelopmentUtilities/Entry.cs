@@ -14,7 +14,7 @@ namespace Spectrum.Plugins.DevelopmentUtilities
         public string FriendlyName => "Development Utilities";
         public string Author => "Ciastex";
         public string Contact => "ciastexx@live.com";
-        public  APILevel CompatibleAPILevel => APILevel.InfraRed;
+        public  APILevel CompatibleAPILevel => APILevel.UltraViolet;
 
         private FileSystem FileSystem { get; set; }
         private Settings Settings { get; set; }
@@ -127,12 +127,12 @@ namespace Spectrum.Plugins.DevelopmentUtilities
 
         private void ValidateSettings()
         {
-            if (!Settings.ValueExists("SceneDumperBriefHotkey"))
+            if (!Settings.ContainsKey("SceneDumperBriefHotkey"))
             {
                 Settings["SceneDumperBriefHotkey"] = "LeftControl+Alpha0";
             }
 
-            if (!Settings.ValueExists("SceneDumperDetailedHotkey"))
+            if (!Settings.ContainsKey("SceneDumperDetailedHotkey"))
             {
                 Settings["SceneDumperDetailedHotkey"] = "LeftControl+Alpha9";
             }
