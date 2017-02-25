@@ -18,7 +18,7 @@ namespace SplitTimes
         public string FriendlyName => "Split times";
         public string Author => "Jonathan Vollebregt";
         public string Contact => "jnvsor@gmail.com";
-        public APILevel CompatibleAPILevel => APILevel.MicroWave;
+        public APILevel CompatibleAPILevel => APILevel.InfraRed;
 
         private readonly List<SplitTime> _previousCheckpointTimes = new List<SplitTime>();
         private Dictionary<int, SplitTime> _bestCheckpointTimes;

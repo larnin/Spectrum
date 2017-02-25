@@ -18,7 +18,7 @@ namespace SplitTracks
         public string FriendlyName => "Split tracks";
         public string Author => "Jonathan Vollebregt";
         public string Contact => "jnvsor@gmail.com";
-        public APILevel CompatibleAPILevel => APILevel.MicroWave;
+        public APILevel CompatibleAPILevel => APILevel.InfraRed;
 
         private readonly List<SplitTrack> _previousTrackTimes = new List<SplitTrack>();
         private readonly List<TimeSpan> _bestTrackTimes = new List<TimeSpan>();

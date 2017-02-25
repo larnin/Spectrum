@@ -13,7 +13,7 @@ namespace ServerMod
         public string FriendlyName => "Server commands Mod";
         public string Author => "Nico";
         public string Contact => "SteamID: larnin";
-        public APILevel CompatibleAPILevel => APILevel.MicroWave;
+        public APILevel CompatibleAPILevel => APILevel.InfraRed;
         public string PluginVersion = "V0.3";
 
         //private List<string> hostCommands = new List<string>();

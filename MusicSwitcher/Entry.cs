@@ -12,7 +12,7 @@ namespace MusicSwitcher
         public string FriendlyName => "Music Switcher";
         public string Author => "Ciastex";
         public string Contact => "ciastexx@live.com";
-        public APILevel CompatibleAPILevel => APILevel.MicroWave;
+        public APILevel CompatibleAPILevel => APILevel.InfraRed;
 
         private Settings _settings;
 

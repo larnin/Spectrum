@@ -14,7 +14,7 @@ namespace NoServerLimit
         public string FriendlyName => "Server Limit Unlocker";
         public string Author => "Ciastex";
         public string Contact => "ciastexx@live.com";
-        public APILevel CompatibleAPILevel => APILevel.MicroWave;
+        public APILevel CompatibleAPILevel => APILevel.InfraRed;
 
         private Settings _settings;
 
