@@ -4,17 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5AAA2550-9AC2-474E-A74A-1F21AD378367}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{B24CD7FD-67B0-4B3B-9770-F760A336C418}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Spectrum.Prism</RootNamespace>
-    <AssemblyName>Spectrum.Prism</AssemblyName>
+    <RootNamespace>Spectrum.Plugins.SplitTimes</RootNamespace>
+    <AssemblyName>SplitTimes.plugin</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AssemblyVersion>1.0.14.5909</AssemblyVersion>
+    <AssemblyVersion>1.0.3.5909</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,39 +31,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\Spectrum.Dependencies\Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="Mono.Cecil, Version=0.9.6.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
-      <HintPath>..\packages\Mono.Cecil.0.9.6.1\lib\net35\Mono.Cecil.dll</HintPath>
+    <Reference Include="UnityEngine">
+      <HintPath>..\Spectrum.Dependencies\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Spectrum.API">
+      <HintPath>..\Spectrum.API\bin\Release\Spectrum.API.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IO\ColoredOutput.cs" />
-    <Compile Include="IO\ModuleWriter.cs" />
-    <Compile Include="Patches\DevModeEnablePatch.cs" />
-    <Compile Include="Patches\SpectrumUpdateCodePatch.cs" />
-    <Compile Include="Runtime\BasePatch.cs" />
-    <Compile Include="Runtime\EventArgs\PatchFailedEventArgs.cs" />
-    <Compile Include="Runtime\EventArgs\PatchSucceededEventArgs.cs" />
-    <Compile Include="Runtime\Patcher.cs" />
-    <Compile Include="Runtime\PatchHelper.cs" />
-    <Compile Include="ErrorHandler.cs" />
-    <Compile Include="IO\ModuleLoader.cs" />
-    <Compile Include="Patches\SpectrumInitCodePatch.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Entry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources.cs" />
-    <Compile Include="Runtime\IPatch.cs" />
+    <Compile Include="SplitTime.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="install_windows.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="install_linux.sh">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

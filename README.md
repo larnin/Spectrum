@@ -1,4 +1,3 @@
-
 [![Build status](https://ci.appveyor.com/api/projects/status/5uvu1nmf3js0po7j?svg=true)](https://ci.appveyor.com/project/Ciastex/spectrum)  
 
 ### What is Spectrum?
