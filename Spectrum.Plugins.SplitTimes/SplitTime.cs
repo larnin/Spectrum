@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Spectrum.API;
 using Spectrum.API.Game.Vehicle;
 
@@ -135,6 +136,7 @@ namespace Spectrum.Plugins.SplitTimes
             var folder = FileSystem.GetValidFileNameToLower(p.Name_, "_");
             folder = Path.Combine(folder, FileSystem.GetValidFileNameToLower(m.GameModeID_.ToString(), "_"));
             folder = Path.Combine(folder, FileSystem.GetValidFileNameToLower(l.Name_, "_"));
+            folder = Path.Combine(folder, String.Join("_", l.Path_.Split(Path.DirectorySeparatorChar).Reverse().Take(3).Reverse().ToArray()));
 
             return folder;
         }
