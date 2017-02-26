@@ -7,8 +7,8 @@ namespace Spectrum.Plugins.SplitTimes
     {
         private TimeSpan _old;
         private TimeSpan _new;
-        private int _checkpoint;
-        private int _lastCheckpoint;
+        public int CheckpointId { get; private set; }
+        public int LastCheckpointId { get; private set; }
 
         public TimeSpan Total
         {
@@ -26,27 +26,11 @@ namespace Spectrum.Plugins.SplitTimes
             }
         }
 
-        public int CheckpointId
-        {
-            get
-            {
-                return _checkpoint;
-            }
-        }
-
-        public int LastCheckpointId
-        {
-            get
-            {
-                return _lastCheckpoint;
-            }
-        }
-
         private SplitTime Rounded
         {
             get
             {
-                return new SplitTime(_old, TimeSpan.FromMilliseconds(Math.Round (_new.TotalMilliseconds / 10f) * 10f), _checkpoint, _lastCheckpoint);
+                return new SplitTime(_old, TimeSpan.FromMilliseconds(Math.Round (_new.TotalMilliseconds / 10f) * 10f), CheckpointId, LastCheckpointId);
             }
         }
 
@@ -54,23 +38,23 @@ namespace Spectrum.Plugins.SplitTimes
         {
             _old = oldTime.Total;
             _new = newTime;
-            _checkpoint = checkpointId;
+            CheckpointId = checkpointId;
 
             if (_old == TimeSpan.Zero)
-                _lastCheckpoint = -1;
+                LastCheckpointId = -1;
             else
-                _lastCheckpoint = oldTime.CheckpointId;
+                LastCheckpointId = oldTime.CheckpointId;
         }
 
         public SplitTime(TimeSpan oldTime, TimeSpan newTime, int checkpointId, int lastCheckpointId)
         {
             _old = oldTime;
             _new = newTime;
-            _checkpoint = checkpointId;
-            _lastCheckpoint = lastCheckpointId;
+            CheckpointId = checkpointId;
+            LastCheckpointId = lastCheckpointId;
         }
 
-        private string Render(TimeSpan time, int decPlaces = 3, char milSep = '.', char minSep = ':')
+        private string Render(TimeSpan time, int decPlaces = 2, char milSep = '.', char minSep = ':')
         {
             return $"{time.Minutes:D2}{minSep}{time.Seconds:D2}{milSep}{time.Milliseconds.ToString("D3").Substring(0, decPlaces)}";
         }
@@ -130,15 +114,15 @@ namespace Spectrum.Plugins.SplitTimes
 
         public string RenderSave()
         {
-            if (_checkpoint == -1)
+            if (CheckpointId == -1)
                 return $"{Render(Total)}\t{Render(Rounded.Split)}";
             else
-                return $"{Render(Rounded.Total, 2)}\t{Render(Rounded.Split, 2)}\t{_checkpoint}";
+                return $"{Render(Rounded.Total, 2)}\t{Render(Rounded.Split, 2)}\t{CheckpointId}";
         }
 
         public string RenderFilename()
         {
-            if (_checkpoint != -1)
+            if (CheckpointId != -1)
                 throw new Exception("Spectrum.Plugins.SplitTimes: Could not generate filename. Attempted to generate filename from checkpoint time.");
 
             return $"{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}_{Render(Total, 3, '-', '-')}.txt";

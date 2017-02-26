@@ -25,16 +25,16 @@ namespace Spectrum.Plugins.SplitTimes
         private TimeSpan _bestTime = TimeSpan.Zero;
         private string _trackFolder;
 
-        private FileSystem FileSystem { get; set; }
-        private Settings Settings { get; set; }
+        private FileSystem FileSystem;
+        private Settings Settings;
 
         private bool _finished = true;
 
         public void Initialize(IManager manager)
         {
-            LocalVehicle.CheckpointPassed += LocalVehicle_CheckpointPassed;
-            LocalVehicle.Finished += LocalVehicle_Finished;
-            Race.Started += Race_Started;
+            LocalVehicle.CheckpointPassed += CheckpointPassed;
+            LocalVehicle.Finished += Finished;
+            Race.Started += Started;
 
             FileSystem = new FileSystem(typeof(Entry));
             Settings = new Settings(typeof(Entry));
@@ -43,7 +43,7 @@ namespace Spectrum.Plugins.SplitTimes
             manager.Hotkeys.Bind(Settings["ShowTimesHotkey"] as string, ShowPressed, false);
         }
 
-        private void Race_Started(object sender, EventArgs e)
+        private void Started(object sender, EventArgs e)
         {
             _finished = false;
 
@@ -63,7 +63,7 @@ namespace Spectrum.Plugins.SplitTimes
             }
         }
 
-        private void LocalVehicle_Finished(object sender, FinishedEventArgs e)
+        private void Finished(object sender, FinishedEventArgs e)
         {
             if (e.Type != RaceEndType.Finished)
                 return;
@@ -82,7 +82,7 @@ namespace Spectrum.Plugins.SplitTimes
             }
         }
 
-        private void LocalVehicle_CheckpointPassed(object sender, CheckpointHitEventArgs e)
+        private void CheckpointPassed(object sender, CheckpointHitEventArgs e)
         {
             var now = new SplitTime(_previousCheckpointTimes.LastOrDefault(), Race.ElapsedTime, e.CheckpointIndex);
             _previousCheckpointTimes.Add(now);
@@ -194,7 +194,7 @@ namespace Spectrum.Plugins.SplitTimes
         private void ValidateSettings()
         {
             if (!Settings.ContainsKey("ShowTimesHotkey"))
-                Settings["ShowTimesHotkey"] = "LeftControl+X";
+                Settings["ShowTimesHotkey"] = "LeftControl+Z";
 
             if (!Settings.ContainsKey("SaveTimes"))
                 Settings["SaveTimes"] = true;
