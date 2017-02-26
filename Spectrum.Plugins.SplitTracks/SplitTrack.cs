@@ -6,7 +6,7 @@ namespace Spectrum.Plugins.SplitTracks
     {
         private TimeSpan _old;
         private TimeSpan _new;
-        private string _track;
+        public string TrackName { get; private set; }
 
         public TimeSpan Total
         {
@@ -24,29 +24,21 @@ namespace Spectrum.Plugins.SplitTracks
             }
         }
 
-        public string TrackName
-        {
-            get
-            {
-                return _track;
-            }
-        }
-
         public SplitTrack(SplitTrack oldTime, TimeSpan newTime, string trackName)
         {
             _old = oldTime.Total;
             _new = newTime;
-            _track = trackName;
+            TrackName = trackName;
         }
 
-        private string Render(TimeSpan time, int decPlaces = 3, char milSep = '.', char minSep = ':')
+        private string Render(TimeSpan time, int decPlaces = 2, char milSep = '.', char minSep = ':')
         {
             return $"{time.Minutes:D2}{minSep}{time.Seconds:D2}{milSep}{time.Milliseconds.ToString("D3").Substring(0, decPlaces)}";
         }
 
         public string RenderHud()
         {
-            return $"<size=25>{Render(Track)}   {TrackName}</size>";
+            return $"<size=25>{Render(Track)}   <color=#00000000>(+00:00.00)</color>   {TrackName}</size>";
         }
 
         public string RenderHud(TimeSpan previousBest)
@@ -61,7 +53,7 @@ namespace Spectrum.Plugins.SplitTracks
             else if (previousBest > Track)
                 output.Append($"   <color=#6be584ff>(-{Render(previousBest - Track)})</color>");
             else
-                output.Append("             ");
+                output.Append("   <color=#00000000>(+00:00.00)</color>");
 
             output.Append($"   {TrackName}</size>");
 

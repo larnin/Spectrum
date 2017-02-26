@@ -27,12 +27,12 @@ namespace Spectrum.Plugins.SplitTracks
         private bool _started = false;
         private bool _finished = true;
 
-        private Settings Settings { get; set; }
+        private Settings Settings;
 
         public void Initialize(IManager manager)
         {
-            LocalVehicle.Finished += LocalVehicle_Finished;
-            Race.Started += Race_Started;
+            LocalVehicle.Finished += Finished;
+            Race.Started += Started;
 
             Settings = new Settings(typeof(Entry));
             ValidateSettings();
@@ -42,7 +42,7 @@ namespace Spectrum.Plugins.SplitTracks
             manager.Hotkeys.Bind(Settings["EndListHotkey"] as string, EndList);
         }
 
-        private void Race_Started(object sender, EventArgs e)
+        private void Started(object sender, EventArgs e)
         {
             if (!_active)
                 return;
@@ -60,7 +60,7 @@ namespace Spectrum.Plugins.SplitTracks
             _started = true;
         }
 
-        private void LocalVehicle_Finished(object sender, FinishedEventArgs e)
+        private void Finished(object sender, FinishedEventArgs e)
         {
             if (e.Type != RaceEndType.Finished)
                 return;
@@ -73,8 +73,8 @@ namespace Spectrum.Plugins.SplitTracks
             _previousTrackTimes.Add(finished);
 
             _started = false;
-            _finished = true;
             ShowPressed(8f);
+            _finished = true;
         }
 
         private void ShowPressed()
@@ -112,6 +112,7 @@ namespace Spectrum.Plugins.SplitTracks
         {
             _active = false;
             _started = false;
+            _finished = false;
 
             ShowPressed(10f);
         }
@@ -148,50 +149,18 @@ namespace Spectrum.Plugins.SplitTracks
 
         private TimeSpan GetBestTime()
         {
-            var leaderboard = LocalLeaderboard.Load(G.Sys.GameManager_.Level_.Path_, G.Sys.GameManager_.ModeID_);
-            TimeSpan previousBest = TimeSpan.Zero;
+            LevelInfo levelInfo = G.Sys.LevelSets_.GetLevelInfo(G.Sys.GameManager_.LevelPath_);
+            ProfileProgress progress = G.Sys.ProfileManager_.CurrentProfile_.Progress_;
+            int pb = progress.GetTopResultWithRelativePath(levelInfo.relativePath_, G.Sys.GameManager_.ModeID_);
 
-            if (leaderboard != null)
+            if (pb != -1)
             {
-                foreach (ResultInfo time in leaderboard.Results_)
-                {
-                    if (time.ProfileName_ == G.Sys.PlayerManager_.Current_.profile_.Name_ && (previousBest == TimeSpan.Zero || TimeSpan.FromMilliseconds(time.Value_) < previousBest))
-                        previousBest = TimeSpan.FromMilliseconds(time.Value_);
-                }
+                return TimeSpan.FromMilliseconds(pb);
             }
-
-            if (previousBest != TimeSpan.Zero)
-                return previousBest;
-
-            var path = Path.Combine(Defaults.PluginDataDirectory, "Spectrum.Plugins.SplitTimes.plugin");
-            path = Path.Combine(path, Resource.GetValidFileNameToLower(G.Sys.PlayerManager_.Current_.profile_.Name_, "_"));
-            path = Path.Combine(path, Resource.GetValidFileNameToLower(G.Sys.GameManager_.Mode_.GameModeID_.ToString(), "_"));
-            path = Path.Combine(path, Resource.GetValidFileNameToLower(G.Sys.GameManager_.Level_.Name_, "_"));
-            path = Path.Combine(path, "pb.txt");
-
-            if (File.Exists(path))
+            else
             {
-                try
-                {
-                    using (var sr = new StreamReader(path))
-                    {
-                        string[] line;
-                        while ((line = sr.ReadLine()?.Split('\t')) != null)
-                        {
-                            if (line.Length == 2)
-                            {
-                                return TimeSpan.Parse("00:" + line[0]);
-                            }
-                        }
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine($"Spectrum.Plugins.SplitTracks: Tried to load time from Spectrum.Plugins.SplitTimes and failed. Exception below:\n{ex}");
-                }
+                return TimeSpan.Zero;
             }
-
-            return TimeSpan.Zero;
         }
 
         private void ValidateSettings()
