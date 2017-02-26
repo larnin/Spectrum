@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Spectrum.API;
 using Spectrum.API.Game.Vehicle;
 
 namespace Spectrum.Plugins.SplitTimes
@@ -126,6 +128,15 @@ namespace Spectrum.Plugins.SplitTimes
                 throw new Exception("Spectrum.Plugins.SplitTimes: Could not generate filename. Attempted to generate filename from checkpoint time.");
 
             return $"{DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss")}_{Render(Total, 3, '-', '-')}.txt";
+        }
+
+        public static string GetSavePath(Level l, GameMode m, Profile p)
+        {
+            var folder = FileSystem.GetValidFileNameToLower(p.Name_, "_");
+            folder = Path.Combine(folder, FileSystem.GetValidFileNameToLower(m.GameModeID_.ToString(), "_"));
+            folder = Path.Combine(folder, FileSystem.GetValidFileNameToLower(l.Name_, "_"));
+
+            return folder;
         }
     }
 }

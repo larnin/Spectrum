@@ -53,9 +53,11 @@ namespace Spectrum.Plugins.SplitTimes
 
             if (Settings.GetItem<bool>("SaveTimes"))
             {
-                _trackFolder = FileSystem.GetValidFileNameToLower(G.Sys.PlayerManager_.Current_.profile_.Name_, "_");
-                _trackFolder = Path.Combine(_trackFolder, FileSystem.GetValidFileNameToLower(G.Sys.GameManager_.Mode_.GameModeID_.ToString(), "_"));
-                _trackFolder = Path.Combine(_trackFolder, FileSystem.GetValidFileNameToLower(G.Sys.GameManager_.Level_.Name_, "_"));
+                _trackFolder = SplitTime.GetSavePath(
+                    G.Sys.GameManager_.Level_,
+                    G.Sys.GameManager_.Mode_,
+                    G.Sys.PlayerManager_.Current_.profile_
+                );
 
                 _bestCheckpointTimes = ReadTimes("pb.txt");
                 if (_bestCheckpointTimes.ContainsKey(-1))

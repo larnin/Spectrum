@@ -57,5 +57,9 @@
       <Project>{A9CFD86D-1604-4C80-B02B-E60AD98BA86F}</Project>
       <Name>Spectrum.API</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Spectrum.Plugins.SplitTimes\Spectrum.Plugins.SplitTimes.csproj">
+      <Project>{B24CD7FD-67B0-4B3B-9770-F760A336C418}</Project>
+      <Name>Spectrum.Plugins.SplitTimes</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

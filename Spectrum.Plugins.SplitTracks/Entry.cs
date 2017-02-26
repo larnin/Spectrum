@@ -10,6 +10,7 @@ using Spectrum.API.Interfaces.Plugins;
 using Spectrum.API.Interfaces.Systems;
 using Spectrum.API.Configuration;
 using Spectrum.API.Game.EventArgs.Vehicle;
+using Spectrum.Plugins.SplitTimes;
 
 namespace Spectrum.Plugins.SplitTracks
 {
@@ -162,10 +163,51 @@ namespace Spectrum.Plugins.SplitTracks
             {
                 return TimeSpan.FromMilliseconds(pb);
             }
-            else
+
+            // Only fallback to SplitTimes values for adventure mode
+            if (G.Sys.GameManager_.Mode_.GameModeID_ == GameModeID.Adventure)
             {
-                return TimeSpan.Zero;
+                return GetBestSplitTime();
             }
+
+            return TimeSpan.Zero;
+        }
+
+        private TimeSpan GetBestSplitTime()
+        {
+            var fs = new FileSystem(typeof(SplitTimes.Entry));
+
+            var path = Path.Combine(Defaults.PluginDataDirectory, fs.DirectoryPath);
+            path = Path.Combine(path, SplitTime.GetSavePath(
+                G.Sys.GameManager_.Level_,
+                G.Sys.GameManager_.Mode_,
+                G.Sys.PlayerManager_.Current_.profile_
+            ));
+            path = Path.Combine(path, "pb.txt");
+
+            if (File.Exists(path))
+            {
+                try
+                {
+                    using (var sr = new StreamReader(path))
+                    {
+                        string[] line;
+                        while ((line = sr.ReadLine()?.Split('\t')) != null)
+                        {
+                            if (line.Length == 2)
+                            {
+                                return TimeSpan.Parse("00:" + line[0]);
+                            }
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Spectrum.Plugins.SplitTracks: Tried to load time from Spectrum.Plugins.SplitTimes and failed. Exception below:\n{ex}");
+                }
+            }
+
+            return TimeSpan.Zero;
         }
 
         private void ValidateSettings()
