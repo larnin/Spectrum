@@ -84,20 +84,25 @@ namespace Spectrum.Plugins.SplitTracks
 
         private void ShowPressed(float duration)
         {
-            if (G.Sys.GameManager_.IsModeGo_ && !G.Sys.GameManager_.PauseMenuOpen_ && !_finished)
+            if (G.Sys.GameManager_.IsModeGo_ && !G.Sys.GameManager_.PauseMenuOpen_ && !_finished && !G.Sys.GameManager_.Mode_.IsChatWindowOpen_)
             {
-                var times = GetTimeStrings();
-                if (_started)
-                {
-                    times.Insert(0, new SplitTrack(_previousTrackTimes.LastOrDefault(), Race.ElapsedTime, G.Sys.GameManager_.Level_.Name_).RenderHud());
-                    times.Insert(0, "Total time: " + _previousTrackTimes.LastOrDefault().RenderTotal(Race.ElapsedTime));
-                }
-                else if (_previousTrackTimes.Count != 0)
-                {
-                    times.Insert(0, "Total time: " + _previousTrackTimes.LastOrDefault().RenderTotal());
-                }
-                HudLinesDownward(duration, times);
+                Show(duration);
             }
+        }
+
+        private void Show(float duration)
+        {
+            var times = GetTimeStrings();
+            if (_started)
+            {
+                times.Insert(0, new SplitTrack(_previousTrackTimes.LastOrDefault(), Race.ElapsedTime, G.Sys.GameManager_.Level_.Name_).RenderHud());
+                times.Insert(0, "Total time: " + _previousTrackTimes.LastOrDefault().RenderTotal(Race.ElapsedTime));
+            }
+            else if (_previousTrackTimes.Count != 0)
+            {
+                times.Insert(0, "Total time: " + _previousTrackTimes.LastOrDefault().RenderTotal());
+            }
+            HudLinesDownward(duration, times);
         }
 
         private void StartList()

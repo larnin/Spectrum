@@ -99,13 +99,18 @@ namespace Spectrum.Plugins.SplitTimes
 
         private void ShowPressed()
         {
-            if (G.Sys.GameManager_.IsModeGo_ && !G.Sys.GameManager_.PauseMenuOpen_ && !_finished)
+            if (G.Sys.GameManager_.IsModeGo_ && !G.Sys.GameManager_.PauseMenuOpen_ && !_finished && !G.Sys.GameManager_.Mode_.IsChatWindowOpen_)
             {
-                var times = GetTimeStrings();
-                times.Insert(0, new SplitTime(_previousCheckpointTimes.LastOrDefault(), Race.ElapsedTime, 0).RenderHud());
-                times.Insert(0, "<size=57><color=#00000000>Regenerating</color></size>"); // Dummy placeholder to keep positioning
-                HudLinesDownward(2.5f, times);
+                Show();
             }
+        }
+
+        private void Show()
+        {
+            var times = GetTimeStrings();
+            times.Insert(0, new SplitTime(_previousCheckpointTimes.LastOrDefault(), Race.ElapsedTime, 0).RenderHud());
+            times.Insert(0, "<size=57><color=#00000000>Regenerating</color></size>"); // Dummy placeholder to keep positioning
+            HudLinesDownward(2.5f, times);
         }
 
         private void HudLinesDownward(float delay, List<string> lines)
