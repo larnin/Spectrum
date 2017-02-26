@@ -38,9 +38,6 @@
     <Reference Include="UnityEngine">
       <HintPath>..\Spectrum.Dependencies\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="Spectrum.API">
-      <HintPath>..\Spectrum.API\bin\Release\Spectrum.API.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entry.cs" />
@@ -55,4 +52,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\Spectrum.API\Spectrum.API.csproj">
+      <Project>{A9CFD86D-1604-4C80-B02B-E60AD98BA86F}</Project>
+      <Name>Spectrum.API</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

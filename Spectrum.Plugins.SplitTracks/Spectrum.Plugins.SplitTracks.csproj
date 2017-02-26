@@ -32,14 +32,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Spectrum.API">
-      <HintPath>..\Spectrum.API\bin\Release\Spectrum.API.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\mnt\data\SteamLibrary\SteamApps\common\Distance\bin\Distance_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\Spectrum.Dependencies\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\mnt\data\SteamLibrary\SteamApps\common\Distance\bin\Distance_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\Spectrum.Dependencies\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -55,4 +52,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <ProjectReference Include="..\Spectrum.API\Spectrum.API.csproj">
+      <Project>{A9CFD86D-1604-4C80-B02B-E60AD98BA86F}</Project>
+      <Name>Spectrum.API</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
