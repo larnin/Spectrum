@@ -9,13 +9,13 @@ namespace Spectrum.API.Game.Vehicle
 
         internal HUD() { }
 
-        public void SetHUDText(string text, float displayTime)
+        public void SetHUDText(string text, float displayTime, int priority = -1)
         {
             UpdateParentObject();
 
             if (CanOperateOnHoverScreen)
             {
-                HoverScreenEmitter.SetTrickText(new TrickyTextLogic.TrickText(displayTime, 0, TrickyTextLogic.TrickText.TextType.standard, text));
+                HoverScreenEmitter.SetTrickText(new TrickyTextLogic.TrickText(displayTime, priority, TrickyTextLogic.TrickText.TextType.standard, text));
             }
         }
 
