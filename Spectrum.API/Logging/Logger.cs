@@ -20,6 +20,8 @@ namespace Spectrum.API.Logging
             ColorizeLines = true;
             FilePath = Path.Combine(Defaults.LogDirectory, filePath);
 
+            Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
+
             if (File.Exists(FilePath))
                 File.Delete(FilePath);
         }
