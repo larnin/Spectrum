@@ -29,7 +29,7 @@ namespace Spectrum.Plugins.DevelopmentUtilities.Utilities
                     validGameObjects.Add(gameObject);
             }
 
-            using (var sw = new StreamWriter(FileSystem.CreateFile(currentSceneName)))
+            using (var sw = new StreamWriter(FileSystem.CreateFile(currentSceneName, true)))
             {
                 foreach (var gameObject in validGameObjects)
                 {

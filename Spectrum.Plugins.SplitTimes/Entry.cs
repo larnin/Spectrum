@@ -184,7 +184,7 @@ namespace Spectrum.Plugins.SplitTimes
             try
             {
                 FileSystem.CreateDirectory(_trackFolder);
-                using (var sw = new StreamWriter(FileSystem.CreateFile(Path.Combine(_trackFolder, filename))))
+                using (var sw = new StreamWriter(FileSystem.CreateFile(Path.Combine(_trackFolder, filename), true)))
                 {
                     foreach (SplitTime time in _previousCheckpointTimes)
                     {
