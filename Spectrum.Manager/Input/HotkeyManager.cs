@@ -104,14 +104,33 @@ namespace Spectrum.Manager.Input
 
         internal void Update()
         {
+            List<Hotkey> pressed = new List<Hotkey>();
+            int biggestPressed = 0;
+
             if (ActionHotkeys.Count > 0)
             {
                 foreach (var hotkey in ActionHotkeys)
                 {
                     if (hotkey.Key.IsPressed)
                     {
-                        hotkey.Value.Invoke();
+                        if (hotkey.Key.Specificity > biggestPressed)
+                        {
+                            pressed.Clear();
+                            biggestPressed = hotkey.Key.Specificity;
+                        }
+
+                        if (hotkey.Key.Specificity == biggestPressed)
+                        {
+                            pressed.Add(hotkey.Key);
+                        }
                     }
+                }
+            }
+
+            if (biggestPressed > 0) {
+                foreach (var hotkey in pressed)
+                {
+                    ActionHotkeys[hotkey].Invoke();
                 }
             }
         }
