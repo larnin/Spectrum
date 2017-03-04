@@ -108,19 +108,23 @@ namespace Spectrum.Plugins.SplitTracks
 
         private void StartList()
         {
-            _active = true;
-            _started = false;
-            _previousTrackTimes.Clear();
-            _bestTrackTimes.Clear();
+            if (!G.Sys.GameManager_.Mode_.IsChatWindowOpen_) {
+                _active = true;
+                _started = false;
+                _previousTrackTimes.Clear();
+                _bestTrackTimes.Clear();
+            }
         }
 
         private void EndList()
         {
-            _active = false;
-            _started = false;
-            _finished = false;
+            if (!G.Sys.GameManager_.Mode_.IsChatWindowOpen_) {
+                _active = false;
+                _started = false;
+                _finished = false;
 
-            ShowPressed(10f);
+                ShowPressed(10f);
+            }
         }
 
         private void HudLinesDownward(float delay, List<string> lines)
