@@ -16,14 +16,10 @@ namespace Spectrum.API.Utilities
         {
             foreach (var gameObject in Object.FindObjectsOfType<GameObject>())
             {
-                if (gameObject.name == "CarScreenGroup")
+                var screenComponent = gameObject.GetComponent<CarScreenLogic>();
+                if (screenComponent?.CarLogic_.IsLocalCar_ ?? false)
                 {
-                    var screenComponent = gameObject.GetComponent<CarScreenLogic>();
-                    if (screenComponent.CarLogic_.IsLocalCar_)
-                    {
-                        return screenComponent;
-                    }
-                    Console.WriteLine("API: Found CarScreenGroup but it is not local.");
+                    return screenComponent;
                 }
             }
             return null;

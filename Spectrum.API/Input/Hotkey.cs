@@ -9,6 +9,7 @@ namespace Spectrum.API.Input
         private List<string> Keys { get; }
         private bool WasFired { get; set; }
         private bool IsOneTime { get; } = true;
+        public int Specificity { get { return Keys.Count; } }
 
         public bool IsPressed
         {

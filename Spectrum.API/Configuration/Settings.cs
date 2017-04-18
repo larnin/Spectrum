@@ -9,7 +9,7 @@ namespace Spectrum.API.Configuration
         private string FileName { get; }
         private string FilePath => Path.Combine(Defaults.SettingsDirectory, FileName);
 
-        public Settings(Type type, string postfix = "") : base("ROOT")
+        public Settings(Type type, string postfix = "")
         {
             if (string.IsNullOrEmpty(postfix))
             {
@@ -28,20 +28,23 @@ namespace Spectrum.API.Configuration
                     var json = sr.ReadToEnd();
                     var reader = new JsonFx.Json.JsonReader();
 
-                    Settings settings = null;
+                    Section sec = null;
+
                     try
                     {
-                        settings = reader.Read<Settings>(json);
+                        sec = reader.Read<Section>(json);
                     }
                     catch
                     {
                         saveLater = true;
                     }
 
-                    if (settings != null)
+                    if (sec != null)
                     {
-                        Values = settings.Values;
-                        Sections = settings.Sections;
+                        foreach (string k in sec.Keys)
+                        {
+                            Add(k, sec[k]);
+                        }
                     }
                 }
 
@@ -52,7 +55,7 @@ namespace Spectrum.API.Configuration
             }
         }
 
-        public void Save(bool formatJson = false)
+        public void Save(bool formatJson = true)
         {
             DataWriterSettings st = new DataWriterSettings { PrettyPrint = formatJson };
             var writer = new JsonFx.Json.JsonWriter(st);

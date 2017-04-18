@@ -98,7 +98,7 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.CheckpointHit.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     var eventArgs = new CheckpointHitEventArgs(data.checkpointIndex_, data.trackT_);
                     CheckpointPassed?.Invoke(null, eventArgs);
@@ -107,7 +107,7 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.Death.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     var eventArgs = new DestroyedEventArgs((DestructionCause)data.causeOfDeath);
                     Destroyed?.Invoke(null, eventArgs);
@@ -116,7 +116,7 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.Explode.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     var eventArgs = new DestroyedEventArgs((DestructionCause)data.causeOfDeath);
                     Exploded?.Invoke(null, eventArgs);
@@ -139,7 +139,7 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.Horn.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     var eventArgs = new HonkEventArgs(data.hornPercent_, new Position(data.position_.x, data.position_.y, data.position_.z));
                     Honked?.Invoke(null, eventArgs);
@@ -148,7 +148,7 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.Impact.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     var eventArgs = new ImpactEventArgs(data.speed_, new Position(data.pos_.x, data.pos_.y, data.pos_.z), data.impactedCollider_.name);
                     Collided?.Invoke(null, eventArgs);
@@ -157,7 +157,7 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.Jump.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     Jumped?.Invoke(null, System.EventArgs.Empty);
                 }
@@ -165,7 +165,7 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.ModeSpecial.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     SpecialModeEvent?.Invoke(null, System.EventArgs.Empty);
                 }  
@@ -185,7 +185,7 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.Split.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     var eventArgs = new SplitEventArgs(data.penetration, data.separationSpeed);
                     Split?.Invoke(null, eventArgs);
@@ -194,16 +194,16 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.TrickComplete.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
-                    var eventArgs = new TrickCompleteEventArgs(data.boost_, data.boostPercent_, data.boostTime_, data.cooldownPercent_, data.points_, data.rechargeAmount_);
+                    var eventArgs = new TrickCompleteEventArgs(data.cooldownAmount_, data.points_, data.wallRideMeters_, data.ceilingRideMeters_, data.grindMeters_);
                     TrickCompleted?.Invoke(null, eventArgs);
                 }
             });
 
             Events.Car.WingsStateChange.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     if (data.open_)
                     {
@@ -218,7 +218,7 @@ namespace Spectrum.API.Game.Vehicle
 
             Events.Car.WingsAbilityStateChanged.SubscribeAll((sender, data) =>
             {
-                if (sender.name == "LocalCar")
+                if (sender.GetComponent<PlayerDataLocal>())
                 {
                     if (data.enabled_)
                     {

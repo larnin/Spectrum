@@ -4,6 +4,7 @@ namespace Spectrum.API
     {
         RadioWave = 1,
         MicroWave = 2,
-        InfraRed = 3
+        InfraRed = 3,
+        UltraViolet = 4
     }
 }

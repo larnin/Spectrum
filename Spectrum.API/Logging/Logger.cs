@@ -17,11 +17,13 @@ namespace Spectrum.API.Logging
 
         public Logger(string filePath)
         {
-            if (File.Exists(filePath))
-                File.Delete(filePath);
-
             ColorizeLines = true;
             FilePath = Path.Combine(Defaults.LogDirectory, filePath);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
+
+            if (File.Exists(FilePath))
+                File.Delete(FilePath);
         }
 
         public void Error(string message)

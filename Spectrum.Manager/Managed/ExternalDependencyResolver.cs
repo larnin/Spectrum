@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Spectrum.API;
 using Spectrum.API.Logging;
+using Spectrum.API.Configuration;
 
 namespace Spectrum.Manager.Managed
 {
@@ -15,7 +16,7 @@ namespace Spectrum.Manager.Managed
         {
             Log = new Logger(Defaults.DependencyResolverLogFileName)
             {
-                WriteToConsole = Global.Settings.GetSection("Output").GetValue<bool>("LogToConsole")
+                WriteToConsole = Global.Settings.GetItem<Section>("Output").GetItem<bool>("LogToConsole")
             };
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 

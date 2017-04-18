@@ -4,6 +4,7 @@ using Spectrum.API;
 using Spectrum.API.Input;
 using Spectrum.API.Interfaces.Systems;
 using Spectrum.API.Logging;
+using Spectrum.API.Configuration;
 
 namespace Spectrum.Manager.Input
 {
@@ -19,7 +20,7 @@ namespace Spectrum.Manager.Input
 
             Log = new Logger(Defaults.HotkeyManagerLogFileName)
             {
-                WriteToConsole = Global.Settings.GetSection("Output").GetValue<bool>("LogToConsole")
+                WriteToConsole = Global.Settings.GetItem<Section>("Output").GetItem<bool>("LogToConsole")
             };
         }
 
@@ -103,14 +104,33 @@ namespace Spectrum.Manager.Input
 
         internal void Update()
         {
+            List<Hotkey> pressed = new List<Hotkey>();
+            int biggestPressed = 0;
+
             if (ActionHotkeys.Count > 0)
             {
                 foreach (var hotkey in ActionHotkeys)
                 {
                     if (hotkey.Key.IsPressed)
                     {
-                        hotkey.Value.Invoke();
+                        if (hotkey.Key.Specificity > biggestPressed)
+                        {
+                            pressed.Clear();
+                            biggestPressed = hotkey.Key.Specificity;
+                        }
+
+                        if (hotkey.Key.Specificity == biggestPressed)
+                        {
+                            pressed.Add(hotkey.Key);
+                        }
                     }
+                }
+            }
+
+            if (biggestPressed > 0) {
+                foreach (var hotkey in pressed)
+                {
+                    ActionHotkeys[hotkey].Invoke();
                 }
             }
         }
