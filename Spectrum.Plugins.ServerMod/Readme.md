@@ -1,8 +1,8 @@
 #### __!! Spectrum.Plugins.ServerMod works for stable versions 5081 !!__  
 
-Spectrum.Plugins.ServerMod is a plugin that adds some commands to the server, accessible by the host and players.
-All the commands are prefixed by '!'.
-If you are a client and you have the plugin, you can use some of your commands by remplacing the '!' key to '%' 
+Spectrum.Plugins.ServerMod is a plugin that adds some commands to the server, accessible by the host and players.  
+All the commands are prefixed by '!'.  
+If you are a client and you have the plugin, you can use some of your commands by remplacing the '!' key to '%'  
 
 Commands have 3 permission levels:
 * __HOST__: Only the host can use the command
@@ -22,7 +22,7 @@ Toggle the server auto mode.
 When auto mode is activated, the server will automatically jump to the next level when all players finish.  
 If a level lasts longer than 15 minutes, the server continues to the next level.  
 If the playlist ends, the server shuffle the playlist automatically.  
-Auto mode doesn't work with Trackmogrify.
+Auto mode doesn't work with Trackmogrify.  
 At the end of a map, if votes are enabled, players can choose between the 3 next maps (or restart the current) on the playlist the one they wants to play next.
 
 #### Autospec:
@@ -47,7 +47,7 @@ Stops the current countdown (including the default game-initiated countdown).
 
 #### Date
 Permission: __ALL__ (can also be used as client)  
-Use: !date
+Use: !date  
 Shows the date and time of the owner of the plugin.
 
 #### Del:
@@ -85,16 +85,16 @@ Use: !list
 Shows all connected clients and their IDs
 
 #### Load:
-Permission: __HOST__
-Use: !load
+Permission: __HOST__  
+Use: !load  
 Shows all the available playlists.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!load [playlist name]
-Removes all the levels on the current playlist and load a new one.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!load [playlist name]  
+Removes all the levels on the current playlist and load a new one.  
 If you are not on the lobby, the current level is added at the start of the new playlist.
     
 #### Play:
 Permission: __HOST__  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__ALL__ (if players can add maps)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__ALL__ (if players can add maps)  
 Use: !play [name]  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!play [filter]  
 Adds a level to the playlist in the first position (the next level to be played)  
@@ -120,8 +120,8 @@ Use: !rip
 Prints a losing sentence.
 
 #### Save:
-Permission: __HOST__
-Use: !save [name]
+Permission: __HOST__  
+Use: !save [name]  
 Save the current playlist on a file on the game playlist directory.  
 It can be loaded agains with the __!load__ command, or on the lobby.  
 
@@ -143,14 +143,14 @@ Sets the server public.
 Changes the name of the server.
 
 #### Settings:
-Permission: __HOST__
+Permission: __HOST__  
 Use: !settings reload  
 Reloads the settings from file.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings vote [true/false]
-Allows players to vote for the next map on auto mode.
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings play [true/false]
-Allows players to add maps on the playlist with the __!play__ command.
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings addOne [true/false]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings vote [true/false]  
+Allows players to vote for the next map on auto mode.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings play [true/false]  
+Allows players to add maps on the playlist with the __!play__ command.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings addOne [true/false]  
 If players can add maps and this option enabled, the players can only add one map at a time .
     
 #### Shuffle:
@@ -192,10 +192,10 @@ The index filter can be written multiple times to select many maps.
 #### Examples
 __!play -a snowstate -m sprint -all__ : Adds all the maps that snowstate have created on the sprint gamemode to the playlist.  
 __!list -name epic level__ : List all the levels on the current gamemode that contains "epic level" on their name. It's equivalent as __!list epic level__  
-__!play -name up -mode challenge -index 1__ : Add the first level from challenge mode found that contains "up" in it's name.
+__!play -name up -mode challenge -index 1__ : Add the first level from challenge mode found that contains "up" in it's name.  
 __!level -last -p 4__ : Shows the 4th page (result 30 to 39) of the last command.
 
-#Settings
+# Settings
 When the plugin is started for the first time, it generate a setting file that look like this : (on json)
 ```
 {
@@ -213,14 +213,14 @@ When the plugin is started for the first time, it generate a setting file that l
 	"voteNext" : true
 }
 ```
-__playersCanAddMap__ (true/false): Allows players to add map on the playlist.
-You can change it with the command !settings play.
-__addOneMapOnly__ (true/false): If players are allowed to add map and this option set to true, they can only add one map at a time.
-You can change it with the command !settings addOne.
-__voteNext__ (true/false): Allows players to vote for the next map on auto mode.
-You can change it with the command !settings vote.
-__win__ (list of string): A list of sentence that will be picked randomly when a player use the command !win
-__rip__ (list of string) : A list of sentence that will be picked randomly when a player use the command !rip
+__playersCanAddMap__ (true/false): Allows players to add map on the playlist.  
+You can change it with the command !settings play.  
+__addOneMapOnly__ (true/false): If players are allowed to add map and this option set to true, they can only add one map at a time.  
+You can change it with the command !settings addOne.  
+__voteNext__ (true/false): Allows players to vote for the next map on auto mode.  
+You can change it with the command !settings vote.  
+__win__ (list of string): A list of sentence that will be picked randomly when a player use the command !win  
+__rip__ (list of string) : A list of sentence that will be picked randomly when a player use the command !rip  
 
 # Author contacts 
 Steam : http://steamcommunity.com/id/larnin/  
