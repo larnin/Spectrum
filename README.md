@@ -8,15 +8,6 @@ game's experience and make it do things the original game's developers didn't
 even think about. It's being constantly updated by one of the Distance community
 members.
 
-### Installation
-Please refer to [this Wiki](https://github.com/Ciastex/Spectrum/wiki/Installing-Spectrum) page about Spectrum installation process.
-
-### Reporting a Bug
-Please refer to [this Wiki](https://github.com/Ciastex/Spectrum/wiki/Reporting-a-bug) page on how to make a good bug report.
-
-### Building Spectrum
-Please refer to [this Wiki](https://github.com/Ciastex/Spectrum/wiki/Building-Spectrum-from-source) page on building Spectrum from source.
-
 ### Getting unstable versions
 [AppVeyor artifacts](https://ci.appveyor.com/project/Ciastex/spectrum/build/artifacts) page contains the binaries for the latest commit.
 
