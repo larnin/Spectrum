@@ -26,7 +26,7 @@ namespace Spectrum.API.Game.Network
 
                 var author = ExtractMessageAuthor(data.message_);
 
-                if (author != G.Sys.PlayerManager_.Current_.profile_.Name_ && !IsSystemMessage(data.message_))
+                if (author != G.Sys.GameManager_.GetOnlineProfileName(G.Sys.PlayerManager_.Current_.profile_.Index_) && !IsSystemMessage(data.message_))
                 {
                     var eventArgs = new ChatMessageEventArgs(author, ExtractMessageBody(data.message_));
                     MessageReceived?.Invoke(null, eventArgs);
