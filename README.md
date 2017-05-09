@@ -3,10 +3,7 @@
 ### What is Spectrum?
 Spectrum is a simple, yet powerful extension system for Refract Studios' game 
 [Distance](http://survivethedistance.com/)
-It allows you to write custom Lua scripts and DLL plugins to customize the
-game's experience and make it do things the original game's developers didn't 
-even think about. It's being constantly updated by one of the Distance community
-members.
+It allows you to write DLL plugins to customize the game's experience and make it do things the original game's developers didn't even think about. It's being constantly updated by one of the Distance community members (sans small development breaks).
 
 ### Getting unstable versions
 [AppVeyor artifacts](https://ci.appveyor.com/project/Ciastex/spectrum/build/artifacts) page contains the binaries for the latest commit.
