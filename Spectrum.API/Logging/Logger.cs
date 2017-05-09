@@ -15,10 +15,10 @@ namespace Spectrum.API.Logging
 
         private string FilePath { get; }
 
-        public Logger(string filePath)
+        public Logger(string fileName)
         {
             ColorizeLines = true;
-            FilePath = Path.Combine(Defaults.LogDirectory, filePath);
+            FilePath = Path.Combine(Defaults.LogDirectory, fileName);
 
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
 
