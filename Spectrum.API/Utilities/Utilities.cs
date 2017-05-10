@@ -1,6 +1,5 @@
 using System.Reflection;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Spectrum.API.Utilities
 {
@@ -8,18 +7,20 @@ namespace Spectrum.API.Utilities
     {
         internal static GameObject FindLocalCar()
         {
-            return GameObject.Find("LocalCar");
+            return G.Sys.PlayerManager_?.Current_?.playerData_?.Car_;
+        }
+
+        internal static CarLogic FindLocalCarLogic()
+        {
+            return G.Sys.PlayerManager_?.Current_?.playerData_?.CarLogic_;
         }
 
         internal static CarScreenLogic FindLocalVehicleScreen()
         {
-            foreach (var gameObject in Object.FindObjectsOfType<GameObject>())
+            var carScreenLogic = G.Sys.PlayerManager_?.Current_?.playerData_?.CarScreenLogic_;
+            if (carScreenLogic?.CarLogic_.IsLocalCar_ ?? false)
             {
-                var screenComponent = gameObject.GetComponent<CarScreenLogic>();
-                if (screenComponent?.CarLogic_.IsLocalCar_ ?? false)
-                {
-                    return screenComponent;
-                }
+                return carScreenLogic;
             }
             return null;
         }
