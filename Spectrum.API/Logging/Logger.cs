@@ -41,6 +41,11 @@ namespace Spectrum.API.Logging
         {
             if (ColorizeLines)
                 Console.ForegroundColor = WarningColor;
+
+            WriteLine($"[*][{DateTime.Now}] {message}");
+
+            if (ColorizeLines)
+                Console.ResetColor();
         }
 
         public void Info(string message, bool noNewLine = false)
