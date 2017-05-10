@@ -64,7 +64,7 @@ namespace Spectrum.API.Game.Network
             ChatLog.ClearLog();
         }
 
-        private static string ExtractMessageAuthor(string message)
+        public static string ExtractMessageAuthor(string message)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace Spectrum.API.Game.Network
             }
         }
 
-        private static string ExtractMessageBody(string message)
+        public static string ExtractMessageBody(string message)
         {
             try
             {
