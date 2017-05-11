@@ -7,9 +7,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
 {
     class DateCMD : cmd
     {
-        public static bool playersCanAddMap = false;
-        public static bool addOneMapOnly = true;
-
         public override string name { get { return "date"; } }
         public override PermType perm { get { return PermType.ALL; } }
         public override bool canUseAsClient { get { return true; } }

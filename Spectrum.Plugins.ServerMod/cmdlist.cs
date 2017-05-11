@@ -24,6 +24,7 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new PlayCMD());
             cmds.Add(new PlaylistCMD());
             cmds.Add(new PluginCMD());
+            cmds.Add(new RestartCMD());
             cmds.Add(new RipCMD());
             cmds.Add(new SaveCMD());
             cmds.Add(new ScoresCMD());

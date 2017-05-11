@@ -50,6 +50,7 @@
     <Compile Include="cmds\cmd.cs" />
     <Compile Include="cmds\CountdownCMD.cs" />
     <Compile Include="cmds\DelCMD.cs" />
+    <Compile Include="cmds\RestartCMD.cs" />
     <Compile Include="cmds\RipCMD.cs" />
     <Compile Include="cmds\SaveCMD.cs" />
     <Compile Include="cmds\ScoresCMD.cs" />
