@@ -19,7 +19,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Utilities.sendMessage("!settings reload: reload the settings for file.");
             Utilities.sendMessage("!settings play [true/false]: allow player to add maps on the playlist.");
             Utilities.sendMessage("!settings addOne [true/false]: if enabled, allow the players to add only one map at a time.");
-            Utilities.sendMessage("!settings welcome [message]: Set the welcome message. \"off\" to disable. %USERNAME% is substituted for the player's name.");
+            Utilities.sendMessage("!settings welcome [message]: Set the welcome message.");
             Utilities.sendMessage("  \"off\" to disable.");
             Utilities.sendMessage("  %USERNAME% is substituted for the player's name.");
             Utilities.sendMessage("!settings voteSystem [true/false]: Turn the voting system off/on.");
