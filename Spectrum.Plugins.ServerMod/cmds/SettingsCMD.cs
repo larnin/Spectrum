@@ -22,7 +22,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Utilities.sendMessage("!settings welcome [message]: Set the welcome message. \"off\" to disable. %USERNAME% is substituted for the player's name.");
             Utilities.sendMessage("  \"off\" to disable.");
             Utilities.sendMessage("  %USERNAME% is substituted for the player's name.");
-            Utilities.sendMessage("!settings voteSystem [true/false]: Turn the voting system off/on. This is separate from autoVote!");
+            Utilities.sendMessage("!settings voteSystem [true/false]: Turn the voting system off/on.");
             Utilities.sendMessage("  This is separate from autoVote!");
             Utilities.sendMessage("voteSystem thresholds are changed with !votectrl");
             Utilities.sendMessage("-- Setting for !auto: --");
