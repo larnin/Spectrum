@@ -76,7 +76,7 @@ Use: !level [keyword]
 Shows all levels in the host’s library that contain the entered keyword.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!level [filter]  
 Shows all levels that match the filter.  
-See bellow for more information about filters.  
+See below for more information about filters.  
 If this command is used as a client with __%level__, it search on your library.
 
 #### List:

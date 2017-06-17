@@ -45,6 +45,7 @@
     <Compile Include="cmds\AutoSpecCMD.cs" />
     <Compile Include="cmds\ClearCMD.cs" />
     <Compile Include="cmds\DateCMD.cs" />
+    <Compile Include="cmds\DelsCMD.cs" />
     <Compile Include="cmds\LoadCMD.cs" />
     <Compile Include="cmds\PluginCMD.cs" />
     <Compile Include="cmds\cmd.cs" />
@@ -67,6 +68,8 @@
     <Compile Include="cmds\SpecCMD.cs" />
     <Compile Include="cmds\StartvoteCMD.cs" />
     <Compile Include="cmds\TimelimitCMD.cs" />
+    <Compile Include="cmds\VoteHandler.cs" />
+    <Compile Include="cmds\WelcomeCMD.cs" />
     <Compile Include="cmds\WinCMD.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="LevelList.cs" />

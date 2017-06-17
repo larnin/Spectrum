@@ -42,15 +42,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
             foreach(var cName in cmd.all.commands())
             {
                 cmd c = cmd.all.getCommand(cName);
-                list += cName;
-                if (c.perm == PermType.HOST)
-                    list += "(H)";
-                if (c.perm == PermType.LOCAL)
-                    list += "(L)";
+                if (c.perm == PermType.HOST && Utilities.isHost())
+                    list += cName+"(H)";
+                if (c.perm == PermType.LOCAL && p.IsLocal_)
+                    list += cName+"(L)";
+                if (c.perm == PermType.ALL)
+                    list += cName;
                 list += ", ";
             }
             Utilities.sendMessage(list.Remove(list.Length - 2));
-            Utilities.sendMessage("(H) = host only / (L) = local client only");
+            if (p.IsLocal_ || Utilities.isHost()) 
+                Utilities.sendMessage("(H) = host only / (L) = local client only");
             Utilities.sendMessage("Use !help <command> for more information on the command");
         }
     }

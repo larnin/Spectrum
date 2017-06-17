@@ -11,7 +11,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
 {
     class AutoSpecCMD : cmd
     {
-        private bool autoSpecMode = false;
+        public bool autoSpecMode = false;
+
+        public static bool autoSpecReturnToLobby = false;
 
         public override string name { get { return "autospec"; } }
         public override PermType perm { get { return PermType.LOCAL; } }
@@ -58,7 +60,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             var players = G.Sys.PlayerManager_.PlayerList_;
             if (players.Count != 0)
             {
-                if (players.Count == 1 && Utilities.isHost())
+                if (players.Count == 1 && Utilities.isHost() && autoSpecReturnToLobby)
                     G.Sys.GameManager_.GoToLobby();
                 else
                 {

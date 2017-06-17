@@ -9,12 +9,13 @@ namespace Spectrum.Plugins.ServerMod
 
         public cmdlist()
         {
-            cmds.Add(new AutoCMD());
+            cmds.Add(new AutoCMD(this));
             cmds.Add(new AutoSpecCMD());
             cmds.Add(new ClearCMD());
             cmds.Add(new CountdownCMD());
             cmds.Add(new DateCMD());
             cmds.Add(new DelCMD());
+            cmds.Add(new DelsCMD());
             cmds.Add(new ForceStartCMD());
             cmds.Add(new HelpCMD());
             cmds.Add(new LevelCMD());
@@ -26,6 +27,7 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new PluginCMD());
             cmds.Add(new RestartCMD());
             cmds.Add(new RipCMD());
+            cmds.Add(new WinCMD());
             cmds.Add(new SaveCMD());
             cmds.Add(new ScoresCMD());
             cmds.Add(new ServerCMD());
@@ -33,7 +35,12 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new ShuffleCMD());
             cmds.Add(new SpecCMD());
             cmds.Add(new TimelimitCMD());
-            cmds.Add(new WinCMD());
+            cmds.Add(new WelcomeCMD());
+            
+            VoteHandler voteHandler = new VoteHandler(this);
+            cmds.Add(voteHandler.voteCommand);
+            cmds.Add(voteHandler.voteControlCommand);
+            
         }
 
         public cmd getCommand(string name)
