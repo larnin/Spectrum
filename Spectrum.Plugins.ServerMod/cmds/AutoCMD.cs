@@ -18,10 +18,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         const int maxtVoteValue = 3;
 
-        const string msgPattern = @"^\s*msg\s+(.*)\s*$";
-        const string maxPattern = @"^\s*max\s+(\d+)\s*$";
-        const string minPattern = @"^\s*min\s+(\d+)\s*$";
-
         public bool autoMode = false;
         int index = 0;  // Tracks when new levels load. Some code needs to stop running if a new level loads.
         bool voting = false;
@@ -171,7 +167,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     {
                         cmd.all.getCommand("shuffle").use(null, "");
                     }
-                    else G.Sys.GameManager_.GoToNextLevel(true);
+                    G.Sys.GameManager_.GoToNextLevel(true);
                 }
                 else autoMode = false;
             }
@@ -302,7 +298,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             yield return new WaitForSeconds(maxRunTime);
             if (currentIndex == index && autoMode)
             {
-                Utilities.sendMessage("This map had run for the maximum run time.");
+                Utilities.sendMessage("This map has run for the maximum run time.");
                 Utilities.sendMessage("Finishing in 30 sec...");
                 int myIndex = index;
                 yield return new WaitForSeconds(30);
