@@ -249,7 +249,7 @@ namespace Spectrum.Plugins.ServerMod
             if (!Settings.ContainsKey("autoAdvanceMsg"))
                 Settings["autoAdvanceMsg"] = "";
             if (!Settings.ContainsKey("autoMinPlayers"))
-                Settings["autoMinPlayers"] = 2;
+                Settings["autoMinPlayers"] = 1;
             if (!Settings.ContainsKey("autoMaxTime"))
                 Settings["autoMaxTime"] = 15*60;
             if (!Settings.ContainsKey("autoSpecCountsAsPlayer"))

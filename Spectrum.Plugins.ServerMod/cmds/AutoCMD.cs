@@ -14,7 +14,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public static string advanceMessage = "";
         public static int maxRunTime = 15*60;
-        public static int minPlayers = 2;
+        public static int minPlayers = 1;
 
         const int maxtVoteValue = 3;
 
