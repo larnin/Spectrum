@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Nico";
         public string Contact => "SteamID: larnin";
         public APILevel CompatibleAPILevel => APILevel.UltraViolet;
-        public string PluginVersion = "Version C.0.5.3";
+        public string PluginVersion = "V0.5.0";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
