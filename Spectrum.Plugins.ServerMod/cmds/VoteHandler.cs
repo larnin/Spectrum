@@ -27,9 +27,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             this.list = list;
             thresholds = new Dictionary<string, double>();
-            thresholds.Add("skip", 0.5);
-            thresholds.Add("stop", 0.5);
-            thresholds.Add("play", 0.4);
+            thresholds.Add("skip", 0.55);
+            thresholds.Add("stop", 0.55);
+            thresholds.Add("play", 0.55);
             thresholds.Add("kick", 0.7);
             thresholds.Add("count", 0.6);
 
