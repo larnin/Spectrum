@@ -34,7 +34,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
 
-            if (useVote)  // host can always force play, never uses vote.
+            if (useVote && !p.IsLocal_)  // host can always force play, never uses vote.
             {
                 ((VoteHandler.VoteCMD)cmd.all.getCommand("vote")).forceNextUse();
                 ((VoteHandler.VoteCMD)cmd.all.getCommand("vote")).use(p, "y play " + message);

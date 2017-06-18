@@ -42,7 +42,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             foreach(var cName in cmd.all.commands())
             {
                 cmd c = cmd.all.getCommand(cName);
-                if (c.perm == PermType.HOST && Utilities.isHost())
+                if (c.perm == PermType.HOST && (p.IsLocal_ && Utilities.isHost()))
                     list += cName+"(H)";
                 if (c.perm == PermType.LOCAL && p.IsLocal_)
                     list += cName+"(L)";
