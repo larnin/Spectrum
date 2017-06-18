@@ -17,6 +17,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override void help(ClientPlayerInfo p)
         {
             Utilities.sendMessage("!settings reload: reload the settings for file.");
+            Utilities.sendMessage("!settings playVote [true/false]: set play command to act as '!vote y play'");
+            Utilities.sendMessage("  This setting overrides the 'play' settings.");
             Utilities.sendMessage("!settings play [true/false]: allow player to add maps on the playlist.");
             Utilities.sendMessage("!settings addOne [true/false]: if enabled, allow the players to add only one map at a time.");
             Utilities.sendMessage("!settings welcome [message]: Set the welcome message.");
@@ -45,6 +47,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if (strs[0] == "reload")
                 reload(p);
+            else if (strs[0] == "playvote")
+            {
+                if (strs.Length == 1)
+                    help(p);
+                else playVote(p, strs[1]);
+            }
             else if (strs[0] == "play")
             {
                 if (strs.Length == 1)
@@ -120,6 +128,27 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             Entry.load();
             Utilities.sendMessage("Settings reloaded !");
+        }
+
+        void playVote(ClientPlayerInfo p, string value)
+        {
+            if (value == "0" || value == "false")
+            {
+                PlayCMD.useVote = false;
+                Utilities.sendMessage("'!play' no longer acts as '!vote y play' for non-hosts.");
+            }
+            else if (value == "1" || value == "true")
+            {
+                PlayCMD.useVote = true;
+                Utilities.sendMessage("'!play' now acts as '!vote y play' for non-hosts.");
+            }
+            else
+            {
+                help(p);
+                return;
+            }
+
+            Entry.save();
         }
 
         void play(ClientPlayerInfo p, string value)

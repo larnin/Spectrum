@@ -81,11 +81,6 @@ Commands with "(L)" can only be used by the local player (the one who has the pl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!help [command name]  
 Shows the help message of the specified command.
 
-#### Welcome:
-Permission: __ALL__  
-Use: !welcome  
-Shows the welcome message again  
-
 #### Level:
 Permission: __ALL__  (can also be used as client)  
 Use: !level [keyword]  
@@ -117,29 +112,10 @@ Adds a level to the playlist in the first position (the next level to be played)
 If more than one level matches the name exactly, the first one is added.  
 If only one level contains the name, it will be added to the playlist.  
 If more than one level contains the name, it will display the matching levels (like !level).  
-The filter works exactly like the list command.
-
-#### Vote:
-Permission: __ALL__
-Use: !vote [y/n/i] [vote type] [value]
-Allows voting for various things, with configurable passing thresholds:
-* `!vote [y/n/i] skip` Vote to skip the current level
-* `!vote [y/n/i] stop` Vote to stop the countdown
-* `!vote [y/n/i] play [level name]` Vote to play a map
-
-##### Examples:
-`!vote y skip` Vote to skip the current level  
-`!vote n skip` Cancel your vote to skip the level  
-`!vote i stop` View the vote pass threshold, votes made, and votes needed to stop the countdown  
-`!vote y play inferno` Vote to play the level "Inferno"  
-`!vote y play -a krispy` Vote to play all of Krispy's maps  
-Votes for maps are counted individually for every map, not by the command used.  
-
-#### VoteCtrl:
-Permission: __HOST__  
-Use: !votectrl [vote type] [percent]  
-Vote types are `skip`, `stop`, and `play`.  
-`percent` should be a number between 0 and 100. Numbers above 100 effectively disable the vote.  
+The filter works exactly like the list command.  
+If the `play` setting is true, players can add levels directly, one at a time.  
+If the `playVote` setting is true, players can vote for multiple levels at once: `!play <level>` will act as an alias for `!vote y play <level>`  
+`playVote` overrides `play`. The host will keep the default functionality for the `!play` command, always.
 
 #### Playlist:
 Permission: __ALL__  
@@ -184,6 +160,10 @@ Changes the name of the server.
 Permission: __HOST__  
 Use: !settings reload  
 Reloads the settings from file.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings playVote [true/false]  
+Allows players to vote for maps on the playlist with the __!play__ command.  
+If true, __!play <map>__ acts as an alias for `!vote y play <map>`  
+The host keeps the regular functionality of __!play__.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings play [true/false]  
 Allows players to add maps on the playlist with the __!play__ command.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings addOne [true/false]  
@@ -227,6 +207,37 @@ Permission: __HOST__
 Use: !timelimit [value]  
 Works like the official command, it changes the max time for the next reverse tag maps.  
 The value must be between 30 and 1800 seconds (30 minutes)
+
+#### Vote:
+Permission: __ALL__
+Use: !vote [y/n/i] [vote type] [value]
+Allows voting for various things, with configurable passing thresholds:
+* `!vote [y/n/i] skip` Vote to skip the current level
+* `!vote [y/n/i] stop` Vote to stop the countdown
+* `!vote [y/n/i] play [level name]` Vote to play a map
+`[y/n/i]` can be left off, and the vote is done as a `yes` vote:
+* `!vote skip` is `!vote y skip`
+* `!vote play <map>` is `!vote y play <map>`
+
+##### Examples:
+`!vote skip` Vote to skip the current level  
+`!vote y skip` Vote to skip the current level  
+`!vote n skip` Cancel your vote to skip the level  
+`!vote i stop` View the vote pass threshold, votes made, and votes needed to stop the countdown  
+`!vote play inferno` Vote to play the level "Inferno"  
+`!vote play -a krispy` Vote to play all of Krispy's maps  
+Votes for maps are counted individually for every map, not by the command used.  
+
+#### VoteCtrl:
+Permission: __HOST__  
+Use: !votectrl [vote type] [percent]  
+Vote types are `skip`, `stop`, and `play`.  
+`percent` should be a number between 0 and 100. Numbers above 100 effectively disable the vote.  
+
+#### Welcome:
+Permission: __ALL__  
+Use: !welcome  
+Shows the welcome message again  
 
 #### Win
 Permission: __ALL__  
@@ -286,6 +297,9 @@ When the plugin is started for the first time, it generate a setting file that l
 ```
 __playersCanAddMap__ (true/false): Allows players to add map on the playlist.  
 You can change it with the command !settings play.  
+__playIsVote__ (true/false): Turns `!play <map>` into `!vote y play <map>` for non-hosts.  
+You can change it with the command !settings playVote.
+The host always keeps the regular functionality of !play.
 __addOneMapOnly__ (true/false): If players are allowed to add map and this option set to true, they can only add one map at a time.  
 You can change it with the command !settings addOne.  
 __allowVoteSystem__ (true/false): Allows the !vote command to be used.  

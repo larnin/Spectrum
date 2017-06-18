@@ -9,6 +9,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
     {
         public static bool playersCanAddMap = false;
         public static bool addOneMapOnly = true;
+        public static bool useVote = false;
 
         public override string name { get { return "play"; } }
         public override PermType perm { get { return playersCanAddMap ? PermType.ALL : PermType.HOST; } }
@@ -16,10 +17,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!play [lvl name]: Adds a level to the playlist as the next to be played.");
-            Utilities.sendMessage("!play [filter] : Use filters to find a level");
-            Utilities.sendMessage("Valid filters : -mode -m -name -n -author -a -index -i -last -l -all");
-            Utilities.sendMessage("The level must be know by the server to be show");
+            if (useVote)
+                Utilities.sendMessage("!play [lvl name]: Vote to add a level to the playlist.");
+            else
+                Utilities.sendMessage("!play [lvl name]: Adds a level to the playlist as the next to be played.");
+            Utilities.sendMessage("!play [filter]: Use filters to find a level");
+            Utilities.sendMessage("Valid filters: -mode -m -name -n -author -a -index -i -last -l -all");
+            Utilities.sendMessage("The level must be known by the server to be show up");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -30,15 +34,22 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
 
-            if (Utilities.isOnLobby())
+            if (useVote && !p.IsLocal_)  // host can always force play, never uses vote.
             {
-                Utilities.sendMessage("You can't set the next level here");
+                ((VoteHandler.VoteCMD)cmd.all.getCommand("vote")).forceNextUse();
+                ((VoteHandler.VoteCMD)cmd.all.getCommand("vote")).use(p, "y play " + message);
                 return;
             }
 
-            if(G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
+            if (Utilities.isOnLobby())
             {
-                Utilities.sendMessage("You can't manage the playlist in trackmogrify");
+                Utilities.sendMessage("You can't set the next level in the lobby.");
+                return;
+            }
+
+            if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
+            {
+                Utilities.sendMessage("You can't manage the playlist in trackmogrify.");
                 return;
             }
 
