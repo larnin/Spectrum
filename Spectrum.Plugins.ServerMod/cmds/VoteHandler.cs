@@ -106,6 +106,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
             public VoteCMD(VoteHandler parent)
             {
                 this.parent = parent;
+                
+                Events.ServerToClient.ModeFinished.Subscribe(data =>
+                {
+                    parent.votes["skip"].Clear();
+                    parent.votes["stop"].Clear();
+
+                    votedSkip = false;
+                });
             }
 
             public override void help(ClientPlayerInfo p)
@@ -159,6 +167,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 else
                 {
                     Utilities.sendMessage("Invalid <yes/no> You can use yes/no, y/n, 1/0, true/false, and t/f.");
+                    Utilities.sendMessage("You can use info/i to get info.");
                     return;
                 }
 
@@ -204,15 +213,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                     List<string> votes = parent.votes[voteType];
 
-                    if (votes.Count == 0 && voteValue)
-                    {
-                        Events.ServerToClient.ModeFinished.Subscribe(data =>
-                        {
-                            parent.votes[voteType].Clear();
-                            votedSkip = false;
-                        });
-                    }
-
                     int value = votes.Count;
 
                     string playerVoteId = $"{p.Username_}:{p.NetworkPlayer_.externalIP}:{p.NetworkPlayer_.externalPort}";
@@ -255,14 +255,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
 
                     List<string> votes = parent.votes[voteType];
-
-                    if (votes.Count == 0 && voteValue)
-                    {
-                        Events.ServerToClient.ModeFinished.Subscribe(data =>
-                        {
-                            parent.votes[voteType].Clear();
-                        });
-                    }
                     
                     int value = votes.Count;
 

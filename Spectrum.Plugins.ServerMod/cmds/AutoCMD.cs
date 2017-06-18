@@ -20,6 +20,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public bool autoMode = false;
         int index = 0;  // Tracks when new levels load. Some code needs to stop running if a new level loads.
+        // when index changes, it invalidates any running code after is does WaitForSeconds
+        //  this means that loading a new map through the gui or restarting auto will invalidate the old auto routine
+        //  which would otherwise interfere by selecting a level when the host or new auto routine already did.
         bool voting = false;
         Dictionary<string, int> votes = new Dictionary<string, int>();
 
@@ -131,12 +134,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public int getMinPlayers()
         {
             AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
+            // if autoSpec does not count as a player and if the host is autospec, then add 1 to minPlayers
             return minPlayers + ((!autoSpecCountsAsPlayer && autoSpecCommand.autoSpecMode) ? 1 : 0);
         }
 
-        IEnumerator waitAndGoNext()
+        IEnumerable<float> waitForMinPlayers()
         {
-            // index and myIndex are used to check if the level advances before auto does it.
             int myIndex;
             if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
             {
@@ -144,11 +147,20 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 while (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
                 {
                     myIndex = index;
-                    yield return new WaitForSeconds(5.0f);
+                    yield return 5.0f;
                     if (index != myIndex)
                         yield break;
                 }
             }
+        }
+
+        IEnumerator waitAndGoNext()
+        {
+            foreach (float f in waitForMinPlayers())
+            {
+                yield return new WaitForSeconds(f);
+            }
+            int myIndex; // index and myIndex are used to check if the level advances before auto does it.
             if (!Utilities.isOnLobby())
             {
                 Utilities.sendMessage("Going to the next level in 10 seconds...");
@@ -177,18 +189,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator voteAndGoNext()
         {
-            int myIndex;
-            if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
+            foreach (float f in waitForMinPlayers())
             {
-                Utilities.sendMessage($"Waiting for there to be {getMinPlayers()} players.");
-                while (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
-                {
-                    myIndex = index;
-                    yield return new WaitForSeconds(5.0f);
-                    if (index != myIndex)
-                        yield break;
-                }
+                yield return new WaitForSeconds(f);
             }
+            int myIndex;
             if (!Utilities.isOnLobby())
             {
                 voting = true;
@@ -213,9 +218,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     else Utilities.sendMessage("Level [b][FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + index].levelNameAndPath_.levelName_ + "[-][/b] selected !");
                     voting = false;
 
-                    myIndex = index;
+                    myIndex = this.index;
                     yield return new WaitForSeconds(5);
-                    if (index != myIndex)
+                    if (this.index != myIndex)
                         yield break;
 
                     if (advanceMessage != "")
@@ -231,7 +236,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     else autoMode = false;
                 }
                 else autoMode = false;
-                yield return null;
             }
             else autoMode = false;
             yield return null;
@@ -239,20 +243,25 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator startFromLobby()
         {
+            bool hasRanOnce = false;
             int myIndex;
             int total = 0;
             while (total < 2)
             {
-                if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
+                if (hasRanOnce)
                 {
-                    Utilities.sendMessage($"Waiting for there to be {getMinPlayers()} players.");
-                    while (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
-                    {
-                        myIndex = index;
-                        yield return new WaitForSeconds(5.0f);
-                        if (index != myIndex)
-                            yield break;
-                    }
+                    Utilities.sendMessage("Starting the game in 10 seconds...");
+
+                    myIndex = index;
+                    yield return new WaitForSeconds(10.0f);
+                    if (index != myIndex)
+                        yield break;
+                }
+                else hasRanOnce = true;
+
+                foreach (float f in waitForMinPlayers())
+                {
+                    yield return new WaitForSeconds(f);
                 }
                 total = 1;
 
@@ -276,16 +285,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         yield return new WaitForSeconds(5.0f);
                         if (index != myIndex)
                             yield break;
-                        total = 0;
+                        total = 0;  // since we had to wait for 5 seconds, some players might have left. We need to run the loop again to make sure.
+                        // by making this 0, total will be < 2 and the loop will repeat.
                     }
                 } while (!canContinue);
                 total = total + 1;
             }
-            Utilities.sendMessage("Starting the game in 10 seconds...");
-            myIndex = index;
-            yield return new WaitForSeconds(10.0f);
-            if (index != myIndex)
-                yield break;
             if (Utilities.isOnLobby())
                 G.Sys.GameManager_.GoToCurrentLevel();
             yield return null;
@@ -300,6 +305,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 Utilities.sendMessage("This map has run for the maximum run time.");
                 Utilities.sendMessage("Finishing in 30 sec...");
+
                 int myIndex = index;
                 yield return new WaitForSeconds(30);
                 if (index != myIndex)
