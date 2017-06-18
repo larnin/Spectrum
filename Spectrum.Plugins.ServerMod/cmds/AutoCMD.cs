@@ -213,9 +213,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     else Utilities.sendMessage("Level [b][FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + index].levelNameAndPath_.levelName_ + "[-][/b] selected !");
                     voting = false;
 
-                    myIndex = index;
+                    myIndex = this.index;
                     yield return new WaitForSeconds(5);
-                    if (index != myIndex)
+                    if (this.index != myIndex)
                         yield break;
 
                     if (advanceMessage != "")
@@ -231,7 +231,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     else autoMode = false;
                 }
                 else autoMode = false;
-                yield return null;
             }
             else autoMode = false;
             yield return null;
