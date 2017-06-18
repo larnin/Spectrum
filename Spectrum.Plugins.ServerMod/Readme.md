@@ -81,11 +81,6 @@ Commands with "(L)" can only be used by the local player (the one who has the pl
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!help [command name]  
 Shows the help message of the specified command.
 
-#### Welcome:
-Permission: __ALL__  
-Use: !welcome  
-Shows the welcome message again  
-
 #### Level:
 Permission: __ALL__  (can also be used as client)  
 Use: !level [keyword]  
@@ -121,32 +116,6 @@ The filter works exactly like the list command.
 If the `play` setting is true, players can add levels directly, one at a time.  
 If the `playVote` setting is true, players can vote for multiple levels at once: `!play <level>` will act as an alias for `!vote y play <level>`  
 `playVote` overrides `play`. The host will keep the default functionality for the `!play` command, always.
-
-#### Vote:
-Permission: __ALL__
-Use: !vote [y/n/i] [vote type] [value]
-Allows voting for various things, with configurable passing thresholds:
-* `!vote [y/n/i] skip` Vote to skip the current level
-* `!vote [y/n/i] stop` Vote to stop the countdown
-* `!vote [y/n/i] play [level name]` Vote to play a map
-`[y/n/i]` can be left off, and the vote is done as a `yes` vote:
-* `!vote skip` is `!vote y skip`
-* `!vote play <map>` is `!vote y play <map>`
-
-##### Examples:
-`!vote skip` Vote to skip the current level  
-`!vote y skip` Vote to skip the current level  
-`!vote n skip` Cancel your vote to skip the level  
-`!vote i stop` View the vote pass threshold, votes made, and votes needed to stop the countdown  
-`!vote play inferno` Vote to play the level "Inferno"  
-`!vote play -a krispy` Vote to play all of Krispy's maps  
-Votes for maps are counted individually for every map, not by the command used.  
-
-#### VoteCtrl:
-Permission: __HOST__  
-Use: !votectrl [vote type] [percent]  
-Vote types are `skip`, `stop`, and `play`.  
-`percent` should be a number between 0 and 100. Numbers above 100 effectively disable the vote.  
 
 #### Playlist:
 Permission: __ALL__  
@@ -238,6 +207,37 @@ Permission: __HOST__
 Use: !timelimit [value]  
 Works like the official command, it changes the max time for the next reverse tag maps.  
 The value must be between 30 and 1800 seconds (30 minutes)
+
+#### Vote:
+Permission: __ALL__
+Use: !vote [y/n/i] [vote type] [value]
+Allows voting for various things, with configurable passing thresholds:
+* `!vote [y/n/i] skip` Vote to skip the current level
+* `!vote [y/n/i] stop` Vote to stop the countdown
+* `!vote [y/n/i] play [level name]` Vote to play a map
+`[y/n/i]` can be left off, and the vote is done as a `yes` vote:
+* `!vote skip` is `!vote y skip`
+* `!vote play <map>` is `!vote y play <map>`
+
+##### Examples:
+`!vote skip` Vote to skip the current level  
+`!vote y skip` Vote to skip the current level  
+`!vote n skip` Cancel your vote to skip the level  
+`!vote i stop` View the vote pass threshold, votes made, and votes needed to stop the countdown  
+`!vote play inferno` Vote to play the level "Inferno"  
+`!vote play -a krispy` Vote to play all of Krispy's maps  
+Votes for maps are counted individually for every map, not by the command used.  
+
+#### VoteCtrl:
+Permission: __HOST__  
+Use: !votectrl [vote type] [percent]  
+Vote types are `skip`, `stop`, and `play`.  
+`percent` should be a number between 0 and 100. Numbers above 100 effectively disable the vote.  
+
+#### Welcome:
+Permission: __ALL__  
+Use: !welcome  
+Shows the welcome message again  
 
 #### Win
 Permission: __ALL__  
