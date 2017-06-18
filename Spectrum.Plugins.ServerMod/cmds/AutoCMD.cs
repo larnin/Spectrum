@@ -243,16 +243,21 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator startFromLobby()
         {
+            bool hasRanOnce = false;
             int myIndex;
             int total = 0;
             while (total < 2)
             {
-                Utilities.sendMessage("Starting the game in 10 seconds...");
+                if (hasRanOnce)
+                {
+                    Utilities.sendMessage("Starting the game in 10 seconds...");
 
-                myIndex = index;
-                yield return new WaitForSeconds(10.0f);
-                if (index != myIndex)
-                    yield break;
+                    myIndex = index;
+                    yield return new WaitForSeconds(10.0f);
+                    if (index != myIndex)
+                        yield break;
+                }
+                else hasRanOnce = true;
 
                 foreach (float f in waitForMinPlayers())
                 {
