@@ -2,7 +2,7 @@
 
 Spectrum.Plugins.ServerMod is a plugin that adds some commands to the server, accessible by the host and players.  
 All the commands are prefixed by '!'.  
-If you are a client and you have the plugin, you can use some of your commands by remplacing the '!' key to '%'  
+If you are a client and you have the plugin, you can use some of your commands by replacing the '!' key to '%'.
 
 Commands have 3 permission levels:
 * __HOST__: Only the host can use the command
@@ -11,7 +11,7 @@ Commands have 3 permission levels:
 
 Some commands with __ALL__ permission level can also be used as a client.  
 
-__Playlist managing commands can't be used on trackmogrify mode (trackmogrify don't use playlist).__ 
+__Playlist managing commands can't be used on trackmogrify mode (trackmogrify doesn't use playlists).__
 
 # Command list (alphabetized):
 
@@ -21,15 +21,20 @@ Use: !auto
 Toggle the server auto mode.  
 When auto mode is activated, the server will automatically jump to the next level when all players finish.  
 If a level lasts longer than 15 minutes, the server continues to the next level.  
-If the playlist ends, the server shuffle the playlist automatically.  
+The maximum time on a level can be configured with the `autoMaxTime` settings.  
+If the playlist ends, the server shuffles the playlist automatically.  
 Auto mode doesn't work with Trackmogrify.  
-At the end of a map, if votes are enabled, players can choose between the 3 next maps (or restart the current) on the playlist the one they wants to play next.
+At the end of a map, if votes are enabled, players can choose between the 3 next maps (or restart the current) on the playlist the one they wants to play next.  
+If there are not enough players, the server will wait for players to join.  
+The minimum players is configurable with the `autoMinPlayers` setting.
+
 
 #### Autospec:
 Permission: __LOCAL__  
 Use: !autospec  
 Toggles automatic spectating (useful when you go AFK or use auto mode).  
-If you are the host and no players are online, the server will automatically return to the lobby.
+If the setting `autoSpecReturnToLobby` in the settings file is `true`: If you are the host and no players are online, the server will automatically return to the lobby.  
+By default, `autoSpecReturnToLobby` is `false`.
 
 #### Clear:
 Permission: __HOST__  
@@ -53,7 +58,13 @@ Shows the date and time of the owner of the plugin.
 #### Del:
 Permission: __HOST__  
 Use: !del [index]  
-Removes the map at the entered index for the current playlist.  
+Removes the map at the entered index from the current playlist.  
+The next map has an index of 1.
+
+#### Dels:
+Permission: __HOST__  
+Use: !dels [indexStart] [indexEnd]
+Removes the maps between the entered start and end indexes from the current playlist.  
 The next map has an index of 1.
 
 #### ForceStart:
@@ -69,6 +80,11 @@ Commands with "(H)" can only be used by the host.
 Commands with "(L)" can only be used by the local player (the one who has the plugin).  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!help [command name]  
 Shows the help message of the specified command.
+
+#### Welcome:
+Permission: __ALL__  
+Use: !welcome  
+Shows the welcome message again  
 
 #### Level:
 Permission: __ALL__  (can also be used as client)  
@@ -91,7 +107,7 @@ Shows all the available playlists.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!load [playlist name]  
 Removes all the levels on the current playlist and load a new one.  
 If you are not on the lobby, the current level is added at the start of the new playlist.
-    
+
 #### Play:
 Permission: __HOST__  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__ALL__ (if players can add maps)  
@@ -102,6 +118,28 @@ If more than one level matches the name exactly, the first one is added.
 If only one level contains the name, it will be added to the playlist.  
 If more than one level contains the name, it will display the matching levels (like !level).  
 The filter works exactly like the list command.
+
+#### Vote:
+Permission: __ALL__
+Use: !vote [y/n/i] [vote type] [value]
+Allows voting for various things, with configurable passing thresholds:
+* `!vote [y/n/i] skip` Vote to skip the current level
+* `!vote [y/n/i] stop` Vote to stop the countdown
+* `!vote [y/n/i] play [level name]` Vote to play a map
+
+##### Examples:
+`!vote y skip` Vote to skip the current level  
+`!vote n skip` Cancel your vote to skip the level  
+`!vote i stop` View the vote pass threshold, votes made, and votes needed to stop the countdown  
+`!vote y play inferno` Vote to play the level "Inferno"  
+`!vote y play -a krispy` Vote to play all of Krispy's maps  
+Votes for maps are counted individually for every map, not by the command used.  
+
+#### VoteCtrl:
+Permission: __HOST__  
+Use: !votectrl [vote type] [percent]  
+Vote types are `skip`, `stop`, and `play`.  
+`percent` should be a number between 0 and 100. Numbers above 100 effectively disable the vote.  
 
 #### Playlist:
 Permission: __ALL__  
@@ -123,7 +161,7 @@ Prints a losing sentence.
 Permission: __HOST__  
 Use: !save [name]  
 Save the current playlist on a file on the game playlist directory.  
-It can be loaded agains with the __!load__ command, or on the lobby.  
+It can be loaded again with the __!load__ command, or o=in the lobby.  
 
 #### Scores:
 Permission: __ALL__ (can also be used as client)  
@@ -146,13 +184,32 @@ Changes the name of the server.
 Permission: __HOST__  
 Use: !settings reload  
 Reloads the settings from file.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings vote [true/false]  
-Allows players to vote for the next map on auto mode.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings play [true/false]  
 Allows players to add maps on the playlist with the __!play__ command.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings addOne [true/false]  
-If players can add maps and this option enabled, the players can only add one map at a time .
-    
+If players can add maps and this option enabled, the players can only add one map at a time.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings welcome [message]  
+Sets a welcome message to display to entering players.  
+In the message, %USERNAME% is replace by the player's name.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings voteSystem [true/false]  
+Turn the `!vote` command on or off.  
+You can control vote thresholds with `!votectrl`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoVote [true/false]  
+Allows players to vote for the next map on auto mode.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoMsg [message]  
+Sets a message to display when advancing to the next track.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoMinPlayers [amount]  
+Sets the minimum amount of players for auto mode to advance to the next map.  
+If the host is autospectating and `autoSpecPlayer` is false, this number will internally increase by 1 to simulate the host not being present.  
+Default: 1  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoMaxTime [seconds]  
+Sets the maximum amount of seconds to run each level for.  
+Default: 900 (15 minutes)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoSpecPlayer [true/false]  
+Whether or not the host counts as a player for `autoMinPlayers` when spectating.  
+If false, one more player is required to go to the next level.  
+Default: false  
+
 #### Shuffle:
 Permission: __HOST__  
 Use: !shuffle  
@@ -179,7 +236,7 @@ Prints a random winning sentence.
 # Filters
 Commands __level__ and __play__ can use filters to allow you to search maps.
 * __-name__ or __-n__ : Select maps that contains theses words on it's name.
-* __-author__ or __-a__ : Only show you maps form the entred author 
+* __-author__ or __-a__ : Only show you maps form the entred author
 * __-mode__ or __-m__ : Select map on one particular gamemode. If not specified, it use the current gamemode
     * Valid gamemodes are : sprint, challenge, tag, soccer, style, stun  
     _(Soccer mode don't work perfectly)_
@@ -196,11 +253,26 @@ __!play -name up -mode challenge -index 1__ : Add the first level from challenge
 __!level -last -p 4__ : Shows the 4th page (result 30 to 39) of the last command.
 
 # Settings
-When the plugin is started for the first time, it generate a setting file that look like this : (on json)
+When the plugin is started for the first time, it generate a setting file that look like this : (in json)
 ```
 {
-	"playersCanAddMap" : true,
+	"playersCanAddMap" : false,
 	"addOneMapOnly" : true,
+	"allowVoteSystem" : false,
+	"autoSpecReturnToLobby" : false,
+	"welcome" : "",
+	"voteNext" : false,
+	"autoAdvanceMsg" : "",
+	"autoMinPlayers" : 1,
+	"autoMaxTime" : 900,
+	"autoSpecCountsAsPlayer" : false,
+	"voteSystemThresholds" : {
+		"skip" : 0.7,
+		"stop" : 0.7,
+		"play" : 0.55,
+		"kick" : 0.9,
+		"count" : 0.55
+	},
 	"win" : [
 		"ALL RIGHT!",
 		"YEAH!"
@@ -209,21 +281,36 @@ When the plugin is started for the first time, it generate a setting file that l
 		"ACCESS VIOLATION!",
 		"AW, THAT'S TOO BAD!",
 		"YOU'RE OUT OF CONTROL!"
-	],
-	"voteNext" : true
+	]
 }
 ```
 __playersCanAddMap__ (true/false): Allows players to add map on the playlist.  
 You can change it with the command !settings play.  
 __addOneMapOnly__ (true/false): If players are allowed to add map and this option set to true, they can only add one map at a time.  
 You can change it with the command !settings addOne.  
+__allowVoteSystem__ (true/false): Allows the !vote command to be used.  
+You can change it with the command !settings voteSystem  
+__autpSpecReturnToLobby__ (true/false): Whether or not the host returns to lobby when they are the last player and are auto-spectating.  
+__welcome__ (text): The message to display to players that enter. If empty, no message is displayed.  
+You can change it with the command !settings welcome  
+%USERNAME% is replaced by the player's name. \\n represents a new line. \\" allows you to put in quotes.  
 __voteNext__ (true/false): Allows players to vote for the next map on auto mode.  
 You can change it with the command !settings vote.  
+__autoAdvanceMsg__ (text): The message to display in auto mode when going to the next level. No message if empty.  
+You can change it with the command !settings autoMsg  
+__autoMinPlayers__ (number): The minimum amount of players needed for auto mode to go to the next level.  
+You can change it with the command !settings autoMinPlayers  
+__autoMaxTime__ (seconds): The maximum amount of time auto mode will spend on one level.  
+You can change it with the command !settings autoMaxTime  
+__autoSpecCountsAsPlayer__ (true/false): Whether or not the host counts towards autoMinPlayers if they are auto-spectating.  
+You can change it with the command !settings autoSpecPlayer  
+__voteSystemThresholds__: The vote pass thresholds for each type of vote.  
+You can change them with the command !votectrl [vote type] [new threshold from 0 to 100]  
+When using the !votectrl command, the threshold should be a number, no decimals, from 0 to 100.  
+55 in !votectrl is the same as .55 in the settings file.  
 __win__ (list of string): A list of sentence that will be picked randomly when a player use the command !win  
 __rip__ (list of string) : A list of sentence that will be picked randomly when a player use the command !rip  
 
-# Author contacts 
+# Author contacts
 Steam : http://steamcommunity.com/id/larnin/  
 Discord : Nico#5480 (https://discord.gg/0SlqqvzfIbi6zhbY)
-
-
