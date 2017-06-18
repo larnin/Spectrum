@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.UltraViolet;
-        public string PluginVersion = "Version C.0.5.4";
+        public string PluginVersion = "Version C.0.5.5";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
