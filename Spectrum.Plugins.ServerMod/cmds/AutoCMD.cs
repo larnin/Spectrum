@@ -20,6 +20,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public bool autoMode = false;
         int index = 0;  // Tracks when new levels load. Some code needs to stop running if a new level loads.
+        // when index changes, it invalidates any running code after is does WaitForSeconds
+        //  this means that loading a new map through the gui or restarting auto will invalidate the old auto routine
+        //  which would otherwise interfere by selecting a level when the host or new auto routine already did.
         bool voting = false;
         Dictionary<string, int> votes = new Dictionary<string, int>();
 
@@ -131,6 +134,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public int getMinPlayers()
         {
             AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
+            // if autoSpec does not count as a player and if the host is autospec, then add 1 to minPlayers
             return minPlayers + ((!autoSpecCountsAsPlayer && autoSpecCommand.autoSpecMode) ? 1 : 0);
         }
 
@@ -243,6 +247,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
             int total = 0;
             while (total < 2)
             {
+                Utilities.sendMessage("Starting the game in 10 seconds...");
+
+                myIndex = index;
+                yield return new WaitForSeconds(10.0f);
+                if (index != myIndex)
+                    yield break;
+
                 foreach (float f in waitForMinPlayers())
                 {
                     yield return new WaitForSeconds(f);
@@ -269,16 +280,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         yield return new WaitForSeconds(5.0f);
                         if (index != myIndex)
                             yield break;
-                        total = 0;
+                        total = 0;  // since we had to wait for 5 seconds, some players might have left. We need to run the loop again to make sure.
+                        // by making this 0, total will be < 2 and the loop will repeat.
                     }
                 } while (!canContinue);
                 total = total + 1;
             }
-            Utilities.sendMessage("Starting the game in 10 seconds...");
-            myIndex = index;
-            yield return new WaitForSeconds(10.0f);
-            if (index != myIndex)
-                yield break;
             if (Utilities.isOnLobby())
                 G.Sys.GameManager_.GoToCurrentLevel();
             yield return null;
@@ -293,6 +300,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 Utilities.sendMessage("This map has run for the maximum run time.");
                 Utilities.sendMessage("Finishing in 30 sec...");
+
                 int myIndex = index;
                 yield return new WaitForSeconds(30);
                 if (index != myIndex)
