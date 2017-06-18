@@ -27,7 +27,6 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new PluginCMD());
             cmds.Add(new RestartCMD());
             cmds.Add(new RipCMD());
-            cmds.Add(new WinCMD());
             cmds.Add(new SaveCMD());
             cmds.Add(new ScoresCMD());
             cmds.Add(new ServerCMD());
@@ -36,7 +35,8 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new SpecCMD());
             cmds.Add(new TimelimitCMD());
             cmds.Add(new WelcomeCMD());
-            
+            cmds.Add(new WinCMD());
+
             VoteHandler voteHandler = new VoteHandler(this);
             cmds.Add(voteHandler.voteCommand);
             cmds.Add(voteHandler.voteControlCommand);
