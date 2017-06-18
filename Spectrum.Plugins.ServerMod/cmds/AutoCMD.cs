@@ -134,9 +134,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             return minPlayers + ((!autoSpecCountsAsPlayer && autoSpecCommand.autoSpecMode) ? 1 : 0);
         }
 
-        IEnumerator waitAndGoNext()
+        IEnumerable<float> waitForMinPlayers()
         {
-            // index and myIndex are used to check if the level advances before auto does it.
             int myIndex;
             if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
             {
@@ -144,11 +143,20 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 while (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
                 {
                     myIndex = index;
-                    yield return new WaitForSeconds(5.0f);
+                    yield return 5.0f;
                     if (index != myIndex)
                         yield break;
                 }
             }
+        }
+
+        IEnumerator waitAndGoNext()
+        {
+            foreach (float f in waitForMinPlayers())
+            {
+                yield return new WaitForSeconds(f);
+            }
+            int myIndex; // index and myIndex are used to check if the level advances before auto does it.
             if (!Utilities.isOnLobby())
             {
                 Utilities.sendMessage("Going to the next level in 10 seconds...");
@@ -177,18 +185,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator voteAndGoNext()
         {
-            int myIndex;
-            if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
+            foreach (float f in waitForMinPlayers())
             {
-                Utilities.sendMessage($"Waiting for there to be {getMinPlayers()} players.");
-                while (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
-                {
-                    myIndex = index;
-                    yield return new WaitForSeconds(5.0f);
-                    if (index != myIndex)
-                        yield break;
-                }
+                yield return new WaitForSeconds(f);
             }
+            int myIndex;
             if (!Utilities.isOnLobby())
             {
                 voting = true;
@@ -242,16 +243,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
             int total = 0;
             while (total < 2)
             {
-                if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
+                foreach (float f in waitForMinPlayers())
                 {
-                    Utilities.sendMessage($"Waiting for there to be {getMinPlayers()} players.");
-                    while (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
-                    {
-                        myIndex = index;
-                        yield return new WaitForSeconds(5.0f);
-                        if (index != myIndex)
-                            yield break;
-                    }
+                    yield return new WaitForSeconds(f);
                 }
                 total = 1;
 
