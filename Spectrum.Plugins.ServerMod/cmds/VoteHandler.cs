@@ -12,6 +12,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
     {
 
         private string voteCmdPattern = @"^\s*(\S+)\s+(\S+)\s*(.*)$";
+        private string voteCmdShortcutPattern = @"^\s*(\S+)\s*(.*)$";
         private string voteCtrlPattern = @"^\s*(\S+)\s+(\d+)$";
 
         public static Dictionary<string, double> thresholds = null;
@@ -26,11 +27,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             this.list = list;
             thresholds = new Dictionary<string, double>();
-            thresholds.Add("skip", 0.7);
-            thresholds.Add("stop", 0.7);
-            thresholds.Add("play", 0.55);
-            thresholds.Add("kick", 0.9);
-            thresholds.Add("count", 0.55);
+            thresholds.Add("skip", 0.5);
+            thresholds.Add("stop", 0.5);
+            thresholds.Add("play", 0.4);
+            thresholds.Add("kick", 0.7);
+            thresholds.Add("count", 0.6);
 
             Entry.load();  // load any existing thresholds
             Entry.save();  // save any thresholds that were not loaded
@@ -101,6 +102,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             public static bool votesAllowed = false;
 
+            private bool doForceNextUse = false;
             private bool votedSkip = false;
 
             public VoteCMD(VoteHandler parent)
@@ -118,13 +120,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             public override void help(ClientPlayerInfo p)
             {
+                Utilities.sendMessage("!vote <voteType> <parameters>: Vote yes on the given voteType.");
                 Utilities.sendMessage("!vote <yes/no> <voteType> <parameters>: Vote yes/no on the given voteType. y/n also work.");
                 Utilities.sendMessage("!vote <info/i> <voteType>: View information about the voteType.");
-                Utilities.sendMessage("Example: !vote info skip");
                 Utilities.sendMessage("voteTypes:");
-                Utilities.sendMessage(" !vote <y/n> skip: skip the current map.");
-                Utilities.sendMessage(" !vote <y/n> stop: stop the countdown.");
-                Utilities.sendMessage(" !vote <y/n> play <mapName>: vote to play map matching mapName. Use !level to find maps. Uses the same syntax as !level.");
+                Utilities.sendMessage(" !vote [y/n] skip: skip the current map.");
+                Utilities.sendMessage(" !vote [y/n] stop: stop the countdown.");
+                Utilities.sendMessage(" !vote [y/n] play <mapName>: vote to play map matching mapName. Use !level to find maps. Uses the same syntax as !level.");
+                Utilities.sendMessage("Examples:");
+                Utilities.sendMessage(" !vote play inferno: vote yes on playing inferno");
+                Utilities.sendMessage(" !vote n stop: cancel your vote to stop the countdown");
+                Utilities.sendMessage(" !vote i skip: view info about the skip vote ");
                 /*
                 Utilities.sendMessage(" !vote <y/n> kick <player>: vote to kick <player> from the game.");
                 Utilities.sendMessage(" !vote <y/n> count <time>: vote for <time> to be the new max time.");
@@ -133,46 +139,78 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 */
             }
 
+            public void forceNextUse()
+            {
+                // ignore votes on/off settings for next use
+                // used by other commands when calling vote
+                doForceNextUse = true;
+            }
+
             public override void use(ClientPlayerInfo p, string message)
             {
-                if (!votesAllowed)
+                if (!doForceNextUse)
                 {
-                    Utilities.sendMessage("Votes are disabled.");
-                    return;
+                    if (!votesAllowed)
+                    {
+                        Utilities.sendMessage("Votes are disabled.");
+                        return;
+                    }
                 }
+                else
+                    doForceNextUse = false;
 
-                var match = Regex.Match(message, parent.voteCmdPattern);
+                bool voteValue;
+                bool isInfo;
 
-                if (!match.Success)
-                {
-                    help(p);
-                    return;
-                }
+                string voteType;
+                string parameter;
 
-                string voteValueS = match.Groups[1].Value.ToLower();
-                bool voteValue = false;
-                bool isInfo = false;
-                if (voteValueS == "yes" || voteValueS == "y" || voteValueS == "1" || voteValueS == "true" || voteValueS == "t")
+                var matchShortcut = Regex.Match(message, parent.voteCmdShortcutPattern);
+                var shortcutVoteType = matchShortcut.Groups[1].Value.ToLower();
+                if (matchShortcut.Success && thresholds.ContainsKey(shortcutVoteType))
                 {
                     voteValue = true;
-                }
-                else if (voteValueS == "no" || voteValueS == "n" || voteValueS == "0" || voteValueS == "false" || voteValueS == "f")
-                {
-                    voteValue = false;
-                }
-                else if (voteValueS == "info" || voteValueS == "i")
-                {
-                    isInfo = true;
+                    isInfo = false;
+                    voteType = shortcutVoteType;
+                    parameter = matchShortcut.Groups[2].Value;
                 }
                 else
                 {
-                    Utilities.sendMessage("Invalid <yes/no> You can use yes/no, y/n, 1/0, true/false, and t/f.");
-                    Utilities.sendMessage("You can use info/i to get info.");
-                    return;
+                    var match = Regex.Match(message, parent.voteCmdPattern);
+
+                    if (!match.Success)
+                    {
+                        help(p);
+                        return;
+                    }
+
+                    string voteValueS = match.Groups[1].Value.ToLower();
+                    voteValue = false;
+                    isInfo = false;
+                    if (voteValueS == "yes" || voteValueS == "y" || voteValueS == "1" || voteValueS == "true" || voteValueS == "t")
+                    {
+                        voteValue = true;
+                    }
+                    else if (voteValueS == "no" || voteValueS == "n" || voteValueS == "0" || voteValueS == "false" || voteValueS == "f")
+                    {
+                        voteValue = false;
+                    }
+                    else if (voteValueS == "info" || voteValueS == "i")
+                    {
+                        isInfo = true;
+                    }
+                    else
+                    {
+                        Utilities.sendMessage("Invalid <voteType>, or invalid [yes/no] You can use yes/no, y/n, 1/0, true/false, and t/f.");
+                        Utilities.sendMessage("You can use [info/i] to get info.");
+                        Utilities.sendMessage("<voteType>s: skip, stop, play");
+                        return;
+                    }
+
+                    voteType = match.Groups[2].Value.ToLower();
+                    parameter = match.Groups[3].Value;
                 }
 
-                string voteType = match.Groups[2].Value.ToLower();
-                string parameter = match.Groups[3].Value;
 
                 if (!VoteHandler.thresholds.ContainsKey(voteType))
                 {
@@ -290,6 +328,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 }
                 else if (voteType == "play")
                 {
+
+                    if (Utilities.isOnLobby())
+                    {
+                        Utilities.sendMessage("You can't vote for the next level in the lobby.");
+                        return;
+                    }
+
+                    if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
+                    {
+                        Utilities.sendMessage("You can't vote for levels in trackmogrify.");
+                        return;
+                    }
+
                     string levelName = parameter;
                     var m = LevelList.extractModifiers(levelName);
                     List<LevelPlaylist.ModeAndLevelInfo> lvls = LevelList.levels(m);
@@ -360,6 +411,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
                     G.Sys.GameManager_.LevelPlaylist_.SetIndex(index);
 
+                    var playersThreshold = Convert.ToInt32(Math.Ceiling(thresholds[voteType] * Convert.ToDouble(numPlayers)));
+
+                    if (lvls.Count == 0)
+                    {
+                        Utilities.sendMessage("Can't find any levels with the filter '" + levelName + "'.");
+                    }
+
                     string newMessage;
                     int count;
 
@@ -371,7 +429,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         {
                             if (++count <= 10)
                             {
-                                newMessage = newMessage + level.level.levelNameAndPath_.levelName_ + ", ";
+                                newMessage = newMessage + level.level.levelNameAndPath_.levelName_ + $"({level.votes}/{playersThreshold}), ";
                             }
                         }
                     }
@@ -395,7 +453,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         {
                             if (++count <= 10)
                             {
-                                newMessage = newMessage + level.level.levelNameAndPath_.levelName_ + ", ";
+                                newMessage = newMessage + level.level.levelNameAndPath_.levelName_ + $"({level.votes}/{playersThreshold}), ";
                             }
                         }
                     }

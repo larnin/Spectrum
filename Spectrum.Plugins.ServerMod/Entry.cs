@@ -171,6 +171,7 @@ namespace Spectrum.Plugins.ServerMod
             {
                 PlayCMD.playersCanAddMap = (bool)Settings["playersCanAddMap"];
                 PlayCMD.addOneMapOnly = (bool)Settings["addOneMapOnly"];
+                PlayCMD.useVote = (bool)Settings["playIsVote"];
 
                 VoteHandler.VoteCMD.votesAllowed = (bool)Settings["allowVoteSystem"];
                 if (Settings.ContainsKey("voteSystemThresholds") && VoteHandler.thresholds != null)
@@ -208,6 +209,7 @@ namespace Spectrum.Plugins.ServerMod
         {
             Settings["playersCanAddMap"] = PlayCMD.playersCanAddMap;
             Settings["addOneMapOnly"] = PlayCMD.addOneMapOnly;
+            Settings["playIsVote"] = PlayCMD.useVote;
 
             Settings["allowVoteSystem"] = VoteHandler.VoteCMD.votesAllowed;
             if (VoteHandler.thresholds != null)
@@ -235,6 +237,8 @@ namespace Spectrum.Plugins.ServerMod
                 Settings["playersCanAddMap"] = false;
             if (!Settings.ContainsKey("addOneMapOnly"))
                 Settings["addOneMapOnly"] = true;
+            if (!Settings.ContainsKey("playIsVote"))
+                Settings["playIsVote"] = false;
 
             if (!Settings.ContainsKey("allowVoteSystem"))
                 Settings["allowVoteSystem"] = false;
