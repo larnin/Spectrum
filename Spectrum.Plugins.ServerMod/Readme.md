@@ -135,7 +135,7 @@ Allows voting for various things, with configurable passing thresholds:
 `!vote y play -a krispy` Vote to play all of Krispy's maps  
 Votes for maps are counted individually for every map, not by the command used.  
 
-### VoteCtrl:
+#### VoteCtrl:
 Permission: __HOST__  
 Use: !votectrl [vote type] [percent]  
 Vote types are `skip`, `stop`, and `play`.  
