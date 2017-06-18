@@ -13,10 +13,10 @@ namespace Spectrum.Plugins.ServerMod
     public class Entry : IPlugin
     {
         public string FriendlyName => "Server commands Mod";
-        public string Author => "Nico";
-        public string Contact => "SteamID: larnin";
+        public string Author => "Corecii";
+        public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.UltraViolet;
-        public string PluginVersion = "Version C.0.5.3";
+        public string PluginVersion = "Version C.0.5.4";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
