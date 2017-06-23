@@ -232,6 +232,7 @@ namespace Spectrum.API.Game.Vehicle
             });
         }
 
+        /* TODO: Fix this method.
         public static void SetJetFlamesColor(string hexColor)
         {
             UpdateObjectReferences();
@@ -246,7 +247,7 @@ namespace Spectrum.API.Game.Vehicle
                     }
                 }
             }
-        }
+        }*/
 
         public static void SetBoostFlameColor(string hexColor)
         {
