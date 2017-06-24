@@ -10,7 +10,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
     class AutoCMD : cmd
     {
         public static bool voteNext = false;
-        public static bool autoSpecCountsAsPlayer = false;
+        public static bool autoSpecHostIgnored = false;
 
         public static string advanceMessage = "";
         public static int maxRunTime = 15*60;
@@ -135,7 +135,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
             // if autoSpec does not count as a player and if the host is autospec, then add 1 to minPlayers
-            return minPlayers + ((!autoSpecCountsAsPlayer && autoSpecCommand.autoSpecMode) ? 1 : 0);
+            return minPlayers + ((!autoSpecHostIgnored && autoSpecCommand.autoSpecMode) ? 1 : 0);
         }
 
         IEnumerable<float> waitForMinPlayers()
