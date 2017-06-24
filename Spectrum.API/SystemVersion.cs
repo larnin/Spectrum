@@ -10,6 +10,6 @@ namespace Spectrum.API
             set { SVNRevision.number_ = value; }
         }
 
-        public static string VersionString => $"DISTANCE {DistanceBuild} (SPECTRUM [00AA77]{APILevel.ToString()}[-])";
+        public static string VersionString => $"DISTANCE {DistanceBuild} (SPECTRUM [00AA77]{APILevel.ToString().ToUpperInvariant()}[-])";
     }
 }
