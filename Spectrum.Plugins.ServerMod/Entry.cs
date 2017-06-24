@@ -186,7 +186,7 @@ namespace Spectrum.Plugins.ServerMod
 
                 WelcomeCMD.welcomeMessage = (string)Settings["welcome"];
 
-                AutoCMD.autoSpecCountsAsPlayer = (bool)Settings["autoSpecCountsAsPlayer"];
+                AutoCMD.autoSpecHostIgnored = (bool)Settings["autoSpecHostIgnored"];
                 AutoCMD.voteNext = (bool)Settings["voteNext"];
                 AutoCMD.advanceMessage = (string)Settings["autoAdvanceMsg"];
                 AutoCMD.minPlayers = (int)Settings["autoMinPlayers"];
@@ -221,7 +221,7 @@ namespace Spectrum.Plugins.ServerMod
 
             Settings["welcome"] = WelcomeCMD.welcomeMessage;
 
-            Settings["autoSpecCountsAsPlayer"] = AutoCMD.autoSpecCountsAsPlayer;
+            Settings["autoSpecHostIgnored"] = AutoCMD.autoSpecHostIgnored;
             Settings["voteNext"] = AutoCMD.voteNext;
             Settings["autoAdvanceMsg"] = AutoCMD.advanceMessage;
             Settings["autoMinPlayers"] = AutoCMD.minPlayers;
@@ -256,8 +256,20 @@ namespace Spectrum.Plugins.ServerMod
                 Settings["autoMinPlayers"] = 1;
             if (!Settings.ContainsKey("autoMaxTime"))
                 Settings["autoMaxTime"] = 15*60;
-            if (!Settings.ContainsKey("autoSpecCountsAsPlayer"))
-                Settings["autoSpecCountsAsPlayer"] = false;
+            if (!Settings.ContainsKey("autoSpecHostIgnored"))
+            {
+                if (Settings.ContainsKey("autoSpecCountsAsPlayer"))
+                {
+                    // this setting was renamed from `autoSpecCountsAsPlayer`
+                    //  to `autoSpecHostIgnored` for clarity
+                    Settings["autoSpecHostIgnored"] = !(bool)Settings["autoSpecCountsAsPlayer"];
+                    Settings.Remove("autoSpecCountsAsPlayer");
+                }
+                else
+                {
+                    Settings["autoSpecHostIgnored"] = true;
+                }
+            }
 
             if (!Settings.ContainsKey("win"))
                 Settings["win"] = WinCMD.winList;

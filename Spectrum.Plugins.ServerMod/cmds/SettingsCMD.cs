@@ -32,7 +32,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Utilities.sendMessage("!settings autoMsg [message]: the message to display when advancing the map in auto mode. \"off\" to disable.");
             Utilities.sendMessage("!settings autoMinPlayers [amount]: the minimum amount of players needed for a map to start in auto mode.");
             Utilities.sendMessage("!settings autoMaxTime [seconds]: the maximum amount of time that auto mode will spend on one map.");
-            Utilities.sendMessage("!settings autoSpecPlayer [true/false]: turn on/off whether the host counts as a player for autoMinPlayers when using autospec.");
+            Utilities.sendMessage("!settings autoSpecHostIgnored [true/false]: turn on/off whether the host is ignored as a player when running auto mode.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -115,7 +115,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     help(p);
                 else autoMaxTime(p, strs[1]);
             }
-            else if (strs[0] == "autospecplayer")
+            else if (strs[0] == "autospechostignored")
             {
                 if (strs.Length == 1)
                     help(p);
@@ -306,13 +306,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             if (value == "0" || value == "false")
             {
-                AutoCMD.autoSpecCountsAsPlayer = false;
-                Utilities.sendMessage("AutoSpec host no longer counts as a player!");
+                AutoCMD.autoSpecHostIgnored = false;
+                Utilities.sendMessage("AutoSpec host is no longer ignored in auto mode!");
             }
             else if (value == "1" || value == "true")
             {
-                AutoCMD.autoSpecCountsAsPlayer = true;
-                Utilities.sendMessage("AutoSpec host counts as a player!");
+                AutoCMD.autoSpecHostIgnored = true;
+                Utilities.sendMessage("AutoSpec host is now ignored in auto mode!");
             }
             else
             {

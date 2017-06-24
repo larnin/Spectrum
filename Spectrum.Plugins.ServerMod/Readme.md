@@ -185,10 +185,9 @@ Default: 1
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoMaxTime [seconds]  
 Sets the maximum amount of seconds to run each level for.  
 Default: 900 (15 minutes)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoSpecPlayer [true/false]  
-Whether or not the host counts as a player for `autoMinPlayers` when spectating.  
-If false, one more player is required to go to the next level.  
-Default: false  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoSpecHostIgnored [true/false]  
+When true, the host is ignored in auto mode when counting players.  
+Default: true  
 
 #### Shuffle:
 Permission: __HOST__  
@@ -276,7 +275,7 @@ When the plugin is started for the first time, it generate a setting file that l
 	"autoAdvanceMsg" : "",
 	"autoMinPlayers" : 1,
 	"autoMaxTime" : 900,
-	"autoSpecCountsAsPlayer" : false,
+	"autoSpecHostIgnored" : true,
 	"voteSystemThresholds" : {
 		"skip" : 0.7,
 		"stop" : 0.7,
@@ -316,14 +315,14 @@ __autoMinPlayers__ (number): The minimum amount of players needed for auto mode 
 You can change it with the command !settings autoMinPlayers  
 __autoMaxTime__ (seconds): The maximum amount of time auto mode will spend on one level.  
 You can change it with the command !settings autoMaxTime  
-__autoSpecCountsAsPlayer__ (true/false): Whether or not the host counts towards autoMinPlayers if they are auto-spectating.  
-You can change it with the command !settings autoSpecPlayer  
+__autoSpecHostIgnored__ (true/false): When true, auto mode will ignore the host when counting players. Default true.  
+You can change it with the command !settings autoSpecHostIgnored  
 __voteSystemThresholds__: The vote pass thresholds for each type of vote.  
 You can change them with the command !votectrl [vote type] [new threshold from 0 to 100]  
 When using the !votectrl command, the threshold should be a number, no decimals, from 0 to 100.  
 55 in !votectrl is the same as .55 in the settings file.  
-__win__ (list of string): A list of sentence that will be picked randomly when a player use the command !win  
-__rip__ (list of string) : A list of sentence that will be picked randomly when a player use the command !rip  
+__win__ (list of string): A list of sentence that will be picked randomly when a player uses the command !win  
+__rip__ (list of string) : A list of sentence that will be picked randomly when a player uses the command !rip  
 
 # Author contacts
 Steam : http://steamcommunity.com/id/larnin/  
