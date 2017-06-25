@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Spectrum.Plugins.ServerMod
 {
@@ -10,6 +11,7 @@ namespace Spectrum.Plugins.ServerMod
         public GameModeID mode = GameModeID.None;
         public string name = "";
         public string author = "";
+        public bool isRegex = false;
         public List<int> index = new List<int>();
         public bool all = false;
         public bool useLastList = false;
@@ -46,13 +48,14 @@ namespace Spectrum.Plugins.ServerMod
                 string nameText = "";
                 string authorText = "";
 
+                // TODO: replace with regex: @" \-(\w+) ?(.*?)"
                 var list = filter.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string value in list)
                 {
-                    var words = value.ToLower().Trim().Split(' ');
+                    var words = value.Trim().Split(' ');
                     if (words.Count() == 0)
                         continue;
-                    string key = words[0];
+                    string key = words[0].ToLower();
                     if (key == "m" || key == "mode")
                     {
                         if (words.Count() < 2)
@@ -79,6 +82,14 @@ namespace Spectrum.Plugins.ServerMod
                         if (words.Count() < 2)
                             continue;
                         for (int i = 1; i < words.Count(); i++)
+                            nameText += " " + words[i].ToLower();
+                    }
+                    else if (key == "r" || key == "regex")
+                    {
+                        m.isRegex = true;
+                        if (words.Count() < 2)
+                            continue;
+                        for (int i = 1; i < words.Count(); i++)
                             nameText += " " + words[i];
                     }
                     else if (key == "a" || key == "author")
@@ -92,7 +103,7 @@ namespace Spectrum.Plugins.ServerMod
                         if (words.Count() < 2)
                             continue;
                         for (int i = 1; i < words.Count(); i++)
-                            authorText += words[i] + " ";
+                            authorText += words[i].ToLower() + " ";
                     }
                     else if (key == "i" || key == "index")
                     {
@@ -117,7 +128,10 @@ namespace Spectrum.Plugins.ServerMod
                         m.all = true;
                 }
                 m.author = authorText.ToLower().Trim();
-                m.name = nameText.ToLower().Trim();
+                if (!m.isRegex)
+                    m.name = nameText.ToLower().Trim();
+                else
+                    m.name = nameText.Trim();
             }
 
             if (validModes.IndexOf(m.mode) < 0)
@@ -152,9 +166,37 @@ namespace Spectrum.Plugins.ServerMod
                 nameFilteredList = lvls;
             else
             {
-                foreach (var lvl in lvls)
-                    if (lvl.levelName_.ToLower().Contains(m.name.ToLower()))
-                        nameFilteredList.Add(lvl);
+                bool addedExact = false;
+                // find exact match first, but only if we aren't using regex.
+                if (!m.isRegex)
+                {
+                    foreach (var lvl in lvls)
+                        if (lvl.levelName_.ToLower() == m.name.ToLower())
+                        {
+                            nameFilteredList.Add(lvl);
+                            addedExact = true;
+                            break;
+                        }
+                }
+                // if exact match is found, don't find other matches
+                if (!addedExact)
+                {
+                    if (m.isRegex)
+                    {
+                        Console.WriteLine($"Finding regex: '{m.name}'");
+                        foreach (var lvl in lvls)
+                        {
+                            if (Regex.Match(lvl.levelName_, m.name).Success)
+                                nameFilteredList.Add(lvl);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var lvl in lvls)
+                            if (lvl.levelName_.ToLower().Contains(m.name.ToLower()))
+                                nameFilteredList.Add(lvl);
+                    }
+                }
             }
 
             List<LevelNameAndPathPair> authorFilteredList = new List<LevelNameAndPathPair>();
@@ -177,7 +219,7 @@ namespace Spectrum.Plugins.ServerMod
                 List<LevelNameAndPathPair> exactFilteredList = new List<LevelNameAndPathPair>();
                 foreach (var lvl in authorFilteredList)
                 {
-                    if (lvl.levelName_.Trim().ToLower() == m.name.Trim().ToLower())
+                    if (nameFilteredList.Exists(l => l.levelName_ == lvl.levelName_ && l.levelPath_ == lvl.levelPath_))
                         exactFilteredList.Add(lvl);
                 }
                 authorFilteredList = exactFilteredList;
