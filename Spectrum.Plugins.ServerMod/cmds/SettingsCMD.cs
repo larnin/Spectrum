@@ -16,23 +16,24 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!settings reload: reload the settings for file.");
-            Utilities.sendMessage("!settings playVote [true/false]: set play command to act as '!vote y play'");
-            Utilities.sendMessage("  This setting overrides the 'play' settings.");
-            Utilities.sendMessage("!settings play [true/false]: allow player to add maps on the playlist.");
-            Utilities.sendMessage("!settings addOne [true/false]: if enabled, allow the players to add only one map at a time.");
-            Utilities.sendMessage("!settings welcome [message]: Set the welcome message.");
-            Utilities.sendMessage("  \"off\" to disable.");
-            Utilities.sendMessage("  %USERNAME% is substituted for the player's name.");
-            Utilities.sendMessage("!settings voteSystem [true/false]: Turn the voting system off/on.");
-            Utilities.sendMessage("  This is separate from autoVote!");
+            Utilities.sendMessage("[b][FF0000]General Settings[-][/b]");
+            Utilities.sendMessage(Utilities.formatCmd("!settings reload") + ": reload the settings for file.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings playVote [true/false]") + ": set play command to act as '!vote y play'");
+            Utilities.sendMessage("This setting overrides the 'play' settings.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings play [true/false]") + ": allow player to add maps on the playlist.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings addOne [true/false]") + ": if enabled, allow the players to add only one map at a time.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings welcome [message]") + ": Set the welcome message.");
+            Utilities.sendMessage("\"off\" to disable.");
+            Utilities.sendMessage("%USERNAME% is substituted for the player's name.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings voteSystem [true/false]") + ": Turn the voting system off/on.");
+            Utilities.sendMessage("This is separate from autoVote!");
             Utilities.sendMessage("voteSystem thresholds are changed with !votectrl");
-            Utilities.sendMessage("-- Setting for !auto: --");
-            Utilities.sendMessage("!settings autoVote [true/false]: allow players to vote on auto mode.");
-            Utilities.sendMessage("!settings autoMsg [message]: the message to display when advancing the map in auto mode. \"off\" to disable.");
-            Utilities.sendMessage("!settings autoMinPlayers [amount]: the minimum amount of players needed for a map to start in auto mode.");
-            Utilities.sendMessage("!settings autoMaxTime [seconds]: the maximum amount of time that auto mode will spend on one map.");
-            Utilities.sendMessage("!settings autoSpecHostIgnored [true/false]: turn on/off whether the host is ignored as a player when running auto mode.");
+            Utilities.sendMessage("[b][FF0000]!auto Settings[-][/b]");
+            Utilities.sendMessage(Utilities.formatCmd("!settings autoVote [true/false]") + ": allow players to vote on auto mode.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings autoMsg [message]") + ": the message to display when advancing the map in auto mode. \"off\" to disable.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings autoMinPlayers [amount]") + ": the minimum amount of players needed for a map to start in auto mode.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings autoMaxTime [seconds]") + ": the maximum amount of time that auto mode will spend on one map.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings autoSpecHostIgnored [true/false]") + ": turn on/off whether the host is ignored as a player when running auto mode.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

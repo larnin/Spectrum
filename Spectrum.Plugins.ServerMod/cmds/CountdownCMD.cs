@@ -35,9 +35,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!countdown: Start the 60sec final countdown");
-            Utilities.sendMessage("!countdown <time>: Start the final countdown with <time> seconds");
-            Utilities.sendMessage("!countdown stop: Stop the final countdown");
+            Utilities.sendMessage(Utilities.formatCmd("!countdown") + ": Start the 60sec final countdown");
+            Utilities.sendMessage(Utilities.formatCmd("!countdown <time>") + ": Start the final countdown with <time> seconds");
+            Utilities.sendMessage(Utilities.formatCmd("!countdown stop") + ": Stop the final countdown");
         }
 
         public override void use(ClientPlayerInfo p, string message)

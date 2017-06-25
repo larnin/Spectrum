@@ -9,7 +9,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!forcestart: Forces the game to start regardless of the ready states of players in the lobby.");
+            Utilities.sendMessage(Utilities.formatCmd("!forcestart") + ": Forces the game to start regardless of the ready states of players in the lobby.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

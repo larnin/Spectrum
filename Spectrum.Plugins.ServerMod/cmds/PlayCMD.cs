@@ -18,10 +18,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override void help(ClientPlayerInfo p)
         {
             if (useVote)
-                Utilities.sendMessage("!play [lvl name]: Vote to add a level to the playlist.");
+                Utilities.sendMessage(Utilities.formatCmd("!play [lvl name]") + ": Vote to add a level to the playlist.");
             else
-                Utilities.sendMessage("!play [lvl name]: Adds a level to the playlist as the next to be played.");
-            Utilities.sendMessage("!play [filter]: Use filters to find a level");
+                Utilities.sendMessage(Utilities.formatCmd("!play [lvl name]") + ": Adds a level to the playlist as the next to be played.");
+            Utilities.sendMessage(Utilities.formatCmd("!play [filter]") + ": Use filters to find a level");
             Utilities.sendMessage("Valid filters: -mode -m -name -n -author -a -index -i -last -l -all");
             Utilities.sendMessage("The level must be known by the server to be show up");
         }

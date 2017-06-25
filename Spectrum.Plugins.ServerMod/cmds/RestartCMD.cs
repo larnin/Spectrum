@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!restart: Restart the current map");
+            Utilities.sendMessage(Utilities.formatCmd("!restart") + ": Restart the current map");
         }
 
         public override void use(ClientPlayerInfo p, string message)

@@ -15,7 +15,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!spec [id/name]: Forces a player to spectate the game.");
+            Utilities.sendMessage(Utilities.formatCmd("!spec [id/name]") + ": Forces a player to spectate the game.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

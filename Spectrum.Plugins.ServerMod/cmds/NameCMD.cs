@@ -12,7 +12,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!name [newName]: Allow you to change your name");
+            Utilities.sendMessage(Utilities.formatCmd("!name [newName]") + ": Allow you to change your name");
         }
 
         public override void use(ClientPlayerInfo p, string message)

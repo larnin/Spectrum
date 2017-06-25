@@ -17,7 +17,12 @@ namespace Spectrum.Plugins.ServerMod
 #pragma warning disable CS0618 // Type or member is obsolete
             StaticTransceivedEvent<ChatMessage.Data>.Broadcast(new ChatMessage.Data((message).Colorize("[AAAAAA]")));
 #pragma warning restore CS0618 // Type or member is obsolete
-                              //Console.WriteLine("Log : " + message);
+            //Console.WriteLine("Log : " + message);
+        }
+
+        public static string formatCmd(string commandString)
+        {
+            return "[D0D0D0]" + commandString + "[-]";
         }
 
         public static bool isOnline()

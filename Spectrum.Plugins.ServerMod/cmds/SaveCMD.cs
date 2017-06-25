@@ -13,7 +13,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!save [name]: Save the current playlist.");
+            Utilities.sendMessage(Utilities.formatCmd("!save [name]") + ": Save the current playlist.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

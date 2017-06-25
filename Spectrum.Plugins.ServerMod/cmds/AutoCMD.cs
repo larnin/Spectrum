@@ -66,7 +66,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!auto: Toggle the server auto mode.");
+            Utilities.sendMessage(Utilities.formatCmd("!auto") + ": Toggle the server auto mode.");
             Utilities.sendMessage("You must have a playlist to activate the auto server");
             Utilities.sendMessage("You can change auto mode settings with the !settings command or in the settings file.");
         }
@@ -135,7 +135,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
             // if autoSpec does not count as a player and if the host is autospec, then add 1 to minPlayers
-            return minPlayers + ((!autoSpecHostIgnored && autoSpecCommand.autoSpecMode) ? 1 : 0);
+            return minPlayers + ((autoSpecHostIgnored && autoSpecCommand.autoSpecMode) ? 1 : 0);
         }
 
         IEnumerable<float> waitForMinPlayers()
@@ -165,10 +165,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 Utilities.sendMessage("Going to the next level in 10 seconds...");
                 Utilities.sendMessage("Next level is: " + Utilities.getNextLevelName());
-                if (advanceMessage != "")
-                {
-                    Utilities.sendMessage(advanceMessage);
-                }
                 myIndex = index;
                 yield return new WaitForSeconds(10.0f);
                 if (index != myIndex)
@@ -222,11 +218,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     yield return new WaitForSeconds(5);
                     if (this.index != myIndex)
                         yield break;
-
-                    if (advanceMessage != "")
-                    {
-                        Utilities.sendMessage(advanceMessage);
-                    }
                         
                     if (autoMode && !Utilities.isOnLobby())
                     {
@@ -298,6 +289,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator waitUtilEnd()
         {
+            if (advanceMessage != "")
+            {
+                Utilities.sendMessage(advanceMessage);
+            }
             didFinish = false;
             int currentIndex = index;
             yield return new WaitForSeconds(maxRunTime);

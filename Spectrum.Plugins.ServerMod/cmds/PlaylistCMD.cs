@@ -11,7 +11,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!playlist: Show nexts levels of the playlist");
+            Utilities.sendMessage(Utilities.formatCmd("!playlist") + ": Show nexts levels of the playlist");
         }
 
         public override void use(ClientPlayerInfo p, string message)

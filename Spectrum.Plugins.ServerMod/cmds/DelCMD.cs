@@ -13,7 +13,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!del <index>: remove the map at the targeted index from the playlist");
+            Utilities.sendMessage(Utilities.formatCmd("!del <index>") + ": remove the map at the targeted index from the playlist");
             Utilities.sendMessage("The next map has an index of 1");
         }
 

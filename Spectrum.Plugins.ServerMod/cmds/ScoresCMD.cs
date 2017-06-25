@@ -12,7 +12,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!scores: depending to the gamemode, it will show the current distances, times or points of players.");
+            Utilities.sendMessage(Utilities.formatCmd("!scores") + ": depending to the gamemode, it will show the current distances, times or points of players.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

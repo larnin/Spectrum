@@ -25,7 +25,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!welcome: Hear the welcome message.");
+            Utilities.sendMessage(Utilities.formatCmd("!welcome") + ": Hear the welcome message.");
             if (Utilities.isHost())
             {
                 Utilities.sendMessage("You can set the welcome message with !settings");

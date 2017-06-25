@@ -62,7 +62,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             public override void help(ClientPlayerInfo p)
             {
-                Utilities.sendMessage("!votectrl <voteType> <percent>: Set <percent> as the amount of players needed for a <voteType> vote to succeed.");
+                Utilities.sendMessage(Utilities.formatCmd("!votectrl <voteType> <percent>") + ": Set <percent> as the amount of players needed for a <voteType> vote to succeed.");
                 Utilities.sendMessage("<percent> should be an integer 0 - 100. Set above 100 to disable.");
             }
 
@@ -120,17 +120,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             public override void help(ClientPlayerInfo p)
             {
-                Utilities.sendMessage("!vote <voteType> <parameters>: Vote yes on the given voteType.");
-                Utilities.sendMessage("!vote <yes/no> <voteType> <parameters>: Vote yes/no on the given voteType. y/n also work.");
-                Utilities.sendMessage("!vote <info/i> <voteType>: View information about the voteType.");
+                Utilities.sendMessage(Utilities.formatCmd("!vote <voteType> <parameters>") + ": Vote yes on the given voteType.");
+                Utilities.sendMessage(Utilities.formatCmd("!vote <yes/no> <voteType> <parameters>") + ": Vote yes/no on the given voteType. y/n also work.");
+                Utilities.sendMessage(Utilities.formatCmd("!vote <info/i> <voteType>") + ": View information about the voteType.");
                 Utilities.sendMessage("voteTypes:");
-                Utilities.sendMessage(" !vote [y/n] skip: skip the current map.");
-                Utilities.sendMessage(" !vote [y/n] stop: stop the countdown.");
-                Utilities.sendMessage(" !vote [y/n] play <mapName>: vote to play map matching mapName. Use !level to find maps. Uses the same syntax as !level.");
+                Utilities.sendMessage(" " + Utilities.formatCmd("!vote [y/n] skip") + ": skip the current map.");
+                Utilities.sendMessage(" " + Utilities.formatCmd("!vote [y/n] stop") + ": stop the countdown.");
+                Utilities.sendMessage(" " + Utilities.formatCmd("!vote [y/n] play <mapName>") + ": vote to play map matching mapName. Use !level to find maps. Uses the same syntax as !level.");
                 Utilities.sendMessage("Examples:");
-                Utilities.sendMessage(" !vote play inferno: vote yes on playing inferno");
-                Utilities.sendMessage(" !vote n stop: cancel your vote to stop the countdown");
-                Utilities.sendMessage(" !vote i skip: view info about the skip vote ");
+                Utilities.sendMessage(" " + Utilities.formatCmd("!vote play inferno") + ": vote yes on playing inferno");
+                Utilities.sendMessage(" " + Utilities.formatCmd("!vote n stop") + ": cancel your vote to stop the countdown");
+                Utilities.sendMessage(" " + Utilities.formatCmd("!vote i skip") + ": view info about the skip vote ");
                 /*
                 Utilities.sendMessage(" !vote <y/n> kick <player>: vote to kick <player> from the game.");
                 Utilities.sendMessage(" !vote <y/n> count <time>: vote for <time> to be the new max time.");

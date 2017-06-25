@@ -11,10 +11,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!server: Show the server name");
-            Utilities.sendMessage("!server [new name]: Modify the server name");
-            Utilities.sendMessage("!server private [password]: Set the server private");
-            Utilities.sendMessage("!server public: Set the server public");
+            Utilities.sendMessage(Utilities.formatCmd("!server") + ": Show the server name");
+            Utilities.sendMessage(Utilities.formatCmd("!server [new name]") + ": Modify the server name");
+            Utilities.sendMessage(Utilities.formatCmd("!server private [password]") + ": Set the server private");
+            Utilities.sendMessage(Utilities.formatCmd("!server public") + ": Set the server public");
         }
 
         public override void use(ClientPlayerInfo p, string message)

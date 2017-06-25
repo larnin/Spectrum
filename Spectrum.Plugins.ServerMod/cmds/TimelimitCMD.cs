@@ -14,7 +14,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!timelimit [time]: Change the max time for the reverse tag map");
+            Utilities.sendMessage(Utilities.formatCmd("!timelimit [time]") + ": Change the max time for the reverse tag map");
         }
 
         public override void use(ClientPlayerInfo p, string message)

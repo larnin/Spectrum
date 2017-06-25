@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!dels <indexStart> <indexEnd>: remove the maps between indexStart and indexEnd from the playlist");
+            Utilities.sendMessage(Utilities.formatCmd("!dels <indexStart> <indexEnd>") + ": remove the maps between indexStart and indexEnd from the playlist");
             Utilities.sendMessage("The next map has an index of 1");
         }
 

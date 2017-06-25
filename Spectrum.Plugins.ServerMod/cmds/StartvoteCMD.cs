@@ -13,7 +13,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!startvote: ");
+            Utilities.sendMessage(Utilities.formatCmd("!startvote") + ": ");
         }
 
         public override void use(ClientPlayerInfo p, string message)

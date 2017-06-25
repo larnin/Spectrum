@@ -13,7 +13,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!win: Win the game !");
+            Utilities.sendMessage(Utilities.formatCmd("!win") + ": Win the game !");
         }
 
         public override void use(ClientPlayerInfo p, string message)

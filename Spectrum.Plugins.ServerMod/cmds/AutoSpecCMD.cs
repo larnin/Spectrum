@@ -29,7 +29,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!autospec: Toggle automatic spectating for you.");
+            Utilities.sendMessage(Utilities.formatCmd("!autospec") + ": Toggle automatic spectating for you.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

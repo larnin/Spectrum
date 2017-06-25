@@ -9,7 +9,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!list: list all the players in the server.");
+            Utilities.sendMessage(Utilities.formatCmd("!list") + ": list all the players in the server.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

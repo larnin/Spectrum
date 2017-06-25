@@ -13,8 +13,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!load: Show all the available playlists.");
-            Utilities.sendMessage("!load [playlist name]: Load a playlist.");
+            Utilities.sendMessage(Utilities.formatCmd("!load") + ": Show all the available playlists.");
+            Utilities.sendMessage(Utilities.formatCmd("!load [playlist name]") + ": Load a playlist.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

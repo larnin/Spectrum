@@ -13,7 +13,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("!clear: Remove everything on the playlist.");
+            Utilities.sendMessage(Utilities.formatCmd("!clear") + ": Remove everything on the playlist.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
