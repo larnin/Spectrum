@@ -10,13 +10,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
     class AutoCMD : cmd
     {
         public static bool voteNext = false;
+        public static bool autoSpecHostIgnored = false;
 
+        public static string advanceMessage = "";
+        public static int maxRunTime = 15*60;
+        public static int minPlayers = 1;
 
-        const int maxRunTime = 15*60;
         const int maxtVoteValue = 3;
 
-        bool autoMode = false;
-        int index = 0;
+        public bool autoMode = false;
+        int index = 0;  // Tracks when new levels load. Some code needs to stop running if a new level loads.
+        // when index changes, it invalidates any running code after is does WaitForSeconds
+        //  this means that loading a new map through the gui or restarting auto will invalidate the old auto routine
+        //  which would otherwise interfere by selecting a level when the host or new auto routine already did.
         bool voting = false;
         Dictionary<string, int> votes = new Dictionary<string, int>();
 
@@ -24,14 +30,20 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override PermType perm { get { return PermType.HOST; } }
         public override bool canUseAsClient { get { return false; } }
 
-        public AutoCMD()
+        bool didFinish = false;
+
+        cmdlist list;
+
+        public AutoCMD(cmdlist list)
         {
+            this.list = list;
+
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {
                 onModeFinish();
             });
 
-            Events.GameMode.Go.Subscribe(data =>
+            Events.GameMode.ModeStarted.Subscribe(data =>
             {
                 onModeStart();
             });
@@ -40,30 +52,42 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 onChatEvent(data.message_);
             });
+
+            AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
+            CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
+            Events.RaceMode.FinalCountdownActivate.Subscribe(data =>
+            {
+                if (G.Sys.PlayerManager_.PlayerList_.Count == 2 && autoSpecCommand.autoSpecMode)
+                {
+                    countdownCommand.stopCountdown();
+                }
+            });
         }
 
         public override void help(ClientPlayerInfo p)
         {
             Utilities.sendMessage("!auto: Toggle the server auto mode.");
-            Utilities.sendMessage("You must have a playlist to active the auto server");
+            Utilities.sendMessage("You must have a playlist to activate the auto server");
+            Utilities.sendMessage("You can change auto mode settings with the !settings command or in the settings file.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if(!autoMode)
+            index++;  // Tracks when new levels load. Some code needs to stop running if a new level loads.
+            if (!autoMode)
             {
                 autoMode = true;
-                Utilities.sendMessage("Automode started !");
-                if(Utilities.isOnLobby())
+                Utilities.sendMessage("Auto mode started!");
+                if (Utilities.isOnLobby())
                     G.Sys.GameManager_.StartCoroutine(startFromLobby());
-                else if(Utilities.isModeFinished())
+                else if (Utilities.isModeFinished())
                     G.Sys.GameManager_.StartCoroutine(waitAndGoNext());
                 else onModeStart();
             }
             else
             {
                 autoMode = false;
-                Utilities.sendMessage("Automode stopped !");
+                Utilities.sendMessage("Auto mode stopped!");
             }
         }
 
@@ -84,12 +108,18 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         private void onModeFinish()
         {
-            if(autoMode)
+            if(autoMode && !didFinish)
             {
-                if (voteNext && G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count >= maxtVoteValue)
-                    G.Sys.GameManager_.StartCoroutine(voteAndGoNext());
-                else G.Sys.GameManager_.StartCoroutine(waitAndGoNext());
+                nextLevel();
             }
+        }
+
+        public void nextLevel()
+        {
+            didFinish = true;
+            if (voteNext && G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count >= maxtVoteValue)
+                G.Sys.GameManager_.StartCoroutine(voteAndGoNext());
+            else G.Sys.GameManager_.StartCoroutine(waitAndGoNext());
         }
 
         private void onModeStart()
@@ -101,13 +131,48 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 G.Sys.GameManager_.StartCoroutine(waitUtilEnd());
         }
 
+        public int getMinPlayers()
+        {
+            AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
+            // if autoSpec does not count as a player and if the host is autospec, then add 1 to minPlayers
+            return minPlayers + ((!autoSpecHostIgnored && autoSpecCommand.autoSpecMode) ? 1 : 0);
+        }
+
+        IEnumerable<float> waitForMinPlayers()
+        {
+            int myIndex;
+            if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
+            {
+                Utilities.sendMessage($"Waiting for there to be {getMinPlayers()} players.");
+                while (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
+                {
+                    myIndex = index;
+                    yield return 5.0f;
+                    if (index != myIndex)
+                        yield break;
+                }
+            }
+        }
+
         IEnumerator waitAndGoNext()
         {
+            foreach (float f in waitForMinPlayers())
+            {
+                yield return new WaitForSeconds(f);
+            }
+            int myIndex; // index and myIndex are used to check if the level advances before auto does it.
             if (!Utilities.isOnLobby())
             {
-                Utilities.sendMessage("Go to next level in 10 seconds ...");
-                Utilities.sendMessage("Next level is : " + Utilities.getNextLevelName());
+                Utilities.sendMessage("Going to the next level in 10 seconds...");
+                Utilities.sendMessage("Next level is: " + Utilities.getNextLevelName());
+                if (advanceMessage != "")
+                {
+                    Utilities.sendMessage(advanceMessage);
+                }
+                myIndex = index;
                 yield return new WaitForSeconds(10.0f);
+                if (index != myIndex)
+                    yield break;
                 if (autoMode && !Utilities.isOnLobby())
                 {
                     if (Utilities.isCurrentLastLevel())
@@ -124,6 +189,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator voteAndGoNext()
         {
+            foreach (float f in waitForMinPlayers())
+            {
+                yield return new WaitForSeconds(f);
+            }
+            int myIndex;
             if (!Utilities.isOnLobby())
             {
                 voting = true;
@@ -134,7 +204,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 Utilities.sendMessage("[b][FF0000]1[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + 1].levelNameAndPath_.levelName_ + "[-][/b]");
                 Utilities.sendMessage("[b][00FF00]2[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + 2].levelNameAndPath_.levelName_ + "[-][/b]");
                 Utilities.sendMessage("[b][0088FF]3[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + 3].levelNameAndPath_.levelName_ + "[-][/b]");
+
+                myIndex = index;
                 yield return new WaitForSeconds(15);
+                if (index != myIndex)
+                    yield break;
 
                 if (autoMode && !Utilities.isOnLobby())
                 {
@@ -143,8 +217,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         Utilities.sendMessage("Restart the current level !");
                     else Utilities.sendMessage("Level [b][FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + index].levelNameAndPath_.levelName_ + "[-][/b] selected !");
                     voting = false;
-                    yield return new WaitForSeconds(5);
 
+                    myIndex = this.index;
+                    yield return new WaitForSeconds(5);
+                    if (this.index != myIndex)
+                        yield break;
+
+                    if (advanceMessage != "")
+                    {
+                        Utilities.sendMessage(advanceMessage);
+                    }
+                        
                     if (autoMode && !Utilities.isOnLobby())
                     {
                         setToNextMap(index);
@@ -153,7 +236,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     else autoMode = false;
                 }
                 else autoMode = false;
-                yield return null;
             }
             else autoMode = false;
             yield return null;
@@ -161,8 +243,54 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator startFromLobby()
         {
-            Utilities.sendMessage("Start game in 10 seconds ...");
-            yield return new WaitForSeconds(10.0f);
+            bool hasRanOnce = false;
+            int myIndex;
+            int total = 0;
+            while (total < 2)
+            {
+                if (hasRanOnce)
+                {
+                    Utilities.sendMessage("Starting the game in 10 seconds...");
+
+                    myIndex = index;
+                    yield return new WaitForSeconds(10.0f);
+                    if (index != myIndex)
+                        yield break;
+                }
+                else hasRanOnce = true;
+
+                foreach (float f in waitForMinPlayers())
+                {
+                    yield return new WaitForSeconds(f);
+                }
+                total = 1;
+
+                bool canContinue = false;
+                do
+                {
+                    canContinue = true;
+                    string players = "";
+                    foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
+                    {
+                        if (!current.Ready_)
+                        {
+                            canContinue = false;
+                            players += current.Username_ + ", ";
+                        }
+                    }
+                    if (!canContinue)
+                    {
+                        Utilities.sendMessage($"Waiting for all players to be ready. ({players}is not ready.)");
+                        myIndex = index;
+                        yield return new WaitForSeconds(5.0f);
+                        if (index != myIndex)
+                            yield break;
+                        total = 0;  // since we had to wait for 5 seconds, some players might have left. We need to run the loop again to make sure.
+                        // by making this 0, total will be < 2 and the loop will repeat.
+                    }
+                } while (!canContinue);
+                total = total + 1;
+            }
             if (Utilities.isOnLobby())
                 G.Sys.GameManager_.GoToCurrentLevel();
             yield return null;
@@ -170,13 +298,18 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator waitUtilEnd()
         {
+            didFinish = false;
             int currentIndex = index;
             yield return new WaitForSeconds(maxRunTime);
             if (currentIndex == index && autoMode)
             {
-                Utilities.sendMessage("This map had run for 15min ...");
-                Utilities.sendMessage("Finishing in 30 sec ...");
+                Utilities.sendMessage("This map has run for the maximum run time.");
+                Utilities.sendMessage("Finishing in 30 sec...");
+
+                int myIndex = index;
                 yield return new WaitForSeconds(30);
+                if (index != myIndex)
+                    yield break;
 
                 if (currentIndex == index && autoMode)
                 {

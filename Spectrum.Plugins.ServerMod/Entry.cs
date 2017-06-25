@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Nico";
         public string Contact => "SteamID: larnin";
         public APILevel CompatibleAPILevel => APILevel.UltraViolet;
-        public string PluginVersion = "V0.4";
+        public string PluginVersion = "V0.5";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -171,9 +171,31 @@ namespace Spectrum.Plugins.ServerMod
             {
                 PlayCMD.playersCanAddMap = (bool)Settings["playersCanAddMap"];
                 PlayCMD.addOneMapOnly = (bool)Settings["addOneMapOnly"];
+                PlayCMD.useVote = (bool)Settings["playIsVote"];
+
+                VoteHandler.VoteCMD.votesAllowed = (bool)Settings["allowVoteSystem"];
+                if (Settings.ContainsKey("voteSystemThresholds") && VoteHandler.thresholds != null)
+                {
+                    foreach (KeyValuePair<string, double> entry in (Dictionary<string, double>)Settings["voteSystemThresholds"])
+                    {
+                        VoteHandler.thresholds[entry.Key] = entry.Value;
+                    }
+                }
+
+                AutoSpecCMD.autoSpecReturnToLobby = (bool)Settings["autoSpecReturnToLobby"];
+
+                WelcomeCMD.welcomeMessage = (string)Settings["welcome"];
+
+                AutoCMD.autoSpecHostIgnored = (bool)Settings["autoSpecHostIgnored"];
                 AutoCMD.voteNext = (bool)Settings["voteNext"];
+                AutoCMD.advanceMessage = (string)Settings["autoAdvanceMsg"];
+                AutoCMD.minPlayers = (int)Settings["autoMinPlayers"];
+                AutoCMD.maxRunTime = (int)Settings["autoMaxTime"];
+
                 WinCMD.winList = ((string[])Settings["win"]).ToList();
                 RipCMD.ripList = ((string[])Settings["rip"]).ToList();
+
+
             }
             catch (Exception e)
             {
@@ -187,7 +209,24 @@ namespace Spectrum.Plugins.ServerMod
         {
             Settings["playersCanAddMap"] = PlayCMD.playersCanAddMap;
             Settings["addOneMapOnly"] = PlayCMD.addOneMapOnly;
+            Settings["playIsVote"] = PlayCMD.useVote;
+
+            Settings["allowVoteSystem"] = VoteHandler.VoteCMD.votesAllowed;
+            if (VoteHandler.thresholds != null)
+            {
+                Settings["voteSystemThresholds"] = VoteHandler.thresholds;
+            }
+
+            Settings["autoSpecReturnToLobby"] = AutoSpecCMD.autoSpecReturnToLobby;
+
+            Settings["welcome"] = WelcomeCMD.welcomeMessage;
+
+            Settings["autoSpecHostIgnored"] = AutoCMD.autoSpecHostIgnored;
             Settings["voteNext"] = AutoCMD.voteNext;
+            Settings["autoAdvanceMsg"] = AutoCMD.advanceMessage;
+            Settings["autoMinPlayers"] = AutoCMD.minPlayers;
+            Settings["autoMaxTime"] = AutoCMD.maxRunTime;
+
 
             Settings.Save();
         }
@@ -198,8 +237,40 @@ namespace Spectrum.Plugins.ServerMod
                 Settings["playersCanAddMap"] = false;
             if (!Settings.ContainsKey("addOneMapOnly"))
                 Settings["addOneMapOnly"] = true;
+            if (!Settings.ContainsKey("playIsVote"))
+                Settings["playIsVote"] = false;
+
+            if (!Settings.ContainsKey("allowVoteSystem"))
+                Settings["allowVoteSystem"] = false;
+
+            if (!Settings.ContainsKey("autoSpecReturnToLobby"))
+                Settings["autoSpecReturnToLobby"] = false;
+
+            if (!Settings.ContainsKey("welcome"))
+                Settings["welcome"] = "";
             if (!Settings.ContainsKey("voteNext"))
                 Settings["voteNext"] = false;
+            if (!Settings.ContainsKey("autoAdvanceMsg"))
+                Settings["autoAdvanceMsg"] = "";
+            if (!Settings.ContainsKey("autoMinPlayers"))
+                Settings["autoMinPlayers"] = 1;
+            if (!Settings.ContainsKey("autoMaxTime"))
+                Settings["autoMaxTime"] = 15*60;
+            if (!Settings.ContainsKey("autoSpecHostIgnored"))
+            {
+                if (Settings.ContainsKey("autoSpecCountsAsPlayer"))
+                {
+                    // this setting was renamed from `autoSpecCountsAsPlayer`
+                    //  to `autoSpecHostIgnored` for clarity
+                    Settings["autoSpecHostIgnored"] = !(bool)Settings["autoSpecCountsAsPlayer"];
+                    Settings.Remove("autoSpecCountsAsPlayer");
+                }
+                else
+                {
+                    Settings["autoSpecHostIgnored"] = true;
+                }
+            }
+
             if (!Settings.ContainsKey("win"))
                 Settings["win"] = WinCMD.winList;
             if (!Settings.ContainsKey("rip"))

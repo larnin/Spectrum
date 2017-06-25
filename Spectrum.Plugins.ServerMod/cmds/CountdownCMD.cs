@@ -79,7 +79,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             countdownEndTime = DateTime.Now.AddSeconds(time);
         }
 
-        private void stopCountdown()
+        public void stopCountdown()
         {
             countdownStarted = false;
 #pragma warning disable CS0618 // Type or member is obsolete
