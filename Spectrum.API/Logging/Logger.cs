@@ -15,10 +15,10 @@ namespace Spectrum.API.Logging
 
         private string FilePath { get; }
 
-        public Logger(string filePath)
+        public Logger(string fileName)
         {
             ColorizeLines = true;
-            FilePath = Path.Combine(Defaults.LogDirectory, filePath);
+            FilePath = Path.Combine(Defaults.LogDirectory, fileName);
 
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
 
@@ -41,6 +41,11 @@ namespace Spectrum.API.Logging
         {
             if (ColorizeLines)
                 Console.ForegroundColor = WarningColor;
+
+            WriteLine($"[*][{DateTime.Now}] {message}");
+
+            if (ColorizeLines)
+                Console.ResetColor();
         }
 
         public void Info(string message, bool noNewLine = false)

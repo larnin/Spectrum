@@ -10,5 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)spectrum-banner-512px.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Wiki\PluginCreation\TheBasics\ConsoleResult.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Wiki\PluginCreation\TheBasics\ProjectSetup.png" />
   </ItemGroup>
 </Project>

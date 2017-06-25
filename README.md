@@ -23,9 +23,7 @@ configurable vote passing thresholds
 ---
 
 ## What is [Spectrum](https://github.com/Ciastex/Spectrum)?
-Spectrum is a simple, yet powerful extension system for Refract Studios' game
-[Distance](http://survivethedistance.com/).
-It allows you to write custom Lua scripts and DLL plugins to customize the
-game's experience and make it do things the original game's developers didn't
-even think about. It's being constantly updated by one of the Distance community
-members.
+Spectrum is a simple, yet powerful extension system for Refract Studios' game 
+[Distance](http://survivethedistance.com/)
+It allows you to write DLL plugins to customize the game's experience and make it do things the original game's developers didn't even think about. It's being constantly updated by one of the Distance community members (sans small development breaks).
+

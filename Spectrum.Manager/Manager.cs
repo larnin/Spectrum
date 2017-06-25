@@ -22,6 +22,7 @@ namespace Spectrum.Manager
 
         public bool IsEnabled { get; set; }
         public bool CanLoadPlugins => Directory.Exists(Defaults.PluginDirectory);
+
         public Manager()
         {
             Log = new Logger("Manager.log");
@@ -47,7 +48,7 @@ namespace Spectrum.Manager
 
                 if (Game.ShowWatermark)
                 {
-                    Game.WatermarkText = $"Distance {SystemVersion.DistanceBuild} (Spectrum [FF00FF]{SystemVersion.APILevel.ToString()}[-])";
+                    Game.WatermarkText = SystemVersion.VersionString;
                 }
             };
 
