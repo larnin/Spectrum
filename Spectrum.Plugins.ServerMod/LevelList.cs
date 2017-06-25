@@ -183,7 +183,6 @@ namespace Spectrum.Plugins.ServerMod
                 {
                     if (m.isRegex)
                     {
-                        Console.WriteLine($"Finding regex: '{m.name}'");
                         foreach (var lvl in lvls)
                         {
                             if (Regex.Match(lvl.levelName_, m.name).Success)
