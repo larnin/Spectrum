@@ -216,7 +216,7 @@ namespace Spectrum.Plugins.ServerMod
                 return "Refract";
 
             if(lvlInfo.levelType_ == LevelType.Workshop)
-                return G.Sys.SteamworksManager_.GetSteamName(lvlInfo.workshopCreatorID_);
+                return SteamworksManager.GetSteamName(lvlInfo.workshopCreatorID_);
 
             return "";
         }

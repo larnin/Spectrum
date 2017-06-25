@@ -15,8 +15,8 @@ namespace Spectrum.Plugins.ServerMod
         public string FriendlyName => "Server commands Mod";
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
-        public APILevel CompatibleAPILevel => APILevel.UltraViolet;
-        public string PluginVersion = "Version C.0.5.6";
+        public APILevel CompatibleAPILevel => APILevel.XRay;
+        public string PluginVersion = "Version C.0.6.0";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -38,7 +38,7 @@ namespace Spectrum.Plugins.ServerMod
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
             {
                 var author = Utilities.ExtractMessageAuthor(data.message_);
-                var steamName = G.Sys.SteamworksManager_.GetUserName().ToLower().Trim();
+                var steamName = SteamworksManager.GetUserName().ToLower().Trim();
                 var profileName = G.Sys.PlayerManager_.Current_.profile_.Name_.ToLower().Trim();
 
                 if (!Utilities.IsSystemMessage(data.message_) && (author.ToLower().Trim() != steamName && author.ToLower().Trim() != profileName))
