@@ -338,27 +338,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
             yield return null;
         }
 
-        void resetListOnLobby(LevelPlaylist playlist)
-        {
-            var list = playlist.Playlist_;
-            G.Sys.GameManager_.LevelPlaylist_.Clear();
-            foreach (var lvl in list)
-                G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
-        }
-
-        void resetListOnGame(LevelPlaylist playlist)
-        {
-            //int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
-            //var item = playlist.Playlist_[index];
-            //playlist.Playlist_.RemoveAt(index);
-
-            var list = playlist.Playlist_;
-            G.Sys.GameManager_.LevelPlaylist_.Clear();
-            //G.Sys.GameManager_.LevelPlaylist_.Add(item);
-            foreach (var lvl in list)
-                G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
-        }
-
         int bestVote()
         {
             List<int> values = new List<int>();
