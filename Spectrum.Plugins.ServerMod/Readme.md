@@ -158,39 +158,39 @@ Changes the name of the server.
 Permission: __HOST__  
 Use: !settings reload  
 Reloads the settings from file.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoSpecReturnToLobby [true/false]  
+__!settings autoSpecReturnToLobby [true/false]__  
 Whether or not to return to lobby if the host is the last play in the server and is autospectating.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings playVote [true/false]  
+__!settings playVote [true/false]__  
 Allows players to vote for maps on the playlist with the __!play__ command.  
 If true, __!play <map>__ acts as an alias for `!vote y play <map>`  
 The host keeps the regular functionality of __!play__.
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings play [true/false]  
+__!settings play [true/false]__  
 Allows players to add maps on the playlist with the __!play__ command.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings addOne [true/false]  
+__!settings addOne [true/false]__  
 If players can add maps and this option enabled, the players can only add one map at a time.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings welcome [message]  
+__!settings welcome [message]__  
 Sets a welcome message to display to entering players.  
 In the message, %USERNAME% is replace by the player's name.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings voteSystem [true/false]  
+__!settings voteSystem [true/false]__  
 Turn the `!vote` command on or off.  
 You can control vote thresholds with `!votectrl`  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoVote [true/false]  
+__!settings autoVote [true/false]__  
 Allows players to vote for the next map on auto mode.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoShuffle [true/false]  
+__!settings autoShuffle [true/false]__  
 Whether or not to shuffle the playlist when it reaches its end in auto mode.  
 If false, the playlist is restarted without shuffling.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoUniqueVotes [true/false]  
+__!settings autoUniqueVotes [true/false]__  
 Whether or not level-end votes in auto mode should be unique. See settings file description for more info.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoMsg [message]  
+__!settings autoMsg [message]__  
 Sets a message to display when advancing to the next track.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoMinPlayers [amount]  
+__!settings autoMinPlayers [amount]__  
 Sets the minimum amount of players for auto mode to advance to the next map.  
 If the host is autospectating and `autoSpecPlayer` is false, this number will internally increase by 1 to simulate the host not being present.  
 Default: 1  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoMaxTime [seconds]  
+__!settings autoMaxTime [seconds]__  
 Sets the maximum amount of seconds to run each level for.  
 Default: 900 (15 minutes)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoSpecHostIgnored [true/false]  
+__!settings autoSpecHostIgnored [true/false]__  
 When true, the host is ignored in auto mode when counting players.  
 Default: true  
 
@@ -340,5 +340,10 @@ __win__ (list of string): A list of sentence that will be picked randomly when a
 __rip__ (list of string) : A list of sentence that will be picked randomly when a player uses the command !rip  
 
 # Author contacts
+Steam : [Corecii](http://steamcommunity.com/id/corecii/ )
+Discord : Corecii#3019
+
+## Note: The [original version of ServerMod](https://github.com/larnin/Spectrum) is by Nico
+Nico can be reached with the following contacts.
 Steam : http://steamcommunity.com/id/larnin/  
 Discord : Nico#5480 (https://discord.gg/0SlqqvzfIbi6zhbY)
