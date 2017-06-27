@@ -1,5 +1,3 @@
-#### __!! Spectrum.Plugins.ServerMod works for stable versions 5081 !!__  
-
 Spectrum.Plugins.ServerMod is a plugin that adds some commands to the server, accessible by the host and players.  
 All the commands are prefixed by '!'.  
 If you are a client and you have the plugin, you can use some of your commands by replacing the '!' key to '%'.
