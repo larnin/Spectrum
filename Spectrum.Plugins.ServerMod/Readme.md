@@ -340,10 +340,10 @@ __win__ (list of string): A list of sentence that will be picked randomly when a
 __rip__ (list of string) : A list of sentence that will be picked randomly when a player uses the command !rip  
 
 # Author contacts
-Steam : [Corecii](http://steamcommunity.com/id/corecii/ )
-Discord : Corecii#3019
+Steam : [Corecii](http://steamcommunity.com/id/corecii/)  
+Discord : Corecii#3019  
 
-## Note: The [original version of ServerMod](https://github.com/larnin/Spectrum) is by Nico
-Nico can be reached with the following contacts.
-Steam : http://steamcommunity.com/id/larnin/  
-Discord : Nico#5480 (https://discord.gg/0SlqqvzfIbi6zhbY)
+### Note: The [original version of ServerMod](https://github.com/larnin/Spectrum) is by Nico
+Nico can be reached with the following contacts.  
+Steam : [http://steamcommunity.com/id/larnin/](http://steamcommunity.com/id/larnin/)  
+Discord : Nico#5480 ([https://discord.gg/0SlqqvzfIbi6zhbY](https://discord.gg/0SlqqvzfIbi6zhbY))
