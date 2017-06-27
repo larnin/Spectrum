@@ -43,12 +43,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 cmd c = cmd.all.getCommand(cName);
                 if (c.perm == PermType.HOST && (p.IsLocal_ && Utilities.isHost()))
-                    list += cName+"(H)";
+                    list += cName+"(H), ";
                 if (c.perm == PermType.LOCAL && p.IsLocal_)
-                    list += cName+"(L)";
+                    list += cName+"(L), ";
                 if (c.perm == PermType.ALL)
-                    list += cName;
-                list += ", ";
+                    list += cName+", ";
             }
             Utilities.sendMessage(list.Remove(list.Length - 2));
             if (p.IsLocal_ || Utilities.isHost()) 

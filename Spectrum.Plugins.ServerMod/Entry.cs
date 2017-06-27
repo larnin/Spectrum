@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
-        public string PluginVersion = "Version C.0.6.2";
+        public string PluginVersion = "Version C.0.6.3";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -188,6 +188,8 @@ namespace Spectrum.Plugins.ServerMod
 
                 AutoCMD.autoSpecHostIgnored = (bool)Settings["autoSpecHostIgnored"];
                 AutoCMD.voteNext = (bool)Settings["voteNext"];
+                AutoCMD.shuffleAtEnd = (bool)Settings["autoShuffleAtEndOfPlaylist"];
+                AutoCMD.uniqueEndVotes = (bool)Settings["autoUniqueEndVotes"];
                 AutoCMD.advanceMessage = (string)Settings["autoAdvanceMsg"];
                 AutoCMD.minPlayers = (int)Settings["autoMinPlayers"];
                 AutoCMD.maxRunTime = (int)Settings["autoMaxTime"];
@@ -223,6 +225,8 @@ namespace Spectrum.Plugins.ServerMod
 
             Settings["autoSpecHostIgnored"] = AutoCMD.autoSpecHostIgnored;
             Settings["voteNext"] = AutoCMD.voteNext;
+            Settings["autoShuffleAtEndOfPlaylist"] = AutoCMD.shuffleAtEnd;
+            Settings["autoUniqueEndVotes"] = AutoCMD.uniqueEndVotes;
             Settings["autoAdvanceMsg"] = AutoCMD.advanceMessage;
             Settings["autoMinPlayers"] = AutoCMD.minPlayers;
             Settings["autoMaxTime"] = AutoCMD.maxRunTime;
@@ -250,6 +254,10 @@ namespace Spectrum.Plugins.ServerMod
                 Settings["welcome"] = "";
             if (!Settings.ContainsKey("voteNext"))
                 Settings["voteNext"] = false;
+            if (!Settings.ContainsKey("shuffleAtEnd"))
+                Settings["autoShuffleAtEnd"] = true;
+            if (!Settings.ContainsKey("uniqueEndVotes"))
+                Settings["autoUniqueEndVotes"] = false;
             if (!Settings.ContainsKey("autoAdvanceMsg"))
                 Settings["autoAdvanceMsg"] = "";
             if (!Settings.ContainsKey("autoMinPlayers"))

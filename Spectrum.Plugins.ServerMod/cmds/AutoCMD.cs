@@ -11,6 +11,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
     {
         public static bool voteNext = false;
         public static bool autoSpecHostIgnored = false;
+        public static bool shuffleAtEnd = true;
+        public static bool uniqueEndVotes = false;
 
         public static string advanceMessage = "";
         public static int maxRunTime = 15*60;
@@ -173,7 +175,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 {
                     if (Utilities.isCurrentLastLevel())
                     {
-                        cmd.all.getCommand("shuffle").use(null, "");
+                        if (shuffleAtEnd)
+                            cmd.all.getCommand("shuffle").use(null, "");
+                        else
+                        {
+                            if (G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count != 0)
+                            {
+                                G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
+                                G.Sys.GameManager_.NextLevelName_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelName_;
+                                G.Sys.GameManager_.NextLevelPath_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelPath_;
+                            }
+                        }
                     }
                     G.Sys.GameManager_.GoToNextLevel(true);
                 }
@@ -195,7 +207,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 voting = true;
                 votes.Clear();
                 if(G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - G.Sys.GameManager_.LevelPlaylist_.Index_ < maxtVoteValue)
-                    cmd.all.getCommand("shuffle").use(null, "");
+                {
+                    if (shuffleAtEnd)
+                        cmd.all.getCommand("shuffle").use(null, "");
+                    else
+                    {
+                        if (G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count != 0)
+                        {
+                            G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
+                            G.Sys.GameManager_.NextLevelName_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelName_;
+                            G.Sys.GameManager_.NextLevelPath_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelPath_;
+                        }
+                    }
+                }
                 Utilities.sendMessage("Vote for the next map (write [FF0000]1[-], [00FF00]2[-], [0088FF]3[-], or [FFFFFF]0[-] to restart) ! Votes end in 15 sec !");
                 Utilities.sendMessage("[b][FF0000]1[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + 1].levelNameAndPath_.levelName_ + "[-][/b]");
                 Utilities.sendMessage("[b][00FF00]2[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + 2].levelNameAndPath_.levelName_ + "[-][/b]");
@@ -314,6 +338,27 @@ namespace Spectrum.Plugins.ServerMod.cmds
             yield return null;
         }
 
+        void resetListOnLobby(LevelPlaylist playlist)
+        {
+            var list = playlist.Playlist_;
+            G.Sys.GameManager_.LevelPlaylist_.Clear();
+            foreach (var lvl in list)
+                G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
+        }
+
+        void resetListOnGame(LevelPlaylist playlist)
+        {
+            //int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
+            //var item = playlist.Playlist_[index];
+            //playlist.Playlist_.RemoveAt(index);
+
+            var list = playlist.Playlist_;
+            G.Sys.GameManager_.LevelPlaylist_.Clear();
+            //G.Sys.GameManager_.LevelPlaylist_.Add(item);
+            foreach (var lvl in list)
+                G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
+        }
+
         int bestVote()
         {
             List<int> values = new List<int>();
@@ -346,16 +391,23 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         void setToNextMap(int nextIndex)
         {
-            for(int i = 1; i <= maxtVoteValue; i++)
+            if (!uniqueEndVotes)
             {
-                int offset = i >= nextIndex && nextIndex != 0 ? 2 : 1;
-                var item = G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + offset];
-                G.Sys.GameManager_.LevelPlaylist_.Playlist_.RemoveAt(G.Sys.GameManager_.LevelPlaylist_.Index_ + offset);
-                G.Sys.GameManager_.LevelPlaylist_.Playlist_.Insert(G.Sys.GameManager_.LevelPlaylist_.Index_, item);
-                G.Sys.GameManager_.LevelPlaylist_.SetIndex(G.Sys.GameManager_.LevelPlaylist_.Index_ + 1);
+                G.Sys.GameManager_.LevelPlaylist_.SetIndex(G.Sys.GameManager_.LevelPlaylist_.Index_ + nextIndex - 1);
             }
-            if(nextIndex == 0)
-                G.Sys.GameManager_.LevelPlaylist_.SetIndex(G.Sys.GameManager_.LevelPlaylist_.Index_ - 1);
+            else
+            {
+                for (int i = 1; i <= maxtVoteValue; i++)
+                {
+                    int offset = i >= nextIndex && nextIndex != 0 ? 2 : 1;
+                    var item = G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + offset];
+                    G.Sys.GameManager_.LevelPlaylist_.Playlist_.RemoveAt(G.Sys.GameManager_.LevelPlaylist_.Index_ + offset);
+                    G.Sys.GameManager_.LevelPlaylist_.Playlist_.Insert(G.Sys.GameManager_.LevelPlaylist_.Index_, item);
+                    G.Sys.GameManager_.LevelPlaylist_.SetIndex(G.Sys.GameManager_.LevelPlaylist_.Index_ + 1);
+                }
+                if (nextIndex == 0)
+                    G.Sys.GameManager_.LevelPlaylist_.SetIndex(G.Sys.GameManager_.LevelPlaylist_.Index_ - 1);
+            }
         }
     }
 }

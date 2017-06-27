@@ -160,6 +160,8 @@ Changes the name of the server.
 Permission: __HOST__  
 Use: !settings reload  
 Reloads the settings from file.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoSpecReturnToLobby [true/false]  
+Whether or not to return to lobby if the host is the last play in the server and is autospectating.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings playVote [true/false]  
 Allows players to vote for maps on the playlist with the __!play__ command.  
 If true, __!play <map>__ acts as an alias for `!vote y play <map>`  
@@ -176,6 +178,11 @@ Turn the `!vote` command on or off.
 You can control vote thresholds with `!votectrl`  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoVote [true/false]  
 Allows players to vote for the next map on auto mode.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoShuffle [true/false]  
+Whether or not to shuffle the playlist when it reaches its end in auto mode.  
+If false, the playlist is restarted without shuffling.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoUniqueVotes [true/false]  
+Whether or not level-end votes in auto mode should be unique. See settings file description for more info.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoMsg [message]  
 Sets a message to display when advancing to the next track.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!settings autoMinPlayers [amount]  
@@ -245,7 +252,7 @@ Prints a random winning sentence.
 
 # Filters
 Commands __level__ and __play__ can use filters to allow you to search maps.
-* __-name__ or __-n__ : Select maps that contains theses words on it's name.
+* __-name__ or __-n__ : Select maps that contains theses words on it's name. If a map with an exact-match name is found, only that one map is returned.
 * __-author__ or __-a__ : Only show you maps form the entred author
 * __-mode__ or __-m__ : Select map on one particular gamemode. If not specified, it use the current gamemode
     * Valid gamemodes are : sprint, challenge, tag, soccer, style, stun  
@@ -255,6 +262,7 @@ The index filter can be written multiple times to select many maps.
 * __-l__ or __-last__ : Use the result of the last !level or !play command
 * __-p__ or __-page__ : Show the specified page of level (10 level per page)
 * __-all__ : Only for the !play command, if you use this filter, all the found maps are added on the playlist  
+* __-regex__ or __-r__ : Choose maps using case-sensitive C# regex.
 
 #### Examples
 __!play -a snowstate -m sprint -all__ : Adds all the maps that snowstate have created on the sprint gamemode to the playlist.  
@@ -276,6 +284,8 @@ When the plugin is started for the first time, it generate a setting file that l
 	"autoMinPlayers" : 1,
 	"autoMaxTime" : 900,
 	"autoSpecHostIgnored" : true,
+    "autoShuffleAtEndOfPlaylist": true,
+    "autoUniqueEndVotes": false,
 	"voteSystemThresholds" : {
 		"skip" : 0.7,
 		"stop" : 0.7,
@@ -317,6 +327,13 @@ __autoMaxTime__ (seconds): The maximum amount of time auto mode will spend on on
 You can change it with the command !settings autoMaxTime  
 __autoSpecHostIgnored__ (true/false): When true, auto mode will ignore the host when counting players. Default true.  
 You can change it with the command !settings autoSpecHostIgnored  
+__autoShuffleAtEndOfPlaylist__ (true/false): Whether or not to shuffle the playlist when the map ends.
+If false, the playlist restarts from the beginning w/o shuffling. Default true.  
+You can change it with the command !settings autoShuffle.  
+__autoUniqueEndVotes__ (true/false): Whether or not level-end votes should be unique.  
+If true, a map will only show up once in level-end votes until the playlist restarts. If it is not chosen during its one time being vote-able, it will not be playable until the playlist restarts.  
+If false, a map can show up again if it's not chosen. Chooseing Level 1 in a vote means levels 2 and 3 will be in the next vote.  
+You can change it with the command !settings autoUniqueVotes.  
 __voteSystemThresholds__: The vote pass thresholds for each type of vote.  
 You can change them with the command !votectrl [vote type] [new threshold from 0 to 100]  
 When using the !votectrl command, the threshold should be a number, no decimals, from 0 to 100.  

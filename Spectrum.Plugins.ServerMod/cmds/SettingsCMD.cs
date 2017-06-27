@@ -16,10 +16,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("[b][FF0000]General Settings[-][/b]");
+            Utilities.sendMessage("[b][D00000]General Settings[-][/b]");
             Utilities.sendMessage(Utilities.formatCmd("!settings reload") + ": reload the settings for file.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings autoSpecReturnToLobby") + ": return to lobby if autospectating and no one else is in the server. default: false");
             Utilities.sendMessage(Utilities.formatCmd("!settings playVote [true/false]") + ": set play command to act as '!vote y play'");
-            Utilities.sendMessage("This setting overrides the 'play' settings.");
+            Utilities.sendMessage("This setting overrides the 'play' setting.");
             Utilities.sendMessage(Utilities.formatCmd("!settings play [true/false]") + ": allow player to add maps on the playlist.");
             Utilities.sendMessage(Utilities.formatCmd("!settings addOne [true/false]") + ": if enabled, allow the players to add only one map at a time.");
             Utilities.sendMessage(Utilities.formatCmd("!settings welcome [message]") + ": Set the welcome message.");
@@ -28,8 +29,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Utilities.sendMessage(Utilities.formatCmd("!settings voteSystem [true/false]") + ": Turn the voting system off/on.");
             Utilities.sendMessage("This is separate from autoVote!");
             Utilities.sendMessage("voteSystem thresholds are changed with !votectrl");
-            Utilities.sendMessage("[b][FF0000]!auto Settings[-][/b]");
+            Utilities.sendMessage("[b][D00000]!auto Settings[-][/b]");
             Utilities.sendMessage(Utilities.formatCmd("!settings autoVote [true/false]") + ": allow players to vote on auto mode.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings autoShuffle [true/false]") + ": shuffle the playlist at the end in auto mode.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings autoUniqueVotes [true/false]") + ": whether or not 0-3 votes at the end of a level should remove vote entries that showed up in previous votes.");
             Utilities.sendMessage(Utilities.formatCmd("!settings autoMsg [message]") + ": the message to display when advancing the map in auto mode. \"off\" to disable.");
             Utilities.sendMessage(Utilities.formatCmd("!settings autoMinPlayers [amount]") + ": the minimum amount of players needed for a map to start in auto mode.");
             Utilities.sendMessage(Utilities.formatCmd("!settings autoMaxTime [seconds]") + ": the maximum amount of time that auto mode will spend on one map.");
@@ -48,6 +51,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if (strs[0] == "reload")
                 reload(p);
+            else if (strs[0] == "autospecreturntolobby")
+            {
+                if (strs.Length == 1)
+                    help(p);
+                else autoSpecReturnToLobby(p, strs[1]);
+            }
             else if (strs[0] == "playvote")
             {
                 if (strs.Length == 1)
@@ -89,7 +98,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 if (strs.Length == 1)
                     help(p);
-                else vote(p, strs[1]);
+                else autoVote(p, strs[1]);
+            }
+            else if (strs[0] == "autoshuffle")
+            {
+                if (strs.Length == 1)
+                    help(p);
+                else autoShuffle(p, strs[1]);
+            }
+            else if (strs[0] == "autouniquevotes")
+            {
+                if (strs.Length == 1)
+                    help(p);
+                else autoUniqueVotes(p, strs[1]);
             }
             else if (strs[0] == "automsg")
             {
@@ -129,6 +150,27 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             Entry.load();
             Utilities.sendMessage("Settings reloaded !");
+        }
+
+        void autoSpecReturnToLobby(ClientPlayerInfo p, string value)
+        {
+            if (value == "0" || value == "false")
+            {
+                AutoSpecCMD.autoSpecReturnToLobby = false;
+                Utilities.sendMessage("'!autospec' no longer returns to lobby when no one else is in the server.");
+            }
+            else if (value == "1" || value == "true")
+            {
+                AutoSpecCMD.autoSpecReturnToLobby = true;
+                Utilities.sendMessage("'!autospec' now returns to lobby when no one else is in the server.");
+            }
+            else
+            {
+                help(p);
+                return;
+            }
+
+            Entry.save();
         }
 
         void playVote(ClientPlayerInfo p, string value)
@@ -231,7 +273,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Entry.save();
         }
 
-        void vote(ClientPlayerInfo p, string value)
+        void autoVote(ClientPlayerInfo p, string value)
         {
             if (value == "0" || value == "false")
             {
@@ -242,6 +284,48 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 AutoCMD.voteNext = true;
                 Utilities.sendMessage("Votes enabled !");
+            }
+            else
+            {
+                help(p);
+                return;
+            }
+
+            Entry.save();
+        }
+
+        void autoShuffle(ClientPlayerInfo p, string value)
+        {
+            if (value == "0" || value == "false")
+            {
+                AutoCMD.shuffleAtEnd = false;
+                Utilities.sendMessage("'!auto' no longer shuffles at the end of the playlist");
+            }
+            else if (value == "1" || value == "true")
+            {
+                AutoCMD.shuffleAtEnd = true;
+                Utilities.sendMessage("'!auto' will shuffle at the end of the playlist.");
+            }
+            else
+            {
+                help(p);
+                return;
+            }
+
+            Entry.save();
+        }
+
+        void autoUniqueVotes(ClientPlayerInfo p, string value)
+        {
+            if (value == "0" || value == "false")
+            {
+                AutoCMD.uniqueEndVotes = false;
+                Utilities.sendMessage("'!auto' level-end votes are no longer unique.");
+            }
+            else if (value == "1" || value == "true")
+            {
+                AutoCMD.uniqueEndVotes = true;
+                Utilities.sendMessage("'!auto' level-end votes are now unique.");
             }
             else
             {
