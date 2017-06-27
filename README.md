@@ -1,8 +1,10 @@
 
 # Modified ServerMod for Distance
-[Latest Release](https://github.com/Corecii/Spectrum/releases)
+[Latest Release (.DLL)](https://github.com/Corecii/Spectrum/releases)
 
-This contains a modified version of the ServerMod from [here](https://github.com/larnin/Spectrum).
+[ServerMod Help, Documentation, and README](https://github.com/Corecii/Spectrum/blob/master/Spectrum.Plugins.ServerMod/Readme.md)
+
+This is a modified version of the ServerMod from [here](https://github.com/larnin/Spectrum).
 
 You need [Spectrum](https://github.com/Ciastex/Spectrum) to use this.
 
@@ -23,7 +25,6 @@ configurable vote passing thresholds
 ---
 
 ## What is [Spectrum](https://github.com/Ciastex/Spectrum)?
-Spectrum is a simple, yet powerful extension system for Refract Studios' game 
+Spectrum is a simple, yet powerful extension system for Refract Studios' game
 [Distance](http://survivethedistance.com/)
 It allows you to write DLL plugins to customize the game's experience and make it do things the original game's developers didn't even think about. It's being constantly updated by one of the Distance community members (sans small development breaks).
-
