@@ -254,10 +254,10 @@ namespace Spectrum.Plugins.ServerMod
                 Settings["welcome"] = "";
             if (!Settings.ContainsKey("voteNext"))
                 Settings["voteNext"] = false;
-            if (!Settings.ContainsKey("shuffleAtEnd"))
+            if (!Settings.ContainsKey("autoShuffleAtEnd"))
                 Settings["autoShuffleAtEnd"] = true;
-            if (!Settings.ContainsKey("uniqueEndVotes"))
-                Settings["autoUniqueEndVotes"] = false;
+            if (!Settings.ContainsKey("autoUniqueEndVotes"))
+                Settings["autoUniqueEndVotes"] = true;
             if (!Settings.ContainsKey("autoAdvanceMsg"))
                 Settings["autoAdvanceMsg"] = "";
             if (!Settings.ContainsKey("autoMinPlayers"))

@@ -12,7 +12,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public static bool voteNext = false;
         public static bool autoSpecHostIgnored = false;
         public static bool shuffleAtEnd = true;
-        public static bool uniqueEndVotes = false;
+        public static bool uniqueEndVotes = true;
 
         public static string advanceMessage = "";
         public static int maxRunTime = 15*60;
