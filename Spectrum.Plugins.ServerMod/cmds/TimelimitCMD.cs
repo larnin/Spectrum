@@ -35,7 +35,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
 
             G.Sys.GameManager_.NextModeTimeLimit_ = time;
-            Utilities.sendMessage("Next time gamemode will be " + time + " seconds lenght.");
+            Utilities.sendMessage("Next time gamemode will be " + time + " seconds length.");
         }
     }
 }

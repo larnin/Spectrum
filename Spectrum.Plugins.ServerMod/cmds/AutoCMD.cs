@@ -323,17 +323,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if (currentIndex == index && autoMode)
             {
                 Utilities.sendMessage("This map has run for the maximum run time.");
-                Utilities.sendMessage("Finishing in 30 sec...");
 
-                int myIndex = index;
-                yield return new WaitForSeconds(30);
-                if (index != myIndex)
-                    yield break;
-
-                if (currentIndex == index && autoMode)
-                {
-                    StaticTargetedEvent<Finished.Data>.Broadcast(RPCMode.All, default(Finished.Data));
-                }
+                // start countdown for 30 seconds. Everyone is marked DNF at 30 seconds.
+                CountdownCMD countdownCommand = (CountdownCMD) list.getCommand("countdown");
+                countdownCommand.startCountdown(30);
             }
             yield return null;
         }

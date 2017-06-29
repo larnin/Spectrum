@@ -34,6 +34,7 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new ShuffleCMD());
             cmds.Add(new SpecCMD());
             cmds.Add(new TimelimitCMD());
+            cmds.Add(new UpdateCMD());
             cmds.Add(new WelcomeCMD());
             cmds.Add(new WinCMD());
 

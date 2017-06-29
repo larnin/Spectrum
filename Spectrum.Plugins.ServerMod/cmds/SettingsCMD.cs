@@ -19,6 +19,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Utilities.sendMessage("[b][D00000]General Settings[-][/b]");
             Utilities.sendMessage(Utilities.formatCmd("!settings reload") + ": reload the settings for file.");
             Utilities.sendMessage(Utilities.formatCmd("!settings autoSpecReturnToLobby") + ": return to lobby if autospectating and no one else is in the server. default: false");
+            Utilities.sendMessage(Utilities.formatCmd("!settings updateCheck [true/false]") + ": whether or not an update check should be performed when the server is started.");
             Utilities.sendMessage(Utilities.formatCmd("!settings playVote [true/false]") + ": set play command to act as '!vote y play'");
             Utilities.sendMessage("This setting overrides the 'play' setting.");
             Utilities.sendMessage(Utilities.formatCmd("!settings play [true/false]") + ": allow player to add maps on the playlist.");
@@ -56,6 +57,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 if (strs.Length == 1)
                     help(p);
                 else autoSpecReturnToLobby(p, strs[1]);
+            }
+            else if (strs[0] == "updatecheck")
+            {
+                if (strs.Length == 1)
+                    help(p);
+                else updateCheck(p, strs[1]);
             }
             else if (strs[0] == "playvote")
             {
@@ -163,6 +170,27 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 AutoSpecCMD.autoSpecReturnToLobby = true;
                 Utilities.sendMessage("'!autospec' now returns to lobby when no one else is in the server.");
+            }
+            else
+            {
+                help(p);
+                return;
+            }
+
+            Entry.save();
+        }
+
+        void updateCheck(ClientPlayerInfo p, string value)
+        {
+            if (value == "0" || value == "false")
+            {
+                UpdateCMD.updateCheck = false;
+                Utilities.sendMessage("No longer checking for updates when the server is started.");
+            }
+            else if (value == "1" || value == "true")
+            {
+                UpdateCMD.updateCheck = true;
+                Utilities.sendMessage("Will check for updates when a server is started.");
             }
             else
             {

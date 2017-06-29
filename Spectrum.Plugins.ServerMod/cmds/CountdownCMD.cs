@@ -70,13 +70,18 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     Utilities.sendMessage("The time must be between 10 and 300 seconds");
                     return;
                 }
-            }
 
-            StaticTargetedEvent<FinalCountdownActivate.Data>.Broadcast(RPCMode.All, new FinalCountdownActivate.Data(Timex.ModeTime_ + time, time));
-            Utilities.sendMessage("Final countdown started for " + time + " seconds !");
+                startCountdown(time);
+                Utilities.sendMessage("Final countdown started for " + time + " seconds !");
+            }
+        }
+
+        public void startCountdown(int seconds)
+        {
+            StaticTargetedEvent<FinalCountdownActivate.Data>.Broadcast(RPCMode.All, new FinalCountdownActivate.Data(Timex.ModeTime_ + seconds, seconds));
 
             countdownStarted = true;
-            countdownEndTime = DateTime.Now.AddSeconds(time);
+            countdownEndTime = DateTime.Now.AddSeconds(seconds);
         }
 
         public void stopCountdown()

@@ -158,6 +158,8 @@ Changes the name of the server.
 Permission: __HOST__  
 Use: !settings reload  
 Reloads the settings from file.  
+__!settings updateCheck [true/false]__  
+Whether or not to check for updates when a server is started.  
 __!settings autoSpecReturnToLobby [true/false]__  
 Whether or not to return to lobby if the host is the last play in the server and is autospectating.  
 __!settings playVote [true/false]__  
@@ -272,6 +274,7 @@ __!level -last -p 4__ : Shows the 4th page (result 30 to 39) of the last command
 When the plugin is started for the first time, it generate a setting file that look like this : (in json)
 ```
 {
+    "updateCheck": true,
 	"playersCanAddMap" : false,
 	"addOneMapOnly" : true,
 	"allowVoteSystem" : false,
@@ -302,6 +305,8 @@ When the plugin is started for the first time, it generate a setting file that l
 	]
 }
 ```
+__updateCheck__ (true/false): Whether or not to check for ServerMod updates when a server is started.
+You can change it with the command !settings updateCheck.  
 __playersCanAddMap__ (true/false): Allows players to add map on the playlist.  
 You can change it with the command !settings play.  
 __playIsVote__ (true/false): Turns `!play <map>` into `!vote y play <map>` for non-hosts.  

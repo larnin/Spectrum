@@ -70,6 +70,7 @@
     <Compile Include="cmds\TimelimitCMD.cs" />
     <Compile Include="cmds\VoteHandler.cs" />
     <Compile Include="cmds\WelcomeCMD.cs" />
+    <Compile Include="cmds\UpdateCMD.cs" />
     <Compile Include="cmds\WinCMD.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="LevelList.cs" />

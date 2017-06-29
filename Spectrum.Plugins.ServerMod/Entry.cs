@@ -1,8 +1,9 @@
 ﻿using Spectrum.API;
 using Spectrum.API.Interfaces.Plugins;
 using Spectrum.API.Interfaces.Systems;
-using Spectrum.API.Game.Network;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using Spectrum.Plugins.ServerMod.cmds;
 using System;
 using Spectrum.API.Configuration;
@@ -16,7 +17,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
-        public string PluginVersion = "Version C.0.6.4";
+        public static string PluginVersion = "Version C.0.6.0";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -44,6 +45,21 @@ namespace Spectrum.Plugins.ServerMod
                 if (!Utilities.IsSystemMessage(data.message_) && (author.ToLower().Trim() != steamName && author.ToLower().Trim() != profileName))
                     Chat_MessageReceived(author, Utilities.ExtractMessageBody(data.message_));
             });
+
+            Events.Network.ServerInitialized.Subscribe(data =>
+            {
+                if (UpdateCMD.updateCheck)
+                {
+                    G.Sys.GameManager_.StartCoroutine(serverInit());
+                }
+            });
+        }
+
+        IEnumerator serverInit()
+        {
+            yield return new WaitForSeconds(1.0f);  // wait for the server to load
+            UpdateCMD.checkForUpdates(false);  // check for ServerMod updates
+            yield break;
         }
 
         private void Chat_MessageSent(string message)
@@ -172,20 +188,21 @@ namespace Spectrum.Plugins.ServerMod
                 PlayCMD.playersCanAddMap = (bool)Settings["playersCanAddMap"];
                 PlayCMD.addOneMapOnly = (bool)Settings["addOneMapOnly"];
                 PlayCMD.useVote = (bool)Settings["playIsVote"];
-
+                
                 VoteHandler.VoteCMD.votesAllowed = (bool)Settings["allowVoteSystem"];
                 if (Settings.ContainsKey("voteSystemThresholds") && VoteHandler.thresholds != null)
                 {
-                    foreach (KeyValuePair<string, double> entry in (Dictionary<string, double>)Settings["voteSystemThresholds"])
+                    var thresholds = (Dictionary<string, object>) Settings["voteSystemThresholds"];
+                    foreach (KeyValuePair<string, object> entry in thresholds)
                     {
-                        VoteHandler.thresholds[entry.Key] = entry.Value;
+                        VoteHandler.thresholds[entry.Key] = (double) entry.Value;
                     }
                 }
-
+                
                 AutoSpecCMD.autoSpecReturnToLobby = (bool)Settings["autoSpecReturnToLobby"];
-
+                
                 WelcomeCMD.welcomeMessage = (string)Settings["welcome"];
-
+                
                 AutoCMD.autoSpecHostIgnored = (bool)Settings["autoSpecHostIgnored"];
                 AutoCMD.voteNext = (bool)Settings["voteNext"];
                 AutoCMD.shuffleAtEnd = (bool)Settings["autoShuffleAtEndOfPlaylist"];
@@ -193,17 +210,16 @@ namespace Spectrum.Plugins.ServerMod
                 AutoCMD.advanceMessage = (string)Settings["autoAdvanceMsg"];
                 AutoCMD.minPlayers = (int)Settings["autoMinPlayers"];
                 AutoCMD.maxRunTime = (int)Settings["autoMaxTime"];
-
+                
                 WinCMD.winList = ((string[])Settings["win"]).ToList();
                 RipCMD.ripList = ((string[])Settings["rip"]).ToList();
-
+                
+                UpdateCMD.updateCheck = (bool)Settings["updateCheck"];
 
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
                 Console.WriteLine(e);
-                Console.WriteLine(e.Source);
             }
         }
 
@@ -216,7 +232,12 @@ namespace Spectrum.Plugins.ServerMod
             Settings["allowVoteSystem"] = VoteHandler.VoteCMD.votesAllowed;
             if (VoteHandler.thresholds != null)
             {
-                Settings["voteSystemThresholds"] = VoteHandler.thresholds;
+                var thresholds = new Dictionary<string, double>();
+                foreach (KeyValuePair<string, double> entry in VoteHandler.thresholds)
+                {
+                    thresholds[entry.Key] = entry.Value;
+                }
+                Settings["voteSystemThresholds"] = thresholds;
             }
 
             Settings["autoSpecReturnToLobby"] = AutoSpecCMD.autoSpecReturnToLobby;
@@ -230,6 +251,8 @@ namespace Spectrum.Plugins.ServerMod
             Settings["autoAdvanceMsg"] = AutoCMD.advanceMessage;
             Settings["autoMinPlayers"] = AutoCMD.minPlayers;
             Settings["autoMaxTime"] = AutoCMD.maxRunTime;
+
+            Settings["updateCheck"] = UpdateCMD.updateCheck;
 
 
             Settings.Save();
@@ -283,6 +306,11 @@ namespace Spectrum.Plugins.ServerMod
                 Settings["win"] = WinCMD.winList;
             if (!Settings.ContainsKey("rip"))
                 Settings["rip"] = RipCMD.ripList;
+
+            if (!Settings.ContainsKey("updateCheck"))
+                Settings["updateCheck"] = true;
+
+
 
             Settings.Save();
         }
