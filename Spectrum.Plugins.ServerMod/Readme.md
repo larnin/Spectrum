@@ -214,6 +214,11 @@ Use: !timelimit [value]
 Works like the official command, it changes the max time for the next reverse tag maps.  
 The value must be between 30 and 1800 seconds (30 minutes)
 
+#### Update
+Permission: __HOST__  
+Use: !update  
+Display any newer versions of the ServerMod that are available.
+
 #### Vote:
 Permission: __ALL__
 Use: !vote [y/n/i] [vote type] [value]
