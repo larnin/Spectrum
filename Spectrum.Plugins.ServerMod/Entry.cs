@@ -8,6 +8,7 @@ using Spectrum.Plugins.ServerMod.cmds;
 using System;
 using Spectrum.API.Configuration;
 using System.Linq;
+using System.IO;
 
 namespace Spectrum.Plugins.ServerMod
 {
@@ -177,6 +178,56 @@ namespace Spectrum.Plugins.ServerMod
         private void printClient()
         {
             Utilities.sendMessage(Utilities.localClient().GetChatName() + " " + PluginVersion);
+        }
+
+        private static void reloadSettingsFromFile()
+        {
+            // NOTE: Code from Spectrum's Settings. Used because there is no provided method to reload settings.
+            Type type = typeof(Entry);
+            string postfix = "";
+            string FileName;
+            if (string.IsNullOrEmpty(postfix))
+            {
+                FileName = $"{type.Assembly.GetName().Name}.json";
+            }
+            else
+            {
+                FileName = $"{type.Assembly.GetName().Name}.{postfix}.json";
+            }
+            string FilePath = Path.Combine(Defaults.SettingsDirectory, FileName);
+
+            if (File.Exists(FilePath))
+            {
+                using (var sr = new StreamReader(FilePath))
+                {
+                    var json = sr.ReadToEnd();
+                    var reader = new JsonFx.Json.JsonReader();
+
+                    Section sec = null;
+
+                    try
+                    {
+                        sec = reader.Read<Section>(json);
+                    }
+                    catch
+                    {
+                    }
+
+                    if (sec != null)
+                    {
+                        foreach (string k in sec.Keys)
+                        {
+                            Settings[k] = sec[k];
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void reload()
+        {
+            reloadSettingsFromFile();
+            load();
         }
 
         public static void load()

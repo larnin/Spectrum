@@ -17,7 +17,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override void help(ClientPlayerInfo p)
         {
             Utilities.sendMessage("[b][D00000]General Settings[-][/b]");
-            Utilities.sendMessage(Utilities.formatCmd("!settings reload") + ": reload the settings for file.");
+            Utilities.sendMessage(Utilities.formatCmd("!settings reload") + ": reload the settings from the file.");
             Utilities.sendMessage(Utilities.formatCmd("!settings autoSpecReturnToLobby") + ": return to lobby if autospectating and no one else is in the server. default: false");
             Utilities.sendMessage(Utilities.formatCmd("!settings updateCheck [true/false]") + ": whether or not an update check should be performed when the server is started.");
             Utilities.sendMessage(Utilities.formatCmd("!settings playVote [true/false]") + ": set play command to act as '!vote y play'");
@@ -155,8 +155,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         void reload(ClientPlayerInfo p)
         {
-            Entry.load();
-            Utilities.sendMessage("Settings reloaded !");
+            Entry.reload();
+            Utilities.sendMessage("Settings reloaded from file!");
         }
 
         void autoSpecReturnToLobby(ClientPlayerInfo p, string value)
