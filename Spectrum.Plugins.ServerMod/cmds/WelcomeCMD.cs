@@ -1,13 +1,29 @@
 ﻿using Events;
 using Events.RaceMode;
+using Spectrum.Plugins.ServerMod.CmdSettings;
 using System;
 using UnityEngine;
 
 namespace Spectrum.Plugins.ServerMod.cmds
 {
+    class CmdSettingWelcomeMessage : CmdSettingString
+    {
+        public override string FileId { get; } = "welcome";
+        public override string SettingsId { get; } = "welcome";
+
+        public override string DisplayName { get; } = "Welcome Message";
+        public override string HelpShort { get; } = "Show a welcome message";
+        public override string HelpLong { get; } = "The welcome message to show to players. Leave empty to clear.";
+
+        public override object Default { get; } = "";
+    }
     class WelcomeCMD : cmd
     {
-        public static string welcomeMessage = "";
+        public string welcomeMessage
+        {
+            get { return (string)getSetting("welcome").Value; }
+            set { getSetting("welcome").Value = value; }
+        }
 
         public override string name { get { return "welcome"; } }
         public override PermType perm { get { return PermType.ALL; } }
@@ -21,6 +37,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 if (Utilities.isOnline() && Utilities.isHost())
                     onClientJoin(data.client_);
             });
+
+            CmdSetting[] settings =
+            {
+                new CmdSettingWelcomeMessage()
+            };
         }
 
         public override void help(ClientPlayerInfo p)

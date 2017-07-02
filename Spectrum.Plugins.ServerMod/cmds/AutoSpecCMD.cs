@@ -1,5 +1,6 @@
 ﻿using Events;
 using Events.GameMode;
+using Spectrum.Plugins.ServerMod.CmdSettings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,11 +10,25 @@ using UnityEngine;
 
 namespace Spectrum.Plugins.ServerMod.cmds
 {
+    class CmdSettingAutoSpecLobby : CmdSettingBool
+    {
+        public override string FileId { get; } = "autoSpecReturnToLobby";
+
+        public override string DisplayName { get; } = "Auto-Spec Return to Lobby";
+        public override string HelpShort { get; } = "!autospec: return to lobby if no one is playing";
+        public override string HelpLong { get; } = "Whether or not to return to the lobby if eveyone leaves while auto-spectate is running.";
+
+        public override object Default { get; } = false;
+    }
     class AutoSpecCMD : cmd
     {
         public bool autoSpecMode = false;
 
-        public static bool autoSpecReturnToLobby = false;
+        public bool autoSpecReturnToLobby
+        {
+            get { return (bool)getSetting("autoSpecReturnRoLobby").Value; }
+            set { getSetting("autoSpecReturnRoLobby").Value = value; }
+        }
 
         public override string name { get { return "autospec"; } }
         public override PermType perm { get { return PermType.LOCAL; } }
@@ -25,6 +40,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 onModeStart();
             });
+
+            CmdSetting[] settings =
+            {
+                new CmdSettingAutoSpecLobby()
+            };
         }
 
         public override void help(ClientPlayerInfo p)

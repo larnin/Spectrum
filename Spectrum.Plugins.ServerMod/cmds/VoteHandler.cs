@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.CmdSettings;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         private string voteCmdPattern = @"^\s*(\S+)\s+(\S+)\s*(.*)$";
         private string voteCmdShortcutPattern = @"^\s*(\S+)\s*(.*)$";
         private string voteCtrlPattern = @"^\s*(\S+)\s+(\d+)$";
-
-        public static Dictionary<string, double> thresholds = null;
+        
         private Dictionary<string, List<string>> votes;
 
         private cmdlist list;
@@ -26,15 +26,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public VoteHandler(cmdlist list)
         {
             this.list = list;
-            thresholds = new Dictionary<string, double>();
-            thresholds.Add("skip", 0.55);
-            thresholds.Add("stop", 0.55);
-            thresholds.Add("play", 0.55);
-            thresholds.Add("kick", 0.7);
-            thresholds.Add("count", 0.6);
-
-            Entry.load();  // load any existing thresholds
-            Entry.save();  // save any thresholds that were not loaded
 
             votes = new Dictionary<string, List<string>>();
             votes.Add("skip", new List<string>());
@@ -80,15 +71,77 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 string percentS = match.Groups[2].Value;
                 int percent = int.Parse(percentS);
 
-                if (!VoteHandler.thresholds.ContainsKey(voteType))
+                if (!parent.voteCommand.voteThresholds.ContainsKey(voteType))
                 {
                     Utilities.sendMessage($"Invalid <voteType>. ({voteType})");
                     help(p);
                     return;
                 }
 
-                VoteHandler.thresholds[voteType] = Convert.ToDouble(percent) / 100.0;
+                parent.voteCommand.voteThresholds[voteType] = Convert.ToDouble(percent) / 100.0;
                 Utilities.sendMessage($"Pass threshold for {voteType} changed to {percent}%");
+            }
+        }
+
+        class CmdSettingVotesEnabled : CmdSettingBool
+        {
+            public override string FileId { get; } = "allowVoteSystem";
+            public override string SettingsId { get; } = "voteSystem";
+
+            public override string DisplayName { get; } = "!vote On/Off";
+            public override string HelpShort { get; } = "!vote enable/disable";
+            public override string HelpLong { get; } = "Whether or not players can use votes with !vote";
+
+            public override object Default { get; } = false;
+        }
+        class CmdSettingVoteThresholds : CmdSetting
+        {
+            public override string FileId { get; } = "voteSystemThresholds";
+            public override string SettingsId { get; } = "";  // disabled
+
+            public override string DisplayName { get; } = "Vote System Thresholds";
+            public override string HelpShort { get; } = "The thresholds at which each vote passes";
+            public override string HelpLong { get { return HelpShort; } }
+
+            public override object Default
+            {
+                get
+                {
+                    var thresholds = new Dictionary<string, double>();
+                    thresholds.Add("skip", 0.55);
+                    thresholds.Add("stop", 0.55);
+                    thresholds.Add("play", 0.55);
+                    thresholds.Add("kick", 0.7);
+                    thresholds.Add("count", 0.6);
+                    return thresholds;
+                }
+            }
+
+            public override UpdateResult UpdateFromString(string input)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override UpdateResult UpdateFromObject(object input)
+            {
+                if (input.GetType() != typeof(Dictionary<string, object>))
+                {
+                    return new UpdateResult(false, Default, "Invalid dictionary. Resetting to default.");
+                }
+                try
+                {
+                    var thresholds = new Dictionary<string, double>();
+                    foreach (KeyValuePair<object, object> entry in (Dictionary<object, object>) input)
+                    {
+                        thresholds[(string)entry.Key] = (double)entry.Value;
+                    }
+                    return new UpdateResult(true, thresholds);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Error reading dictionary: {e}");
+                    return new UpdateResult(false, Default, "Error reading dictionary. Resetting to default.");
+                }
             }
         }
 
@@ -100,7 +153,16 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             public VoteHandler parent;
 
-            public static bool votesAllowed = false;
+            public bool votesAllowed
+            {
+                get { return (bool)getSetting("allowVoteSystem").Value; }
+                set { getSetting("allowVoteSystem").Value = value; }
+            }
+            public Dictionary<string, double> voteThresholds
+            {
+                get { return (Dictionary<string, double>)getSetting("voteSystemThresholds").Value; }
+                set { getSetting("voteSystemThresholds").Value = value; }
+            }
 
             private bool doForceNextUse = false;
             private bool votedSkip = false;
@@ -116,6 +178,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                     votedSkip = false;
                 });
+
+                settings = new CmdSetting[] {
+                    new CmdSettingVotesEnabled(),
+                    new CmdSettingVoteThresholds()
+                };
             }
 
             public override void help(ClientPlayerInfo p)
@@ -167,7 +234,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                 var matchShortcut = Regex.Match(message, parent.voteCmdShortcutPattern);
                 var shortcutVoteType = matchShortcut.Groups[1].Value.ToLower();
-                if (matchShortcut.Success && thresholds.ContainsKey(shortcutVoteType))
+                if (matchShortcut.Success && voteThresholds.ContainsKey(shortcutVoteType))
                 {
                     voteValue = true;
                     isInfo = false;
@@ -212,7 +279,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 }
 
 
-                if (!VoteHandler.thresholds.ContainsKey(voteType))
+                if (!voteThresholds.ContainsKey(voteType))
                 {
                     Utilities.sendMessage($"Invalid <voteType>. ({voteType})");
                     help(p);
@@ -228,9 +295,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 if (isInfo)
                 {
                     Utilities.sendMessage($"Info for {voteType}:");
-                    Utilities.sendMessage($"Pass threshold: {Convert.ToInt32(Math.Floor(VoteHandler.thresholds[voteType]*100))}%");
+                    Utilities.sendMessage($"Pass threshold: {Convert.ToInt32(Math.Floor(voteThresholds[voteType]*100))}%");
                     int value = parent.votes[voteType].Count;
-                    Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(VoteHandler.thresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                    Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                     return;
                 }
 
@@ -264,20 +331,20 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         votes.Add(playerVoteId);
                         value = votes.Count;
                         Utilities.sendMessage($"{p.Username_} voted to skip {G.Sys.GameManager_.LevelName_}.");
-                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(VoteHandler.thresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                     }
                     else
                     {
                         votes.Remove(playerVoteId);
                         value = votes.Count;
                         Utilities.sendMessage($"{p.Username_} unvoted to skip {G.Sys.GameManager_.LevelName_}.");
-                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(VoteHandler.thresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                         return;
                     }
 
 
 
-                    if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) >= VoteHandler.thresholds[voteType])
+                    if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) >= voteThresholds[voteType])
                     {
                         votedSkip = true;
                         Utilities.sendMessage("Vote skip succeeded! Skipping map...");
@@ -307,18 +374,18 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         votes.Add(playerVoteId);
                         value = votes.Count;
                         Utilities.sendMessage($"{p.Username_} voted to stop the countdown.");
-                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(VoteHandler.thresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                     }
                     else
                     {
                         votes.Remove(playerVoteId);
                         value = votes.Count;
                         Utilities.sendMessage($"{p.Username_} unvoted to stop the countdown.");
-                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(VoteHandler.thresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                         return;
                     }
 
-                    if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) >= VoteHandler.thresholds[voteType])
+                    if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) >= voteThresholds[voteType])
                     {
                         parent.votes[voteType].Clear();
                         CountdownCMD command = (CountdownCMD)parent.list.getCommand("countdown");
@@ -346,7 +413,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     List<LevelPlaylist.ModeAndLevelInfo> lvls = LevelList.levels(m);
                     List<LevelResultsSortInfo> levelResults = new List<LevelResultsSortInfo>();
                     
-                    double threshold = VoteHandler.thresholds["play"];
+                    double threshold = voteThresholds["play"];
 
                     LevelPlaylist playlist = new LevelPlaylist();
                     playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
@@ -411,7 +478,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
                     G.Sys.GameManager_.LevelPlaylist_.SetIndex(index);
 
-                    var playersThreshold = Convert.ToInt32(Math.Ceiling(thresholds[voteType] * Convert.ToDouble(numPlayers)));
+                    var playersThreshold = Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)));
 
                     if (lvls.Count == 0)
                     {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.CmdSettings;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -9,18 +10,41 @@ using System.Text.RegularExpressions;
 
 namespace Spectrum.Plugins.ServerMod.cmds
 {
+    class CmdSettingUpdateCheck : CmdSettingBool
+    {
+        public override string FileId { get; } = "updateCheck";
+        public override string SettingsId { get; } = "updateCheck";
+
+        public override string DisplayName { get; } = "Automatic Update Check";
+        public override string HelpShort { get; } = "Show updates on server start";
+        public override string HelpLong { get; } = "Whether or not to show updates to ServerMod when a server is started";
+
+        public override object Default { get; } = true;
+    }
     class UpdateCMD : cmd
     {
         public override string name { get { return "update"; } }
         public override PermType perm { get { return PermType.HOST; } }
         public override bool canUseAsClient { get { return false; } }
 
-        public static bool updateCheck = true;
+        public bool updateCheck
+        {
+            get { return (bool)getSetting("updateCheck").Value; }
+            set { getSetting("updateCheck").Value = value; }
+        }
         private static string updateCheckURL = "https://api.github.com/repos/corecii/spectrum/releases";
         private static string updateCheckRemoteRegex = @"ServerMod\.(C\.\d+\.\d+\.\d+)";
         private static string updateCheckLocalRegex = @"Version (C\.\d+\.\d+\.\d+)";
 
         private const string tagNameRegex = "\"tag_name\": ?\"(.+?)\",";
+
+        public UpdateCMD()
+        {
+            CmdSetting[] settings =
+            {
+                new CmdSettingUpdateCheck()
+            };
+        }
 
         public override void help(ClientPlayerInfo p)
         {

@@ -9,6 +9,7 @@ using System;
 using Spectrum.API.Configuration;
 using System.Linq;
 using System.IO;
+using Spectrum.Plugins.ServerMod.CmdSettings;
 
 namespace Spectrum.Plugins.ServerMod
 {
@@ -24,7 +25,8 @@ namespace Spectrum.Plugins.ServerMod
 
         public void Initialize(IManager manager)
         {
-            load();
+            load();  // load existing data
+            save();  // save defaults that were not loaded
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
@@ -49,7 +51,7 @@ namespace Spectrum.Plugins.ServerMod
 
             Events.Network.ServerInitialized.Subscribe(data =>
             {
-                if (UpdateCMD.updateCheck)
+                if (((UpdateCMD)cmd.all.getCommand("update")).updateCheck)
                 {
                     G.Sys.GameManager_.StartCoroutine(serverInit());
                 }
@@ -232,41 +234,21 @@ namespace Spectrum.Plugins.ServerMod
 
         public static void load()
         {
-            ValidateSettings();
-
             try
             {
-                PlayCMD.playersCanAddMap = (bool)Settings["playersCanAddMap"];
-                PlayCMD.addOneMapOnly = (bool)Settings["addOneMapOnly"];
-                PlayCMD.useVote = (bool)Settings["playIsVote"];
-                
-                VoteHandler.VoteCMD.votesAllowed = (bool)Settings["allowVoteSystem"];
-                if (Settings.ContainsKey("voteSystemThresholds") && VoteHandler.thresholds != null)
+                foreach (cmd Command in cmd.all.list())
                 {
-                    var thresholds = (Dictionary<string, object>) Settings["voteSystemThresholds"];
-                    foreach (KeyValuePair<string, object> entry in thresholds)
+                    foreach (CmdSetting Setting in Command.settings)
                     {
-                        VoteHandler.thresholds[entry.Key] = (double) entry.Value;
+                        var value = Settings[Setting.FileId];
+                        UpdateResult result = Setting.UpdateFromObject(value);
+                        if (!result.Valid)
+                            Console.WriteLine($"Invalid value for {Setting.FileId}: {result.Message}");
+                        else if (result.Message != "")
+                            Console.WriteLine(result.Message);
+                        Setting.Value = result.NewValue;
                     }
                 }
-                
-                AutoSpecCMD.autoSpecReturnToLobby = (bool)Settings["autoSpecReturnToLobby"];
-                
-                WelcomeCMD.welcomeMessage = (string)Settings["welcome"];
-                
-                AutoCMD.autoSpecHostIgnored = (bool)Settings["autoSpecHostIgnored"];
-                AutoCMD.voteNext = (bool)Settings["voteNext"];
-                AutoCMD.shuffleAtEnd = (bool)Settings["autoShuffleAtEndOfPlaylist"];
-                AutoCMD.uniqueEndVotes = (bool)Settings["autoUniqueEndVotes"];
-                AutoCMD.advanceMessage = (string)Settings["autoAdvanceMsg"];
-                AutoCMD.minPlayers = (int)Settings["autoMinPlayers"];
-                AutoCMD.maxRunTime = (int)Settings["autoMaxTime"];
-                
-                WinCMD.winList = ((string[])Settings["win"]).ToList();
-                RipCMD.ripList = ((string[])Settings["rip"]).ToList();
-                
-                UpdateCMD.updateCheck = (bool)Settings["updateCheck"];
-
             }
             catch (Exception e)
             {
@@ -276,92 +258,20 @@ namespace Spectrum.Plugins.ServerMod
 
         public static void save()
         {
-            Settings["playersCanAddMap"] = PlayCMD.playersCanAddMap;
-            Settings["addOneMapOnly"] = PlayCMD.addOneMapOnly;
-            Settings["playIsVote"] = PlayCMD.useVote;
-
-            Settings["allowVoteSystem"] = VoteHandler.VoteCMD.votesAllowed;
-            if (VoteHandler.thresholds != null)
+            try
             {
-                var thresholds = new Dictionary<string, double>();
-                foreach (KeyValuePair<string, double> entry in VoteHandler.thresholds)
+                foreach (cmd Command in cmd.all.list())
                 {
-                    thresholds[entry.Key] = entry.Value;
-                }
-                Settings["voteSystemThresholds"] = thresholds;
-            }
-
-            Settings["autoSpecReturnToLobby"] = AutoSpecCMD.autoSpecReturnToLobby;
-
-            Settings["welcome"] = WelcomeCMD.welcomeMessage;
-
-            Settings["autoSpecHostIgnored"] = AutoCMD.autoSpecHostIgnored;
-            Settings["voteNext"] = AutoCMD.voteNext;
-            Settings["autoShuffleAtEndOfPlaylist"] = AutoCMD.shuffleAtEnd;
-            Settings["autoUniqueEndVotes"] = AutoCMD.uniqueEndVotes;
-            Settings["autoAdvanceMsg"] = AutoCMD.advanceMessage;
-            Settings["autoMinPlayers"] = AutoCMD.minPlayers;
-            Settings["autoMaxTime"] = AutoCMD.maxRunTime;
-
-            Settings["updateCheck"] = UpdateCMD.updateCheck;
-
-
-            Settings.Save();
-        }
-
-        private static void ValidateSettings()
-        {
-            if (!Settings.ContainsKey("playersCanAddMap"))
-                Settings["playersCanAddMap"] = false;
-            if (!Settings.ContainsKey("addOneMapOnly"))
-                Settings["addOneMapOnly"] = true;
-            if (!Settings.ContainsKey("playIsVote"))
-                Settings["playIsVote"] = false;
-
-            if (!Settings.ContainsKey("allowVoteSystem"))
-                Settings["allowVoteSystem"] = false;
-
-            if (!Settings.ContainsKey("autoSpecReturnToLobby"))
-                Settings["autoSpecReturnToLobby"] = false;
-
-            if (!Settings.ContainsKey("welcome"))
-                Settings["welcome"] = "";
-            if (!Settings.ContainsKey("voteNext"))
-                Settings["voteNext"] = false;
-            if (!Settings.ContainsKey("autoShuffleAtEnd"))
-                Settings["autoShuffleAtEnd"] = true;
-            if (!Settings.ContainsKey("autoUniqueEndVotes"))
-                Settings["autoUniqueEndVotes"] = true;
-            if (!Settings.ContainsKey("autoAdvanceMsg"))
-                Settings["autoAdvanceMsg"] = "";
-            if (!Settings.ContainsKey("autoMinPlayers"))
-                Settings["autoMinPlayers"] = 1;
-            if (!Settings.ContainsKey("autoMaxTime"))
-                Settings["autoMaxTime"] = 15*60;
-            if (!Settings.ContainsKey("autoSpecHostIgnored"))
-            {
-                if (Settings.ContainsKey("autoSpecCountsAsPlayer"))
-                {
-                    // this setting was renamed from `autoSpecCountsAsPlayer`
-                    //  to `autoSpecHostIgnored` for clarity
-                    Settings["autoSpecHostIgnored"] = !(bool)Settings["autoSpecCountsAsPlayer"];
-                    Settings.Remove("autoSpecCountsAsPlayer");
-                }
-                else
-                {
-                    Settings["autoSpecHostIgnored"] = true;
+                    foreach (CmdSetting Setting in Command.settings)
+                    {
+                        Settings[Setting.FileId] = Setting.Value;
+                    }
                 }
             }
-
-            if (!Settings.ContainsKey("win"))
-                Settings["win"] = WinCMD.winList;
-            if (!Settings.ContainsKey("rip"))
-                Settings["rip"] = RipCMD.ripList;
-
-            if (!Settings.ContainsKey("updateCheck"))
-                Settings["updateCheck"] = true;
-
-
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
             Settings.Save();
         }

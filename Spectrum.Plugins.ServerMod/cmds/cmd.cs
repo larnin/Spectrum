@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace Spectrum.Plugins.ServerMod.cmds
 {
     enum PermType
@@ -18,5 +20,16 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public abstract void use(ClientPlayerInfo p, string message);
 
         public static cmdlist all = new cmdlist();
+
+        public virtual CmdSettings.CmdSetting[] settings { get; set; } = new CmdSettings.CmdSetting[0];
+        public CmdSettings.CmdSetting getSetting(string FileId)
+        {
+            foreach (var setting in settings)
+            {
+                if (setting.FileId == FileId)
+                    return setting;
+            }
+            return null;
+        }
     }
 }

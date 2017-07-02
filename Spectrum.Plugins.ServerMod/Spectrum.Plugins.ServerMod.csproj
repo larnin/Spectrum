@@ -44,7 +44,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CmdSettings\CmdSetting.cs" />
     <Compile Include="cmdlist.cs" />
+    <Compile Include="CmdSettings\CmdSettingSeconds.cs" />
+    <Compile Include="CmdSettings\CmdSettingString.cs" />
+    <Compile Include="CmdSettings\CmdSettingDouble.cs" />
+    <Compile Include="CmdSettings\CmdSettingInt.cs" />
+    <Compile Include="CmdSettings\CmdSettingBool.cs" />
+    <Compile Include="CmdSettings\UpdateResult.cs" />
     <Compile Include="cmds\AutoCMD.cs" />
     <Compile Include="cmds\AutoSpecCMD.cs" />
     <Compile Include="cmds\ClearCMD.cs" />
@@ -70,7 +77,6 @@
     <Compile Include="cmds\SettingsCMD.cs" />
     <Compile Include="cmds\ShuffleCMD.cs" />
     <Compile Include="cmds\SpecCMD.cs" />
-    <Compile Include="cmds\StartvoteCMD.cs" />
     <Compile Include="cmds\TimelimitCMD.cs" />
     <Compile Include="cmds\VoteHandler.cs" />
     <Compile Include="cmds\WelcomeCMD.cs" />

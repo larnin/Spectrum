@@ -63,5 +63,12 @@ namespace Spectrum.Plugins.ServerMod
                 l.Add(c.name);
             return l;
         }
+        public List<cmd> list()
+        {
+            List<cmd> l = new List<cmd>();
+            foreach (var c in cmds)
+                l.Add(c);
+            return l;
+        }
     }
 }

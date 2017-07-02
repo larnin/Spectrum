@@ -1,5 +1,6 @@
 ﻿using Events;
 using Events.GameMode;
+using Spectrum.Plugins.ServerMod.CmdSettings;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,42 @@ namespace Spectrum.Plugins.ServerMod.cmds
 {
     class AutoCMD : cmd
     {
-        public static bool voteNext = false;
-        public static bool autoSpecHostIgnored = false;
-        public static bool shuffleAtEnd = true;
-        public static bool uniqueEndVotes = true;
+        public bool voteNext
+        {
+            get { return (bool)getSetting("voteNext").Value; }
+            set { getSetting("voteNext").Value = value; }
+        }
+        public bool autoSpecHostIgnored
+        {
+            get { return (bool)getSetting("autoSpecHostIgnored").Value; }
+            set { getSetting("autoSpecHostIgnored").Value = value; }
+        }
+        public bool shuffleAtEnd
+        {
+            get { return (bool)getSetting("autoShuffleAtEnd").Value; }
+            set { getSetting("autoShuffleAtEnd").Value = value; }
+        }
+        public bool uniqueEndVotes
+        {
+            get { return (bool)getSetting("autoUniqueEndVotes").Value; }
+            set { getSetting("autoUniqueEndVotes").Value = value; }
+        }
 
-        public static string advanceMessage = "";
-        public static int maxRunTime = 15*60;
-        public static int minPlayers = 1;
+        public string advanceMessage
+        {
+            get { return (string)getSetting("autoAdvanceMsg").Value; }
+            set { getSetting("autoAdvanceMsg").Value = value; }
+        }
+        public int maxRunTime
+        {
+            get { return (int)getSetting("autoMaxTime").Value; }
+            set { getSetting("autoMaxTime").Value = value; }
+        }
+        public int minPlayers
+        {
+            get { return (int)getSetting("autoMinPlayers").Value; }
+            set { getSetting("autoMinPlayers").Value = value; }
+        }
 
         const int maxtVoteValue = 3;
 
@@ -55,15 +84,34 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 onChatEvent(data.message_);
             });
 
-            AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
-            CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
             Events.RaceMode.FinalCountdownActivate.Subscribe(data =>
             {
-                if (G.Sys.PlayerManager_.PlayerList_.Count == 2 && autoSpecCommand.autoSpecMode)
-                {
-                    countdownCommand.stopCountdown();
-                }
+                // NOTE: Hacky bug fix.
+                // If the countdown is stopped at the same time it's started,
+                //  then it actually starts but doesn't display a message for it.
+                G.Sys.GameManager_.StartCoroutine(stopCountdownLate());
             });
+            
+            settings = new CmdSetting[] {
+                new CmdSettingAutoVote(),
+                new CmdSettingAutoShuffle(),
+                new CmdSettingAutoUniqueVotes(),
+                new CmdSettingAutoMessage(),
+                new CmdSettingAutoMinPlayers(),
+                new CmdSettingAutoMaxTime(),
+                new CmdSettingAutoSpecHostIgnored()
+            };
+        }
+
+        IEnumerator stopCountdownLate()
+        {
+            yield return new WaitForSeconds(1.0f);
+            AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
+            CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
+            if (G.Sys.PlayerManager_.PlayerList_.Count == 2 && autoSpecCommand.autoSpecMode)
+            {
+                countdownCommand.stopCountdown();
+            }
         }
 
         public override void help(ClientPlayerInfo p)
@@ -381,5 +429,80 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     G.Sys.GameManager_.LevelPlaylist_.SetIndex(G.Sys.GameManager_.LevelPlaylist_.Index_ - 1);
             }
         }
+    }
+    class CmdSettingAutoVote : CmdSettingBool
+    {
+        public override string FileId { get; } = "voteNext";
+        public override string SettingsId { get; } = "autoVote";
+
+        public override string DisplayName { get; } = "!auto Vote";
+        public override string HelpShort { get; } = "!auto: Level-end votes";
+        public override string HelpLong { get; } = "Whether or not players can vote for the next map at the end of a level in auto mode";
+
+        public override object Default { get; } = false;
+    }
+    class CmdSettingAutoShuffle : CmdSettingBool
+    {
+        public override string FileId { get; } = "autoShuffleAtEnd";
+        public override string SettingsId { get; } = "autoShuffle";
+
+        public override string DisplayName { get; } = "!auto Shuffle";
+        public override string HelpShort { get; } = "!auto: Shuffle at end of playlist";
+        public override string HelpLong { get; } = "Whether or not the playlist should be shuffled when it finishes in auto mode";
+
+        public override object Default { get; } = true;
+    }
+    class CmdSettingAutoUniqueVotes : CmdSettingBool
+    {
+        public override string FileId { get; } = "autoUniqueVotes";
+        public override string SettingsId { get; } = "autoUniqueEndVotes";
+
+        public override string DisplayName { get; } = "!auto Unique Votes";
+        public override string HelpShort { get; } = "!auto: Level-end voting choices are unique";
+        public override string HelpLong { get; } = "Whether or not levels should be re-ordered after votes so the next vote has all-new options";
+
+        public override object Default { get; } = true;
+    }
+    class CmdSettingAutoMessage : CmdSettingString
+    {
+        public override string FileId { get; } = "autoAdvanceMsg";
+        public override string SettingsId { get; } = "autoMsg";
+
+        public override string DisplayName { get; } = "!auto Message";
+        public override string HelpShort { get; } = "!auto: Level advance message";
+        public override string HelpLong { get; } = "The message to display when the level advances. Leave empty to clear.";
+
+        public override object Default { get; } = "";
+    }
+    class CmdSettingAutoMinPlayers : CmdSettingInt
+    {
+        public override string FileId { get; } = "autoMinPlayers";
+
+        public override string DisplayName { get; } = "!auto Minimum Players";
+        public override string HelpShort { get; } = "!auto: Min players for auto mode to adv. level";
+        public override string HelpLong { get; } = "How many players auto mode needs before it will advance to the next level";
+
+        public override object Default { get; } = 1;
+        public override int LowerBound { get; } = 0;
+    }
+    class CmdSettingAutoMaxTime : CmdSettingSeconds
+    {
+        public override string FileId { get; } = "autoMaxTime";
+
+        public override string DisplayName { get; } = "!auto Maximum Time";
+        public override string HelpShort { get; } = "!auto: Max time before level adv.";
+        public override string HelpLong { get; } = "Maximum amount of time a level can run for in auto mode before it advances to the next";
+
+        public override object Default { get; } = 900;
+    }
+    class CmdSettingAutoSpecHostIgnored : CmdSettingBool
+    {
+        public override string FileId { get; } = "autoSpecHostIgnored";
+
+        public override string DisplayName { get; } = "!auto Auto-spectating Host Ignored";
+        public override string HelpShort { get; } = "!auto: Ignore host as player if in !autospec";
+        public override string HelpLong { get; } = "Whether or not the host should be ignored if in !autospec. If ignored, the host will not count towards the players needed to advance to the next level.";
+
+        public override object Default { get; } = true;
     }
 }
