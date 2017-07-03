@@ -65,6 +65,16 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         cmdlist list;
 
+        public override CmdSetting[] settings { get; } = {
+            new CmdSettingAutoVote(),
+            new CmdSettingAutoShuffle(),
+            new CmdSettingAutoUniqueVotes(),
+            new CmdSettingAutoMessage(),
+            new CmdSettingAutoMinPlayers(),
+            new CmdSettingAutoMaxTime(),
+            new CmdSettingAutoSpecHostIgnored()
+        };
+
         public AutoCMD(cmdlist list)
         {
             this.list = list;
@@ -92,15 +102,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 G.Sys.GameManager_.StartCoroutine(stopCountdownLate());
             });
             
-            settings = new CmdSetting[] {
-                new CmdSettingAutoVote(),
-                new CmdSettingAutoShuffle(),
-                new CmdSettingAutoUniqueVotes(),
-                new CmdSettingAutoMessage(),
-                new CmdSettingAutoMinPlayers(),
-                new CmdSettingAutoMaxTime(),
-                new CmdSettingAutoSpecHostIgnored()
-            };
         }
 
         IEnumerator stopCountdownLate()
@@ -470,7 +471,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override string DisplayName { get; } = "!auto Message";
         public override string HelpShort { get; } = "!auto: Level advance message";
-        public override string HelpLong { get; } = "The message to display when the level advances. Leave empty to clear.";
+        public override string HelpLong { get; } = "The message to display when the level advances. `clear` to turn off.";
 
         public override object Default { get; } = "";
     }

@@ -34,17 +34,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override PermType perm { get { return PermType.LOCAL; } }
         public override bool canUseAsClient { get { return true; } }
 
+        public override CmdSetting[] settings { get; } =
+        {
+            new CmdSettingAutoSpecLobby()
+        };
+
         public AutoSpecCMD()
         {
             Events.GameMode.Go.Subscribe(data =>
             {
                 onModeStart();
             });
-
-            CmdSetting[] settings =
-            {
-                new CmdSettingAutoSpecLobby()
-            };
         }
 
         public override void help(ClientPlayerInfo p)

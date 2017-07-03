@@ -12,13 +12,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override PermType perm { get { return PermType.ALL; } }
         public override bool canUseAsClient { get { return true; } }
 
-        public RipCMD()
+        public override CmdSetting[] settings { get; } =
         {
-            CmdSetting[] settings =
-            {
-                new CmdSettingRipList()
-            };
-        }
+            new CmdSettingRipList()
+        };
 
         public override void help(ClientPlayerInfo p)
         {

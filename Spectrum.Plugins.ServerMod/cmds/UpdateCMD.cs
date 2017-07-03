@@ -38,12 +38,15 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         private const string tagNameRegex = "\"tag_name\": ?\"(.+?)\",";
 
+        public override CmdSetting[] settings { get; } =
+        {
+            new CmdSettingUpdateCheck()
+        };
+
         public UpdateCMD()
         {
-            CmdSetting[] settings =
-            {
-                new CmdSettingUpdateCheck()
-            };
+            Console.WriteLine("Creating settings...");
+            Console.WriteLine($"Settings: {settings} ({settings.Length} long)");
         }
 
         public override void help(ClientPlayerInfo p)

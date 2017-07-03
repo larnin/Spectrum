@@ -10,7 +10,7 @@ namespace Spectrum.Plugins.ServerMod.CmdSettings
         public override string UsageParameters { get; } = "<text>";
         public override UpdateResult UpdateFromString(string input)
         {
-            return new UpdateResult(true, input);
+            return new UpdateResult(true, input.ToLower() == "clear" ? "" : input);
         }
         public override UpdateResult UpdateFromObject(object input)
         {

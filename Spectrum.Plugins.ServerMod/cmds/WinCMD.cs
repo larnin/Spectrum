@@ -11,13 +11,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override PermType perm { get { return PermType.ALL; } }
         public override bool canUseAsClient { get { return true; } }
 
-        public WinCMD()
+        public override CmdSetting[] settings { get; } =
         {
-            CmdSetting[] settings =
-            {
-                new CmdSettingWinList()
-            };
-        }
+            new CmdSettingWinList()
+        };
 
         public override void help(ClientPlayerInfo p)
         {

@@ -13,7 +13,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override string DisplayName { get; } = "Welcome Message";
         public override string HelpShort { get; } = "Show a welcome message";
-        public override string HelpLong { get; } = "The welcome message to show to players. Leave empty to clear.";
+        public override string HelpLong { get; } = "The welcome message to show to players. `clear` to turn off. `%USERNAME%` is replaced with the player's name.";
 
         public override object Default { get; } = "";
     }
@@ -29,6 +29,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override PermType perm { get { return PermType.ALL; } }
         public override bool canUseAsClient { get { return false; } }
 
+        public override CmdSetting[] settings { get; } =
+        {
+            new CmdSettingWelcomeMessage()
+        };
+
         public WelcomeCMD()
         {
 
@@ -37,11 +42,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 if (Utilities.isOnline() && Utilities.isHost())
                     onClientJoin(data.client_);
             });
-
-            CmdSetting[] settings =
-            {
-                new CmdSettingWelcomeMessage()
-            };
         }
 
         public override void help(ClientPlayerInfo p)

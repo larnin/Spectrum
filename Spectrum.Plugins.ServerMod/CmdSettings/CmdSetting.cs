@@ -16,15 +16,15 @@ namespace Spectrum.Plugins.ServerMod.CmdSettings
         public virtual string HelpMarkdown { get { return HelpLong; } }
         public virtual string UsageParameters { get; } = "<option>";
 
-        public object Value { get; set; }
+        public object value;
+        public object Value
+        {
+            get { return this.value == null ? Default : this.value;  }
+            set { this.value = value; }
+        }
         public abstract object Default { get; }
 
         public abstract UpdateResult UpdateFromString(string input);
         public abstract UpdateResult UpdateFromObject(object input);
-
-        public CmdSetting()
-        {
-            Value = Default;
-        }
     }
 }

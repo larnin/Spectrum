@@ -131,9 +131,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 try
                 {
                     var thresholds = new Dictionary<string, double>();
-                    foreach (KeyValuePair<object, object> entry in (Dictionary<object, object>) input)
+                    foreach (KeyValuePair<string, object> entry in (Dictionary<string, object>) input)
                     {
-                        thresholds[(string)entry.Key] = (double)entry.Value;
+                        thresholds[entry.Key] = (double)entry.Value;
                     }
                     return new UpdateResult(true, thresholds);
                 }
@@ -167,6 +167,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
             private bool doForceNextUse = false;
             private bool votedSkip = false;
 
+            public override CmdSetting[] settings { get; } = {
+                new CmdSettingVotesEnabled(),
+                new CmdSettingVoteThresholds()
+            };
+
+
+
             public VoteCMD(VoteHandler parent)
             {
                 this.parent = parent;
@@ -178,11 +185,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                     votedSkip = false;
                 });
-
-                settings = new CmdSetting[] {
-                    new CmdSettingVotesEnabled(),
-                    new CmdSettingVoteThresholds()
-                };
             }
 
             public override void help(ClientPlayerInfo p)

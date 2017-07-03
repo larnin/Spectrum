@@ -51,12 +51,14 @@ namespace Spectrum.Plugins.ServerMod
 
             Events.Network.ServerInitialized.Subscribe(data =>
             {
-                if (((UpdateCMD)cmd.all.getCommand("update")).updateCheck)
-                {
-                    G.Sys.GameManager_.StartCoroutine(serverInit());
-                }
-            });
-        }
+                Utilities.testFunc(() => {
+                        if (((UpdateCMD)cmd.all.getCommand("update")).updateCheck)
+                        {
+                            G.Sys.GameManager_.StartCoroutine(serverInit());
+                        }
+                    });
+                });
+            }
 
         IEnumerator serverInit()
         {
@@ -241,12 +243,15 @@ namespace Spectrum.Plugins.ServerMod
                     foreach (CmdSetting Setting in Command.settings)
                     {
                         var value = Settings[Setting.FileId];
-                        UpdateResult result = Setting.UpdateFromObject(value);
-                        if (!result.Valid)
-                            Console.WriteLine($"Invalid value for {Setting.FileId}: {result.Message}");
-                        else if (result.Message != "")
-                            Console.WriteLine(result.Message);
-                        Setting.Value = result.NewValue;
+                        if (value != null)
+                        {
+                            UpdateResult result = Setting.UpdateFromObject(value);
+                            if (!result.Valid)
+                                Console.WriteLine($"Invalid value for {Setting.FileId}: {result.Message}");
+                            else if (result.Message != "")
+                                Console.WriteLine(result.Message);
+                            Setting.Value = result.NewValue;
+                        }
                     }
                 }
             }

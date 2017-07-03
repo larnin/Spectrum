@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace Spectrum.Plugins.ServerMod.cmds
@@ -21,13 +22,18 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public static cmdlist all = new cmdlist();
 
-        public virtual CmdSettings.CmdSetting[] settings { get; set; } = new CmdSettings.CmdSetting[0];
+        public virtual CmdSettings.CmdSetting[] settings { get; } = new CmdSettings.CmdSetting[0];
         public CmdSettings.CmdSetting getSetting(string FileId)
         {
+            Console.WriteLine($"Searching for {FileId}; Settings is {settings.Length} long.");
             foreach (var setting in settings)
             {
+                Console.WriteLine($" {setting.FileId}");
                 if (setting.FileId == FileId)
+                {
+                    Console.WriteLine("  success");
                     return setting;
+                }
             }
             return null;
         }

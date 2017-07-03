@@ -25,6 +25,19 @@ namespace Spectrum.Plugins.ServerMod
             return "[D0D0D0]" + commandString + "[-]";
         }
 
+        public delegate void TestFuncD();
+        public static void testFunc(TestFuncD f)
+        {
+            try
+            {
+                f();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e}");
+            }
+        }
+
         public static bool isOnline()
         {
             return G.Sys.NetworkingManager_.IsOnline_;

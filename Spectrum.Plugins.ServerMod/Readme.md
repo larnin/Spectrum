@@ -156,45 +156,51 @@ Changes the name of the server.
 
 #### Settings:
 Permission: __HOST__  
-Use: !settings reload  
+
+* `!settings reload`  
 Reloads the settings from file.  
-__!settings updateCheck [true/false]__  
-Whether or not to check for updates when a server is started.  
-__!settings autoSpecReturnToLobby [true/false]__  
-Whether or not to return to lobby if the host is the last play in the server and is autospectating.  
-__!settings playVote [true/false]__  
-Allows players to vote for maps on the playlist with the __!play__ command.  
-If true, __!play <map>__ acts as an alias for `!vote y play <map>`  
-The host keeps the regular functionality of __!play__.
-__!settings play [true/false]__  
-Allows players to add maps on the playlist with the __!play__ command.  
-__!settings addOne [true/false]__  
-If players can add maps and this option enabled, the players can only add one map at a time.  
-__!settings welcome [message]__  
-Sets a welcome message to display to entering players.  
-In the message, %USERNAME% is replace by the player's name.  
-__!settings voteSystem [true/false]__  
-Turn the `!vote` command on or off.  
-You can control vote thresholds with `!votectrl`  
-__!settings autoVote [true/false]__  
-Allows players to vote for the next map on auto mode.  
-__!settings autoShuffle [true/false]__  
-Whether or not to shuffle the playlist when it reaches its end in auto mode.  
-If false, the playlist is restarted without shuffling.  
-__!settings autoUniqueVotes [true/false]__  
-Whether or not level-end votes in auto mode should be unique. See settings file description for more info.  
-__!settings autoMsg [message]__  
-Sets a message to display when advancing to the next track.  
-__!settings autoMinPlayers [amount]__  
-Sets the minimum amount of players for auto mode to advance to the next map.  
-If the host is autospectating and `autoSpecPlayer` is false, this number will internally increase by 1 to simulate the host not being present.  
+* `!settings summary`  
+View the value of all settings.  
+* `!auto` Settings
+  * `!settings autoVote <true/false>`  
+Whether or not players can vote for the next map at the end of a level in auto mode  
+Default: False  
+  * `!settings autoShuffle <true/false>`  
+Whether or not the playlist should be shuffled when it finishes in auto mode  
+Default: True  
+  * `!settings autoUniqueEndVotes <true/false>`  
+Whether or not levels should be re-ordered after votes so the next vote has all-new options  
+Default: True  
+  * `!settings autoMsg <text>`  
+The message to display when the level advances. `clear` to turn off.  
+Default:   
+  * `!settings autoMinPlayers <number>`  
+How many players auto mode needs before it will advance to the next level  
 Default: 1  
-__!settings autoMaxTime [seconds]__  
-Sets the maximum amount of seconds to run each level for.  
-Default: 900 (15 minutes)  
-__!settings autoSpecHostIgnored [true/false]__  
-When true, the host is ignored in auto mode when counting players.  
-Default: true  
+  * `!settings autoMaxTime <seconds>`  
+Maximum amount of time a level can run for in auto mode before it advances to the next  
+Default: 900  
+  * `!settings autoSpecHostIgnored <true/false>`  
+Whether or not the host should be ignored if in !autospec. If ignored, the host will not count towards the players needed to advance to the next level.  
+Default: True  
+* `!autospec` Settings
+  * `!settings autoSpecReturnToLobby <true/false>`  
+Whether or not to return to the lobby if eveyone leaves while auto-spectate is running.  
+Default: False  
+* `!update` Settings
+  * `!settings updateCheck <true/false>`  
+Whether or not to show updates to ServerMod when a server is started  
+Default: True  
+* `!welcome` Settings
+  * `!settings welcome <text>`  
+The welcome message to show to players. `clear` to turn off. `%USERNAME%` is replaced with the player's name.  
+Default:   
+* `!vote` Settings
+  * `!settings voteSystem <true/false>`  
+Whether or not players can use votes with !vote  
+Default: False  
+
+
 
 #### Shuffle:
 Permission: __HOST__  
@@ -310,44 +316,47 @@ When the plugin is started for the first time, it generate a setting file that l
 	]
 }
 ```
-__updateCheck__ (true/false): Whether or not to check for ServerMod updates when a server is started.
-You can change it with the command !settings updateCheck.  
-__playersCanAddMap__ (true/false): Allows players to add map on the playlist.  
-You can change it with the command !settings play.  
-__playIsVote__ (true/false): Turns `!play <map>` into `!vote y play <map>` for non-hosts.  
-You can change it with the command !settings playVote.
-The host always keeps the regular functionality of !play.
-__addOneMapOnly__ (true/false): If players are allowed to add map and this option set to true, they can only add one map at a time.  
-You can change it with the command !settings addOne.  
-__allowVoteSystem__ (true/false): Allows the !vote command to be used.  
-You can change it with the command !settings voteSystem  
-__autpSpecReturnToLobby__ (true/false): Whether or not the host returns to lobby when they are the last player and are auto-spectating.  
-__welcome__ (text): The message to display to players that enter. If empty, no message is displayed.  
-You can change it with the command !settings welcome  
-%USERNAME% is replaced by the player's name. \\n represents a new line. \\" allows you to put in quotes.  
-__voteNext__ (true/false): Allows players to vote for the next map on auto mode.  
-You can change it with the command !settings vote.  
-__autoAdvanceMsg__ (text): The message to display in auto mode when going to the next level. No message if empty.  
-You can change it with the command !settings autoMsg  
-__autoMinPlayers__ (number): The minimum amount of players needed for auto mode to go to the next level.  
-You can change it with the command !settings autoMinPlayers  
-__autoMaxTime__ (seconds): The maximum amount of time auto mode will spend on one level.  
-You can change it with the command !settings autoMaxTime  
-__autoSpecHostIgnored__ (true/false): When true, auto mode will ignore the host when counting players. Default true.  
-You can change it with the command !settings autoSpecHostIgnored  
-__autoShuffleAtEndOfPlaylist__ (true/false): Whether or not to shuffle the playlist when the map ends.
-If false, the playlist restarts from the beginning w/o shuffling. Default true.  
-You can change it with the command !settings autoShuffle.  
-__autoUniqueEndVotes__ (true/false): Whether or not level-end votes should be unique.  
-If true, a map will only show up once in level-end votes until the playlist restarts. If it is not chosen during its one time being vote-able, it will not be playable until the playlist restarts.  
-If false, a map can show up again if it's not chosen. Chooseing Level 1 in a vote means levels 2 and 3 will be in the next vote.  
-You can change it with the command !settings autoUniqueVotes.  
-__voteSystemThresholds__: The vote pass thresholds for each type of vote.  
-You can change them with the command !votectrl [vote type] [new threshold from 0 to 100]  
-When using the !votectrl command, the threshold should be a number, no decimals, from 0 to 100.  
-55 in !votectrl is the same as .55 in the settings file.  
-__win__ (list of string): A list of sentence that will be picked randomly when a player uses the command !win  
-__rip__ (list of string) : A list of sentence that will be picked randomly when a player uses the command !rip  
+
+* `"voteNext" :  <true/false>,`  
+Whether or not players can vote for the next map at the end of a level in auto mode  
+Default: False  
+* `"autoShuffleAtEnd" :  <true/false>,`  
+Whether or not the playlist should be shuffled when it finishes in auto mode  
+Default: True  
+* `"autoUniqueVotes" :  <true/false>,`  
+Whether or not levels should be re-ordered after votes so the next vote has all-new options  
+Default: True  
+* `"autoAdvanceMsg" :  <text>,`  
+The message to display when the level advances. `clear` to turn off.  
+Default:   
+* `"autoMinPlayers" :  <number>,`  
+How many players auto mode needs before it will advance to the next level  
+Default: 1  
+* `"autoMaxTime" :  <seconds>,`  
+Maximum amount of time a level can run for in auto mode before it advances to the next  
+Default: 900  
+* `"autoSpecHostIgnored" :  <true/false>,`  
+Whether or not the host should be ignored if in !autospec. If ignored, the host will not count towards the players needed to advance to the next level.  
+Default: True  
+* `"autoSpecReturnToLobby" :  <true/false>,`  
+Whether or not to return to the lobby if eveyone leaves while auto-spectate is running.  
+Default: False  
+* `"rip" :  <option>,`  
+Possible !rip phrases  
+* `"updateCheck" :  <true/false>,`  
+Whether or not to show updates to ServerMod when a server is started  
+Default: True  
+* `"welcome" :  <text>,`  
+The welcome message to show to players. `clear` to turn off. `%USERNAME%` is replaced with the player's name.  
+Default:   
+* `"win" :  <option>,`  
+Possible !win phrases  
+* `"allowVoteSystem" :  <true/false>,`  
+Whether or not players can use votes with !vote  
+Default: False  
+* `"voteSystemThresholds" :  <option>,`  
+The thresholds at which each vote passes  
+
 
 # Author contacts
 Steam : [Corecii](http://steamcommunity.com/id/corecii/)  
