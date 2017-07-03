@@ -20,24 +20,55 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override object Default { get; } = false;
     }
+    class CmdSettingAutoSpecAllowPlayers : CmdSettingBool
+    {
+        public override string FileId { get; } = "autoSpecAllowPlayers";
+
+        public override string DisplayName { get; } = "Auto-Spec Allow Players";
+        public override string HelpShort { get; } = "!autospec: allow players to use autospec when hosting";
+        public override string HelpLong { get; } = "Whether or not to return players can use the !autospec command when hosting";
+
+        public override object Default { get; } = true;
+    }
     class AutoSpecCMD : cmd
     {
-        public bool autoSpecMode = false;
+        public bool autoSpecMode
+        {
+            get
+            {
+                foreach (var player in G.Sys.PlayerManager_.PlayerList_)
+                {
+                    if (player.IsLocal_ && playerIsAutoSpec(player))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
 
         public bool autoSpecReturnToLobby
         {
-            get { return (bool)getSetting("autoSpecReturnRoLobby").Value; }
-            set { getSetting("autoSpecReturnRoLobby").Value = value; }
+            get { return (bool)getSetting("autoSpecReturnToLobby").Value; }
+            set { getSetting("autoSpecReturnToLobby").Value = value; }
+        }
+        public bool autoSpecAllowPlayers
+        {
+            get { return (bool)getSetting("autoSpecAllowPlayers").Value; }
+            set { getSetting("autoSpecAllowPlayers").Value = value; }
         }
 
         public override string name { get { return "autospec"; } }
-        public override PermType perm { get { return PermType.LOCAL; } }
+        public override PermType perm { get { return autoSpecAllowPlayers ? PermType.ALL : PermType.LOCAL; } }
         public override bool canUseAsClient { get { return true; } }
 
         public override CmdSetting[] settings { get; } =
         {
-            new CmdSettingAutoSpecLobby()
+            new CmdSettingAutoSpecLobby(),
+            new CmdSettingAutoSpecAllowPlayers()
         };
+
+        List<string> spectators = new List<string>();
 
         public AutoSpecCMD()
         {
@@ -49,29 +80,69 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!autospec") + ": Toggle automatic spectating for you.");
+            Utilities.sendMessage(Utilities.formatCmd("!autospec") + ": Toggle automatic spectating");
+        }
+
+        public bool playerIsAutoSpec(ClientPlayerInfo p)
+        {
+            return spectators.Contains(Utilities.getUniquePlayerString(p));
+        }
+
+        public List<ClientPlayerInfo> getAutoSpecPlayers()
+        {
+            var players = new List<ClientPlayerInfo>();
+            foreach (var player in G.Sys.PlayerManager_.PlayerList_)
+            {
+                if (playerIsAutoSpec(player))
+                {
+                    players.Add(player);
+                }
+            }
+            return players;
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if(autoSpecMode)
+            string uniq = Utilities.getUniquePlayerString(p);
+            if (spectators.Contains(uniq))
             {
-                autoSpecMode = false;
-                Utilities.sendMessage("Auto spectator mode turned off");
-                return;
+                spectators.Remove(uniq);
+                Utilities.sendMessage($"Auto spectator mode turned off for {p.Username_}");
             }
-
-            autoSpecMode = true;
-            Utilities.sendMessage("Auto spectator mode turned on");
-            onModeStart();
+            else
+            {
+                spectators.Add(uniq);
+                Utilities.sendMessage($"Auto spectator mode turned on for {p.Username_}");
+                spectatePlayer(p);
+            }
         }
 
         private void onModeStart()
         {
-            if (!Utilities.isOnline())
-                autoSpecMode = false;
-            if (autoSpecMode)
+            if (Utilities.isOnline())
                 G.Sys.GameManager_.StartCoroutine(spectate());
+
+        }
+
+        private void spectatePlayer(ClientPlayerInfo player)
+        {
+            if (!Utilities.isOnGamemode())
+                return;
+            if (player.IsLocal_)
+            {
+                if (G.Sys.PlayerManager_.PlayerList_.Count == 1 && Utilities.isHost() && autoSpecReturnToLobby)
+                {
+                    G.Sys.GameManager_.GoToLobby();
+                }
+                else
+                {
+                    G.Sys.PlayerManager_.Current_.playerData_.Spectate();
+                }
+            }
+            else
+            {
+                StaticTargetedEvent<Finished.Data>.Broadcast(player.NetworkPlayer_, default(Finished.Data));
+            }
         }
 
         IEnumerator spectate()
@@ -80,15 +151,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
             var players = G.Sys.PlayerManager_.PlayerList_;
             if (players.Count != 0)
             {
-                if (players.Count == 1 && Utilities.isHost() && autoSpecReturnToLobby)
-                    G.Sys.GameManager_.GoToLobby();
-                else
+                foreach (var player in players)
                 {
-                    var localPlayer = G.Sys.PlayerManager_.Current_.playerData_;
-                    localPlayer.Spectate();
-                    /*var p = players[0];
-                    if (p.IsLocal_)
-                        StaticTargetedEvent<Finished.Data>.Broadcast(p.NetworkPlayer_, default(Finished.Data));*/
+                    string uniq = Utilities.getUniquePlayerString(player);
+                    if (spectators.Contains(uniq))
+                    {
+                        spectatePlayer(player);
+                    }
                 }
             }
             yield return null;

@@ -58,7 +58,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         }
 
         public override string name { get { return "play"; } }
-        public override PermType perm { get { return playersCanAddMap ? PermType.ALL : PermType.HOST; } }
+        public override PermType perm { get { return (playersCanAddMap || useVote) ? PermType.ALL : PermType.HOST; } }
         public override bool canUseAsClient { get { return false; } }
 
         public override void help(ClientPlayerInfo p)

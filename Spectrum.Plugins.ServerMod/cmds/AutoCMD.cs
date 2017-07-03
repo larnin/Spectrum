@@ -1,6 +1,7 @@
 ﻿using Events;
 using Events.GameMode;
 using Spectrum.Plugins.ServerMod.CmdSettings;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,23 +97,20 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.RaceMode.FinalCountdownActivate.Subscribe(data =>
             {
-                // NOTE: Hacky bug fix.
-                // If the countdown is stopped at the same time it's started,
-                //  then it actually starts but doesn't display a message for it.
-                G.Sys.GameManager_.StartCoroutine(stopCountdownLate());
+                try {
+                    AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
+                    CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
+                    if (G.Sys.PlayerManager_.PlayerList_.Count == 2 && autoSpecCommand.autoSpecMode)
+                    {
+                        countdownCommand.stopCountdown();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Failed to stop countdown: {e}");
+                }
             });
             
-        }
-
-        IEnumerator stopCountdownLate()
-        {
-            yield return new WaitForSeconds(1.0f);
-            AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
-            CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
-            if (G.Sys.PlayerManager_.PlayerList_.Count == 2 && autoSpecCommand.autoSpecMode)
-            {
-                countdownCommand.stopCountdown();
-            }
         }
 
         public override void help(ClientPlayerInfo p)
@@ -185,8 +183,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public int getMinPlayers()
         {
             AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
-            // if autoSpec does not count as a player and if the host is autospec, then add 1 to minPlayers
-            return minPlayers + ((autoSpecHostIgnored && autoSpecCommand.autoSpecMode) ? 1 : 0);
+            return minPlayers + autoSpecCommand.getAutoSpecPlayers().Count;
         }
 
         IEnumerable<float> waitForMinPlayers()
@@ -392,22 +389,32 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     values[v.Value]++;
             }
 
-            int maxValue = values.Max();
-            for (int i = 0; i < values.Count; i++)
-                if (values[i] < maxValue)
-                    values[i] = -1;
-            System.Random r = new System.Random();
-            for(int i = 0; i < 20; i++)
+            if (uniqueEndVotes)
             {
-                int rValue = r.Next(0, values.Count);
-                if (values[rValue] >= 0)
-                    return rValue;
+                // return a random map out of the tied maps
+                System.Random r = new System.Random();
+                List<int> ties = new List<int>();  // list of indexes
+                int maxValue = values.Max();
+                if (maxValue == 0)  // if no one voted, choose randomly between choices 1 and 3. never choose 0.
+                {
+                    return r.Next(1, ties.Count);
+                }
+                for (int i = 0; i < values.Count; i++)
+                    if (values[i] == maxValue)
+                        ties.Add(i);
+                int rValue = r.Next(0, ties.Count);
+                return ties[rValue];  // get & return a random index from the list of tied indexes
             }
-
-            for (int i = 0; i < values.Count; i++)
-                if (values[i] == maxValue)
-                    return i;
-            return 1;
+            else
+            {
+                // return the first map out of the tied maps
+                // the other tied maps will be playable after the first is done
+                int maxValue = values.Max();
+                for (int i = 0; i < values.Count; i++)
+                    if (values[i] == maxValue)
+                        return i;
+                return 1;
+            }
         }
 
         void setToNextMap(int nextIndex)

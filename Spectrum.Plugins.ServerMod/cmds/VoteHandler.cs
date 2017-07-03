@@ -322,7 +322,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                     int value = votes.Count;
 
-                    string playerVoteId = $"{p.Username_}:{p.NetworkPlayer_.externalIP}:{p.NetworkPlayer_.externalPort}";
+                    string playerVoteId = Utilities.getUniquePlayerString(p);
                     if (voteValue)
                     {
                         if (votes.Contains(playerVoteId))
@@ -365,7 +365,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     
                     int value = votes.Count;
 
-                    string playerVoteId = $"{p.Username_}:{p.NetworkPlayer_.externalIP}:{p.NetworkPlayer_.externalPort}";
+                    string playerVoteId = Utilities.getUniquePlayerString(p);
                     if (voteValue)
                     {
                         if (votes.Contains(playerVoteId))
@@ -441,7 +441,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                                 continue;
                             }
                         }
-                        string playerVoteId = $"{p.Username_}:{p.NetworkPlayer_.externalIP}:{p.NetworkPlayer_.externalPort}";
+                        string playerVoteId = Utilities.getUniquePlayerString(p);
                         if (!voteValue)
                         {
                             votes.Remove(playerVoteId);

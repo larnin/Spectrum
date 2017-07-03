@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace Spectrum.Plugins.ServerMod
 {
@@ -150,22 +151,24 @@ namespace Spectrum.Plugins.ServerMod
             return DirectoryEx.GetFiles(Resource.PersonalLevelPlaylistsDirPath_).ToList();
         }
 
+        public static string getUniquePlayerString(ClientPlayerInfo p)
+        {
+            return $"{p.Username_}:{p.NetworkPlayer_.externalIP}:{p.NetworkPlayer_.externalPort}";
+        }
+
+        static string authorMessageRegex = @"^\[[A-Fa-f0-9]{6}\](.+?)\[[A-Fa-f0-9]{6}\]: (.*)$";
         //take from newer spectrum version (stable can't use messages events)
         public static string ExtractMessageAuthor(string message)
         {
             try
             {
-                var onlyName = message.Substring(0, message.IndexOf(":"));
-                // 1. [xxxxxx]user[xxxxxx]: adfsafasf
-                var withoutFirstColorTag = onlyName.Substring(onlyName.IndexOf(']') + 1, onlyName.Length - onlyName.IndexOf(']') - 1);
-                // 2. user[xxxxxx]: adfsafasf
-                var withoutSecondColorTag = withoutFirstColorTag.Substring(0, withoutFirstColorTag.LastIndexOf('['));
-                // 3. user
+                Match msgMatch = Regex.Match(message, authorMessageRegex);
 
-                return NGUIText.StripSymbols(withoutSecondColorTag).Trim();
+                return NGUIText.StripSymbols(msgMatch.Groups[1].Value).Trim();
             }
-            catch
+            catch(Exception e)
             {
+                Console.WriteLine($"Error getting player name: {e}");
                 return string.Empty;
             }
         }
@@ -179,8 +182,10 @@ namespace Spectrum.Plugins.ServerMod
         {
             try
             {
-                // 1. [xxxxxx]user[xxxxxx]: body
-                return message.Substring(message.IndexOf(':') + 1).Trim();
+                Match msgMatch = Regex.Match(message, authorMessageRegex);
+                if (!msgMatch.Success)
+                    return string.Empty;
+                return msgMatch.Groups[2].Value;
             }
             catch
             {

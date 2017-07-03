@@ -43,12 +43,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
             new CmdSettingUpdateCheck()
         };
 
-        public UpdateCMD()
-        {
-            Console.WriteLine("Creating settings...");
-            Console.WriteLine($"Settings: {settings} ({settings.Length} long)");
-        }
-
         public override void help(ClientPlayerInfo p)
         {
             Utilities.sendMessage(Utilities.formatCmd("!update") + ": Check for updates to ServerMod");
