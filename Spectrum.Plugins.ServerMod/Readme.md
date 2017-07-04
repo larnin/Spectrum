@@ -180,12 +180,22 @@ Default: 1
   * `!settings autoMaxTime <seconds>`  
 Maximum amount of time a level can run for in auto mode before it advances to the next  
 Default: 900  
-  * `!settings autoSpecHostIgnored <true/false>`  
-Whether or not the host should be ignored if in !autospec. If ignored, the host will not count towards the players needed to advance to the next level.  
-Default: True  
 * `!autospec` Settings
   * `!settings autoSpecReturnToLobby <true/false>`  
 Whether or not to return to the lobby if eveyone leaves while auto-spectate is running.  
+Default: False  
+  * `!settings autoSpecAllowPlayers <true/false>`  
+Whether or not players/clients can use the !autospec command  
+Default: True  
+* `!play` Settings
+  * `!settings play <true/false>`  
+Whether or not players can add maps using !play  
+Default: False  
+  * `!settings addOne <true/false>`  
+Limit players to adding only one map with !play  
+Default: True  
+  * `!settings playVote <true/false>`  
+For non-hosts, !play will use !vote play instead of adding maps directly. The host still adds maps directly.  
 Default: False  
 * `!update` Settings
   * `!settings updateCheck <true/false>`  
@@ -199,6 +209,7 @@ Default:
   * `!settings voteSystem <true/false>`  
 Whether or not players can use votes with !vote  
 Default: False  
+
 
 
 
@@ -290,6 +301,7 @@ When the plugin is started for the first time, it generate a setting file that l
 	"addOneMapOnly" : true,
 	"allowVoteSystem" : false,
 	"autoSpecReturnToLobby" : false,
+	"autoSpecAllowPlayers" : true,
 	"welcome" : "",
 	"voteNext" : false,
 	"autoAdvanceMsg" : "",
@@ -335,11 +347,20 @@ Default: 1
 * `"autoMaxTime" :  <seconds>,`  
 Maximum amount of time a level can run for in auto mode before it advances to the next  
 Default: 900  
-* `"autoSpecHostIgnored" :  <true/false>,`  
-Whether or not the host should be ignored if in !autospec. If ignored, the host will not count towards the players needed to advance to the next level.  
-Default: True  
 * `"autoSpecReturnToLobby" :  <true/false>,`  
 Whether or not to return to the lobby if eveyone leaves while auto-spectate is running.  
+Default: False  
+* `"autoSpecAllowPlayers" :  <true/false>,`  
+Whether or not players/clients can use the !autospec command  
+Default: True  
+* `"playersCanAddMap" :  <true/false>,`  
+Whether or not players can add maps using !play  
+Default: False  
+* `"addOneMapOnly" :  <true/false>,`  
+Limit players to adding only one map with !play  
+Default: True  
+* `"playIsVote" :  <true/false>,`  
+For non-hosts, !play will use !vote play instead of adding maps directly. The host still adds maps directly.  
 Default: False  
 * `"rip" :  <option>,`  
 Possible !rip phrases  
@@ -356,6 +377,7 @@ Whether or not players can use votes with !vote
 Default: False  
 * `"voteSystemThresholds" :  <option>,`  
 The thresholds at which each vote passes  
+
 
 
 # Author contacts

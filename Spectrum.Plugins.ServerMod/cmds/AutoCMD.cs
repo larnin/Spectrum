@@ -16,11 +16,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
             get { return (bool)getSetting("voteNext").Value; }
             set { getSetting("voteNext").Value = value; }
         }
-        public bool autoSpecHostIgnored
-        {
-            get { return (bool)getSetting("autoSpecHostIgnored").Value; }
-            set { getSetting("autoSpecHostIgnored").Value = value; }
-        }
         public bool shuffleAtEnd
         {
             get { return (bool)getSetting("autoShuffleAtEnd").Value; }
@@ -72,8 +67,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             new CmdSettingAutoUniqueVotes(),
             new CmdSettingAutoMessage(),
             new CmdSettingAutoMinPlayers(),
-            new CmdSettingAutoMaxTime(),
-            new CmdSettingAutoSpecHostIgnored()
+            new CmdSettingAutoMaxTime()
         };
 
         public AutoCMD(cmdlist list)
@@ -417,7 +411,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     int maxValue = values.Max();
                     if (maxValue == 0)  // if no one voted, choose randomly between choices 1 and 3. never choose 0.
                     {
-                        choice = r.Next(1, ties.Count);
+                        choice = r.Next(1, maxtVoteValue);
                         return;
                     }
                     for (int i = 0; i < values.Count; i++)
@@ -431,6 +425,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     // return the first map out of the tied maps
                     // the other tied maps will be playable after the first is done
                     int maxValue = values.Max();
+                    if (maxValue == 0)  // if no one voted, choose the first non-restart map so that all maps are played
+                    {
+                        choice = 1;
+                        return;
+                    }
                     for (int i = 0; i < values.Count; i++)
                         if (values[i] == maxValue)
                         {
@@ -528,15 +527,5 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string HelpLong { get; } = "Maximum amount of time a level can run for in auto mode before it advances to the next";
 
         public override object Default { get; } = 900;
-    }
-    class CmdSettingAutoSpecHostIgnored : CmdSettingBool
-    {
-        public override string FileId { get; } = "autoSpecHostIgnored";
-
-        public override string DisplayName { get; } = "!auto Auto-spectating Host Ignored";
-        public override string HelpShort { get; } = "!auto: Ignore host as player if in !autospec";
-        public override string HelpLong { get; } = "Whether or not the host should be ignored if in !autospec. If ignored, the host will not count towards the players needed to advance to the next level.";
-
-        public override object Default { get; } = true;
     }
 }
