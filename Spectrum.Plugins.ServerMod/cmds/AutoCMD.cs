@@ -28,8 +28,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
         }
         public bool uniqueEndVotes
         {
-            get { return (bool)getSetting("autoUniqueEndVotes").Value; }
-            set { getSetting("autoUniqueEndVotes").Value = value; }
+            get { return (bool)getSetting("autoUniqueVotes").Value; }
+            set { getSetting("autoUniqueVotes").Value = value; }
         }
 
         public string advanceMessage
@@ -88,6 +88,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Events.GameMode.ModeStarted.Subscribe(data =>
             {
                 onModeStart();
+            });
+
+            Events.GameMode.Go.Subscribe(data =>
+            {
+                onGo();
             });
 
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
@@ -176,6 +181,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if (!Utilities.isOnline())
                 autoMode = false;
             index++;
+        }
+
+        private void onGo()
+        {
             if (autoMode)
                 G.Sys.GameManager_.StartCoroutine(waitUtilEnd());
         }
@@ -365,56 +374,73 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
             didFinish = false;
             int currentIndex = index;
-            yield return new WaitForSeconds(maxRunTime);
-            if (currentIndex == index && autoMode)
+            if (maxRunTime > 60)
             {
-                Utilities.sendMessage("This map has run for the maximum run time.");
+                yield return new WaitForSeconds(maxRunTime - 60);
+                if (currentIndex == index && autoMode)
+                {
+                    Utilities.sendMessage("This map has run for the maximum run time.");
 
-                // start countdown for 30 seconds. Everyone is marked DNF at 30 seconds.
-                CountdownCMD countdownCommand = (CountdownCMD) list.getCommand("countdown");
-                countdownCommand.startCountdown(30);
+                    // start countdown for 60 seconds. Everyone is marked DNF at 60 seconds.
+                    CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
+                    countdownCommand.startCountdown(60);
+                }
+            }
+            else
+            {
+                CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
+                countdownCommand.startCountdown(maxRunTime);
             }
             yield return null;
         }
 
         int bestVote()
         {
-            List<int> values = new List<int>();
-            for (int i = 0 ; i <= maxtVoteValue; i++)
-                values.Add(0);
-
-            foreach(var v in votes)
+            var choice = 1;
+            Utilities.testFunc(() =>
             {
-                if (v.Value <= maxtVoteValue && v.Value >= 0)
-                    values[v.Value]++;
-            }
+                List<int> values = new List<int>();
+                for (int i = 0; i <= maxtVoteValue; i++)
+                    values.Add(0);
 
-            if (uniqueEndVotes)
-            {
-                // return a random map out of the tied maps
-                System.Random r = new System.Random();
-                List<int> ties = new List<int>();  // list of indexes
-                int maxValue = values.Max();
-                if (maxValue == 0)  // if no one voted, choose randomly between choices 1 and 3. never choose 0.
+                foreach (var v in votes)
                 {
-                    return r.Next(1, ties.Count);
+                    if (v.Value <= maxtVoteValue && v.Value >= 0)
+                        values[v.Value]++;
                 }
-                for (int i = 0; i < values.Count; i++)
-                    if (values[i] == maxValue)
-                        ties.Add(i);
-                int rValue = r.Next(0, ties.Count);
-                return ties[rValue];  // get & return a random index from the list of tied indexes
-            }
-            else
-            {
-                // return the first map out of the tied maps
-                // the other tied maps will be playable after the first is done
-                int maxValue = values.Max();
-                for (int i = 0; i < values.Count; i++)
-                    if (values[i] == maxValue)
-                        return i;
-                return 1;
-            }
+
+                if (uniqueEndVotes)
+                {
+                    // return a random map out of the tied maps
+                    System.Random r = new System.Random();
+                    List<int> ties = new List<int>();  // list of indexes
+                    int maxValue = values.Max();
+                    if (maxValue == 0)  // if no one voted, choose randomly between choices 1 and 3. never choose 0.
+                    {
+                        choice = r.Next(1, ties.Count);
+                        return;
+                    }
+                    for (int i = 0; i < values.Count; i++)
+                        if (values[i] == maxValue)
+                            ties.Add(i);
+                    int rValue = r.Next(0, ties.Count);
+                    choice = ties[rValue];  // get & return a random index from the list of tied indexes
+                }
+                else
+                {
+                    // return the first map out of the tied maps
+                    // the other tied maps will be playable after the first is done
+                    int maxValue = values.Max();
+                    for (int i = 0; i < values.Count; i++)
+                        if (values[i] == maxValue)
+                        {
+                            choice = i;
+                            return;
+                        }
+                    choice = 1;
+                }
+            });
+            return choice;
         }
 
         void setToNextMap(int nextIndex)

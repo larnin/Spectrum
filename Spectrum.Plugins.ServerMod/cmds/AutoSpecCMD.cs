@@ -26,7 +26,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override string DisplayName { get; } = "Auto-Spec Allow Players";
         public override string HelpShort { get; } = "!autospec: allow players to use autospec when hosting";
-        public override string HelpLong { get; } = "Whether or not to return players can use the !autospec command when hosting";
+        public override string HelpLong { get; } = "Whether or not players/clients can use the !autospec command";
 
         public override object Default { get; } = true;
     }

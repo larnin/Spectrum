@@ -61,6 +61,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override PermType perm { get { return (playersCanAddMap || useVote) ? PermType.ALL : PermType.HOST; } }
         public override bool canUseAsClient { get { return false; } }
 
+        public override CmdSetting[] settings { get; } =
+        {
+            new CmdSettingPlayPlayersAddMaps(),
+            new CmdSettingPlayAddOne(),
+            new CmdSettingPlayIsVote()
+        };
+
         public override void help(ClientPlayerInfo p)
         {
             if (useVote)
@@ -70,13 +77,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Utilities.sendMessage(Utilities.formatCmd("!play [filter]") + ": Use filters to find a level");
             Utilities.sendMessage("Valid filters: -mode -m -name -n -author -a -index -i -last -l -all");
             Utilities.sendMessage("The level must be known by the server to be show up");
-
-            CmdSetting[] setting =
-            {
-                new CmdSettingPlayPlayersAddMaps(),
-                new CmdSettingPlayAddOne(),
-                new CmdSettingPlayIsVote()
-            };
         }
 
         public override void use(ClientPlayerInfo p, string message)

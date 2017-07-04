@@ -26,7 +26,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             Random r = new Random();
             float color = (float)r.NextDouble() * 360;
-            Utilities.sendMessage("[b][" + ColorEx.ColorToHexNGUI(new ColorHSB(color, 0.5f, 0.5f, 1f).ToColor()) + "]" + ripList[r.Next(ripList.Count)] + "[-][/b]");
+            Utilities.sendMessage("[b][" + ColorEx.ColorToHexNGUI(new ColorHSB(color, 1f, 1f, 1f).ToColor()) + "]" + ripList[r.Next(ripList.Count)] + "[-][/b]");
         }
 
         public List<string> ripList
