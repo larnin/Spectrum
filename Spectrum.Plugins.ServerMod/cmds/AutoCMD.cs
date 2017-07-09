@@ -228,11 +228,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator waitAndGoNext()
         {
+            int myIndex = index; // index and myIndex are used to check if the level advances before auto does it.
             foreach (float f in waitForMinPlayers())
             {
                 yield return new WaitForSeconds(f);
             }
-            int myIndex; // index and myIndex are used to check if the level advances before auto does it.
+            if (index != myIndex)
+                yield break;
             if (!Utilities.isOnLobby())
             {
                 Utilities.sendMessage("Going to the next level in 10 seconds...");
@@ -270,11 +272,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator voteAndGoNext()
         {
+            int myIndex = index;
             foreach (float f in waitForMinPlayers())
             {
                 yield return new WaitForSeconds(f);
             }
-            int myIndex;
+            if (index != myIndex)
+                yield break;
             if (!Utilities.isOnLobby())
             {
                 voting = true;
@@ -335,7 +339,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         IEnumerator startFromLobby()
         {
             bool hasRanOnce = false;
-            int myIndex;
+            int myIndex = index;
             int total = 0;
             while (total < 2)
             {
@@ -350,10 +354,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 }
                 else hasRanOnce = true;
 
+                myIndex = index;
                 foreach (float f in waitForMinPlayers())
                 {
                     yield return new WaitForSeconds(f);
                 }
+                if (index != myIndex)
+                    yield break;
                 total = 1;
 
                 bool canContinue = false;
