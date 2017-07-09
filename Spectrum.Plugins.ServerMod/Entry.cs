@@ -36,7 +36,10 @@ namespace Spectrum.Plugins.ServerMod
 
             Events.Local.ChatSubmitMessage.Subscribe(data =>
             {
-                Chat_MessageSent(data.message_);
+                Utilities.testFunc(() =>
+                {
+                    Chat_MessageSent(data.message_);
+                });
             });
 
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>

@@ -36,6 +36,16 @@ namespace Spectrum.Plugins.ServerMod
             catch (Exception e)
             {
                 Console.WriteLine($"Error: {e}");
+                try
+                {
+                    sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                    sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                    sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                }
+                catch (Exception e2)
+                {
+                    Console.WriteLine($"Could not send message: {e2}");
+                }
             }
         }
 

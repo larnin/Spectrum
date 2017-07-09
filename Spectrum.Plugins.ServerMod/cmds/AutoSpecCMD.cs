@@ -74,7 +74,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             Events.GameMode.Go.Subscribe(data =>
             {
-                onModeStart();
+                Utilities.testFunc(() =>
+                {
+                    onModeStart();
+                });
             });
         }
 
@@ -103,6 +106,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void use(ClientPlayerInfo p, string message)
         {
+            if (!autoSpecAllowPlayers && !p.IsLocal_)
+                return;
             string uniq = Utilities.getUniquePlayerString(p);
             if (spectators.Contains(uniq))
             {
@@ -127,6 +132,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
         private void spectatePlayer(ClientPlayerInfo player)
         {
             if (!Utilities.isOnGamemode())
+                return;
+            if (!autoSpecAllowPlayers && !player.IsLocal_)
                 return;
             if (player.IsLocal_)
             {
@@ -153,8 +160,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 foreach (var player in players)
                 {
-                    string uniq = Utilities.getUniquePlayerString(player);
-                    if (spectators.Contains(uniq))
+                    if (playerIsAutoSpec(player))
                     {
                         spectatePlayer(player);
                     }

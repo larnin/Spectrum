@@ -39,8 +39,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.Server.StartClientLate.Subscribe(data =>
             {
-                if (Utilities.isOnline() && Utilities.isHost())
-                    onClientJoin(data.client_);
+                Utilities.testFunc(() =>
+                {
+                    if (Utilities.isOnline() && Utilities.isHost())
+                        onClientJoin(data.client_);
+                });
             });
         }
 

@@ -76,22 +76,34 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {
-                onModeFinish();
+                Utilities.testFunc(() =>
+                {
+                    onModeFinish();
+                });
             });
 
             Events.GameMode.ModeStarted.Subscribe(data =>
             {
-                onModeStart();
+                Utilities.testFunc(() =>
+                {
+                    onModeStart();
+                });
             });
 
             Events.GameMode.Go.Subscribe(data =>
             {
-                onGo();
+                Utilities.testFunc(() =>
+                {
+                    onGo();
+                });
             });
 
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
             {
-                onChatEvent(data.message_);
+                Utilities.testFunc(() =>
+                {
+                    onChatEvent(data.message_);
+                });
             });
 
             Events.RaceMode.FinalCountdownActivate.Subscribe(data =>
@@ -194,7 +206,16 @@ namespace Spectrum.Plugins.ServerMod.cmds
             int myIndex;
             if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
             {
-                Utilities.sendMessage($"Waiting for there to be {getMinPlayers()} players.");
+                AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
+                var specCount = autoSpecCommand.getAutoSpecPlayers().Count;
+                if (specCount != 0) {
+                    string specWord = specCount == 1 ? "is" : "are";
+                    Utilities.sendMessage($"Waiting for there to be {minPlayers} players. ({specCount} {specWord} auto-spectating)");
+                }
+                else
+                {
+                    Utilities.sendMessage($"Waiting for there to be {minPlayers} players.");
+                }
                 while (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
                 {
                     myIndex = index;
@@ -236,7 +257,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             }
                         }
                     }
-                    G.Sys.GameManager_.GoToNextLevel(true);
+                    Utilities.testFunc(() =>
+                    {
+                        G.Sys.GameManager_.GoToNextLevel(true);
+                    });
                 }
                 else autoMode = false;
             }
@@ -294,8 +318,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         
                     if (autoMode && !Utilities.isOnLobby())
                     {
-                        setToNextMap(index);
-                        G.Sys.GameManager_.GoToNextLevel(true);
+                        Utilities.testFunc(() =>
+                        {
+                            setToNextMap(index);
+                            G.Sys.GameManager_.GoToNextLevel(true);
+                        });
                     }
                     else autoMode = false;
                 }

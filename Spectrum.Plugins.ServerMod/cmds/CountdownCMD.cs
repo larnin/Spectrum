@@ -18,18 +18,27 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {
-                onModeFinish();
+                Utilities.testFunc(() =>
+                {
+                    onModeFinish();
+                });
             });
 
             Events.RaceMode.FinalCountdownCancel.Subscribe(data =>
             {
-                onCountdownStop();
+                Utilities.testFunc(() =>
+                {
+                    onCountdownStop();
+                });
             });
 
             Events.Server.StartClientLate.Subscribe(data =>
             {
-                if (Utilities.isOnline() && Utilities.isHost())
-                    onClientJoin(data.client_);
+                Utilities.testFunc(() =>
+                {
+                    if (Utilities.isOnline() && Utilities.isHost())
+                        onClientJoin(data.client_);
+                });
             });
         }
 

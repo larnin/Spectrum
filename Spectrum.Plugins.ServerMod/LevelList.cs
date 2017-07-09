@@ -89,8 +89,15 @@ namespace Spectrum.Plugins.ServerMod
                         m.isRegex = true;
                         if (words.Count() < 2)
                             continue;
+                        if (words[0] == "r" || (words[0] != "R" && words[0] == "regex"))
+                            nameText += "(?i)";
+                        // if lowercase (r, regex) was used, the regex is case-insensitive
+                        // if uppercase (R, Regex, etc.) was used, the regex is case-sensitive
                         for (int i = 1; i < words.Count(); i++)
-                            nameText += " " + words[i];
+                            if (i == 1)
+                                nameText += words[i];
+                            else
+                                nameText += " " + words[i];
                     }
                     else if (key == "a" || key == "author")
                     {
