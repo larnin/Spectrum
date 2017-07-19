@@ -86,6 +86,21 @@ namespace Spectrum.Plugins.ServerMod
             return GameManager.SceneName_.Equals("GameMode");
         }
 
+        public static List<ClientPlayerInfo> getClientsBySearch(string search)
+        {
+            int index;
+            if (!int.TryParse(search, out index))
+                index = -1;
+            search = Regex.Escape(search).Replace("\\*", ".*").Replace("\\$", "$").Replace("\\^", "^");
+            var clients = new List<ClientPlayerInfo>();
+            foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
+            {
+                if (index != -1 ? current.Index_ == index : Regex.Match(current.Username_, search, RegexOptions.IgnoreCase).Success)
+                    clients.Add(current);
+            }
+            return clients;
+        }
+
         public static ClientPlayerInfo clientFromName(string name)
         {
             foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
@@ -114,6 +129,34 @@ namespace Spectrum.Plugins.ServerMod
                     return current;
             }
             return null;
+        }
+
+        public static LevelNameAndPathPair getLevel(int index)
+        {
+            var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_.Playlist_;
+
+            if (index < currentPlaylist.Count)
+                return currentPlaylist[index].levelNameAndPath_;
+            else
+                return null;
+        }
+
+        public static LevelNameAndPathPair getCurrentLevel()
+        {
+            var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_.Playlist_;
+            int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
+            return currentPlaylist[index].levelNameAndPath_;
+        }
+
+        public static LevelNameAndPathPair getNextLevel()
+        {
+            var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_.Playlist_;
+            int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
+
+            if (index < currentPlaylist.Count - 1)
+                return currentPlaylist[index + 1].levelNameAndPath_;
+            else
+                return null;
         }
 
         public static string getNextLevelName()
@@ -201,6 +244,26 @@ namespace Spectrum.Plugins.ServerMod
             {
                 return string.Empty;
             }
+        }
+
+        public static bool isLevelOnline(LevelNameAndPathPair TestLevel)
+        {
+            var LevelSetsManager = G.Sys.LevelSets_;
+            foreach (var Level in LevelSetsManager.OfficialLevelNameAndPathPairs_)
+            {
+                if (Level.levelPath_ == TestLevel.levelPath_)
+                {
+                    return true;
+                }
+            }
+            foreach (var Level in LevelSetsManager.WorkshopLevelNameAndPathPairs_)
+            {
+                if (Level.levelPath_ == TestLevel.levelPath_)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

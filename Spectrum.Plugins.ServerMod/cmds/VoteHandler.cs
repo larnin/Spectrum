@@ -94,6 +94,35 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             public override object Default { get; } = false;
         }
+        class CmdSettingVoteThreshold : CmdSettingInt
+        {
+            private string ThresholdName;
+            private int DefaultThreshold;
+
+            public override string FileId { get; } = ""; // disabled
+            public override string SettingsId { get { return "vote" + ThresholdName; } }
+
+            public override string DisplayName { get { return "Vote Threshold " + ThresholdName; } }
+            public override string HelpShort { get { return "The percent where " + ThresholdName + " vote passes"; } }
+            public override string HelpLong { get { return HelpShort; } }
+
+            public override object Default { get { return DefaultThreshold; } }
+
+            public override int LowerBound { get; } = 0;
+            
+            public CmdSettingVoteThreshold(string ThresholdName, int DefaultThreshold)
+            {
+                this.ThresholdName = ThresholdName;
+                this.DefaultThreshold = DefaultThreshold;
+            }
+
+            public CmdSettingVoteThreshold(string ThresholdName, int DefaultThreshold, int Value)
+            {
+                this.ThresholdName = ThresholdName;
+                this.DefaultThreshold = DefaultThreshold;
+                this.Value = Value;
+            }
+        }
         class CmdSettingVoteThresholds : CmdSetting
         {
             public override string FileId { get; } = "voteSystemThresholds";
@@ -177,8 +206,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             public VoteCMD(VoteHandler parent)
             {
                 this.parent = parent;
-                
-                Events.ServerToClient.ModeFinished.Subscribe(data =>
+
+                Events.GameMode.ModeStarted.Subscribe(data =>
                 {
                     Utilities.testFunc(() =>
                     {

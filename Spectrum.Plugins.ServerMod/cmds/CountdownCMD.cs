@@ -7,7 +7,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 {
     class CountdownCMD : cmd
     {
-        bool countdownStarted = false;
+        public bool countdownStarted = false;
         DateTime countdownEndTime = DateTime.Now;
 
         public override string name { get { return "countdown"; } }

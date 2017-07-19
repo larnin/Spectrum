@@ -26,19 +26,16 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
 
-            int index = 0;
-            bool parsed = int.TryParse(message, out index);
-
-            ClientPlayerInfo player = parsed ? Utilities.clientFromID(index) : Utilities.clientFromName(message);
-            if(player == null)
+            var affects = "";
+            foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
             {
-                Utilities.sendMessage("Can't find the player '" + message + "'");
-                return;
+                StaticTargetedEvent<Finished.Data>.Broadcast(client.NetworkPlayer_, default(Finished.Data));
+                affects += $"{ p.Username_}, ";
             }
-
-            StaticTargetedEvent<Finished.Data>.Broadcast(player.NetworkPlayer_, default(Finished.Data));
-
-            Utilities.sendMessage("Player " + message + " is now spectating.");
+            if (affects == "")
+                Utilities.sendMessage("Could not find any players with that name or index");
+            else
+                Utilities.sendMessage(affects + "is now spectating.");
         }
     }
 }

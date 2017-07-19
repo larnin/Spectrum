@@ -42,6 +42,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
             get { return (int)getSetting("autoMinPlayers").Value; }
             set { getSetting("autoMinPlayers").Value = value; }
         }
+        public bool skipOffline
+        {
+            get { return (bool)getSetting("autoSkipOffline").Value; }
+            set { getSetting("autoSkipOffline").Value = value; }
+        }
 
         const int maxtVoteValue = 3;
 
@@ -67,7 +72,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             new CmdSettingAutoUniqueVotes(),
             new CmdSettingAutoMessage(),
             new CmdSettingAutoMinPlayers(),
-            new CmdSettingAutoMaxTime()
+            new CmdSettingAutoMaxTime(),
+            new CmdSettingSkipOfflineTracks()
         };
 
         public AutoCMD(cmdlist list)
@@ -226,64 +232,82 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
         }
 
-        IEnumerator waitAndGoNext()
+        private List<int> getOnlineLevels(int start, int limit)
         {
-            int myIndex = index; // index and myIndex are used to check if the level advances before auto does it.
-            foreach (float f in waitForMinPlayers())
+            var list = new List<int>();
+            if (G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count == 0)
+                return list;
+            var startIndex = start;
+            var firstOnlineIndex = startIndex;
+            var NextLevel = Utilities.getLevel(firstOnlineIndex);
+            while (true)
             {
-                yield return new WaitForSeconds(f);
-            }
-            if (index != myIndex)
-                yield break;
-            if (!Utilities.isOnLobby())
-            {
-                Utilities.sendMessage("Going to the next level in 10 seconds...");
-                Utilities.sendMessage("Next level is: " + Utilities.getNextLevelName());
-                myIndex = index;
-                yield return new WaitForSeconds(10.0f);
-                if (index != myIndex)
-                    yield break;
-                if (autoMode && !Utilities.isOnLobby())
+                if (NextLevel == null)
+                    firstOnlineIndex = 0;
+                else
                 {
-                    if (Utilities.isCurrentLastLevel())
+                    if (Utilities.isLevelOnline(NextLevel))
                     {
-                        if (shuffleAtEnd)
-                            cmd.all.getCommand("shuffle").use(null, "");
-                        else
+                        list.Add(firstOnlineIndex);
+                        if (list.Count == limit)
                         {
-                            if (G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count != 0)
-                            {
-                                G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
-                                G.Sys.GameManager_.NextLevelName_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelName_;
-                                G.Sys.GameManager_.NextLevelPath_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelPath_;
-                            }
+                            return list;
                         }
                     }
-                    Utilities.testFunc(() =>
-                    {
-                        G.Sys.GameManager_.GoToNextLevel(true);
-                    });
+                    firstOnlineIndex++;
                 }
-                else autoMode = false;
+                NextLevel = Utilities.getLevel(firstOnlineIndex);
+                if (firstOnlineIndex == startIndex)
+                    return list;
             }
-            else autoMode = false;
-            yield return null;
+        }
+        private List<int> getOnlineLevels(int limit)
+        {
+            return getOnlineLevels(G.Sys.GameManager_.LevelPlaylist_.Index_, limit);
         }
 
-        IEnumerator voteAndGoNext()
+        private int getFirstOnlineLevelIndex(int start)
         {
-            int myIndex = index;
-            foreach (float f in waitForMinPlayers())
+            var list = getOnlineLevels(start, 1);
+            if (list.Count < 1)
+                return -1;
+            return list[0];
+        }
+
+        private int getFirstOnlineLevelIndex()
+        {
+            var list = getOnlineLevels(1);
+            if (list.Count < 1)
+                return -1;
+            return list[0];
+        }
+
+        private bool getOnlineLevelsWrapsAround(int start, int limit)
+        {
+            int last = 0;
+            foreach (int index in getOnlineLevels(start, limit))
             {
-                yield return new WaitForSeconds(f);
+                if (index < last)
+                    return true;
+                last = index;
             }
-            if (index != myIndex)
-                yield break;
+            return false;
+        }
+
+        IEnumerator waitAndGoNext()
+        {
             if (!Utilities.isOnLobby())
             {
-                voting = true;
-                votes.Clear();
-                if(G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - G.Sys.GameManager_.LevelPlaylist_.Index_ < maxtVoteValue)
+                int myIndex = index; // index and myIndex are used to check if the level advances before auto does it.
+                foreach (float f in waitForMinPlayers())
+                {
+                    yield return new WaitForSeconds(f);
+                }
+                if (index != myIndex)
+                    yield break;
+
+                int nextLevelIndex;
+                if (Utilities.isCurrentLastLevel())
                 {
                     if (shuffleAtEnd)
                         cmd.all.getCommand("shuffle").use(null, "");
@@ -296,23 +320,130 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             G.Sys.GameManager_.NextLevelPath_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelPath_;
                         }
                     }
+                    nextLevelIndex = 0;
                 }
-                Utilities.sendMessage("Vote for the next map (write [FF0000]1[-], [00FF00]2[-], [0088FF]3[-], or [FFFFFF]0[-] to restart) ! Votes end in 15 sec !");
-                Utilities.sendMessage("[b][FF0000]1[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + 1].levelNameAndPath_.levelName_ + "[-][/b]");
-                Utilities.sendMessage("[b][00FF00]2[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + 2].levelNameAndPath_.levelName_ + "[-][/b]");
-                Utilities.sendMessage("[b][0088FF]3[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + 3].levelNameAndPath_.levelName_ + "[-][/b]");
+                else
+                {
+                    nextLevelIndex = G.Sys.GameManager_.LevelPlaylist_.Index_ + 1;
+                }
+
+                if (skipOffline)
+                {
+                    nextLevelIndex = getFirstOnlineLevelIndex(nextLevelIndex);
+                    if (nextLevelIndex == -1)
+                    {
+                        autoMode = false;
+                        Utilities.sendMessage("The only levels available are offline levels (not official and not on the workshop).");
+                        Utilities.sendMessage("Qutting auto mode...");
+                        Utilities.sendMessage("You can disable this behavior with " + Utilities.formatCmd("!settings autoSkipOffline false"));
+                        yield break;
+                    }
+                }
+
+                var level = Utilities.getLevel(nextLevelIndex);
+                Utilities.sendMessage("Going to the next level in 10 seconds...");
+                Utilities.sendMessage("Next level is: " + level.levelName_);
+                myIndex = index;
+                yield return new WaitForSeconds(10.0f);
+                if (index != myIndex)
+                    yield break;
+                if (autoMode && !Utilities.isOnLobby())
+                {
+                    Utilities.testFunc(() =>
+                    {
+                        G.Sys.GameManager_.LevelPlaylist_.SetIndex(nextLevelIndex - 1);
+                        G.Sys.GameManager_.GoToNextLevel(true);
+                    });
+                }
+                else autoMode = false;
+            }
+            else autoMode = false;
+            yield return null;
+        }
+
+        IEnumerator voteAndGoNext()
+        {
+            if (!Utilities.isOnLobby())
+            {
+                int myIndex = index;
+                foreach (float f in waitForMinPlayers())
+                {
+                    yield return new WaitForSeconds(f);
+                }
+                if (index != myIndex)
+                    yield break;
+
+                voting = true;
+                votes.Clear();
+
+                int nextLevelIndex;
+                if(
+                    G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - G.Sys.GameManager_.LevelPlaylist_.Index_ < maxtVoteValue
+                    || (skipOffline && getOnlineLevelsWrapsAround(G.Sys.GameManager_.LevelPlaylist_.Index_ + 1, 3))
+                )
+                {
+                    if (shuffleAtEnd)
+                        cmd.all.getCommand("shuffle").use(null, "");
+                    else
+                    {
+                        if (G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count != 0)
+                        {
+                            G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
+                            G.Sys.GameManager_.NextLevelName_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelName_;
+                            G.Sys.GameManager_.NextLevelPath_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelPath_;
+                        }
+                    }
+                    nextLevelIndex = 0;
+                }
+                else
+                {
+                    nextLevelIndex = G.Sys.GameManager_.LevelPlaylist_.Index_ + 1;
+                }
+
+                List<int> voteLevels;
+                if (skipOffline)
+                {
+                    voteLevels = getOnlineLevels(nextLevelIndex, 3);
+                    if (voteLevels.Count < 3)
+                    {
+                        voting = false;
+                        autoMode = false;
+                        Utilities.sendMessage("The playlist does not have at least 3 online levels. Online levels are official levels and workshop levels only.");
+                        Utilities.sendMessage("Qutting auto mode...");
+                        Utilities.sendMessage("You can disable this behavior with " + Utilities.formatCmd("!settings autoSkipOffline false"));
+                        yield break;
+                    }
+                }
+                else
+                {
+                    voteLevels = new List<int>();
+                    for (int i = 0; i < 3; i++)
+                    {
+                        voteLevels.Add(nextLevelIndex + i);
+                    }
+                }
+                voteLevels.Insert(0, G.Sys.GameManager_.LevelPlaylist_.Index_);
+
+
+                Utilities.sendMessage("Vote for the next map (write [FF0000]1[-], [00FF00]2[-], [0088FF]3[-], or [FFFFFF]0[-] to restart)! Votes end in 15 sec!");
+                Utilities.sendMessage("[b][FF0000]1[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]].levelNameAndPath_.levelName_ + "[-][/b]");
+                Utilities.sendMessage("[b][00FF00]2[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[2]].levelNameAndPath_.levelName_ + "[-][/b]");
+                Utilities.sendMessage("[b][0088FF]3[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[3]].levelNameAndPath_.levelName_ + "[-][/b]");
 
                 myIndex = index;
                 yield return new WaitForSeconds(15);
                 if (index != myIndex)
+                {
+                    voting = false;
                     yield break;
+                }
 
                 if (autoMode && !Utilities.isOnLobby())
                 {
                     int index = bestVote();
                     if(index == 0)
-                        Utilities.sendMessage("Restart the current level !");
-                    else Utilities.sendMessage("Level [b][FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + index].levelNameAndPath_.levelName_ + "[-][/b] selected !");
+                        Utilities.sendMessage("Restarting the current level!");
+                    else Utilities.sendMessage("Level [b][FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[index]].levelNameAndPath_.levelName_ + "[-][/b] selected !");
                     voting = false;
 
                     myIndex = this.index;
@@ -324,7 +455,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     {
                         Utilities.testFunc(() =>
                         {
-                            setToNextMap(index);
+                            setToNextMap(voteLevels[index], voteLevels[voteLevels.Count - 1]);
                             G.Sys.GameManager_.GoToNextLevel(true);
                         });
                     }
@@ -390,7 +521,22 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 total = total + 1;
             }
             if (Utilities.isOnLobby())
+            {
+                if (skipOffline)
+                {
+                    int firstOnlineLevelIndex = getFirstOnlineLevelIndex();
+                    if (firstOnlineLevelIndex == -1)
+                    {
+                        autoMode = false;
+                        Utilities.sendMessage("The only levels available are offline levels (not official and not on the workshop).");
+                        Utilities.sendMessage("Qutting auto mode...");
+                        Utilities.sendMessage("You can disable this behavior with " + Utilities.formatCmd("!settings autoSkipOffline false"));
+                        yield break;
+                    }
+                    G.Sys.GameManager_.LevelPlaylist_.SetIndex(firstOnlineLevelIndex);
+                }
                 G.Sys.GameManager_.GoToCurrentLevel();
+            }
             yield return null;
         }
 
@@ -405,12 +551,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if (maxRunTime > 60)
             {
                 yield return new WaitForSeconds(maxRunTime - 60);
-                if (currentIndex == index && autoMode)
+                CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
+                if (currentIndex == index && autoMode && !countdownCommand.countdownStarted)
                 {
-                    Utilities.sendMessage("This map has run for the maximum run time.");
+                    Utilities.sendMessage("This map has run for the maximum time.");
 
                     // start countdown for 60 seconds. Everyone is marked DNF at 60 seconds.
-                    CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
                     countdownCommand.startCountdown(60);
                 }
             }
@@ -476,24 +622,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
             return choice;
         }
 
-        void setToNextMap(int nextIndex)
+        void setToNextMap(int nextIndexAbsolute, int maxIndex)
         {
             if (!uniqueEndVotes)
             {
-                G.Sys.GameManager_.LevelPlaylist_.SetIndex(G.Sys.GameManager_.LevelPlaylist_.Index_ + nextIndex - 1);
+                G.Sys.GameManager_.LevelPlaylist_.SetIndex(nextIndexAbsolute - 1);
             }
             else
             {
-                for (int i = 1; i <= maxtVoteValue; i++)
-                {
-                    int offset = i >= nextIndex && nextIndex != 0 ? 2 : 1;
-                    var item = G.Sys.GameManager_.LevelPlaylist_.Playlist_[G.Sys.GameManager_.LevelPlaylist_.Index_ + offset];
-                    G.Sys.GameManager_.LevelPlaylist_.Playlist_.RemoveAt(G.Sys.GameManager_.LevelPlaylist_.Index_ + offset);
-                    G.Sys.GameManager_.LevelPlaylist_.Playlist_.Insert(G.Sys.GameManager_.LevelPlaylist_.Index_, item);
-                    G.Sys.GameManager_.LevelPlaylist_.SetIndex(G.Sys.GameManager_.LevelPlaylist_.Index_ + 1);
-                }
-                if (nextIndex == 0)
-                    G.Sys.GameManager_.LevelPlaylist_.SetIndex(G.Sys.GameManager_.LevelPlaylist_.Index_ - 1);
+                // just move the next level past all of the vote-able levels
+                var level = G.Sys.GameManager_.LevelPlaylist_.Playlist_[nextIndexAbsolute];
+                G.Sys.GameManager_.LevelPlaylist_.Playlist_.RemoveAt(nextIndexAbsolute);
+                G.Sys.GameManager_.LevelPlaylist_.Playlist_.Insert(maxIndex, level);
+                G.Sys.GameManager_.LevelPlaylist_.SetIndex(maxIndex - 1);
             }
         }
     }
@@ -562,4 +703,16 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override object Default { get; } = 900;
     }
+    class CmdSettingSkipOfflineTracks : CmdSettingBool
+    {
+        public override string FileId { get; } = "autoSkipOffline";
+        public override string SettingsId { get; } = "autoSkipOffline";
+
+        public override string DisplayName { get; } = "!auto Skip Offline Tracks";
+        public override string HelpShort { get; } = "!auto: Skip tracks that can't be downloaded from the workshop";
+        public override string HelpLong { get; } = "Whether or not levels that are not official levels and are not workshop levels should be skipped over in auto mode";
+
+        public override object Default { get; } = true;
+    }
 }
+ 

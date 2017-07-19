@@ -154,7 +154,8 @@ namespace Spectrum.Plugins.ServerMod
             if (m.mode == GameModeID.Trackmogrify)
                 return levelsInTrackmod(m.name);
 
-            var set = G.Sys.LevelSets_.GetSet(m.mode);
+            var LevelSetsManager = G.Sys.LevelSets_;
+            var set = LevelSetsManager.GetSet(m.mode);
             var lvls = set.GetAllLevelNameAndPathExceptMyLevelsPairs();
 
             if(m.useLastList)

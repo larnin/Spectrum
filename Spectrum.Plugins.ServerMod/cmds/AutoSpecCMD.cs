@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override string DisplayName { get; } = "Auto-Spec Return to Lobby";
         public override string HelpShort { get; } = "!autospec: return to lobby if no one is playing";
-        public override string HelpLong { get; } = "Whether or not to return to the lobby if eveyone leaves while auto-spectate is running.";
+        public override string HelpLong { get; } = "Whether or not to return to the lobby if everyone leaves while auto-spectate is running.";
 
         public override object Default { get; } = false;
     }
@@ -88,6 +88,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public bool playerIsAutoSpec(ClientPlayerInfo p)
         {
+            if (!Utilities.isHost() && !p.IsLocal_)
+                return false;
             return spectators.Contains(Utilities.getUniquePlayerString(p));
         }
 
@@ -108,17 +110,65 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             if (!autoSpecAllowPlayers && !p.IsLocal_)
                 return;
-            string uniq = Utilities.getUniquePlayerString(p);
-            if (spectators.Contains(uniq))
+            if (message != "")
             {
-                spectators.Remove(uniq);
-                Utilities.sendMessage($"Auto spectator mode turned off for {p.Username_}");
+                if (!p.IsLocal_)
+                {
+                    Utilities.sendMessage("You are not allowed to autospec other players.");
+                    Utilities.sendMessage("You can use " + Utilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
+                }
+                else if (!Utilities.isHost())
+                {
+                    Utilities.sendMessage("You can only autospec other players while in your own server.");
+                    Utilities.sendMessage("You can use " + Utilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
+                }
+                else
+                {
+                    var off = "";
+                    var on = "";
+                    foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
+                    {
+                        string uniq = Utilities.getUniquePlayerString(p);
+                        if (spectators.Contains(uniq))
+                        {
+                            spectators.Remove(uniq);
+                            if (off == "")
+                                off = p.Username_;
+                            else
+                               off += $", { p.Username_}";
+                        }
+                        else
+                        {
+                            spectators.Add(uniq);
+                            spectatePlayer(p);
+                            if (on == "")
+                                on = p.Username_;
+                            else
+                                on += $", { p.Username_}";
+                        }
+                    }
+                    if (off != "")
+                        Utilities.sendMessage($"Auto spectator mode turned off for " + off);
+                    if (on != "")
+                        Utilities.sendMessage($"Auto spectator mode turned on for " + on);
+                    if (on == "" && off == "")
+                        Utilities.sendMessage("Could not find any players with that name or index");
+                }
             }
             else
             {
-                spectators.Add(uniq);
-                Utilities.sendMessage($"Auto spectator mode turned on for {p.Username_}");
-                spectatePlayer(p);
+                string uniq = Utilities.getUniquePlayerString(p);
+                if (spectators.Contains(uniq))
+                {
+                    spectators.Remove(uniq);
+                    Utilities.sendMessage($"Auto spectator mode turned off for {p.Username_}");
+                }
+                else
+                {
+                    spectators.Add(uniq);
+                    Utilities.sendMessage($"Auto spectator mode turned on for {p.Username_}");
+                    spectatePlayer(p);
+                }
             }
         }
 

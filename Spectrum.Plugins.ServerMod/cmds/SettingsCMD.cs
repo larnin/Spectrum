@@ -57,9 +57,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     return;
                 }
                 else if (setting == "writemarkdown")
-                {  // command used to generate markdown help for settings. not show to user.
+                {  // command used to generate markdown help for settings. not shown to user.
                     string style = msgMatch.Groups[2].Value.ToLower();
-                    if (style == "command")
+                    if (style == "command" || style == "both")
                     {
                         string txt = "";
                         foreach (cmd Command in cmd.all.list())
@@ -71,9 +71,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                                     txt2 += $"  * `!settings {Setting.SettingsId} {Setting.UsageParameters}`  \n{Setting.HelpMarkdown}  \nDefault: {Setting.Default}  \n";
                             }
                             if (txt2 != "")
-                            {
                                 txt += $"* `!{Command.name}` Settings\n" + txt2;
-                            }
                         }
                         string FilePath = Path.Combine(Defaults.SettingsDirectory, "servermod-settings.command.md");
                         using (var sw = new StreamWriter(FilePath, false))
@@ -81,16 +79,20 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             sw.Write(txt);
                         }
                     }
-                    else if (style == "file")
+
+                    if (style == "file" || style == "both")
                     {
                         string txt = "";
                         foreach (cmd Command in cmd.all.list())
                         {
-                            if (Command.settings.Length > 0)
-                                foreach (CmdSetting Setting in Command.settings)
-                                {
-                                    txt += $"* `\"{Setting.FileId}\" :  {Setting.UsageParameters},`  \n{Setting.HelpMarkdown}  \nDefault: {Setting.Default}  \n";
-                                }
+                            string txt2 = "";
+                            foreach (CmdSetting Setting in Command.settings)
+                            {
+                                if (Setting.FileId != "")
+                                 txt2 += $"* `\"{Setting.FileId}\" :  {Setting.UsageParameters},`  \n{Setting.HelpMarkdown}  \nDefault: {Setting.Default}  \n";
+                            }
+                            if (txt2 != "")
+                                txt += txt2;
                         }
                         string FilePath = Path.Combine(Defaults.SettingsDirectory, "servermod-settings.file.md");
                         using (var sw = new StreamWriter(FilePath, false))
@@ -98,8 +100,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             sw.Write(txt);
                         }
                     }
-                    else
-                        Console.WriteLine("Unknown style type. Styles: command, file");
+
+                    if (style != "file" && style != "command" && style != "both")
+                        Console.WriteLine("Unknown style type. Styles: command, file, both");
                     return;
                 }
                 else if (setting == "help")

@@ -180,9 +180,12 @@ Default: 1
   * `!settings autoMaxTime <seconds>`  
 Maximum amount of time a level can run for in auto mode before it advances to the next  
 Default: 900  
+  * `!settings autoSkipOffline <true/false>`  
+Whether or not levels that are not official levels and are not workshop levels should be skipped over in auto mode  
+Default: True  
 * `!autospec` Settings
   * `!settings autoSpecReturnToLobby <true/false>`  
-Whether or not to return to the lobby if eveyone leaves while auto-spectate is running.  
+Whether or not to return to the lobby if everyone leaves while auto-spectate is running.  
 Default: False  
   * `!settings autoSpecAllowPlayers <true/false>`  
 Whether or not players/clients can use the !autospec command  
@@ -209,9 +212,6 @@ Default:
   * `!settings voteSystem <true/false>`  
 Whether or not players can use votes with !vote  
 Default: False  
-
-
-
 
 #### Shuffle:
 Permission: __HOST__  
@@ -347,8 +347,11 @@ Default: 1
 * `"autoMaxTime" :  <seconds>,`  
 Maximum amount of time a level can run for in auto mode before it advances to the next  
 Default: 900  
+* `"autoSkipOffline" :  <true/false>,`  
+Whether or not levels that are not official levels and are not workshop levels should be skipped over in auto mode  
+Default: True  
 * `"autoSpecReturnToLobby" :  <true/false>,`  
-Whether or not to return to the lobby if eveyone leaves while auto-spectate is running.  
+Whether or not to return to the lobby if everyone leaves while auto-spectate is running.  
 Default: False  
 * `"autoSpecAllowPlayers" :  <true/false>,`  
 Whether or not players/clients can use the !autospec command  

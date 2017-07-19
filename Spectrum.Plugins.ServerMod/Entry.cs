@@ -19,7 +19,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
-        public static string PluginVersion = "Version C.0.6.6";
+        public static string PluginVersion = "Version C.6.7.0";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -246,15 +246,18 @@ namespace Spectrum.Plugins.ServerMod
                 {
                     foreach (CmdSetting Setting in Command.settings)
                     {
-                        var value = Settings[Setting.FileId];
-                        if (value != null)
+                        if (Setting.FileId != "")
                         {
-                            UpdateResult result = Setting.UpdateFromObject(value);
-                            if (!result.Valid)
-                                Console.WriteLine($"Invalid value for {Setting.FileId}: {result.Message}");
-                            else if (result.Message != "")
-                                Console.WriteLine(result.Message);
-                            Setting.Value = result.NewValue;
+                            var value = Settings[Setting.FileId];
+                            if (value != null)
+                            {
+                                UpdateResult result = Setting.UpdateFromObject(value);
+                                if (!result.Valid)
+                                    Console.WriteLine($"Invalid value for {Setting.FileId}: {result.Message}");
+                                else if (result.Message != "")
+                                    Console.WriteLine(result.Message);
+                                Setting.Value = result.NewValue;
+                            }
                         }
                     }
                 }
@@ -273,7 +276,10 @@ namespace Spectrum.Plugins.ServerMod
                 {
                     foreach (CmdSetting Setting in Command.settings)
                     {
-                        Settings[Setting.FileId] = Setting.Value;
+                        if (Setting.FileId != "")
+                        {
+                            Settings[Setting.FileId] = Setting.Value;
+                        }
                     }
                 }
             }
