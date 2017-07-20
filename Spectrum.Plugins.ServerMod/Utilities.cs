@@ -246,6 +246,17 @@ namespace Spectrum.Plugins.ServerMod
             }
         }
 
+        public static object getPrivateField(object obj, string fieldName)
+        {
+            return obj
+                .GetType()
+                .GetField(
+                    fieldName,
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
+                )
+                .GetValue(obj);
+        }
+
         public static bool isLevelOnline(LevelNameAndPathPair TestLevel)
         {
             var LevelSetsManager = G.Sys.LevelSets_;
@@ -256,11 +267,19 @@ namespace Spectrum.Plugins.ServerMod
                     return true;
                 }
             }
+            // Checking the private field appears to be the only way to go about this :(
+            var retrievedPublishedFileIds =  (List<ulong>) getPrivateField(G.Sys.SteamworksManager_.UGC_, "retrievedPublishedFileIds_");
             foreach (var Level in LevelSetsManager.WorkshopLevelNameAndPathPairs_)
             {
                 if (Level.levelPath_ == TestLevel.levelPath_)
                 {
-                    return true;
+                    var relativePath = LevelSetsManager.GetLevelInfo(Level.levelPath_).relativePath_;
+                    WorkshopLevelInfo levelInfo = null;
+                    G.Sys.SteamworksManager_.UGC_.TryGetWorkshopLevelData(relativePath, out levelInfo);
+                    if (levelInfo != null) {
+                        var hasLevelId = retrievedPublishedFileIds.Contains((ulong)levelInfo.levelID_);
+                        return hasLevelId;
+                    }
                 }
             }
             return false;
