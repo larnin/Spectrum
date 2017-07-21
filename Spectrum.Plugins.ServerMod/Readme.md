@@ -28,11 +28,15 @@ The minimum players is configurable with the `autoMinPlayers` setting.
 
 
 #### Autospec:
-Permission: __LOCAL__  
+Permission: __All__ (can also be used as client)  
 Use: !autospec  
 Toggles automatic spectating (useful when you go AFK or use auto mode).  
 If the setting `autoSpecReturnToLobby` in the settings file is `true`: If you are the host and no players are online, the server will automatically return to the lobby.  
-By default, `autoSpecReturnToLobby` is `false`.
+By default, `autoSpecReturnToLobby` is `false`.  
+
+Permission: __HOST__  
+Use: !autospec [player name]  
+Toggles automatic spectating for a specific player.  
 
 #### Clear:
 Permission: __HOST__  
@@ -115,6 +119,11 @@ If the `play` setting is true, players can add levels directly, one at a time.
 If the `playVote` setting is true, players can vote for multiple levels at once: `!play <level>` will act as an alias for `!vote y play <level>`  
 `playVote` overrides `play`. The host will keep the default functionality for the `!play` command, always.
 
+#### Players:  
+Permission: __ALL__ (can also be used as client)  
+Use: !players [player search query]  
+Shows all players in the game that match the search query.
+
 #### Playlist:
 Permission: __ALL__  
 Use: !playlist  
@@ -183,6 +192,9 @@ Default: 900
   * `!settings autoSkipOffline <true/false>`  
 Whether or not levels that are not official levels and are not workshop levels should be skipped over in auto mode  
 Default: True  
+  * `!settings autoVoteText <text>`  
+The text to display for level-end votes. Formatting options: %NAME%, %DIFFICULTY%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%  
+Default: %NAME% [A0A0A0]by %AUTHOR%[-]  
 * `!autospec` Settings
   * `!settings autoSpecReturnToLobby <true/false>`  
 Whether or not to return to the lobby if everyone leaves while auto-spectate is running.  
@@ -299,6 +311,7 @@ When the plugin is started for the first time, it generate a setting file that l
     "updateCheck": true,
 	"playersCanAddMap" : false,
 	"addOneMapOnly" : true,
+    "playIsVote": false,
 	"allowVoteSystem" : false,
 	"autoSpecReturnToLobby" : false,
 	"autoSpecAllowPlayers" : true,
@@ -307,9 +320,10 @@ When the plugin is started for the first time, it generate a setting file that l
 	"autoAdvanceMsg" : "",
 	"autoMinPlayers" : 1,
 	"autoMaxTime" : 900,
-	"autoSpecHostIgnored" : true,
     "autoShuffleAtEndOfPlaylist": true,
     "autoUniqueEndVotes": false,
+	"autoSkipOffline" : true,
+	"autoVoteText" : "%NAME% [A0A0A0]by %AUTHOR%[-]"
 	"voteSystemThresholds" : {
 		"skip" : 0.7,
 		"stop" : 0.7,
@@ -329,57 +343,59 @@ When the plugin is started for the first time, it generate a setting file that l
 }
 ```
 
-* `"voteNext" :  <true/false>,`  
+* `"voteNext" :  <true/false>`,  
 Whether or not players can vote for the next map at the end of a level in auto mode  
 Default: False  
-* `"autoShuffleAtEnd" :  <true/false>,`  
+* `"autoShuffleAtEnd" :  <true/false>`,  
 Whether or not the playlist should be shuffled when it finishes in auto mode  
 Default: True  
-* `"autoUniqueVotes" :  <true/false>,`  
+* `"autoUniqueVotes" :  <true/false>`,  
 Whether or not levels should be re-ordered after votes so the next vote has all-new options  
 Default: True  
-* `"autoAdvanceMsg" :  <text>,`  
+* `"autoAdvanceMsg" :  <text>`,  
 The message to display when the level advances. `clear` to turn off.  
 Default:   
-* `"autoMinPlayers" :  <number>,`  
+* `"autoMinPlayers" :  <number>`,  
 How many players auto mode needs before it will advance to the next level  
 Default: 1  
-* `"autoMaxTime" :  <seconds>,`  
+* `"autoMaxTime" :  <seconds>`,  
 Maximum amount of time a level can run for in auto mode before it advances to the next  
 Default: 900  
-* `"autoSkipOffline" :  <true/false>,`  
+* `"autoSkipOffline" :  <true/false>`,  
 Whether or not levels that are not official levels and are not workshop levels should be skipped over in auto mode  
 Default: True  
-* `"autoSpecReturnToLobby" :  <true/false>,`  
+* `"autoVoteText" :  <text>`,  
+The text to display for level-end votes. Formatting options: %NAME%, %DIFFICULTY%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%  
+Default: %NAME% [A0A0A0]by %AUTHOR%[-]  
+* `"autoSpecReturnToLobby" :  <true/false>`,  
 Whether or not to return to the lobby if everyone leaves while auto-spectate is running.  
 Default: False  
-* `"autoSpecAllowPlayers" :  <true/false>,`  
+* `"autoSpecAllowPlayers" :  <true/false>`,  
 Whether or not players/clients can use the !autospec command  
 Default: True  
-* `"playersCanAddMap" :  <true/false>,`  
+* `"playersCanAddMap" :  <true/false>`,  
 Whether or not players can add maps using !play  
 Default: False  
-* `"addOneMapOnly" :  <true/false>,`  
+* `"addOneMapOnly" :  <true/false>`,  
 Limit players to adding only one map with !play  
 Default: True  
-* `"playIsVote" :  <true/false>,`  
+* `"playIsVote" :  <true/false>`,  
 For non-hosts, !play will use !vote play instead of adding maps directly. The host still adds maps directly.  
 Default: False  
-* `"rip" :  <option>,`  
-Possible !rip phrases  
-* `"updateCheck" :  <true/false>,`  
+* `"updateCheck" :  <true/false>`,  
 Whether or not to show updates to ServerMod when a server is started  
 Default: True  
-* `"welcome" :  <text>,`  
+* `"welcome" :  <text>`,  
 The welcome message to show to players. `clear` to turn off. `%USERNAME%` is replaced with the player's name.  
 Default:   
-* `"win" :  <option>,`  
-Possible !win phrases  
-* `"allowVoteSystem" :  <true/false>,`  
+* `"allowVoteSystem" :  <true/false>`,  
 Whether or not players can use votes with !vote  
 Default: False  
-* `"voteSystemThresholds" :  <option>,`  
+* `"voteSystemThresholds" :  <option>`,  
 The thresholds at which each vote passes  
+* `"win" :  <option>`,  
+* `"rip" :  <option>`,  
+
 
 
 

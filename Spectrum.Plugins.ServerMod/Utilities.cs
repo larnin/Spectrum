@@ -259,8 +259,8 @@ namespace Spectrum.Plugins.ServerMod
 
         public static bool isLevelOnline(LevelNameAndPathPair TestLevel)
         {
-            var LevelSetsManager = G.Sys.LevelSets_;
-            foreach (var Level in LevelSetsManager.OfficialLevelNameAndPathPairs_)
+            var levelSetsManager = G.Sys.LevelSets_;
+            foreach (var Level in levelSetsManager.OfficialLevelNameAndPathPairs_)
             {
                 if (Level.levelPath_ == TestLevel.levelPath_)
                 {
@@ -269,11 +269,11 @@ namespace Spectrum.Plugins.ServerMod
             }
             // Checking the private field appears to be the only way to go about this :(
             var retrievedPublishedFileIds =  (List<ulong>) getPrivateField(G.Sys.SteamworksManager_.UGC_, "retrievedPublishedFileIds_");
-            foreach (var Level in LevelSetsManager.WorkshopLevelNameAndPathPairs_)
+            foreach (var Level in levelSetsManager.WorkshopLevelNameAndPathPairs_)
             {
                 if (Level.levelPath_ == TestLevel.levelPath_)
                 {
-                    var relativePath = LevelSetsManager.GetLevelInfo(Level.levelPath_).relativePath_;
+                    var relativePath = levelSetsManager.GetLevelInfo(Level.levelPath_).relativePath_;
                     WorkshopLevelInfo levelInfo = null;
                     G.Sys.SteamworksManager_.UGC_.TryGetWorkshopLevelData(relativePath, out levelInfo);
                     if (levelInfo != null) {
@@ -283,6 +283,76 @@ namespace Spectrum.Plugins.ServerMod
                 }
             }
             return false;
+        }
+
+        public static string getAuthorName(LevelInfo levelInfo)
+        {
+            if (SteamworksManager.IsSteamBuild_ && levelInfo.levelType_ == LevelType.Workshop)
+            {
+                return SteamworksManager.GetSteamName(levelInfo.workshopCreatorID_);
+            }
+            else if (levelInfo.levelType_ == LevelType.Official)
+            {
+                return "Refract";
+            }
+            else if (levelInfo.levelType_ == LevelType.My)
+            {
+                return "Local";
+            }
+            else
+            {
+                return "Unknown";
+            }
+        }
+
+        public static string formatLevelInfoText(LevelNameAndPathPair level, string levelInfoText)
+        {
+            var resText = levelInfoText;
+            Utilities.testFunc(() =>
+            {
+                bool isPointsMode = G.Sys.GameManager_.Mode_ is PointsBasedMode;
+                var levelSetsManager = G.Sys.LevelSets_;
+                var levelInfo = levelSetsManager.GetLevelInfo(level.levelPath_);
+                Console.WriteLine(levelInfo.relativePath_);
+                WorkshopLevelInfo workshopLevelInfo = null;
+                G.Sys.SteamworksManager_.UGC_.TryGetWorkshopLevelData(levelInfo.relativePath_, out workshopLevelInfo);
+                resText = resText
+                    .Replace("%NAME%", levelInfo.levelName_)
+                    .Replace("%DIFFICULTY%", levelInfo.difficulty_.ToString())
+                    .Replace("%AUTHOR%", getAuthorName(levelInfo));
+                if (levelInfo.SupportsMedals(G.Sys.GameManager_.ModeID_))
+                {
+                    resText = resText
+                        .Replace("%MBRONZE%", levelInfo.GetMedalRequirementString(MedalStatus.Bronze, isPointsMode))
+                        .Replace("%MSILVER%", levelInfo.GetMedalRequirementString(MedalStatus.Silver, isPointsMode))
+                        .Replace("%MGOLD%", levelInfo.GetMedalRequirementString(MedalStatus.Gold, isPointsMode))
+                        .Replace("%MDIAMOND%", levelInfo.GetMedalRequirementString(MedalStatus.Diamond, isPointsMode));
+                }
+                else
+                {
+                    resText = resText
+                        .Replace("%MBRONZE%", "No bronze")
+                        .Replace("%MSILVER%", "No silver")
+                        .Replace("%MGOLD%", "No gold")
+                        .Replace("%MDIAMOND%", "No diamond");
+                }
+                if (workshopLevelInfo != null)
+                {
+
+                    resText = resText
+                        .Replace("%STARS%", SteamworksUGC.GetWorkshopRatingText(workshopLevelInfo))
+                        .Replace("%STARSINT%", ((int)(workshopLevelInfo.voteScore_ / 0.2f)).ToString())
+                        .Replace("%STARSDEC%", (workshopLevelInfo.voteScore_ / 0.2f).ToString("F2"));
+                }
+                else
+                {
+                    resText = resText
+                        .Replace("%STARS%", "No rating")
+                        .Replace("%STARSINT%", "No rating")
+                        .Replace("%STARSDEC%", "No rating");
+                }
+            });
+            return resText;
         }
     }
 }

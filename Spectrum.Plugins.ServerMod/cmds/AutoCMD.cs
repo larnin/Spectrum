@@ -26,7 +26,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
             get { return (bool)getSetting("autoUniqueVotes").Value; }
             set { getSetting("autoUniqueVotes").Value = value; }
         }
-
         public string advanceMessage
         {
             get { return (string)getSetting("autoAdvanceMsg").Value; }
@@ -46,6 +45,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             get { return (bool)getSetting("autoSkipOffline").Value; }
             set { getSetting("autoSkipOffline").Value = value; }
+        }
+        public string voteText
+        {
+            get { return (string)getSetting("autoVoteText").Value; }
+            set { getSetting("autoVoteText").Value = value; }
         }
 
         const int maxtVoteValue = 3;
@@ -73,7 +77,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             new CmdSettingAutoMessage(),
             new CmdSettingAutoMinPlayers(),
             new CmdSettingAutoMaxTime(),
-            new CmdSettingSkipOfflineTracks()
+            new CmdSettingSkipOfflineTracks(),
+            new CmdSettingVoteText()
         };
 
         public AutoCMD(cmdlist list)
@@ -426,9 +431,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
 
                 Utilities.sendMessage("Vote for the next map (write [FF0000]1[-], [00FF00]2[-], [0088FF]3[-], or [FFFFFF]0[-] to restart)! Votes end in 15 sec!");
-                Utilities.sendMessage("[b][FF0000]1[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]].levelNameAndPath_.levelName_ + "[-][/b]");
-                Utilities.sendMessage("[b][00FF00]2[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[2]].levelNameAndPath_.levelName_ + "[-][/b]");
-                Utilities.sendMessage("[b][0088FF]3[-] : [FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[3]].levelNameAndPath_.levelName_ + "[-][/b]");
+                Utilities.sendMessage("[b][FF0000]1[-] : [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]].levelNameAndPath_, voteText) + "[-][/b]");
+                Utilities.sendMessage("[b][00FF00]2[-] : [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[2]].levelNameAndPath_, voteText) + "[-][/b]");
+                Utilities.sendMessage("[b][0088FF]3[-] : [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[3]].levelNameAndPath_, voteText) + "[-][/b]");
 
                 myIndex = index;
                 yield return new WaitForSeconds(15);
@@ -713,6 +718,18 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string HelpLong { get; } = "Whether or not levels that are not official levels and are not workshop levels should be skipped over in auto mode";
 
         public override object Default { get; } = true;
+    }
+    class CmdSettingVoteText : CmdSettingString
+    {
+        public override string FileId { get; } = "autoVoteText";
+        public override string SettingsId { get; } = "autoVoteText";
+
+        public override string DisplayName { get; } = "!auto Vote Text";
+        public override string HelpShort { get; } = "!auto: Formatted text to display for level-end votes";
+        public override string HelpLong { get; } = "The text to display for level-end votes. Formatting options: "
+            + "%NAME%, %DIFFICULTY%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%";
+
+        public override object Default { get; } = "%NAME% [A0A0A0]by %AUTHOR%[-]";
     }
 }
  

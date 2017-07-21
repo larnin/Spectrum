@@ -23,6 +23,7 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new LoadCMD());
             //cmds.Add(new NameCMD()); // not supported
             cmds.Add(new PlayCMD());
+            cmds.Add(new PlayersCMD());
             cmds.Add(new PlaylistCMD());
             cmds.Add(new PluginCMD());
             cmds.Add(new RestartCMD());

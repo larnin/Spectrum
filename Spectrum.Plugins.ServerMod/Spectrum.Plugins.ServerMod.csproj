@@ -76,6 +76,7 @@
     <Compile Include="cmds\ServerCMD.cs" />
     <Compile Include="cmds\SettingsCMD.cs" />
     <Compile Include="cmds\ShuffleCMD.cs" />
+    <Compile Include="cmds\PlayersCMD.cs" />
     <Compile Include="cmds\SpecCMD.cs" />
     <Compile Include="cmds\TimelimitCMD.cs" />
     <Compile Include="cmds\VoteHandler.cs" />
