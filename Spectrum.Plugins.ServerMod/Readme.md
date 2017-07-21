@@ -309,37 +309,37 @@ When the plugin is started for the first time, it generate a setting file that l
 ```
 {
     "updateCheck": true,
-	"playersCanAddMap" : false,
-	"addOneMapOnly" : true,
+    "playersCanAddMap" : false,
+    "addOneMapOnly" : true,
     "playIsVote": false,
-	"allowVoteSystem" : false,
-	"autoSpecReturnToLobby" : false,
-	"autoSpecAllowPlayers" : true,
-	"welcome" : "",
-	"voteNext" : false,
-	"autoAdvanceMsg" : "",
-	"autoMinPlayers" : 1,
-	"autoMaxTime" : 900,
+    "allowVoteSystem" : false,
+    "autoSpecReturnToLobby" : false,
+    "autoSpecAllowPlayers" : true,
+    "welcome" : "",
+    "voteNext" : false,
+    "autoAdvanceMsg" : "",
+    "autoMinPlayers" : 1,
+    "autoMaxTime" : 900,
     "autoShuffleAtEndOfPlaylist": true,
     "autoUniqueEndVotes": false,
-	"autoSkipOffline" : true,
-	"autoVoteText" : "%NAME% [A0A0A0]by %AUTHOR%[-]"
-	"voteSystemThresholds" : {
-		"skip" : 0.7,
-		"stop" : 0.7,
-		"play" : 0.55,
-		"kick" : 0.9,
-		"count" : 0.55
-	},
-	"win" : [
-		"ALL RIGHT!",
-		"YEAH!"
-	],
-	"rip" : [
-		"ACCESS VIOLATION!",
-		"AW, THAT'S TOO BAD!",
-		"YOU'RE OUT OF CONTROL!"
-	]
+    "autoSkipOffline" : true,
+    "autoVoteText" : "%NAME% [A0A0A0]by %AUTHOR%[-]"
+    "voteSystemThresholds" : {
+        "skip" : 0.7,
+        "stop" : 0.7,
+        "play" : 0.55,
+        "kick" : 0.9,
+        "count" : 0.55
+    },
+    "win" : [
+        "ALL RIGHT!",
+        "YEAH!"
+    ],
+    "rip" : [
+        "ACCESS VIOLATION!",
+        "AW, THAT'S TOO BAD!",
+        "YOU'RE OUT OF CONTROL!"
+    ]
 }
 ```
 
