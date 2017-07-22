@@ -30,7 +30,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
             {
                 StaticTargetedEvent<Finished.Data>.Broadcast(client.NetworkPlayer_, default(Finished.Data));
-                affects += $"{ p.Username_}, ";
+                affects += $"{ client.Username_}, ";
             }
             if (affects == "")
                 Utilities.sendMessage("Could not find any players with that name or index");

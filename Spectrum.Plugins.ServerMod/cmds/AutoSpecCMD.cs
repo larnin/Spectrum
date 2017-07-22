@@ -128,23 +128,23 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     var on = "";
                     foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
                     {
-                        string uniq = Utilities.getUniquePlayerString(p);
+                        string uniq = Utilities.getUniquePlayerString(client);
                         if (spectators.Contains(uniq))
                         {
                             spectators.Remove(uniq);
                             if (off == "")
-                                off = p.Username_;
+                                off = client.Username_;
                             else
-                               off += $", { p.Username_}";
+                               off += $", { client.Username_}";
                         }
                         else
                         {
                             spectators.Add(uniq);
-                            spectatePlayer(p);
+                            spectatePlayer(client);
                             if (on == "")
-                                on = p.Username_;
+                                on = client.Username_;
                             else
-                                on += $", { p.Username_}";
+                                on += $", { client.Username_}";
                         }
                     }
                     if (off != "")

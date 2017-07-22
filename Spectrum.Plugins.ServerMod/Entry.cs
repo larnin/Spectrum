@@ -19,7 +19,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
-        public static string PluginVersion = "Version C.6.8.0";
+        public static string PluginVersion = "Version C.6.9.0";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -83,7 +83,7 @@ namespace Spectrum.Plugins.ServerMod
                     return;
 
                 int pos = message.IndexOf(' ');
-                string commandName = (pos > 0 ? message.Substring(1, pos) : message.Substring(1).Trim());
+                string commandName = (pos > 0 ? message.Substring(1, pos) : message.Substring(1)).Trim();
                 cmd c = cmd.all.getCommand(commandName);
                 if (c == null)
                     return;
@@ -92,7 +92,6 @@ namespace Spectrum.Plugins.ServerMod
                     Utilities.sendMessage("You can't use that command as client");
                     return;
                 }
-
                 exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
             }
             else

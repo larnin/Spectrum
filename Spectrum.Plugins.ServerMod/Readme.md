@@ -194,7 +194,7 @@ Whether or not levels that are not official levels and are not workshop levels s
 Default: True  
   * `!settings autoVoteText <text>`  
 The text to display for level-end votes. Formatting options: %NAME%, %DIFFICULTY%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%  
-Default: %NAME% [A0A0A0]by %AUTHOR%[-]  
+Default: \[b]%NAME% [A0A0A0]by %AUTHOR%[-]\[/b]  
 * `!autospec` Settings
   * `!settings autoSpecReturnToLobby <true/false>`  
 Whether or not to return to the lobby if everyone leaves while auto-spectate is running.  
@@ -366,7 +366,7 @@ Whether or not levels that are not official levels and are not workshop levels s
 Default: True  
 * `"autoVoteText" :  <text>`,  
 The text to display for level-end votes. Formatting options: %NAME%, %DIFFICULTY%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%  
-Default: %NAME% [A0A0A0]by %AUTHOR%[-]  
+Default: \[b]%NAME% [A0A0A0]by %AUTHOR%[-]\[/b]  
 * `"autoSpecReturnToLobby" :  <true/false>`,  
 Whether or not to return to the lobby if everyone leaves while auto-spectate is running.  
 Default: False  

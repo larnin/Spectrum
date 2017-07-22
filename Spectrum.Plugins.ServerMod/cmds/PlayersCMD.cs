@@ -20,7 +20,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if(message == "")
+            Console.WriteLine("in players");
+            if (message == "")
             {
                 help(p);
                 return;
@@ -29,7 +30,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             var affects = "";
             foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
             {
-                affects += $"{ p.Username_} ({p.Index_}), ";
+                affects += $"{ client.Username_} ({client.Index_}), ";
             }
             if (affects == "")
                 Utilities.sendMessage("Could not find any players with that name or index");

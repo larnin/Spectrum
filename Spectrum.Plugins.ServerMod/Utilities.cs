@@ -38,9 +38,12 @@ namespace Spectrum.Plugins.ServerMod
                 Console.WriteLine($"Error: {e}");
                 try
                 {
-                    sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
-                    sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
-                    sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    if (isHost())
+                    {
+                        sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                        sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                        sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    }
                 }
                 catch (Exception e2)
                 {
@@ -88,11 +91,12 @@ namespace Spectrum.Plugins.ServerMod
 
         public static List<ClientPlayerInfo> getClientsBySearch(string search)
         {
+            var clients = new List<ClientPlayerInfo>();
             int index;
             if (!int.TryParse(search, out index))
                 index = -1;
             search = Regex.Escape(search).Replace("\\*", ".*").Replace("\\$", "$").Replace("\\^", "^");
-            var clients = new List<ClientPlayerInfo>();
+
             foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
             {
                 if (index != -1 ? current.Index_ == index : Regex.Match(current.Username_, search, RegexOptions.IgnoreCase).Success)
@@ -305,7 +309,17 @@ namespace Spectrum.Plugins.ServerMod
             }
         }
 
+        public static string formatLevelInfoText(LevelPlaylist.ModeAndLevelInfo level, string levelInfoText)
+        {
+            return formatLevelInfoText(level.levelNameAndPath_, level.mode_, levelInfoText);
+        }
+
         public static string formatLevelInfoText(LevelNameAndPathPair level, string levelInfoText)
+        {
+            return formatLevelInfoText(level, GameModeID.None, levelInfoText);
+        }
+
+        public static string formatLevelInfoText(LevelNameAndPathPair level, GameModeID mode, string levelInfoText)
         {
             var resText = levelInfoText;
             Utilities.testFunc(() =>
@@ -319,7 +333,8 @@ namespace Spectrum.Plugins.ServerMod
                 resText = resText
                     .Replace("%NAME%", levelInfo.levelName_)
                     .Replace("%DIFFICULTY%", levelInfo.difficulty_.ToString())
-                    .Replace("%AUTHOR%", getAuthorName(levelInfo));
+                    .Replace("%AUTHOR%", getAuthorName(levelInfo))
+                    .Replace("%MODE%", mode.ToString());
                 if (levelInfo.SupportsMedals(G.Sys.GameManager_.ModeID_))
                 {
                     resText = resText

@@ -429,11 +429,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 }
                 voteLevels.Insert(0, G.Sys.GameManager_.LevelPlaylist_.Index_);
 
-
                 Utilities.sendMessage("Vote for the next map (write [FF0000]1[-], [00FF00]2[-], [0088FF]3[-], or [FFFFFF]0[-] to restart)! Votes end in 15 sec!");
-                Utilities.sendMessage("[b][FF0000]1[-] : [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]].levelNameAndPath_, voteText) + "[-][/b]");
-                Utilities.sendMessage("[b][00FF00]2[-] : [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[2]].levelNameAndPath_, voteText) + "[-][/b]");
-                Utilities.sendMessage("[b][0088FF]3[-] : [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[3]].levelNameAndPath_, voteText) + "[-][/b]");
+                Utilities.sendMessage("[b][FF0000]1[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]], voteText) + "[-]");
+                Utilities.sendMessage("[b][00FF00]2[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[2]], voteText) + "[-]");
+                Utilities.sendMessage("[b][0088FF]3[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[3]], voteText) + "[-]");
 
                 myIndex = index;
                 yield return new WaitForSeconds(15);
@@ -727,9 +726,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string DisplayName { get; } = "!auto Vote Text";
         public override string HelpShort { get; } = "!auto: Formatted text to display for level-end votes";
         public override string HelpLong { get; } = "The text to display for level-end votes. Formatting options: "
-            + "%NAME%, %DIFFICULTY%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%";
+            + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%";
 
-        public override object Default { get; } = "%NAME% [A0A0A0]by %AUTHOR%[-]";
+        public override object Default { get; } = "[b]%NAME% [A0A0A0]by %AUTHOR%[-][/b]";
     }
 }
  
