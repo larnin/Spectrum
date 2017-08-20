@@ -17,16 +17,27 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override object Default { get; } = false;
     }
-    class CmdSettingPlayAddOne : CmdSettingBool
+    class CmdSettingPlayMaxPerCmd : CmdSettingInt
     {
-        public override string FileId { get; } = "addOneMapOnly";
-        public override string SettingsId { get; } = "addOne";
+        public override string FileId { get; } = "playMaxPerCmd";
+        public override string SettingsId { get; } = "playMaxPerCmd";
 
-        public override string DisplayName { get; } = "Player !play one map only";
-        public override string HelpShort { get; } = "!play: allow players to add only one map";
-        public override string HelpLong { get; } = "Limit players to adding only one map with !play";
+        public override string DisplayName { get; } = "Player !play max per command use";
+        public override string HelpShort { get; } = "!play: allow players to add only a certain number of maps each time they use `!play`";
+        public override string HelpLong { get; } = "Limit players to adding a certain number of maps with !play. A value of 0 allows any number of maps.";
 
-        public override object Default { get; } = true;
+        public override object Default { get; } = 1;
+    }
+    class CmdSettingPlayMaxPerRound : CmdSettingInt
+    {
+        public override string FileId { get; } = "playMaxPerRound";
+        public override string SettingsId { get; } = "playMaxPerRound";
+
+        public override string DisplayName { get; } = "Player !play max per round use";
+        public override string HelpShort { get; } = "!play: allow players to add only a certain number of maps per round";
+        public override string HelpLong { get; } = "Limit players to adding a certain number of maps with !play. A value of 0 allows any number of maps.";
+
+        public override object Default { get; } = 1;
     }
     class CmdSettingPlayIsVote : CmdSettingBool
     {
@@ -46,10 +57,15 @@ namespace Spectrum.Plugins.ServerMod.cmds
             get { return (bool)getSetting("playersCanAddMap").Value; }
             set { getSetting("playersCanAddMap").Value = value; }
         }
-        public bool addOneMapOnly
+        public int maxPerCmd
         {
-            get { return (bool)getSetting("addOneMapOnly").Value; }
-            set { getSetting("addOneMapOnly").Value = value; }
+            get { return (int)getSetting("playMaxPerCmd").Value; }
+            set { getSetting("playMaxPerCmd").Value = value; }
+        }
+        public int maxPerRound
+        {
+            get { return (int)getSetting("playMaxPerRound").Value; }
+            set { getSetting("playMaxPerRound").Value = value; }
         }
         public bool useVote
         {
@@ -64,9 +80,23 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override CmdSetting[] settings { get; } =
         {
             new CmdSettingPlayPlayersAddMaps(),
-            new CmdSettingPlayAddOne(),
+            new CmdSettingPlayMaxPerCmd(),
+            new CmdSettingPlayMaxPerRound(),
             new CmdSettingPlayIsVote()
         };
+
+        Dictionary<string, int> playerVotesThisRound = new Dictionary<string, int>();
+
+        public PlayCMD()
+        {
+            Events.GameMode.ModeStarted.Subscribe(data =>
+            {
+                Utilities.testFunc(() =>
+                {
+                    playerVotesThisRound.Clear();
+                });
+            });
+        }
 
         public override void help(ClientPlayerInfo p)
         {
@@ -76,7 +106,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 Utilities.sendMessage(Utilities.formatCmd("!play [lvl name]") + ": Adds a level to the playlist as the next to be played.");
             Utilities.sendMessage(Utilities.formatCmd("!play [filter]") + ": Use filters to find a level");
             Utilities.sendMessage("Valid filters: -mode -m -name -n -author -a -index -i -last -l -all");
-            Utilities.sendMessage("The level must be known by the server to be show up");
+            Utilities.sendMessage("The level must be known by the server to be shown");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -115,39 +145,67 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
 
-            if(!m.all && list.Count() > 1 && m.index.Count == 0)
-            {
-                LevelList.printLevels(list, m.page, 10, true);
-                //LevelList.printLevels(list, 10, true);
-                return;
-            }
-
-            if(playersCanAddMap && !p.IsLocal_)
-            {
-                var value = list[0];
-                list.Clear();
-                list.Add(value);
-            }
-
             LevelPlaylist playlist = new LevelPlaylist();
             playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
 
             var currentPlaylist = playlist.Playlist_;
-            int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
+            AutoCMD autoCmd = (AutoCMD) cmd.all.getCommand("auto");
+            int origIndex = G.Sys.GameManager_.LevelPlaylist_.Index_;
+            int index = autoCmd.getInsertIndex();
             Utilities.Shuffle(list, new Random());
-            foreach (var lvl in list)
-                currentPlaylist.Insert(index + 1, lvl);
-            G.Sys.GameManager_.LevelPlaylist_.Clear();
 
-            foreach (var lvl in currentPlaylist)
-                G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
-            G.Sys.GameManager_.LevelPlaylist_.SetIndex(index);
+            var maxPerRoundLocal = 0;
+            if (maxPerRound <= 0)
+                maxPerRoundLocal = int.MaxValue;
+            else
+                maxPerRoundLocal = maxPerRound;
+
+            var maxPerCmdLocal = 0;
+            if (maxPerCmd <= 0)
+                maxPerCmdLocal = int.MaxValue;
+            else
+                maxPerCmdLocal = maxPerCmd;
+
+            var countCmd = 0;
+
+            var countRound = 0;
+            playerVotesThisRound.TryGetValue(Utilities.getUniquePlayerString(p), out countRound);
 
             string lvlsStr = "";
             foreach (var lvl in list)
-                lvlsStr += lvl.levelNameAndPath_.levelName_ + ", ";
+            {
+                if (countRound + 1 > maxPerRoundLocal)
+                {
+                    Utilities.sendMessage($"You have reached the maximum amount of maps you can add per round ({maxPerRound})");
+                    break;
+                }
+                if (countCmd + 1 > maxPerCmdLocal)
+                {
+                    Utilities.sendMessage("You have reached the maximum amount of maps you can add per " + Utilities.formatCmd("!play") + $" ({maxPerCmd})");
+                    break;
+                }
+                countRound++;
+                countCmd++;
+                if (countCmd <= 10)
+                    lvlsStr += lvl.levelNameAndPath_.levelName_ + ", ";
+                currentPlaylist.Insert(index, lvl);
+            }
+            playerVotesThisRound[Utilities.getUniquePlayerString(p)] = countRound;
 
-            Utilities.sendMessage("Level(s) " + lvlsStr.Substring(0, lvlsStr.Count()-2) + " added to the playlist !");
+            if (countCmd > 0)
+            {
+                G.Sys.GameManager_.LevelPlaylist_.Clear();
+
+                foreach (var lvl in currentPlaylist)
+                    G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
+                G.Sys.GameManager_.LevelPlaylist_.SetIndex(origIndex);
+
+                lvlsStr = lvlsStr.Substring(0, lvlsStr.Count() - 2);
+                if (countCmd > 10)
+                    lvlsStr = lvlsStr + $" and {countCmd - 10} more";
+
+                Utilities.sendMessage("Level(s) " + lvlsStr + " added to the playlist !");
+            }
         }
     }
 }

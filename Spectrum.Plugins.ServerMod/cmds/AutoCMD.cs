@@ -81,6 +81,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             new CmdSettingVoteText()
         };
 
+        public int currentMapInsertIndex = -1;
+
         public AutoCMD(cmdlist list)
         {
             this.list = list;
@@ -198,6 +200,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if (!Utilities.isOnline())
                 autoMode = false;
             index++;
+            currentMapInsertIndex = -1;
         }
 
         private void onGo()
@@ -299,6 +302,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
             return false;
         }
 
+        public int getInsertIndex()
+        {
+            if (currentMapInsertIndex == -1)
+                return G.Sys.GameManager_.LevelPlaylist_.Index_ + 1;
+            else
+                return currentMapInsertIndex;
+        }
+
         IEnumerator waitAndGoNext()
         {
             if (!Utilities.isOnLobby())
@@ -344,6 +355,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         yield break;
                     }
                 }
+
+                currentMapInsertIndex = nextLevelIndex + 1;
 
                 var level = Utilities.getLevel(nextLevelIndex);
                 Utilities.sendMessage("Going to the next level in 10 seconds...");
@@ -428,6 +441,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                 }
                 voteLevels.Insert(0, G.Sys.GameManager_.LevelPlaylist_.Index_);
+
+                currentMapInsertIndex = voteLevels[voteLevels.Count - 1] + 1;
 
                 Utilities.sendMessage("Vote for the next map (write [FF0000]1[-], [00FF00]2[-], [0088FF]3[-], or [FFFFFF]0[-] to restart)! Votes end in 15 sec!");
                 Utilities.sendMessage("[b][FF0000]1[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]], voteText) + "[-]");

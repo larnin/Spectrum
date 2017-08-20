@@ -327,7 +327,6 @@ namespace Spectrum.Plugins.ServerMod
                 bool isPointsMode = G.Sys.GameManager_.Mode_ is PointsBasedMode;
                 var levelSetsManager = G.Sys.LevelSets_;
                 var levelInfo = levelSetsManager.GetLevelInfo(level.levelPath_);
-                Console.WriteLine(levelInfo.relativePath_);
                 WorkshopLevelInfo workshopLevelInfo = null;
                 G.Sys.SteamworksManager_.UGC_.TryGetWorkshopLevelData(levelInfo.relativePath_, out workshopLevelInfo);
                 resText = resText
