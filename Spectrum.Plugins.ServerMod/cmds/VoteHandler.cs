@@ -451,7 +451,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     LevelPlaylist playlist = new LevelPlaylist();
                     playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
                     var currentPlaylist = playlist.Playlist_;
-                    int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
+                    AutoCMD autoCmd = (AutoCMD)cmd.all.getCommand("auto");
+                    int origIndex = G.Sys.GameManager_.LevelPlaylist_.Index_;
+                    int index = autoCmd.getInsertIndex();
 
                     foreach (LevelPlaylist.ModeAndLevelInfo lvl in lvls)
                     {
@@ -499,7 +501,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                                 levelResults.Add(new LevelResultsSortInfo(lvl, votes.Count, numPlayers, threshold, 1));
                                 if (Convert.ToDouble(votes.Count) / Convert.ToDouble(numPlayers) >= threshold)
                                 {
-                                    currentPlaylist.Insert(index + 1, lvl);
+                                    currentPlaylist.Insert(index, lvl);
                                     parent.votes.Remove(id);
                                 }
                             }
@@ -509,7 +511,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     G.Sys.GameManager_.LevelPlaylist_.Clear();
                     foreach (var lvl in currentPlaylist)
                         G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
-                    G.Sys.GameManager_.LevelPlaylist_.SetIndex(index);
+                    G.Sys.GameManager_.LevelPlaylist_.SetIndex(origIndex);
 
                     var playersThreshold = Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)));
 
