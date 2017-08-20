@@ -26,7 +26,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string HelpShort { get; } = "!play: allow players to add only a certain number of maps each time they use `!play`";
         public override string HelpLong { get; } = "Limit players to adding a certain number of maps with !play. A value of 0 allows any number of maps.";
 
-        public override object Default { get; } = 1;
+        public override object Default { get; } = 0;
     }
     class CmdSettingPlayMaxPerRound : CmdSettingInt
     {
