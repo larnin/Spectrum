@@ -216,7 +216,7 @@ namespace Spectrum.Plugins.ServerMod
                     var author = getAuthorOfLevel(lvl);
                     if (author.Count() == 0)
                         continue;
-                    if (author.ToLower().Trim() == m.author.ToLower().Trim())
+                    if (author.ToLower().Trim().Contains(m.author.ToLower().Trim()))
                         authorFilteredList.Add(lvl);
                 }
             }
