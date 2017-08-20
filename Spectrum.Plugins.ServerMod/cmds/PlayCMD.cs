@@ -155,13 +155,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Utilities.Shuffle(list, new Random());
 
             var maxPerRoundLocal = 0;
-            if (maxPerRound <= 0)
+            if (p.IsLocal_ || maxPerRound <= 0)
                 maxPerRoundLocal = int.MaxValue;
             else
                 maxPerRoundLocal = maxPerRound;
 
             var maxPerCmdLocal = 0;
-            if (maxPerCmd <= 0)
+            if (p.IsLocal_ || maxPerCmd <= 0)
                 maxPerCmdLocal = int.MaxValue;
             else
                 maxPerCmdLocal = maxPerCmd;
