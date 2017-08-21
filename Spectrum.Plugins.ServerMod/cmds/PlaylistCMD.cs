@@ -50,7 +50,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override void help(ClientPlayerInfo p)
         {
             Utilities.sendMessage(Utilities.formatCmd("!playlist") + " saves, loads, creates, deletes, and filters playlists");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist list [search string]") + ": List all playlists");
+            Utilities.sendMessage(Utilities.formatCmd("!playlist list [search]") + ": List all playlists");
             Utilities.sendMessage(Utilities.formatCmd("!playlist new [filter]") + ": Creates a new playlist.");
             Utilities.sendMessage(Utilities.formatCmd("!playlist load <name>") + ": Load playlist, [FFFFFF]current[-] is the one being played and isn't saved");
             Utilities.sendMessage(Utilities.formatCmd("!playlist save <name>") + ": Save playlist, [FFFFFF]current[-] is the one being played");
