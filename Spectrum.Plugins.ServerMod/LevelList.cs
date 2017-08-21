@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.PlaylistTools;
+using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +22,7 @@ namespace Spectrum.Plugins.ServerMod
     
     static class LevelList
     {
+
         static List<LevelPlaylist.ModeAndLevelInfo> lastList = new List<LevelPlaylist.ModeAndLevelInfo>();
 
         static private List<GameModeID> validModes = new List<GameModeID>

@@ -1,7 +1,11 @@
 ﻿using Events;
 using Events.ClientToAllClients;
+using Spectrum.Plugins.ServerMod.PlaylistTools;
+using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
+using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters.Sorts;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -87,6 +91,11 @@ namespace Spectrum.Plugins.ServerMod
         public static bool isOnGamemode()
         {
             return GameManager.SceneName_.Equals("GameMode");
+        }
+
+        public static string getUniquePlayerString(ClientPlayerInfo p)
+        {
+            return $"{p.Username_}:{p.NetworkPlayer_.externalIP}:{p.NetworkPlayer_.externalPort}";
         }
 
         public static List<ClientPlayerInfo> getClientsBySearch(string search)
@@ -207,10 +216,112 @@ namespace Spectrum.Plugins.ServerMod
         {
             return DirectoryEx.GetFiles(Resource.PersonalLevelPlaylistsDirPath_).ToList();
         }
-
-        public static string getUniquePlayerString(ClientPlayerInfo p)
+        public static List<LevelPlaylist.ModeAndLevelInfo> getAllLevelsAndModes()
         {
-            return $"{p.Username_}:{p.NetworkPlayer_.externalIP}:{p.NetworkPlayer_.externalPort}";
+            var levelSetsManager = G.Sys.LevelSets_;
+            var levelsReturn = new List<LevelPlaylist.ModeAndLevelInfo>();
+            foreach (LevelSet set in levelSetsManager.levelSets_)
+            {
+                var mode = set.gameModeID_;
+                var levels = set.GetAllLevelNameAndPathExceptMyLevelsPairs();
+                foreach (var level in levels)
+                {
+                    levelsReturn.Add(new LevelPlaylist.ModeAndLevelInfo(mode, level));
+                }
+            }
+            return levelsReturn;
+        }
+
+        public static FilteredPlaylist getFilteredPlaylist(string input)
+        {
+            var playlist = new FilteredPlaylist(getAllLevelsAndModes());
+            var failures = playlist.AddFiltersFromString(input);
+            if (!playlist.filters.Any(filter => filter is LevelFilterMode))
+            {
+                playlist.filters.Insert(0, new LevelFilterMode(GameModeID.Sprint));
+            }
+            var count = 0;
+            foreach (string failure in failures)
+            {
+                if (count >= 3 && failures.Count > 4)
+                {
+                    Utilities.sendMessage($"[A00000]and {failures.Count - count} more.[-]");
+                    break;
+                }
+                Utilities.sendMessage("[A00000]" + failure + "[-]");
+                count++;
+            }
+            return playlist;
+        }
+
+        public static List<LevelPlaylist.ModeAndLevelInfo> getFilteredLevels(string input)
+        {
+            return getFilteredPlaylist(input).Calculate();
+        }
+
+        public static string getPlaylistPageText(FilteredPlaylist playlist)
+        {
+            List<int> removeIndexes = new List<int>();
+            List<int> pages = new List<int>();
+            for(int i = playlist.filters.Count - 1; i >= 0; i--)
+            {
+                if (playlist.filters[i] is LevelFilterPage)
+                {
+                    var filter = (LevelFilterPage)playlist.filters[i];
+                    if (filter.comparison.comparison == IntComparison.Comparison.Equal)
+                        if (filter.mode == LevelFilter.Mode.And)
+                        {
+                            pages.Clear();
+                            pages.Add(filter.comparison.number);
+                            removeIndexes.Add(i);
+                            break;
+                        }
+                        else if (filter.mode == LevelFilter.Mode.Or)
+                        {
+                            pages.Insert(0, filter.comparison.number);
+                            removeIndexes.Add(i);
+                        }
+                        else
+                            break; // using `Not` will make things too unpredictable
+                    else
+                        return null;
+                }
+                else if (playlist.filters[i] is LevelSortFilter)
+                    return null; // anything before a sort filter is not guaranteed to be in the same place now
+            }
+            if (pages.Count == 0)
+                pages.Add(1);
+            var newFilters = new List<LevelFilter>(playlist.filters);
+            foreach (int index in removeIndexes)
+                newFilters.RemoveAt(index);
+            var newPlaylist = new FilteredPlaylist(playlist.CopyModeAndLevelInfos(), newFilters);
+            var unpagedList = newPlaylist.Calculate();
+            var totalPages = Math.Ceiling((double) unpagedList.Count / (double) FilteredPlaylist.pageSize);
+            string currentPageString = "";
+            foreach(var page in pages)
+            {
+                currentPageString += page + ",";
+            }
+            currentPageString = currentPageString.Substring(0, currentPageString.Length - 1);
+            return currentPageString + "/" + totalPages;
+        }
+
+        public static string getPlaylistText(FilteredPlaylist playlist, string levelFormat)
+        {
+            string pageString = getPlaylistPageText(playlist);
+            List<LevelPlaylist.ModeAndLevelInfo> levels = playlist.Calculate();
+            string levelList = "";
+            for (int i = 0; i < Math.Min(levels.Count, FilteredPlaylist.pageSize); i++)
+            {
+                levelList += Utilities.formatLevelInfoText(levels[i], levelFormat) + "\n";
+            }
+            if (pageString != null)
+                levelList += "Page " + pageString;
+            else if (levels.Count > FilteredPlaylist.pageSize)
+                levelList += $"and {levels.Count - FilteredPlaylist.pageSize} more";
+            else
+                levelList = levelList.Substring(0, levelList.Length - 1);
+            return levelList;
         }
 
         static string authorMessageRegex = @"^\[[A-Fa-f0-9]{6}\](.+?)\[[A-Fa-f0-9]{6}\]: (.*)$";
@@ -248,6 +359,19 @@ namespace Spectrum.Plugins.ServerMod
             {
                 return string.Empty;
             }
+        }
+
+        public static DateTime ConvertFromUnixTimestamp(double timestamp)
+        {
+            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            return origin.AddSeconds(timestamp);
+        }
+
+        public static double ConvertToUnixTimestamp(DateTime date)
+        {
+            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            TimeSpan diff = date.ToUniversalTime() - origin;
+            return Math.Floor(diff.TotalSeconds);
         }
 
         public static object getPrivateField(object obj, string fieldName)
@@ -334,7 +458,7 @@ namespace Spectrum.Plugins.ServerMod
                     .Replace("%DIFFICULTY%", levelInfo.difficulty_.ToString())
                     .Replace("%AUTHOR%", getAuthorName(levelInfo))
                     .Replace("%MODE%", mode.ToString());
-                if (levelInfo.SupportsMedals(G.Sys.GameManager_.ModeID_))
+                if (levelInfo.SupportsMedals(mode))
                 {
                     resText = resText
                         .Replace("%MBRONZE%", levelInfo.GetMedalRequirementString(MedalStatus.Bronze, isPointsMode))
@@ -345,10 +469,10 @@ namespace Spectrum.Plugins.ServerMod
                 else
                 {
                     resText = resText
-                        .Replace("%MBRONZE%", "No bronze")
-                        .Replace("%MSILVER%", "No silver")
-                        .Replace("%MGOLD%", "No gold")
-                        .Replace("%MDIAMOND%", "No diamond");
+                        .Replace("%MBRONZE%", "None")
+                        .Replace("%MSILVER%", "None")
+                        .Replace("%MGOLD%", "None")
+                        .Replace("%MDIAMOND%", "None");
                 }
                 if (workshopLevelInfo != null)
                 {
@@ -356,14 +480,18 @@ namespace Spectrum.Plugins.ServerMod
                     resText = resText
                         .Replace("%STARS%", SteamworksUGC.GetWorkshopRatingText(workshopLevelInfo))
                         .Replace("%STARSINT%", ((int)(workshopLevelInfo.voteScore_ / 0.2f)).ToString())
-                        .Replace("%STARSDEC%", (workshopLevelInfo.voteScore_ / 0.2f).ToString("F2"));
+                        .Replace("%STARSDEC%", (workshopLevelInfo.voteScore_ / 0.2f).ToString("F2"))
+                        .Replace("%CREATED%", Utilities.ConvertFromUnixTimestamp(workshopLevelInfo.timeCreated_).ToString("d", CultureInfo.CurrentCulture))
+                        .Replace("%UPDATED%", Utilities.ConvertFromUnixTimestamp(workshopLevelInfo.timeUpdated_).ToString("d", CultureInfo.CurrentCulture));
                 }
                 else
                 {
                     resText = resText
-                        .Replace("%STARS%", "No rating")
-                        .Replace("%STARSINT%", "No rating")
-                        .Replace("%STARSDEC%", "No rating");
+                        .Replace("%STARS%", "None")
+                        .Replace("%STARSINT%", "X")
+                        .Replace("%STARSDEC%", "X")
+                        .Replace("%CREATED%", "")
+                        .Replace("%UPDATED%", "");
                 }
             });
             return resText;

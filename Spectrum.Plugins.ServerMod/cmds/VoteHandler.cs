@@ -442,8 +442,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
 
                     string levelName = parameter;
-                    var m = LevelList.extractModifiers(levelName);
-                    List<LevelPlaylist.ModeAndLevelInfo> lvls = LevelList.levels(m);
+                    List<LevelPlaylist.ModeAndLevelInfo> lvls = Utilities.getFilteredLevels(levelName);
                     List<LevelResultsSortInfo> levelResults = new List<LevelResultsSortInfo>();
                     
                     double threshold = voteThresholds["play"];

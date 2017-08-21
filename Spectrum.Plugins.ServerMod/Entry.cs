@@ -10,6 +10,9 @@ using Spectrum.API.Configuration;
 using System.Linq;
 using System.IO;
 using Spectrum.Plugins.ServerMod.CmdSettings;
+using Spectrum.Plugins.ServerMod.PlaylistTools;
+using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
+using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters.Sorts;
 
 namespace Spectrum.Plugins.ServerMod
 {
@@ -19,12 +22,44 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
-        public static string PluginVersion = "Version C.6.10.0";
+        public static string PluginVersion = "Version C.7.0.0";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
         public void Initialize(IManager manager)
         {
+            Utilities.testFunc(() =>
+            {
+                var levelFilters = new LevelFilter[]
+                {
+                new LevelFilterAll(),
+                new LevelFilterAuthor(),
+                new LevelFilterCreated(),
+                new LevelFilterDifficulty(),
+                new LevelFilterIndex(),
+                new LevelFilterIsNew(),
+                new LevelFilterIsUpdated(),
+                new LevelFilterMode(),
+                new LevelFilterName(),
+                new LevelFilterPage(),
+                new LevelFilterRegex(),
+                new LevelFilterStars(),
+                new LevelFilterTime(),
+                new LevelFilterUpdated(),
+
+                new LevelSortFilterAuthor(),
+                new LevelSortFilterCreated(),
+                new LevelSortFilterDifficulty(),
+                new LevelSortFilterMode(),
+                new LevelSortFilterName(),
+                new LevelSortFilterStars(),
+                new LevelSortFilterTime(),
+                new LevelSortFilterUpdated()
+                };
+                foreach (var filter in levelFilters)
+                    FilteredPlaylist.AddFilterType(filter);
+            });
+
             load();  // load existing data
             save();  // save defaults that were not loaded
 

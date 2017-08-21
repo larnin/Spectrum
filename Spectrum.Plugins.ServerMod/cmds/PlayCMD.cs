@@ -135,9 +135,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 Utilities.sendMessage("You can't manage the playlist in trackmogrify.");
                 return;
             }
-
-            Modifiers m = LevelList.extractModifiers(message);
-            var list = LevelList.levels(m);
+            
+            var list = Utilities.getFilteredLevels(message);
 
             if(list.Count == 0)
             {

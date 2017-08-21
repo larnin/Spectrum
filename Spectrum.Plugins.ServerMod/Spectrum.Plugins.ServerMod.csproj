@@ -85,6 +85,36 @@
     <Compile Include="cmds\WinCMD.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="LevelList.cs" />
+    <Compile Include="PlaylistTools\LevelFilterResult.cs" />
+    <Compile Include="PlaylistTools\LevelFilter.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\FloatComparison.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterCreated.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterMode.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterUpdated.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterCreated.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterStars.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterTime.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilter.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterAuthor.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterDifficulty.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterName.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\UIntComparison.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\IntComparison.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterUpdated.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterIsUpdated.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterIsNew.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterAuthor.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterAll.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterStars.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterTime.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterDifficulty.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterMode.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterPage.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterIndex.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterRegex.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterName.cs" />
+    <Compile Include="PlaylistTools\FilteredPlaylist.cs" />
+    <Compile Include="PlaylistTools\PlaylistLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
@@ -105,4 +135,5 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
 </Project>
