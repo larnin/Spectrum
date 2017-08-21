@@ -188,16 +188,17 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
             List<LevelSortFilter> sortFilters = new List<LevelSortFilter>();
             Comparison<PlaylistLevel> sortLevels = (a, b) =>
             {
+                var value = 0;
                 foreach (var sortFilter in sortFilters)
                 {
-                    var value = sortFilter.Sort(a, b);
-                    if (value != 0)
-                        if (sortFilter.mode == LevelFilter.Mode.AndNot || sortFilter.mode == LevelFilter.Mode.OrNot)
-                            return -value;
-                        else
-                            return value;
+                    if (value == 0 || sortFilter.mode == LevelFilter.Mode.Or || sortFilter.mode == LevelFilter.Mode.OrNot)
+                    {
+                        value = sortFilter.Sort(a, b);
+                        if (value != 0 && sortFilter.mode == LevelFilter.Mode.AndNot || sortFilter.mode == LevelFilter.Mode.OrNot)
+                            value = -value;
+                    }
                 }
-                return 0;
+                return value;
             };
             List<PlaylistLevel> instanceLevels = CopyLevels();
             foreach (var filter in filters)

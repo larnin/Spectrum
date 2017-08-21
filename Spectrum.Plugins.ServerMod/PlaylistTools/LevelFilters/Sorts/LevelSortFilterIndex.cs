@@ -26,7 +26,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters.Sorts
             {
                 if (level.allowed)
                 {
-                    indexIndex[level] = currentIndex / divider;
+                    indexIndex[level] = currentIndex == 0 ? 0 : currentIndex / divider;
                     currentIndex++;
                 }
             }
@@ -34,6 +34,12 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters.Sorts
 
         public override int Sort(PlaylistLevel a, PlaylistLevel b)
         {
+            if (!indexIndex.ContainsKey(a) && !indexIndex.ContainsKey(b))
+                return 0;
+            else if (!indexIndex.ContainsKey(a))
+                return isPositive ? 1 : -1;
+            else if (!indexIndex.ContainsKey(b))
+                return isPositive ? -1 : 1;
             return indexIndex[a] - indexIndex[b];
         }
 
@@ -45,10 +51,10 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters.Sorts
                 if (int.TryParse(chatString, out divider))
                     return new LevelFilterResult(new LevelSortFilterIndex(divider));
                 else
-                    return new LevelFilterResult("Invalid number to -shuffle");
+                    return new LevelFilterResult("Invalid number to -sortindex");
             }
             else
-                return new LevelFilterResult(new LevelSortFilterStars());
+                return new LevelFilterResult(new LevelSortFilterIndex());
         }
     }
 }
