@@ -98,13 +98,18 @@ namespace Spectrum.Plugins.ServerMod
             return $"{p.Username_}:{p.NetworkPlayer_.externalIP}:{p.NetworkPlayer_.externalPort}";
         }
 
+        public static string getSearchRegex(string search)
+        {
+            return Regex.Escape(search).Replace("\\*", ".*").Replace("\\$", "$").Replace("\\^", "^");
+        }
+
         public static List<ClientPlayerInfo> getClientsBySearch(string search)
         {
             var clients = new List<ClientPlayerInfo>();
             int index;
             if (!int.TryParse(search, out index))
                 index = -1;
-            search = Regex.Escape(search).Replace("\\*", ".*").Replace("\\$", "$").Replace("\\^", "^");
+            search = getSearchRegex(search);
 
             foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
             {
@@ -152,6 +157,18 @@ namespace Spectrum.Plugins.ServerMod
                 return currentPlaylist[index].levelNameAndPath_;
             else
                 return null;
+        }
+
+        public static void updateGameManagerCurrentLevel()
+        {
+            var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_.Playlist_;
+            int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
+            var level = currentPlaylist[index];
+            var levelSetsManager = G.Sys.LevelSets_;
+            var levelInfo = levelSetsManager.GetLevelInfo(level.levelNameAndPath_.levelPath_);
+            G.Sys.GameManager_.NextLevelPath_ = level.levelNameAndPath_.levelPath_;
+            G.Sys.GameManager_.NextLevelName_ = level.levelNameAndPath_.levelName_;
+            G.Sys.GameManager_.NextGameModeName_ = G.Sys.GameManager_.GetModeName(level.mode_);
         }
 
         public static LevelNameAndPathPair getCurrentLevel()
@@ -234,9 +251,14 @@ namespace Spectrum.Plugins.ServerMod
 
         public static FilteredPlaylist getFilteredPlaylist(string input)
         {
-            var playlist = new FilteredPlaylist(getAllLevelsAndModes());
+            return getFilteredPlaylist(getAllLevelsAndModes(), input, true);
+        }
+
+        public static FilteredPlaylist getFilteredPlaylist(List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault)
+        {
+            var playlist = new FilteredPlaylist(levels);
             var failures = playlist.AddFiltersFromString(input);
-            if (!playlist.filters.Any(filter => filter is LevelFilterMode))
+            if (includeDefault && !playlist.filters.Any(filter => filter is LevelFilterMode))
             {
                 playlist.filters.Insert(0, new LevelFilterMode(GameModeID.Sprint));
             }
@@ -287,7 +309,7 @@ namespace Spectrum.Plugins.ServerMod
                         return null;
                 }
                 else if (playlist.filters[i] is LevelSortFilter)
-                    return null; // anything before a sort filter is not guaranteed to be in the same place now
+                    break; // anything before a sort filter is not guaranteed to be in the same place now
             }
             if (pages.Count == 0)
                 pages.Add(1);
@@ -316,9 +338,9 @@ namespace Spectrum.Plugins.ServerMod
                 levelList += Utilities.formatLevelInfoText(levels[i], levelFormat) + "\n";
             }
             if (pageString != null)
-                levelList += "Page " + pageString;
+                levelList += $"[FFFFFF]Page {pageString}[-]";
             else if (levels.Count > FilteredPlaylist.pageSize)
-                levelList += $"and {levels.Count - FilteredPlaylist.pageSize} more";
+                levelList += $"[FFFFFF]and {levels.Count - FilteredPlaylist.pageSize} more[-]";
             else
                 levelList = levelList.Substring(0, levelList.Length - 1);
             return levelList;

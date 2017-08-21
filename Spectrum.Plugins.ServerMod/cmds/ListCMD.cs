@@ -1,47 +1,44 @@
-﻿
+﻿using System;
+using System.Linq;
+
 namespace Spectrum.Plugins.ServerMod.cmds
 {
     class ListCMD : cmd
     {
         public override string name { get { return "list"; } }
         public override PermType perm { get { return PermType.ALL; } }
-        public override bool canUseAsClient { get { return true; } }
+        public override bool canUseAsClient { get { return false; } }
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!list") + ": list all the players in the server.");
+            Utilities.sendMessage(Utilities.formatCmd("!list") + ": Show next levels in the current playlist");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if(!Utilities.isHost())
+            const int maxLvls = 10;
+
+            var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_.Playlist_;
+            int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
+
+            if(index >= currentPlaylist.Count)
             {
-                listAsClient();
+                Utilities.sendMessage("There are no levels in the playlist!");
                 return;
             }
 
-            string list = "";
-
-            foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
+            Utilities.sendMessage("Current and next levels:");
+            for(int i = 0; i < maxLvls ; i++)
             {
-                list += current.Index_ + " : " + current.Username_;
-                if (current.IsLocal_)
-                    list += " (HOST)";
-                list += ", ";
+                if (i + index >= currentPlaylist.Count)
+                    break;
+                var map = currentPlaylist[i + index];
+                Utilities.sendMessage(map.levelNameAndPath_.levelName_ + " (" + G.Sys.GameManager_.GetModeName(map.mode_) + ")");
             }
 
-            list = list.Remove(list.Length - 2);
-            Utilities.sendMessage(list);
+            int moreCount = currentPlaylist.Count - (index + maxLvls);
+            if (moreCount > 0)
+                Utilities.sendMessage("And " + moreCount + " more ...");
         }
-
-        public void listAsClient()
-        {
-            string text = string.Empty;
-            foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
-                text += current.Index_ + ": " + current.Username_ + ", ";
-
-            Utilities.sendMessage(text.Remove(text.Length - 2));
-        }
-
     }
 }

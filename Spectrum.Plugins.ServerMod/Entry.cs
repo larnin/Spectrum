@@ -50,8 +50,10 @@ namespace Spectrum.Plugins.ServerMod
                 new LevelSortFilterAuthor(),
                 new LevelSortFilterCreated(),
                 new LevelSortFilterDifficulty(),
+                new LevelSortFilterIndex(),
                 new LevelSortFilterMode(),
                 new LevelSortFilterName(),
+                new LevelSortFilterShuffle(),
                 new LevelSortFilterStars(),
                 new LevelSortFilterTime(),
                 new LevelSortFilterUpdated()

@@ -53,46 +53,47 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
                 }
                 LevelFilterResult filterResult = FilterFromOptionAndString("default", defaultStr);
                 if (filterResult.success)
-                    filters.Add(filterResult.filter);
+                    filters.AddRange(filterResult.filters);
                 else
                     failures.Add(filterResult.message);
             }
 
             foreach (Match match in matches)
             {
-                Console.WriteLine($"Match: {match.Groups[1].Value}  {match.Groups[3].Value}  {match.Groups[4].Value}");
                 LevelFilterResult filterResult = FilterFromOptionAndString(match.Groups[3].Value, match.Groups[4].Value);
                 if (filterResult.success)
                 {
-                    var filter = filterResult.filter;
-                    bool not = match.Groups[2].Value.Length > 0;
-                    string oper = match.Groups[1].Value;
-                    if (oper == "&")
-                        filter.mode = LevelFilter.Mode.And;
-                    else if (oper == "|")
-                        filter.mode = LevelFilter.Mode.Or;
-                    else if (oper == "!")
-                        not = !not;
-                    // else: uses default mode.
-                    if (not)
-                        switch (filter.mode)
-                        {
-                            case LevelFilter.Mode.And:
-                                filter.mode = LevelFilter.Mode.AndNot;
-                                break;
-                            case LevelFilter.Mode.Or:
-                                filter.mode = LevelFilter.Mode.OrNot;
-                                break;
-                            case LevelFilter.Mode.AndNot:
-                                filter.mode = LevelFilter.Mode.And;
-                                break;
-                            case LevelFilter.Mode.OrNot:
-                                filter.mode = LevelFilter.Mode.Or;
-                                break;
-                            default:
-                                break;
-                        }
-                    filters.Add(filter);
+                    foreach (LevelFilter filter in filterResult.filters)
+                    {
+                        bool not = match.Groups[2].Value.Length > 0;
+                        string oper = match.Groups[1].Value;
+                        if (oper == "&")
+                            filter.mode = LevelFilter.Mode.And;
+                        else if (oper == "|")
+                            filter.mode = LevelFilter.Mode.Or;
+                        else if (oper == "!")
+                            not = !not;
+                        // else: uses default mode.
+                        if (not)
+                            switch (filter.mode)
+                            {
+                                case LevelFilter.Mode.And:
+                                    filter.mode = LevelFilter.Mode.AndNot;
+                                    break;
+                                case LevelFilter.Mode.Or:
+                                    filter.mode = LevelFilter.Mode.OrNot;
+                                    break;
+                                case LevelFilter.Mode.AndNot:
+                                    filter.mode = LevelFilter.Mode.And;
+                                    break;
+                                case LevelFilter.Mode.OrNot:
+                                    filter.mode = LevelFilter.Mode.Or;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        filters.Add(filter);
+                    }
                 }
                 else
                     failures.Add(filterResult.message);

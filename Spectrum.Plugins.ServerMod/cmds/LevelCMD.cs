@@ -63,7 +63,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string DisplayName { get; } = "!level Level Format";
         public override string HelpShort { get; } = "!level: Formatted text to display for each level";
         public override string HelpLong { get; } = "The text to display for each level. Formatting options: "
-            + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%";
+            + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%, %CREATED%, %UPDATED%";
 
         public override object Default { get; } = "%NAME%";
     }

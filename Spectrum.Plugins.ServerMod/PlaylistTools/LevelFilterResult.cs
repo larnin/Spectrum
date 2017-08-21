@@ -7,7 +7,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
 {
     class LevelFilterResult
     {
-        public LevelFilter filter = null;
+        public List<LevelFilter> filters = null;
         public string message = "";
         public bool success;
 
@@ -19,7 +19,13 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
 
         public LevelFilterResult(LevelFilter filter)
         {
-            this.filter = filter;
+            filters = new List<LevelFilter>() { filter };
+            success = true;
+        }
+
+        public LevelFilterResult(List<LevelFilter> filters)
+        {
+            this.filters = new List<LevelFilter>(filters);
             success = true;
         }
     }

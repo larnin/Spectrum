@@ -18,13 +18,15 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new DelsCMD());
             cmds.Add(new ForceStartCMD());
             cmds.Add(new HelpCMD());
+            cmds.Add(new KickCMD());
             cmds.Add(new LevelCMD());
             cmds.Add(new ListCMD());
             cmds.Add(new LoadCMD());
             //cmds.Add(new NameCMD()); // not supported
             cmds.Add(new PlayCMD());
-            cmds.Add(new PlayersCMD());
             cmds.Add(new PlaylistCMD());
+            cmds.Add(new PlayersCMD());
+            cmds.Add(new ListCMD());
             cmds.Add(new PluginCMD());
             cmds.Add(new RestartCMD());
             cmds.Add(new RipCMD());

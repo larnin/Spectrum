@@ -124,12 +124,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
 
-            if (Utilities.isOnLobby())
-            {
-                Utilities.sendMessage("You can't set the next level in the lobby.");
-                return;
-            }
-
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
                 Utilities.sendMessage("You can't manage the playlist in trackmogrify.");

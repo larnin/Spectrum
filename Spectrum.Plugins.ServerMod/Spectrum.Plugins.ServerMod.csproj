@@ -58,6 +58,8 @@
     <Compile Include="cmds\DateCMD.cs" />
     <Compile Include="cmds\DelsCMD.cs" />
     <Compile Include="cmds\LoadCMD.cs" />
+    <Compile Include="cmds\KickCMD.cs" />
+    <Compile Include="cmds\PlaylistCMD.cs" />
     <Compile Include="cmds\PluginCMD.cs" />
     <Compile Include="cmds\cmd.cs" />
     <Compile Include="cmds\CountdownCMD.cs" />
@@ -69,10 +71,9 @@
     <Compile Include="cmds\ForceStartCMD.cs" />
     <Compile Include="cmds\HelpCMD.cs" />
     <Compile Include="cmds\LevelCMD.cs" />
-    <Compile Include="cmds\ListCMD.cs" />
     <Compile Include="cmds\NameCMD.cs" />
     <Compile Include="cmds\PlayCMD.cs" />
-    <Compile Include="cmds\PlaylistCMD.cs" />
+    <Compile Include="cmds\ListCMD.cs" />
     <Compile Include="cmds\ServerCMD.cs" />
     <Compile Include="cmds\SettingsCMD.cs" />
     <Compile Include="cmds\ShuffleCMD.cs" />
@@ -84,12 +85,13 @@
     <Compile Include="cmds\UpdateCMD.cs" />
     <Compile Include="cmds\WinCMD.cs" />
     <Compile Include="Entry.cs" />
-    <Compile Include="LevelList.cs" />
     <Compile Include="PlaylistTools\LevelFilterResult.cs" />
     <Compile Include="PlaylistTools\LevelFilter.cs" />
     <Compile Include="PlaylistTools\LevelFilters\FloatComparison.cs" />
     <Compile Include="PlaylistTools\LevelFilters\LevelFilterCreated.cs" />
     <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterMode.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterIndex.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterShuffle.cs" />
     <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterUpdated.cs" />
     <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterCreated.cs" />
     <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterStars.cs" />

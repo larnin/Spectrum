@@ -20,17 +20,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            Console.WriteLine("in players");
-            if (message == "")
-            {
-                help(p);
-                return;
-            }
-
             var affects = "";
             foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
             {
-                affects += $"{ client.Username_} ({client.Index_}), ";
+                affects += $"{ client.Username_} ({client.Index_})";
+                if (Utilities.isHost() && client.IsLocal_)
+                    affects += " (HOST)";
+                affects += ", ";
             }
             if (affects == "")
                 Utilities.sendMessage("Could not find any players with that name or index");

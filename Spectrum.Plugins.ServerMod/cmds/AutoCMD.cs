@@ -741,7 +741,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string DisplayName { get; } = "!auto Vote Text";
         public override string HelpShort { get; } = "!auto: Formatted text to display for level-end votes";
         public override string HelpLong { get; } = "The text to display for level-end votes. Formatting options: "
-            + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%";
+            + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%, %CREATED%, %UPDATED%";
 
         public override object Default { get; } = "[b]%NAME% [A0A0A0]by %AUTHOR%[-][/b]";
     }
