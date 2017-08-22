@@ -107,7 +107,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     {
                         LevelPlaylist list = LevelPlaylist.Create(true);
                         list.Name_ = "New Playlist";
-                        FilteredPlaylist levels = Utilities.getFilteredPlaylist(playlistCmdData);
+                        FilteredPlaylist levels = Utilities.getFilteredPlaylist(p, playlistCmdData);
                         list.Playlist_.AddRange(levels.Calculate());
                         selectedPlaylists[uniquePlayerString] = list;
                         Utilities.sendMessage("[FFFFFF]New playlist with...[-]");
@@ -259,7 +259,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             Utilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
-                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(selectedPlaylist.Playlist_, playlistCmdData, false);
+                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, selectedPlaylist.Playlist_, playlistCmdData, false);
                         Utilities.sendMessage(Utilities.getPlaylistText(filterer, levelFormat));
                         break;
                     }
@@ -271,7 +271,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             Utilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
-                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(selectedPlaylist.Playlist_, playlistCmdData, false);
+                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, selectedPlaylist.Playlist_, playlistCmdData, false);
                         selectedPlaylist.Playlist_.Clear();
                         selectedPlaylist.Playlist_.AddRange(filterer.Calculate());
                         Utilities.sendMessage("[FFFFFF]Filtered:[-]");
@@ -286,7 +286,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             Utilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
-                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(playlistCmdData);
+                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, playlistCmdData);
                         selectedPlaylist.Playlist_.AddRange(filterer.Calculate());
                         Utilities.sendMessage("[FFFFFF]Added:[-]");
                         Utilities.sendMessage(Utilities.getPlaylistText(filterer, levelFormat));

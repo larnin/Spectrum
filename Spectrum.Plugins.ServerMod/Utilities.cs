@@ -249,23 +249,12 @@ namespace Spectrum.Plugins.ServerMod
             return levelsReturn;
         }
 
-        public static FilteredPlaylist getFilteredPlaylist(string input)
+        public static void sendFailures(List<string> failures, int max)
         {
-            return getFilteredPlaylist(getAllLevelsAndModes(), input, true);
-        }
-
-        public static FilteredPlaylist getFilteredPlaylist(List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault)
-        {
-            var playlist = new FilteredPlaylist(levels);
-            var failures = playlist.AddFiltersFromString(input);
-            if (includeDefault && !playlist.filters.Any(filter => filter is LevelFilterMode))
-            {
-                playlist.filters.Insert(0, new LevelFilterMode(GameModeID.Sprint));
-            }
             var count = 0;
             foreach (string failure in failures)
             {
-                if (count >= 3 && failures.Count > 4)
+                if (count >= max - 1 && failures.Count > max)
                 {
                     Utilities.sendMessage($"[A00000]and {failures.Count - count} more.[-]");
                     break;
@@ -273,12 +262,49 @@ namespace Spectrum.Plugins.ServerMod
                 Utilities.sendMessage("[A00000]" + failure + "[-]");
                 count++;
             }
+        }
+
+        public static FilteredPlaylist getFilteredPlaylist(ClientPlayerInfo p, List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault)
+        {
+            LevelFilterLast.SetActivePlayer(p);
+            var playlist = new FilteredPlaylist(levels);
+            var failures = playlist.AddFiltersFromString(input);
+            var shouldSave = !playlist.filters.Any(filter => filter is LevelFilterLast);
+            if (includeDefault && !playlist.filters.Any(filter => filter is LevelFilterMode))
+            {
+                playlist.filters.Insert(0, new LevelFilterMode(GameModeID.Sprint));
+                if (shouldSave)
+                    LevelFilterLast.SaveFilter(p, "-m sprint " + input);
+            }
+            else if (shouldSave)
+                LevelFilterLast.SaveFilter(p, input);
+            sendFailures(failures, 4);
             return playlist;
+        }
+
+        public static FilteredPlaylist getFilteredPlaylist(List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault)
+        {
+            return getFilteredPlaylist(null, levels, input, includeDefault);
+        }
+
+        public static FilteredPlaylist getFilteredPlaylist(string input)
+        {
+            return getFilteredPlaylist(null, getAllLevelsAndModes(), input, true);
+        }
+
+        public static FilteredPlaylist getFilteredPlaylist(ClientPlayerInfo p, string input)
+        {
+            return getFilteredPlaylist(p, getAllLevelsAndModes(), input, true);
+        }
+
+        public static List<LevelPlaylist.ModeAndLevelInfo> getFilteredLevels(ClientPlayerInfo p, string input)
+        {
+            return getFilteredPlaylist(input).Calculate();
         }
 
         public static List<LevelPlaylist.ModeAndLevelInfo> getFilteredLevels(string input)
         {
-            return getFilteredPlaylist(input).Calculate();
+            return getFilteredLevels(null, input);
         }
 
         public static string getPlaylistPageText(FilteredPlaylist playlist)

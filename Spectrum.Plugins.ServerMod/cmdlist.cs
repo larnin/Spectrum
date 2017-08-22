@@ -16,6 +16,7 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new DateCMD());
             cmds.Add(new DelCMD());
             cmds.Add(new DelsCMD());
+            cmds.Add(new FilterCMD());
             cmds.Add(new ForceStartCMD());
             cmds.Add(new HelpCMD());
             cmds.Add(new KickCMD());
@@ -26,7 +27,6 @@ namespace Spectrum.Plugins.ServerMod
             cmds.Add(new PlayCMD());
             cmds.Add(new PlaylistCMD());
             cmds.Add(new PlayersCMD());
-            cmds.Add(new ListCMD());
             cmds.Add(new PluginCMD());
             cmds.Add(new RestartCMD());
             cmds.Add(new RipCMD());

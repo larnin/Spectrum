@@ -130,7 +130,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
             
-            var list = Utilities.getFilteredLevels(message);
+            var list = Utilities.getFilteredLevels(p, message);
 
             if(list.Count == 0)
             {

@@ -59,6 +59,7 @@
     <Compile Include="cmds\DelsCMD.cs" />
     <Compile Include="cmds\LoadCMD.cs" />
     <Compile Include="cmds\KickCMD.cs" />
+    <Compile Include="cmds\FilterCMD.cs" />
     <Compile Include="cmds\PlaylistCMD.cs" />
     <Compile Include="cmds\PluginCMD.cs" />
     <Compile Include="cmds\cmd.cs" />
@@ -88,6 +89,8 @@
     <Compile Include="PlaylistTools\LevelFilterResult.cs" />
     <Compile Include="PlaylistTools\LevelFilter.cs" />
     <Compile Include="PlaylistTools\LevelFilters\FloatComparison.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterLast.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterSaved.cs" />
     <Compile Include="PlaylistTools\LevelFilters\LevelFilterCreated.cs" />
     <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterMode.cs" />
     <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterIndex.cs" />

@@ -50,7 +50,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     list += cName+", ";
             }
             Utilities.sendMessage(list.Remove(list.Length - 2));
-            if (p.IsLocal_ || Utilities.isHost()) 
+            if (p.IsLocal_ || (p.IsLocal_ && Utilities.isHost())) 
                 Utilities.sendMessage("(H) = host only / (L) = local client only");
             Utilities.sendMessage("Use !help <command> for more information on the command");
         }

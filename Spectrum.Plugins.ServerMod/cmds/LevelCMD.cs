@@ -50,7 +50,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
 
 
-            var lvls = Utilities.getFilteredPlaylist(message);
+            var lvls = Utilities.getFilteredPlaylist(p, message);
             var txt = Utilities.getPlaylistText(lvls, levelFormat);
             Utilities.sendMessage(txt);
         }

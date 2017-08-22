@@ -79,6 +79,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 }
 
                 parent.voteCommand.voteThresholds[voteType] = Convert.ToDouble(percent) / 100.0;
+                Entry.save();
                 Utilities.sendMessage($"Pass threshold for {voteType} changed to {percent}%");
             }
         }
@@ -442,7 +443,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
 
                     string levelName = parameter;
-                    List<LevelPlaylist.ModeAndLevelInfo> lvls = Utilities.getFilteredLevels(levelName);
+                    List<LevelPlaylist.ModeAndLevelInfo> lvls = Utilities.getFilteredLevels(p, levelName);
                     List<LevelResultsSortInfo> levelResults = new List<LevelResultsSortInfo>();
                     
                     double threshold = voteThresholds["play"];
