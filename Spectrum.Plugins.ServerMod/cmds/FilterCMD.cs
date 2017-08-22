@@ -86,15 +86,27 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                 case "save":
                     {
-                        Match nameFilterMatch = Regex.Match(filterCmdData, @"^(\w+) ?(.*)$");
+                        Match nameFilterMatch = Regex.Match(filterCmdData, @"^(.+) ?(.*)$");
                         if (!playlistCmdMatch.Success)
                         {
-                            Utilities.sendMessage($"[A00000]Bad format for save[-]");
+                            Utilities.sendMessage("[A00000]Bad format for save[-]");
                             help(p);
                             return;
                         }
                         var saveAt = nameFilterMatch.Groups[1].Value;
                         var saveFilter = nameFilterMatch.Groups[2].Value;
+                        if (saveAt == "")
+                        {
+                            Utilities.sendMessage("[A00000]Name required[-]");
+                            help(p);
+                            return;
+                        }
+                        else if (saveFilter == "")
+                        {
+                            Utilities.sendMessage("[A00000]Filter required[-]");
+                            help(p);
+                            return;
+                        }
                         savedFilters[saveAt] = saveFilter;
                         Entry.save();
                         PlaylistTools.LevelFilters.LevelFilterLast.SetActivePlayer(p);
