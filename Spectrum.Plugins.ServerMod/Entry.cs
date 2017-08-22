@@ -22,7 +22,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
-        public static string PluginVersion = "Version C.7.2.0";
+        public static string PluginVersion = "Version C.7.2.1";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -32,33 +32,33 @@ namespace Spectrum.Plugins.ServerMod
             {
                 var levelFilters = new LevelFilter[]
                 {
-                new LevelFilterAll(),
-                new LevelFilterAuthor(),
-                new LevelFilterCreated(),
-                new LevelFilterDifficulty(),
-                new LevelFilterIndex(),
-                new LevelFilterIsNew(),
-                new LevelFilterIsUpdated(),
-                new LevelFilterLast(),
-                new LevelFilterMode(),
-                new LevelFilterName(),
-                new LevelFilterPage(),
-                new LevelFilterRegex(),
-                new LevelFilterSaved(),
-                new LevelFilterStars(),
-                new LevelFilterTime(),
-                new LevelFilterUpdated(),
+                    new LevelFilterAll(),
+                    new LevelFilterAuthor(),
+                    new LevelFilterCreated(),
+                    new LevelFilterDifficulty(),
+                    new LevelFilterIndex(),
+                    new LevelFilterIsNew(),
+                    new LevelFilterIsUpdated(),
+                    new LevelFilterLast(),
+                    new LevelFilterMode(),
+                    new LevelFilterName(),
+                    new LevelFilterPage(),
+                    new LevelFilterRegex(),
+                    new LevelFilterSaved(),
+                    new LevelFilterStars(),
+                    new LevelFilterTime(),
+                    new LevelFilterUpdated(),
 
-                new LevelSortFilterAuthor(),
-                new LevelSortFilterCreated(),
-                new LevelSortFilterDifficulty(),
-                new LevelSortFilterIndex(),
-                new LevelSortFilterMode(),
-                new LevelSortFilterName(),
-                new LevelSortFilterShuffle(),
-                new LevelSortFilterStars(),
-                new LevelSortFilterTime(),
-                new LevelSortFilterUpdated()
+                    new LevelSortFilterAuthor(),
+                    new LevelSortFilterCreated(),
+                    new LevelSortFilterDifficulty(),
+                    new LevelSortFilterIndex(),
+                    new LevelSortFilterMode(),
+                    new LevelSortFilterName(),
+                    new LevelSortFilterShuffle(),
+                    new LevelSortFilterStars(),
+                    new LevelSortFilterTime(),
+                    new LevelSortFilterUpdated()
                 };
                 foreach (var filter in levelFilters)
                     FilteredPlaylist.AddFilterType(filter);

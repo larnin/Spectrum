@@ -9,37 +9,41 @@ namespace Spectrum.Plugins.ServerMod
 
         public cmdlist()
         {
-            cmds.Add(new AutoCMD(this));
-            cmds.Add(new AutoSpecCMD());
-            cmds.Add(new ClearCMD());
-            cmds.Add(new CountdownCMD());
-            cmds.Add(new DateCMD());
-            cmds.Add(new DelCMD());
-            cmds.Add(new DelsCMD());
-            cmds.Add(new FilterCMD());
-            cmds.Add(new ForceStartCMD());
-            cmds.Add(new HelpCMD());
-            cmds.Add(new KickCMD());
-            cmds.Add(new LevelCMD());
-            cmds.Add(new ListCMD());
-            cmds.Add(new LoadCMD());
-            //cmds.Add(new NameCMD()); // not supported
-            cmds.Add(new PlayCMD());
-            cmds.Add(new PlaylistCMD());
-            cmds.Add(new PlayersCMD());
-            cmds.Add(new PluginCMD());
-            cmds.Add(new RestartCMD());
-            cmds.Add(new RipCMD());
-            cmds.Add(new SaveCMD());
-            cmds.Add(new ScoresCMD());
-            cmds.Add(new ServerCMD());
-            cmds.Add(new SettingsCMD());
-            cmds.Add(new ShuffleCMD());
-            cmds.Add(new SpecCMD());
-            cmds.Add(new TimelimitCMD());
-            cmds.Add(new UpdateCMD());
-            cmds.Add(new WelcomeCMD());
-            cmds.Add(new WinCMD());
+            cmd[] addCmds = new cmd[] {
+                new AutoCMD(this),
+                new AutoSpecCMD(),
+                new ClearCMD(),
+                new CountdownCMD(),
+                new DateCMD(),
+                new DelCMD(),
+                new DelsCMD(),
+                new FilterCMD(),
+                new ForceStartCMD(),
+                new HelpCMD(),
+                new KickCMD(),
+                new LevelCMD(),
+                new ListCMD(),
+                new LoadCMD(),
+                //new NameCMD(), // not supported
+                new PlayCMD(),
+                new PlaylistCMD(),
+                new PlayersCMD(),
+                new PluginCMD(),
+                new RestartCMD(),
+                new RipCMD(),
+                new SaveCMD(),
+                new ScoresCMD(),
+                new ServerCMD(),
+                new SettingsCMD(),
+                new ShuffleCMD(),
+                new SpecCMD(),
+                new TimelimitCMD(),
+                new UpdateCMD(),
+                new WelcomeCMD(),
+                new WinCMD(),
+            };
+            foreach (cmd addCmd in addCmds)
+                cmds.Add(addCmd);
 
             VoteHandler voteHandler = new VoteHandler(this);
             cmds.Add(voteHandler.voteCommand);
