@@ -14,9 +14,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if (message.Length == 0)
+            if (message.Length == 0 || (p.IsLocal_ && message.ToLower() == "all"))
             {
-                listCmd(p);
+                listCmd(p, message.ToLower() == "all");
                 return;
             }
 
@@ -29,30 +29,65 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
             c.help(p);
-            Utilities.sendMessage("Permission level : " + c.perm);
+            Utilities.sendMessage("Permission level: " + c.perm);
             if (c.perm == PermType.LOCAL)
                 Utilities.sendMessage("This command can only be used by the local player");
 
         }
 
-        private void listCmd(ClientPlayerInfo p)
+        private void listCmd(ClientPlayerInfo p, bool showAll)
         {
-            Utilities.sendMessage("Available commands :");
+            var playerIsLocal = p.IsLocal_;
+            var playerIsHost = p.IsLocal_ && Utilities.isHost();
+            var playerIsClient = p.IsLocal_ && !Utilities.isHost();
+            var playerIsConnectedClient = !p.IsLocal_ && Utilities.isHost();
+            Utilities.sendMessage("Available commands:");
             string list = "";
             foreach(var cName in cmd.all.commands())
             {
                 cmd c = cmd.all.getCommand(cName);
-                if (c.perm == PermType.HOST && (p.IsLocal_ && Utilities.isHost()))
-                    list += cName+"(H), ";
-                if (c.perm == PermType.LOCAL && p.IsLocal_)
-                    list += cName+"(L), ";
-                if (c.perm == PermType.ALL)
-                    list += cName+", ";
+
+                var allowed = showAll;
+                if (playerIsLocal)
+                {
+                    if (c.perm == PermType.LOCAL || c.canUseAsClient)
+                    {
+                        allowed = true;
+                    }
+                }
+                if (!playerIsClient)
+                {
+                    if (c.perm == PermType.HOST)
+                    {
+                        if (playerIsHost)
+                        {
+                            allowed = true;
+                        }
+                    }
+                    else
+                    {
+                        allowed = true;
+                    }
+                }
+                if (allowed)
+                {
+                    list += cName;
+
+                    if (c.perm == PermType.HOST)
+                        list += "(H)";
+
+                    if (c.perm == PermType.LOCAL || c.canUseAsClient)
+                        list += "(L)";
+
+                    list += ", ";   
+                }
             }
             Utilities.sendMessage(list.Remove(list.Length - 2));
             if (p.IsLocal_ || (p.IsLocal_ && Utilities.isHost())) 
-                Utilities.sendMessage("(H) = host only / (L) = local client only");
-            Utilities.sendMessage("Use !help <command> for more information on the command");
+                Utilities.sendMessage("(H) = host only / (L) = local client");
+            Utilities.sendMessage("Use !help <command> for more information on the command.");
+            if (playerIsLocal && !playerIsHost)
+                Utilities.sendMessage("Use !help all to see every command, including ones you cannot use right now.");
         }
     }
 }

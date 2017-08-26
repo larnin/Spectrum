@@ -13,7 +13,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
     {
         public override string name { get { return "settings"; } }
         public override PermType perm { get { return PermType.HOST; } }
-        public override bool canUseAsClient { get { return false; } }
+        public override bool canUseAsClient { get { return true; } }
 
         private const string settingRegex = @"^\s*(\w+) (.*)[\r\n]*$";
         private const string baseRegex = @"^\s*(\w+)[\r\n]*$";
