@@ -41,9 +41,14 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
 
         public delegate bool TryGetValueDelegate(string input, out float value);
 
+        public static bool DefaultTryGetValue(string input, out float value)
+        {
+            return float.TryParse(input.Trim(), out value);
+        }
+
         public static FloatComparison ParseString(string input)
         {
-            return ParseString(input, float.TryParse);
+            return ParseString(input, DefaultTryGetValue);
         }
 
         public static FloatComparison ParseString(string input, TryGetValueDelegate parser)

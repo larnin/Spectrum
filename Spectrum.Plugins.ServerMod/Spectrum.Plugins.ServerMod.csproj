@@ -90,6 +90,7 @@
     <Compile Include="PlaylistTools\LevelFilter.cs" />
     <Compile Include="PlaylistTools\LevelFilters\FloatComparison.cs" />
     <Compile Include="PlaylistTools\LevelFilters\LevelFilterLast.cs" />
+    <Compile Include="PlaylistTools\LevelFilters\LevelFilterPlaylist.cs" />
     <Compile Include="PlaylistTools\LevelFilters\LevelFilterSaved.cs" />
     <Compile Include="PlaylistTools\LevelFilters\LevelFilterCreated.cs" />
     <Compile Include="PlaylistTools\LevelFilters\Sorts\LevelSortFilterMode.cs" />

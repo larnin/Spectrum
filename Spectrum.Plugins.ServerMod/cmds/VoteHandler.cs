@@ -1,4 +1,5 @@
 ﻿using Spectrum.Plugins.ServerMod.CmdSettings;
+using Spectrum.Plugins.ServerMod.PlaylistTools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -443,7 +444,16 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
 
                     string levelName = parameter;
-                    List<LevelPlaylist.ModeAndLevelInfo> lvls = Utilities.getFilteredLevels(p, levelName);
+
+                    FilteredPlaylist filterer = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
+                    if (!p.IsLocal_)
+                    {
+                        PlayCMD playCmd = (PlayCMD)cmd.all.getCommand("play");
+                        filterer.AddFiltersFromString(playCmd.playFilter);
+                    }
+                    Utilities.sendFailures(Utilities.addFiltersToPlaylist(filterer, p, levelName, true), 4);
+
+                    List<LevelPlaylist.ModeAndLevelInfo> lvls = filterer.Calculate();
                     List<LevelResultsSortInfo> levelResults = new List<LevelResultsSortInfo>();
                     
                     double threshold = voteThresholds["play"];
@@ -455,6 +465,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     int origIndex = G.Sys.GameManager_.LevelPlaylist_.Index_;
                     int index = autoCmd.getInsertIndex();
 
+                    int addCount = 0;
                     foreach (LevelPlaylist.ModeAndLevelInfo lvl in lvls)
                     {
 
@@ -501,8 +512,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                                 levelResults.Add(new LevelResultsSortInfo(lvl, votes.Count, numPlayers, threshold, 1));
                                 if (Convert.ToDouble(votes.Count) / Convert.ToDouble(numPlayers) >= threshold)
                                 {
-                                    currentPlaylist.Insert(index, lvl);
+                                    currentPlaylist.Insert(index + addCount, lvl);
                                     parent.votes.Remove(id);
+                                    addCount++;
                                 }
                             }
                         }

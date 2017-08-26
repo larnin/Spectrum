@@ -22,7 +22,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
-        public static string PluginVersion = "Version C.7.2.1";
+        public static string PluginVersion = "Version C.7.3.0";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -43,6 +43,7 @@ namespace Spectrum.Plugins.ServerMod
                     new LevelFilterMode(),
                     new LevelFilterName(),
                     new LevelFilterPage(),
+                    new LevelFilterPlaylist(),
                     new LevelFilterRegex(),
                     new LevelFilterSaved(),
                     new LevelFilterStars(),

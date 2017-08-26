@@ -86,7 +86,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
         {
             float seconds = 0;
             List<float> numbers = new List<float>();
-            foreach (Match match in Regex.Matches(input, @"\:?(\d*\.?\d+)"))
+            foreach (Match match in Regex.Matches(input.Trim(), @"\:?(\d*\.?\d+)"))
             {
                 float num;
                 if (float.TryParse(match.Groups[1].Value, out num))

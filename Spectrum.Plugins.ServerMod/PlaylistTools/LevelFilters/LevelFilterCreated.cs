@@ -38,14 +38,14 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
         public bool TryParseDateToUnixTimestamp(string input, out uint value)
         {
             DateTime date;
-            if (DateTime.TryParse(input, out date))
+            if (DateTime.TryParse(input.Trim(), out date))
             {
                 value = (uint)Utilities.ConvertToUnixTimestamp(date);
                 return true;
             }
             else
             {
-                if (uint.TryParse(input, out value))
+                if (uint.TryParse(input.Trim(), out value))
                 {
                     return true;
                 }

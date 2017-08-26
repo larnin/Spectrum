@@ -1,6 +1,7 @@
 ﻿using Events;
 using Spectrum.Plugins.ServerMod.CmdSettings;
 using Spectrum.Plugins.ServerMod.PlaylistTools;
+using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Utilities.sendMessage(Utilities.formatCmd("!filter save <name> <filter>") + ": Saves a new filter");
             Utilities.sendMessage(Utilities.formatCmd("!filter show <name>") + ": Show what the filter looks like");
             Utilities.sendMessage(Utilities.formatCmd("!filter del <name>") + ": Delete a filter");
+            // Utilities.sendMessage(Utilities.formatCmd("!filter current <filter>") + ": Filter the currently-playing levels.");
+            // Not advertising `!filter current` because it's too difficult to show the pros/cons between current and upcoming here.
+            //  Most of the time, players will want to use upcoming. If they're using current, they might end up replaying levels.
+            //  If a player wants to replay levels, they probably want to use the `!playlist` commands instead, which resets index to 0.
+            Utilities.sendMessage(Utilities.formatCmd("!filter upcoming <filter>") + ": Filter the upcoming levels.");
             Utilities.sendMessage("Use the [FFFFFF]-filter <name>[-] filter to use saved filters.");
         }
 
@@ -186,7 +192,108 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         Utilities.sendMessage("[FFFFFF]Found:[-]" + results);
                         break;
                     }
+                case "current":
+                    {
+                        PlaylistCMD playlistCmd = (PlaylistCMD) cmd.all.getCommand("playlist");
+                        if (!playlistCmd.canUseCurrentPlaylist)
+                        {
+                            Utilities.sendMessage("Cannot modify current playlist right now.");
+                            break;
+                        }
+                        Console.WriteLine($"Filter txt: {filterCmdData}");
+                        // 1. load current playlist into filter
+                        LevelPlaylist currentList = G.Sys.GameManager_.LevelPlaylist_;
+                        FilteredPlaylist preFilterer = Utilities.getFilteredPlaylist(p, currentList.Playlist_, filterCmdData, false);
+                        // 2. add filter that always allows the current level and helps us find it after calculation.
+                        var indexFilter = new ForceCurrentIndexFilter(currentList.Index_);
+                        preFilterer.AddFilter(indexFilter);
+                        // 3. Calculate filter results.
+                        List<LevelPlaylist.ModeAndLevelInfo> levels = preFilterer.Calculate();
+                        // 4. Update current playlist
+                        currentList.Playlist_.Clear();
+                        currentList.Playlist_.AddRange(levels);
+                        // 4. Get current level index, set playlist index to current level index
+                        if (indexFilter.level != null)
+                        {
+                            int index = levels.IndexOf(indexFilter.level);
+                            if (index >= 0)
+                                currentList.SetIndex(index);
+                            else
+                            {
+                                currentList.SetIndex(0);
+                                Utilities.sendMessage("[A05000]Warning: could not find current level in new playlist (2). Reset to beginning.[-]");
+                            }
+                        }
+                        else
+                        {
+                            currentList.SetIndex(0);
+                            Utilities.sendMessage("[A05000]Warning: could not find current level in new playlist. Reset to beginning.[-]");
+                        }
+                        Utilities.sendMessage("Filtered current playlist. Upcoming:");
+                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, currentList.Playlist_, "", false);
+                        filterer.AddFilter(new LevelFilterIndex(new IntComparison(currentList.Index_, IntComparison.Comparison.GreaterEqual)));
+                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, playlistCmd.levelFormat));
+                        break;
+                    }
+                case "upcoming":
+                    {
+                        PlaylistCMD playlistCmd = (PlaylistCMD)cmd.all.getCommand("playlist");
+                        if (!playlistCmd.canUseCurrentPlaylist)
+                        {
+                            Utilities.sendMessage("Cannot modify current playlist right now.");
+                            break;
+                        }
+                        // 1. load current playlist into filter
+                        LevelPlaylist currentList = G.Sys.GameManager_.LevelPlaylist_;
+                        if (currentList.Index_ == currentList.Count_ - 1)
+                        {
+                            Utilities.sendMessage("Cannot filter upcoming because you are on the last item of the list.");
+                            break;
+                        }
+                        var levelsUpcoming = currentList.Playlist_.GetRange(currentList.Index_ + 1, currentList.Count_ - currentList.Index_ - 1);
+                        FilteredPlaylist preFilterer = Utilities.getFilteredPlaylist(p, levelsUpcoming, filterCmdData, false);
+                        // 2. Calculate filter results.
+                        List<LevelPlaylist.ModeAndLevelInfo> levels = preFilterer.Calculate();
+                        // 3. Update current playlist
+                        currentList.Playlist_.RemoveRange(currentList.Index_ + 1, currentList.Count_ - currentList.Index_ - 1);
+                        currentList.Playlist_.AddRange(levels);
+                        // 4. Print results
+                        Utilities.sendMessage("Filtered current playlist. Upcoming:");
+                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, currentList.Playlist_, "", false);
+                        filterer.AddFilter(new LevelFilterIndex(new IntComparison(currentList.Index_, IntComparison.Comparison.GreaterEqual)));
+                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, playlistCmd.levelFormat));
+                        break;
+                    }
             }
+        }
+    }
+    class ForceCurrentIndexFilter : LevelFilter
+    {
+        public override string[] options { get; } = new string[] { };
+
+        int index;
+        public LevelPlaylist.ModeAndLevelInfo level = null;
+
+        public ForceCurrentIndexFilter(int index)
+        {
+            this.index = index;
+        }
+
+        public override void Apply(List<PlaylistLevel> levels)
+        {
+            if (levels.Count > index)
+            {
+                levels[index].and = PlaylistLevel.Accept.Allow;
+                levels[index].or = PlaylistLevel.Accept.Allow;
+                level = levels[index].level;
+            }
+            else
+                Console.WriteLine($"levels.Count is {levels.Count} but index is {index}");
+        }
+
+        public override LevelFilterResult FromChatString(string chatString, string option)
+        {
+            return new LevelFilterResult("Cannot create by chat");
         }
     }
     class CmdSettingFilters : CmdSetting

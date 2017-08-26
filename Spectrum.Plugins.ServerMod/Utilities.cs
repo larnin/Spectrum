@@ -264,37 +264,49 @@ namespace Spectrum.Plugins.ServerMod
             }
         }
 
-        public static FilteredPlaylist getFilteredPlaylist(ClientPlayerInfo p, List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault)
+        public static List<string> addFiltersToPlaylist(FilteredPlaylist playlist, ClientPlayerInfo p, string filters, bool includeDefault)
         {
             LevelFilterLast.SetActivePlayer(p);
-            var playlist = new FilteredPlaylist(levels);
-            var failures = playlist.AddFiltersFromString(input);
+            var failures = playlist.AddFiltersFromString(filters);
             var shouldSave = !playlist.filters.Any(filter => filter is LevelFilterLast);
             if (includeDefault && !playlist.filters.Any(filter => filter is LevelFilterMode))
             {
                 playlist.filters.Insert(0, new LevelFilterMode(GameModeID.Sprint));
                 if (shouldSave)
-                    LevelFilterLast.SaveFilter(p, "-m sprint " + input);
+                    LevelFilterLast.SaveFilter(p, "-m sprint " + filters);
             }
             else if (shouldSave)
-                LevelFilterLast.SaveFilter(p, input);
-            sendFailures(failures, 4);
+                LevelFilterLast.SaveFilter(p, filters);
+            return failures;
+        }
+
+        public static FilteredPlaylist getFilteredPlaylist(ClientPlayerInfo p, List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault, bool doSendFailures)
+        {
+            var playlist = new FilteredPlaylist(levels);
+            var failures = addFiltersToPlaylist(playlist, p, input, includeDefault);
+            if (doSendFailures)
+                sendFailures(failures, 4);
             return playlist;
+        }
+
+        public static FilteredPlaylist getFilteredPlaylist(ClientPlayerInfo p, List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault)
+        {
+            return getFilteredPlaylist(p, levels, input, includeDefault, true);
         }
 
         public static FilteredPlaylist getFilteredPlaylist(List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault)
         {
-            return getFilteredPlaylist(null, levels, input, includeDefault);
+            return getFilteredPlaylist(null, levels, input, includeDefault, true);
         }
 
         public static FilteredPlaylist getFilteredPlaylist(string input)
         {
-            return getFilteredPlaylist(null, getAllLevelsAndModes(), input, true);
+            return getFilteredPlaylist(null, getAllLevelsAndModes(), input, true, true);
         }
 
         public static FilteredPlaylist getFilteredPlaylist(ClientPlayerInfo p, string input)
         {
-            return getFilteredPlaylist(p, getAllLevelsAndModes(), input, true);
+            return getFilteredPlaylist(p, getAllLevelsAndModes(), input, true, true);
         }
 
         public static List<LevelPlaylist.ModeAndLevelInfo> getFilteredLevels(ClientPlayerInfo p, string input)

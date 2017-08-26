@@ -41,9 +41,14 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
 
         public delegate bool TryGetValueDelegate(string input, out uint value);
 
+        public static bool DefaultTryGetValue(string input, out uint value)
+        {
+            return uint.TryParse(input.Trim(), out value);
+        }
+
         public static UIntComparison ParseString(string input)
         {
-            return ParseString(input, uint.TryParse);
+            return ParseString(input, DefaultTryGetValue);
         }
 
         public static UIntComparison ParseString(string input, TryGetValueDelegate parser)

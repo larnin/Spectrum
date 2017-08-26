@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.PlaylistTools;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Spectrum.Plugins.ServerMod.cmds
@@ -11,34 +13,32 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!list") + ": Show next levels in the current playlist");
+            Utilities.sendMessage(Utilities.formatCmd("!list [filter]") + ": Show next levels in the current playlist with optional filter");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            const int maxLvls = 10;
 
-            var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_.Playlist_;
-            int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
+            LevelPlaylist currentList = G.Sys.GameManager_.LevelPlaylist_;
 
-            if(index >= currentPlaylist.Count)
+            if(currentList.Index_ >= currentList.Count_)
             {
                 Utilities.sendMessage("There are no levels in the playlist!");
                 return;
             }
-
-            Utilities.sendMessage("Current and next levels:");
-            for(int i = 0; i < maxLvls ; i++)
+            else if (currentList.Index_ == currentList.Count_ - 1)
             {
-                if (i + index >= currentPlaylist.Count)
-                    break;
-                var map = currentPlaylist[i + index];
-                Utilities.sendMessage(map.levelNameAndPath_.levelName_ + " (" + G.Sys.GameManager_.GetModeName(map.mode_) + ")");
+                Utilities.sendMessage("You are on the last level of the playlist!");
+                return;
             }
 
-            int moreCount = currentPlaylist.Count - (index + maxLvls);
-            if (moreCount > 0)
-                Utilities.sendMessage("And " + moreCount + " more ...");
+            LevelCMD levelCmd = (LevelCMD) cmd.all.getCommand("level");
+
+            var levelsUpcoming = currentList.Playlist_.GetRange(currentList.Index_ + 1, currentList.Count_ - currentList.Index_ - 1);
+            FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, levelsUpcoming, message, false);
+            
+            Utilities.sendMessage("[FFFFFF]Upcoming:[-]");
+            Utilities.sendMessage(Utilities.getPlaylistText(filterer, levelCmd.levelFormat));
         }
     }
 }

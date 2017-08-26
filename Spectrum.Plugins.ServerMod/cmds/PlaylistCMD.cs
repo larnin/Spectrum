@@ -1,6 +1,7 @@
 ﻿using Events;
 using Spectrum.Plugins.ServerMod.CmdSettings;
 using Spectrum.Plugins.ServerMod.PlaylistTools;
+using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,8 +53,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Utilities.sendMessage(Utilities.formatCmd("!playlist") + " saves, loads, creates, deletes, and filters playlists");
             Utilities.sendMessage(Utilities.formatCmd("!playlist list [search]") + ": List all playlists");
             Utilities.sendMessage(Utilities.formatCmd("!playlist new [filter]") + ": Creates a new playlist.");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist load <name>") + ": Load playlist, [FFFFFF]current[-] is the one being played and isn't saved");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist save <name>") + ": Save playlist, [FFFFFF]current[-] is the one being played");
+            Utilities.sendMessage(Utilities.formatCmd("!playlist load <name>") + ": Load playlist, [FFFFFF]current[-] is the one being played and isn't saved, [FFFFFF]upcoming[-] is the next levels and isn't saved");
+            Utilities.sendMessage(Utilities.formatCmd("!playlist save [name]") + ": Save playlist, [FFFFFF]current[-] is the one being played, [FFFFFF]upcoming[-] is the next levels");
             Utilities.sendMessage(Utilities.formatCmd("!playlist active") + ": Show the name of the loaded playlist.");
             Utilities.sendMessage(Utilities.formatCmd("!playlist del <name>") + ": Delete a playlist");
             Utilities.sendMessage(Utilities.formatCmd("!playlist show [filter]") + ": Show the levels in the loaded playlist");
@@ -67,6 +68,129 @@ namespace Spectrum.Plugins.ServerMod.cmds
             get
             {
                 return Utilities.isHost();
+            }
+        }
+
+        public List<string> getPlaylists(string search)
+        {
+            var searchRegex = Utilities.getSearchRegex(search);
+            List<string> playlists = Utilities.playlists();
+            playlists.RemoveAll((string s) => !Resource.FileExist(s));
+            playlists = playlists.ConvertAll(playlist => Resource.GetFileNameWithoutExtension(playlist));
+            if (canUseCurrentPlaylist)
+            {
+                playlists.Add("current");
+                playlists.Add("upcoming");
+            }
+            playlists.RemoveAll(playlist => !Regex.IsMatch(playlist, searchRegex, RegexOptions.IgnoreCase));
+            return playlists;
+        }
+
+        public LevelPlaylist getPlaylistLevels(string search)
+        {
+            int ignored;
+            return getPlaylistLevels(search, out ignored);
+        }
+
+        public LevelPlaylist getPlaylistLevels(string search, out int count)
+        {
+            var searchRegex = Utilities.getSearchRegex(search);
+            List<string> playlists = Utilities.playlists();
+            playlists.RemoveAll((string s) => !Resource.FileExist(s));
+            playlists.RemoveAll(playlist => !Regex.IsMatch(Resource.GetFileNameWithoutExtension(playlist), searchRegex, RegexOptions.IgnoreCase));
+
+            if (canUseCurrentPlaylist)
+            {
+                List<string> miniList = new List<string>();
+                miniList.Add("current");
+                miniList.Add("upcoming");
+                miniList.RemoveAll(playlist => !Regex.IsMatch(playlist, searchRegex, RegexOptions.IgnoreCase));
+                playlists.AddRange(miniList);
+            }
+            count = playlists.Count;
+            if (playlists.Count == 0)
+                return null;
+            var selectedPlaylist = playlists[0];
+            LevelPlaylist playlistComp;
+            switch (selectedPlaylist)
+            {
+                case "current":
+                    {
+                        playlistComp = LevelPlaylist.Create(true);
+                        playlistComp.Copy(G.Sys.GameManager_.LevelPlaylist_);
+                        playlistComp.Name_ = "current";
+                        break;
+                    }
+                case "upcoming":
+                    {
+                        playlistComp = LevelPlaylist.Create(true);
+                        var currentList = G.Sys.GameManager_.LevelPlaylist_;
+                        for (int i = currentList.Index_ + 1; i < currentList.Count_; i++)
+                        {
+                            playlistComp.Playlist_.Add(currentList.Playlist_[i]);
+                        }
+                        playlistComp.Name_ = "upcoming";
+                        break;
+                    }
+                default:
+                    {
+                        var gameObject = LevelPlaylist.Load(selectedPlaylist);
+                        playlistComp = gameObject.GetComponent<LevelPlaylist>();
+                        break;
+                    }
+            }
+            return playlistComp;
+        }
+        
+        public bool savePlaylist(LevelPlaylist selectedPlaylist, string name)
+        {
+            // playlists are attached to game objects
+            // when a new level loads, all existing game objects are destroyed so we cannot properly save them
+            // instead, we make a new one and copy the old playlist into the new object.
+            LevelPlaylist list = LevelPlaylist.Create(true);
+            list.Copy(selectedPlaylist);
+            list.IsCustom_ = true;
+            selectedPlaylist = list;
+            switch (name)
+            {
+                case "current":
+                    {
+                        if (canUseCurrentPlaylist)
+                        {
+                            G.Sys.GameManager_.LevelPlaylist_.Copy(selectedPlaylist);
+                            G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
+                            Utilities.updateGameManagerCurrentLevel();
+                            StaticTargetedEvent<Events.ServerToClient.SetLevelName.Data>.Broadcast(RPCMode.All, G.Sys.GameManager_.CreateSetLevelNameEventData());
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+                case "upcoming":
+                    {
+                        if (canUseCurrentPlaylist)
+                        {
+                            var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_;
+                            if (currentPlaylist.Count_ > currentPlaylist.Index_ + 1)
+                                currentPlaylist.Playlist_.RemoveRange(currentPlaylist.Index_ + 1, currentPlaylist.Count_ - currentPlaylist.Index_ - 1);
+                            foreach (LevelPlaylist.ModeAndLevelInfo level in selectedPlaylist.Playlist_)
+                            {
+                                currentPlaylist.Add(level);
+                            }
+                            currentPlaylist.IsCustom_ = true;
+                            Utilities.updateGameManagerCurrentLevel();
+                            StaticTargetedEvent<Events.ServerToClient.SetLevelName.Data>.Broadcast(RPCMode.All, G.Sys.GameManager_.CreateSetLevelNameEventData());
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+                default:
+                    {
+                        selectedPlaylist.Name_ = name;
+                        selectedPlaylist.Save();
+                        return true;
+                    }
             }
         }
 
@@ -89,15 +213,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     break;
                 case "list":
                     {
-                        var searchRegex = Utilities.getSearchRegex(playlistCmdData);
-                        List<string> playlists = Utilities.playlists();
-                        playlists.RemoveAll((string s) => !Resource.FileExist(s));
-                        if (canUseCurrentPlaylist)
-                            playlists.Add("current");
+                        List<string> playlists = getPlaylists(playlistCmdData);
                         var results = "";
                         foreach (string playlist in playlists)
-                            if (Regex.IsMatch(playlist == "current" ? playlist : Resource.GetFileNameWithoutExtension(playlist), searchRegex, RegexOptions.IgnoreCase))
-                                results += "\n" + (playlist == "current" ? playlist : Resource.GetFileNameWithoutExtension(playlist));
+                            results += "\n" + (playlist == "current" ? playlist : Resource.GetFileNameWithoutExtension(playlist));
                         if (results == "")
                             results = "None";
                         Utilities.sendMessage("[FFFFFF]Playlists: [-]" + results);
@@ -116,43 +235,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                 case "load":
                     {
-                        var searchRegex = Utilities.getSearchRegex(playlistCmdData);
-                        List<string> playlists = Utilities.playlists();
-                        playlists.RemoveAll((string s) => !Resource.FileExist(s));
-                        if (canUseCurrentPlaylist)
-                            playlists.Add("current");
-                        string selectedPlaylist = null;
                         int matchingCount = 0;
-                        foreach (string playlist in playlists)
-                            if (Regex.IsMatch(playlist == "current" ? playlist : Resource.GetFileNameWithoutExtension(playlist), searchRegex, RegexOptions.IgnoreCase))
-                            {
-                                matchingCount++;
-                                if (selectedPlaylist == null)
-                                    selectedPlaylist = playlist;
-                            }
-                        string playlistName = selectedPlaylist == "current" ? selectedPlaylist : Resource.GetFileNameWithoutExtension(selectedPlaylist);
+                        LevelPlaylist selectedPlaylist = getPlaylistLevels(playlistCmdData, out matchingCount);
                         if (matchingCount == 0)
                         {
                             Utilities.sendMessage("[A00000]Could not find any playlists with that search[-]");
                             break;
                         }
                         else if (matchingCount == 1)
-                            Utilities.sendMessage($"{playlistName} is now active");
+                            Utilities.sendMessage($"{selectedPlaylist.Name_} is now active");
                         else
-                            Utilities.sendMessage($"{playlistName} is now active, but {matchingCount - 1} others matched too");
-
-                        LevelPlaylist playlistComp;
-                        if (selectedPlaylist != "current")
-                        {
-                            var gameObject = LevelPlaylist.Load(selectedPlaylist);
-                            playlistComp = gameObject.GetComponent<LevelPlaylist>();
-                        }
-                        else
-                        {
-                            playlistComp = LevelPlaylist.Create(true);
-                            playlistComp.Copy(G.Sys.GameManager_.LevelPlaylist_);
-                        }
-                        selectedPlaylists[uniquePlayerString] = playlistComp;
+                            Utilities.sendMessage($"{selectedPlaylist.Name_} is now active, but {matchingCount - 1} others matched too");
+                        
+                        selectedPlaylists[uniquePlayerString] = selectedPlaylist;
                         break;
                     }
                 case "save":
@@ -170,23 +265,27 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         }
                         if (playlistCmdData == "")
                         {
-                            Utilities.sendMessage("[A00000]You must enter a name[-]");
-                            break;
+                            Utilities.sendMessage($"[A05000]No name given. Using existing name: {selectedPlaylist.Name_}");
+                            playlistCmdData = selectedPlaylist.Name_;
                         }
-                        selectedPlaylist.IsCustom_ = true;
-                        if (playlistCmdData == "current")
+                        bool result = savePlaylist(selectedPlaylist, playlistCmdData);
+                        switch (playlistCmdData)
                         {
-                            G.Sys.GameManager_.LevelPlaylist_.Copy(selectedPlaylist);
-                            G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
-                            Utilities.updateGameManagerCurrentLevel();
-                            StaticTargetedEvent<Events.ServerToClient.SetLevelName.Data>.Broadcast(RPCMode.All, G.Sys.GameManager_.CreateSetLevelNameEventData());
-                            Utilities.sendMessage("Set current playlist to active playlist.");
-                        }
-                        else
-                        {
-                            selectedPlaylist.Name_ = playlistCmdData;
-                            selectedPlaylist.Save();
-                            Utilities.sendMessage("Saved playlist.");
+                            case "current":
+                                if (result)
+                                    Utilities.sendMessage("Set current playlist to active playlist.");
+                                else
+                                    Utilities.sendMessage("You cannot save to the current playlist right now.");
+                                break;
+                            case "upcoming":
+                                if (result)
+                                    Utilities.sendMessage("Set upcoming levels to active playlist.");
+                                else
+                                    Utilities.sendMessage("You cannot save to the current playlist right now.");
+                                break;
+                            default:
+                                Utilities.sendMessage($"Saved playlist as {playlistCmdData}.");
+                                break;
                         }
                         break;
                     }
@@ -245,7 +344,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         if (count > 0)
                         {
                             deleteConfirmation[uniquePlayerString] = toDelete;
-                            Utilities.sendMessage($"[FFFFFF]Use [A05000]!playlist del yes[-] to delete {count} levels:[-] {results}");
+                            Utilities.sendMessage($"[FFFFFF]Use [A05000]!playlist del yes[-] to delete {count} playlists:[-] {results}");
                         }
                         else
                             Utilities.sendMessage("[A00000]No playlists found[-]");
@@ -300,7 +399,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             Utilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
-                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(selectedPlaylist.Playlist_, playlistCmdData, false);
                         selectedPlaylist.Playlist_.Clear();
                         Utilities.sendMessage("[FFFFFF]Cleared[-]");
                         break;

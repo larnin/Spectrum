@@ -49,10 +49,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
 
+            FilteredPlaylist filterer = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
 
-            var lvls = Utilities.getFilteredPlaylist(p, message);
-            var txt = Utilities.getPlaylistText(lvls, levelFormat);
-            Utilities.sendMessage(txt);
+            if (!p.IsLocal_)
+            {
+                PlayCMD playCmd = (PlayCMD) cmd.all.getCommand("play");
+                filterer.AddFiltersFromString(playCmd.playFilter);
+            }
+
+            Utilities.sendFailures(Utilities.addFiltersToPlaylist(filterer, p, message, true), 4);
+            
+            Utilities.sendMessage(Utilities.getPlaylistText(filterer, levelFormat));
         }
     }
     class CmdSettingLevelFormat : CmdSettingString
@@ -61,10 +68,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string SettingsId { get; } = "levelFormat";
 
         public override string DisplayName { get; } = "!level Level Format";
-        public override string HelpShort { get; } = "!level: Formatted text to display for each level";
-        public override string HelpLong { get; } = "The text to display for each level. Formatting options: "
+        public override string HelpShort { get; } = "!level: Formatted text to display for each level, also for !list";
+        public override string HelpLong { get; } = "The text to display for each level, also for !list. Formatting options: "
             + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%, %CREATED%, %UPDATED%";
 
-        public override object Default { get; } = "%NAME%";
+        public override object Default { get; } = "%MODE%: %NAME%";
     }
 }

@@ -36,10 +36,22 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
             List<LevelFilter> filters = new List<LevelFilter>();
             List<string> failures = new List<string>();
 
-            // Regex note: (?=...) is a positive look-ahead
-            //  We need it so that each option matches as little as possible *up to the next option*
-            string inputMatch = input +" -f ";
-            var matches = Regex.Matches(inputMatch, @"([\-\|\&\!])(\!?)(\S+) (.*?) ?(?=[\-\|\&\!]\!?\S+ )");
+            // Regex explanations:
+            // ([\-\|\&\!])(\!?)(\S+)(?:\s+|\s+(.*?)\s+)(?=[\-\|\&\!]\!?\S+\s+)
+            // ____________-> match `-`, `&` or `|` to group 1
+            //             _____-> match `!` or `` to group 2
+            //                  _____-> match 1 or more non-whitespace characters to group 3
+            //                       ___________________-> Non-capturing group with a regex or (|)
+            //                          ___-> match 1 or more whitespace
+            //                             _-> OR
+            //                              ____________-> match...
+            //                              ___-> 1 or more whitespace
+            //                                 _____-> match 0 or more of any character, as few as possible, to group 4
+            //                                      ___-> match 1 or more whitespace
+            //                                          _______________________-> Non-consuming look-ahead that matches similar format to previous.
+            //                                                                      Causes regex to match up to next option, without consuming the option.
+            string inputMatch = input +" -f "; // this is used so that the look-ahead will match. the ` -f ` never gets matched alone, only as a look-ahead.
+            var matches = Regex.Matches(inputMatch, @"([\-\|\&\!])(\!?)(\S+)(?:\s+|\s+(.*?)\s+)(?=[\-\|\&\!]\!?\S+\s+)");
 
             if (filterTypes.ContainsKey("default"))
             {
@@ -48,7 +60,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
                     defaultStr = input;
                 else
                 {
-                    var defaultMatch = Regex.Match(inputMatch, @"^(.*?) ?[\-\|\&\!]\!?\S+ ?.*? ");
+                    var defaultMatch = Regex.Match(inputMatch, @"^(.*?)\s*[\-\|\&\!]\!?\S+\s+");
                     defaultStr = defaultMatch.Groups[1].Value;
                 }
                 LevelFilterResult filterResult = FilterFromOptionAndString("default", defaultStr);

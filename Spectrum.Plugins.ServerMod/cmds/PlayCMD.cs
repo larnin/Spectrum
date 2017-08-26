@@ -1,4 +1,5 @@
 ﻿using Spectrum.Plugins.ServerMod.CmdSettings;
+using Spectrum.Plugins.ServerMod.PlaylistTools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,10 +46,21 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string SettingsId { get; } = "playVote";
 
         public override string DisplayName { get; } = "Play is Vote";
-        public override string HelpShort { get; } = "!play acts as !vote play for players";
+        public override string HelpShort { get; } = "!play acts as !vote play for players.";
         public override string HelpLong { get; } = "For non-hosts, !play will use !vote play instead of adding maps directly. The host still adds maps directly.";
 
         public override object Default { get; } = false;
+    }
+    class CmdSettingPlayFilter : CmdSettingString
+    {
+        public override string FileId { get; } = "playFilter";
+        public override string SettingsId { get; } = "playFilter";
+
+        public override string DisplayName { get; } = "Play Filter";
+        public override string HelpShort { get; } = "!play: limit addable maps to a filter. Also affects !level and !vote play";
+        public override string HelpLong { get; } = "For non-hosts, !play will only allow mpas to be added if they match a filter. Use `!settings playFilter clear` to clear.";
+
+        public override object Default { get; } = "";
     }
     class PlayCMD : cmd
     {
@@ -72,6 +84,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
             get { return (bool)getSetting("playIsVote").Value; }
             set { getSetting("playIsVote").Value = value; }
         }
+        public string playFilter
+        {
+            get { return (string)getSetting("playFilter").Value; }
+            set { getSetting("playFilter").Value = value; }
+        }
 
         public override string name { get { return "play"; } }
         public override PermType perm { get { return (playersCanAddMap || useVote) ? PermType.ALL : PermType.HOST; } }
@@ -82,7 +99,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             new CmdSettingPlayPlayersAddMaps(),
             new CmdSettingPlayMaxPerCmd(),
             new CmdSettingPlayMaxPerRound(),
-            new CmdSettingPlayIsVote()
+            new CmdSettingPlayIsVote(),
+            new CmdSettingPlayFilter()
         };
 
         Dictionary<string, int> playerVotesThisRound = new Dictionary<string, int>();
@@ -129,10 +147,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 Utilities.sendMessage("You can't manage the playlist in trackmogrify.");
                 return;
             }
-            
-            var list = Utilities.getFilteredLevels(p, message);
 
-            if(list.Count == 0)
+            FilteredPlaylist filterer = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
+
+            if (!p.IsLocal_)
+                filterer.AddFiltersFromString(playFilter);
+
+            Utilities.sendFailures(Utilities.addFiltersToPlaylist(filterer, p, message, true), 4);
+
+            var list = filterer.Calculate();
+
+            if (list.Count == 0)
             {
                 Utilities.sendMessage("Can't find a level with the filter '" + message + "'.");
                 return;
@@ -145,7 +170,6 @@ namespace Spectrum.Plugins.ServerMod.cmds
             AutoCMD autoCmd = (AutoCMD) cmd.all.getCommand("auto");
             int origIndex = G.Sys.GameManager_.LevelPlaylist_.Index_;
             int index = autoCmd.getInsertIndex();
-            Utilities.Shuffle(list, new Random());
 
             var maxPerRoundLocal = 0;
             if (p.IsLocal_ || maxPerRound <= 0)
@@ -181,7 +205,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 countCmd++;
                 if (countCmd <= 10)
                     lvlsStr += lvl.levelNameAndPath_.levelName_ + ", ";
-                currentPlaylist.Insert(index, lvl);
+                currentPlaylist.Insert(index + countCmd - 1, lvl);
             }
             playerVotesThisRound[Utilities.getUniquePlayerString(p)] = countRound;
 
