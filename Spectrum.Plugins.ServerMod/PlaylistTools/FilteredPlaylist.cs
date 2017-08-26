@@ -38,7 +38,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
 
             // Regex explanations:
             // ([\-\|\&\!])(\!?)(\S+)(?:\s+|\s+(.*?)\s+)(?=[\-\|\&\!]\!?\S+\s+)
-            // ____________-> match `-`, `&` or `|` to group 1
+            // ____________-> match `-`, `|`, `&`, or `!` to group 1
             //             _____-> match `!` or `` to group 2
             //                  _____-> match 1 or more non-whitespace characters to group 3
             //                       ___________________-> Non-capturing group with a regex or (|)
