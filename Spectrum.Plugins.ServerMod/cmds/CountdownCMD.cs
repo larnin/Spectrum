@@ -44,7 +44,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!countdown") + ": Start the 60sec final countdown");
+            Utilities.sendMessage(Utilities.formatCmd("!countdown") + ": Start the 60 sec final countdown");
             Utilities.sendMessage(Utilities.formatCmd("!countdown <time>") + ": Start the final countdown with <time> seconds");
             Utilities.sendMessage(Utilities.formatCmd("!countdown stop") + ": Stop the final countdown");
         }
@@ -74,15 +74,15 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     Utilities.sendMessage("The time must be a number");
                     return;
                 }
-                if(time < 10 || time > 300)
-                {
-                    Utilities.sendMessage("The time must be between 10 and 300 seconds");
-                    return;
-                }
-
-                startCountdown(time);
-                Utilities.sendMessage("Final countdown started for " + time + " seconds !");
             }
+            if (time < 10 || time > 300)
+            {
+                Utilities.sendMessage("The time must be between 10 and 300 seconds");
+                return;
+            }
+
+            startCountdown(time);
+            Utilities.sendMessage("Final countdown started for " + time + " seconds !");
         }
 
         public void startCountdown(int seconds)
