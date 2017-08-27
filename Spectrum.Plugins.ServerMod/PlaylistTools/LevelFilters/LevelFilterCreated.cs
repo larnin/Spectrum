@@ -41,7 +41,6 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
             DateTime date;
             if (DateTime.TryParse(input.Trim(), out date))
             {
-                Console.WriteLine(date.ToString("d", CultureInfo.CurrentCulture)+" "+Utilities.ConvertToUnixTimestamp(date)+" "+(uint)Utilities.ConvertToUnixTimestamp(date));
                 value = (uint)Utilities.ConvertToUnixTimestamp(date);
                 return true;
             }
