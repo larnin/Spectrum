@@ -92,7 +92,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                 case "save":
                     {
-                        Match nameFilterMatch = Regex.Match(filterCmdData, @"^(.+) ?(.*)$");
+                        Match nameFilterMatch = Regex.Match(filterCmdData, @"^(.+?)\s+(.*)$");
                         if (!playlistCmdMatch.Success)
                         {
                             Utilities.sendMessage("[A00000]Bad format for save[-]");

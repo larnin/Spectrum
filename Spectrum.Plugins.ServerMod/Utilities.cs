@@ -536,7 +536,11 @@ namespace Spectrum.Plugins.ServerMod
                 }
                 if (workshopLevelInfo != null)
                 {
-
+                    Console.WriteLine(
+                        Utilities.ConvertToUnixTimestamp(Utilities.ConvertFromUnixTimestamp(workshopLevelInfo.timeCreated_))
+                        +" "
+                        +workshopLevelInfo.timeCreated_
+                       );
                     resText = resText
                         .Replace("%STARS%", SteamworksUGC.GetWorkshopRatingText(workshopLevelInfo))
                         .Replace("%STARSINT%", ((int)(workshopLevelInfo.voteScore_ / 0.2f)).ToString())

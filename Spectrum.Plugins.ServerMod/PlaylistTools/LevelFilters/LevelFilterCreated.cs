@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -40,6 +41,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
             DateTime date;
             if (DateTime.TryParse(input.Trim(), out date))
             {
+                Console.WriteLine(date.ToString("d", CultureInfo.CurrentCulture)+" "+Utilities.ConvertToUnixTimestamp(date)+" "+(uint)Utilities.ConvertToUnixTimestamp(date));
                 value = (uint)Utilities.ConvertToUnixTimestamp(date);
                 return true;
             }
@@ -58,7 +60,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
         {
             UIntComparison comparison = UIntComparison.ParseString(chatString, TryParseDateToUnixTimestamp);
             if (comparison != null)
-                return new LevelFilterResult(new LevelFilterUpdated(comparison));
+                return new LevelFilterResult(new LevelFilterCreated(comparison));
             return new LevelFilterResult("Invalid comparison/number for -created");
         }
     }
