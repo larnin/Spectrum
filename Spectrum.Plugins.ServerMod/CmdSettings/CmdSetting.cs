@@ -15,6 +15,7 @@ namespace Spectrum.Plugins.ServerMod.CmdSettings
         public abstract string HelpLong { get; }
         public virtual string HelpMarkdown { get { return HelpLong; } }
         public virtual string UsageParameters { get; } = "<option>";
+        public virtual string UpdatedOnVersion { get; } = "C.7.3.1";
 
         public object value;
         public object Value

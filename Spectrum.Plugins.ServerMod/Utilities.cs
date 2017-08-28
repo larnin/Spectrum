@@ -280,43 +280,12 @@ namespace Spectrum.Plugins.ServerMod
             return failures;
         }
 
-        public static FilteredPlaylist getFilteredPlaylist(ClientPlayerInfo p, List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault, bool doSendFailures)
-        {
-            var playlist = new FilteredPlaylist(levels);
-            var failures = addFiltersToPlaylist(playlist, p, input, includeDefault);
-            if (doSendFailures)
-                sendFailures(failures, 4);
-            return playlist;
-        }
-
-        public static FilteredPlaylist getFilteredPlaylist(ClientPlayerInfo p, List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault)
-        {
-            return getFilteredPlaylist(p, levels, input, includeDefault, true);
-        }
-
-        public static FilteredPlaylist getFilteredPlaylist(List<LevelPlaylist.ModeAndLevelInfo> levels, string input, bool includeDefault)
-        {
-            return getFilteredPlaylist(null, levels, input, includeDefault, true);
-        }
-
-        public static FilteredPlaylist getFilteredPlaylist(string input)
-        {
-            return getFilteredPlaylist(null, getAllLevelsAndModes(), input, true, true);
-        }
-
-        public static FilteredPlaylist getFilteredPlaylist(ClientPlayerInfo p, string input)
-        {
-            return getFilteredPlaylist(p, getAllLevelsAndModes(), input, true, true);
-        }
-
         public static List<LevelPlaylist.ModeAndLevelInfo> getFilteredLevels(ClientPlayerInfo p, string input)
         {
-            return getFilteredPlaylist(input).Calculate();
-        }
-
-        public static List<LevelPlaylist.ModeAndLevelInfo> getFilteredLevels(string input)
-        {
-            return getFilteredLevels(null, input);
+            var playlist = new FilteredPlaylist(getAllLevelsAndModes());
+            var failures = addFiltersToPlaylist(playlist, p, input, true);
+            sendFailures(failures, 4);
+            return playlist.Calculate().levelList;
         }
 
         public static string getPlaylistPageText(FilteredPlaylist playlist)
@@ -356,7 +325,7 @@ namespace Spectrum.Plugins.ServerMod
                 newFilters.RemoveAt(index);
             var newPlaylist = new FilteredPlaylist(playlist.CopyModeAndLevelInfos(), newFilters);
             var unpagedList = newPlaylist.Calculate();
-            var totalPages = Math.Ceiling((double) unpagedList.Count / (double) FilteredPlaylist.pageSize);
+            var totalPages = Math.Ceiling((double) unpagedList.levelList.Count / (double) FilteredPlaylist.pageSize);
             string currentPageString = "";
             foreach(var page in pages)
             {
@@ -366,19 +335,21 @@ namespace Spectrum.Plugins.ServerMod
             return currentPageString + "/" + totalPages;
         }
 
-        public static string getPlaylistText(FilteredPlaylist playlist, string levelFormat)
+        public enum IndexMode { Initial, Final }
+        public static string getPlaylistText(FilteredPlaylist playlist, IndexMode indexMode, string levelFormat)
         {
             string pageString = getPlaylistPageText(playlist);
-            List<LevelPlaylist.ModeAndLevelInfo> levels = playlist.Calculate();
+            CalculateResult levels = playlist.Calculate();
             string levelList = "";
-            for (int i = 0; i < Math.Min(levels.Count, FilteredPlaylist.pageSize); i++)
+            for (int i = 0; i < Math.Min(levels.allowedList.Count, FilteredPlaylist.pageSize); i++)
             {
-                levelList += Utilities.formatLevelInfoText(levels[i], levelFormat) + "\n";
+                var levelIndex = indexMode == IndexMode.Initial ? levels.allowedList[i].index : i;
+                levelList += Utilities.formatLevelInfoText(levels.allowedList[i].level, levelIndex, levelFormat) + "\n";
             }
             if (pageString != null)
                 levelList += $"[FFFFFF]Page {pageString}[-]";
-            else if (levels.Count > FilteredPlaylist.pageSize)
-                levelList += $"[FFFFFF]and {levels.Count - FilteredPlaylist.pageSize} more[-]";
+            else if (levels.allowedList.Count > FilteredPlaylist.pageSize)
+                levelList += $"[FFFFFF]and {levels.allowedList.Count - FilteredPlaylist.pageSize} more[-]";
             else
                 levelList = levelList.Substring(0, levelList.Length - 1);
             return levelList;
@@ -493,17 +464,17 @@ namespace Spectrum.Plugins.ServerMod
             }
         }
 
-        public static string formatLevelInfoText(LevelPlaylist.ModeAndLevelInfo level, string levelInfoText)
+        public static string formatLevelInfoText(LevelPlaylist.ModeAndLevelInfo level, int index, string levelInfoText)
         {
-            return formatLevelInfoText(level.levelNameAndPath_, level.mode_, levelInfoText);
+            return formatLevelInfoText(level.levelNameAndPath_, level.mode_, index, levelInfoText);
         }
 
-        public static string formatLevelInfoText(LevelNameAndPathPair level, string levelInfoText)
+        public static string formatLevelInfoText(LevelNameAndPathPair level, int index, string levelInfoText)
         {
-            return formatLevelInfoText(level, GameModeID.None, levelInfoText);
+            return formatLevelInfoText(level, GameModeID.None, index, levelInfoText);
         }
 
-        public static string formatLevelInfoText(LevelNameAndPathPair level, GameModeID mode, string levelInfoText)
+        public static string formatLevelInfoText(LevelNameAndPathPair level, GameModeID mode, int index, string levelInfoText)
         {
             var resText = levelInfoText;
             Utilities.testFunc(() =>
@@ -517,7 +488,8 @@ namespace Spectrum.Plugins.ServerMod
                     .Replace("%NAME%", levelInfo.levelName_)
                     .Replace("%DIFFICULTY%", levelInfo.difficulty_.ToString())
                     .Replace("%AUTHOR%", getAuthorName(levelInfo))
-                    .Replace("%MODE%", mode.ToString());
+                    .Replace("%MODE%", mode.ToString())
+                    .Replace("%INDEX%", index.ToString());
                 if (levelInfo.SupportsMedals(mode))
                 {
                     resText = resText

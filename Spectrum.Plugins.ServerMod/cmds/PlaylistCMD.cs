@@ -20,7 +20,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string HelpLong { get; } = "The text to display for each level. Formatting options: "
             + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%, %CREATED%, %UPDATED%";
 
-        public override object Default { get; } = "%NAME%";
+        public override object Default { get; } = "%INDEX%: %NAME%";
+        public override string UpdatedOnVersion { get; } = "C.7.4.0";
     }
     class PlaylistCMD : cmd
     {
@@ -226,11 +227,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     {
                         LevelPlaylist list = LevelPlaylist.Create(true);
                         list.Name_ = "New Playlist";
-                        FilteredPlaylist levels = Utilities.getFilteredPlaylist(p, playlistCmdData);
-                        list.Playlist_.AddRange(levels.Calculate());
+                        FilteredPlaylist levels = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
+                        Utilities.addFiltersToPlaylist(levels, p, playlistCmdData, true);
+                        list.Playlist_.AddRange(levels.Calculate().levelList);
                         selectedPlaylists[uniquePlayerString] = list;
                         Utilities.sendMessage("[FFFFFF]New playlist with...[-]");
-                        Utilities.sendMessage(Utilities.getPlaylistText(levels, levelFormat));
+                        Utilities.sendMessage(Utilities.getPlaylistText(levels, Utilities.IndexMode.Final, levelFormat));
                         break;
                     }
                 case "load":
@@ -358,8 +360,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             Utilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
-                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, selectedPlaylist.Playlist_, playlistCmdData, false);
-                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, levelFormat));
+                        FilteredPlaylist filterer = new FilteredPlaylist(selectedPlaylist.Playlist_);
+                        Utilities.addFiltersToPlaylist(filterer, p, playlistCmdData, false);
+                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Initial, levelFormat));
                         break;
                     }
                 case "filter":
@@ -370,11 +373,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             Utilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
-                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, selectedPlaylist.Playlist_, playlistCmdData, false);
+                        FilteredPlaylist filterer = new FilteredPlaylist(selectedPlaylist.Playlist_);
+                        Utilities.addFiltersToPlaylist(filterer, p, playlistCmdData, false);
                         selectedPlaylist.Playlist_.Clear();
-                        selectedPlaylist.Playlist_.AddRange(filterer.Calculate());
+                        selectedPlaylist.Playlist_.AddRange(filterer.Calculate().levelList);
                         Utilities.sendMessage("[FFFFFF]Filtered:[-]");
-                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, levelFormat));
+                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Final, levelFormat));
                         break;
                     }
                 case "add":
@@ -385,10 +389,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             Utilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
-                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, playlistCmdData);
-                        selectedPlaylist.Playlist_.AddRange(filterer.Calculate());
+                        FilteredPlaylist filterer = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
+                        Utilities.addFiltersToPlaylist(filterer, p, playlistCmdData, true);
+                        selectedPlaylist.Playlist_.AddRange(filterer.Calculate().levelList);
                         Utilities.sendMessage("[FFFFFF]Added:[-]");
-                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, levelFormat));
+                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Final, levelFormat));
                         break;
                     }
                 case "clear":

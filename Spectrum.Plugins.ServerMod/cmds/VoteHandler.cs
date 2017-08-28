@@ -321,8 +321,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     return;
                 }
 
-                AutoCMD autoCommand = (AutoCMD)parent.list.getCommand("auto");
-                AutoSpecCMD autoSpecCommand = (AutoSpecCMD)parent.list.getCommand("autospec");
+                AutoCMD autoCommand = parent.list.getCommand<AutoCMD>("auto");
+                AutoSpecCMD autoSpecCommand = parent.list.getCommand<AutoSpecCMD>("autospec");
                 int playerOffset = (autoCommand.autoMode && autoSpecCommand.autoSpecMode) ? -1 : 0;
 
                 int numPlayers = G.Sys.PlayerManager_.PlayerList_.Count + playerOffset;
@@ -423,7 +423,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) >= voteThresholds[voteType])
                     {
                         parent.votes[voteType].Clear();
-                        CountdownCMD command = (CountdownCMD)parent.list.getCommand("countdown");
+                        CountdownCMD command = parent.list.getCommand<CountdownCMD>("countdown");
                         command.stopCountdown();
                         Utilities.sendMessage("Vote stop succeeded! Stopping countdown...");
                     }
@@ -448,12 +448,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     FilteredPlaylist filterer = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
                     if (!p.IsLocal_)
                     {
-                        PlayCMD playCmd = (PlayCMD)cmd.all.getCommand("play");
+                        PlayCMD playCmd = cmd.all.getCommand<PlayCMD>("play");
                         filterer.AddFiltersFromString(playCmd.playFilter);
                     }
                     Utilities.sendFailures(Utilities.addFiltersToPlaylist(filterer, p, levelName, true), 4);
 
-                    List<LevelPlaylist.ModeAndLevelInfo> lvls = filterer.Calculate();
+                    List<LevelPlaylist.ModeAndLevelInfo> lvls = filterer.Calculate().levelList;
                     List<LevelResultsSortInfo> levelResults = new List<LevelResultsSortInfo>();
                     
                     double threshold = voteThresholds["play"];
@@ -461,7 +461,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     LevelPlaylist playlist = new LevelPlaylist();
                     playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
                     var currentPlaylist = playlist.Playlist_;
-                    AutoCMD autoCmd = (AutoCMD)cmd.all.getCommand("auto");
+                    AutoCMD autoCmd = cmd.all.getCommand<AutoCMD>("auto");
                     int origIndex = G.Sys.GameManager_.LevelPlaylist_.Index_;
                     int index = autoCmd.getInsertIndex();
 
@@ -627,7 +627,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         void advanceLevel()
         {
-            AutoCMD autoCommand = (AutoCMD) list.getCommand("auto");
+            AutoCMD autoCommand = list.getCommand<AutoCMD>("auto");
             if (autoCommand.autoMode)
                 autoCommand.nextLevel();
             else G.Sys.GameManager_.StartCoroutine(waitAndGoNext());

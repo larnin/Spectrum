@@ -113,19 +113,18 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
             return new LevelFilterParseResult<LevelFilter>(filters, failures);
         }
 
-        public static LevelFilterParseResult<LevelPlaylist.ModeAndLevelInfo> CalculateParsedFilters(List<LevelPlaylist.ModeAndLevelInfo> initialLevels, string toParse)
-        {
-            var playlist = new FilteredPlaylist(initialLevels);
-            var failures = playlist.AddFiltersFromString(toParse);
-            var finalLevels = playlist.Calculate();
-            return new LevelFilterParseResult<LevelPlaylist.ModeAndLevelInfo>(finalLevels, failures);
-        }
-
         public List<PlaylistLevel> levels;
         public List<LevelFilter> filters;
         
         public FilteredPlaylist() {
             this.levels = new List<PlaylistLevel>();
+            this.filters = new List<LevelFilter>();
+        }
+
+        public FilteredPlaylist(List<LevelPlaylist.ModeAndLevelInfo> levels, int indexOffset)
+        {
+            this.levels = new List<PlaylistLevel>();
+            AddLevels(levels, indexOffset);
             this.filters = new List<LevelFilter>();
         }
 
@@ -162,17 +161,29 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
             return parseResult.failures;
         }
 
+        public void AddLevel(LevelPlaylist.ModeAndLevelInfo level, int index)
+        {
+            levels.Add(new PlaylistLevel(level, index));
+        }
+
         public void AddLevel(LevelPlaylist.ModeAndLevelInfo level)
         {
-            levels.Add(new PlaylistLevel(level));
+            AddLevel(level, levels.Count);
+        }
+
+        public void AddLevels(List<LevelPlaylist.ModeAndLevelInfo> levels, int indexOffset)
+        {
+            var n = 0;
+            foreach (var level in levels)
+            {
+                this.levels.Add(new PlaylistLevel(level, indexOffset + n));
+                n++;
+            }
         }
 
         public void AddLevels(List<LevelPlaylist.ModeAndLevelInfo> levels)
         {
-            foreach (var level in levels)
-            {
-                this.levels.Add(new PlaylistLevel(level));
-            }
+            AddLevels(levels, this.levels.Count);
         }
 
         public List<PlaylistLevel> CopyLevels()
@@ -180,7 +191,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
             var levels = new List<PlaylistLevel>();
             foreach (var level in this.levels)
             {
-                levels.Add(new PlaylistLevel(level.level));
+                levels.Add(new PlaylistLevel(level.level, level.index));
             }
             return levels;
         }
@@ -195,7 +206,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
             return levels;
         }
 
-        public List<LevelPlaylist.ModeAndLevelInfo> Calculate()
+        public CalculateResult Calculate()
         {
             List<LevelSortFilter> sortFilters = new List<LevelSortFilter>();
             Comparison<PlaylistLevel> sortLevels = (a, b) =>
@@ -222,13 +233,8 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
                     instanceLevels.Sort(sortLevels);
                 }
             }
-            List<LevelPlaylist.ModeAndLevelInfo> returnLevels = new List<LevelPlaylist.ModeAndLevelInfo>();
-            foreach (var level in instanceLevels)
-            {
-                if (level.allowed)
-                    returnLevels.Add(level.level);
-            }
-            return returnLevels;
+            instanceLevels.RemoveAll(level => !level.allowed);
+            return new CalculateResult(instanceLevels);
         }
     }
     class LevelFilterParseResult<T>
@@ -239,6 +245,26 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
         {
             this.value = value;
             this.failures = failures;
+        }
+    }
+    class CalculateResult
+    {
+        public List<PlaylistLevel> playlistLevels;
+        public List<PlaylistLevel> allowedList;
+        public List<LevelPlaylist.ModeAndLevelInfo> levelList;
+        public CalculateResult(List<PlaylistLevel> levels)
+        {
+            playlistLevels = levels;
+            levelList = new List<LevelPlaylist.ModeAndLevelInfo>();
+            allowedList = new List<PlaylistLevel>();
+            foreach (var level in levels)
+            {
+                if (level.allowed)
+                {
+                    allowedList.Add(level);
+                    levelList.Add(level.level);
+                }
+            }
         }
     }
 }

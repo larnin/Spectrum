@@ -194,7 +194,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                 case "current":
                     {
-                        PlaylistCMD playlistCmd = (PlaylistCMD) cmd.all.getCommand("playlist");
+                        PlaylistCMD playlistCmd = cmd.all.getCommand<PlaylistCMD>("playlist");
                         if (!playlistCmd.canUseCurrentPlaylist)
                         {
                             Utilities.sendMessage("Cannot modify current playlist right now.");
@@ -203,19 +203,20 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         Console.WriteLine($"Filter txt: {filterCmdData}");
                         // 1. load current playlist into filter
                         LevelPlaylist currentList = G.Sys.GameManager_.LevelPlaylist_;
-                        FilteredPlaylist preFilterer = Utilities.getFilteredPlaylist(p, currentList.Playlist_, filterCmdData, false);
+                        FilteredPlaylist preFilterer = new FilteredPlaylist(currentList.Playlist_);
+                        Utilities.sendFailures(Utilities.addFiltersToPlaylist(preFilterer, p, filterCmdData, false), 4);
                         // 2. add filter that always allows the current level and helps us find it after calculation.
                         var indexFilter = new ForceCurrentIndexFilter(currentList.Index_);
                         preFilterer.AddFilter(indexFilter);
                         // 3. Calculate filter results.
-                        List<LevelPlaylist.ModeAndLevelInfo> levels = preFilterer.Calculate();
+                        CalculateResult levels = preFilterer.Calculate();
                         // 4. Update current playlist
                         currentList.Playlist_.Clear();
-                        currentList.Playlist_.AddRange(levels);
+                        currentList.Playlist_.AddRange(levels.levelList);
                         // 4. Get current level index, set playlist index to current level index
                         if (indexFilter.level != null)
                         {
-                            int index = levels.IndexOf(indexFilter.level);
+                            int index = levels.levelList.IndexOf(indexFilter.level);
                             if (index >= 0)
                                 currentList.SetIndex(index);
                             else
@@ -230,14 +231,15 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             Utilities.sendMessage("[A05000]Warning: could not find current level in new playlist. Reset to beginning.[-]");
                         }
                         Utilities.sendMessage("Filtered current playlist. Upcoming:");
-                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, currentList.Playlist_, "", false);
-                        filterer.AddFilter(new LevelFilterIndex(new IntComparison(currentList.Index_, IntComparison.Comparison.GreaterEqual)));
-                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, playlistCmd.levelFormat));
+                        FilteredPlaylist filterer = new FilteredPlaylist(currentList.Playlist_, -currentList.Index_ - 1);
+                        filterer.AddFilter(new LevelFilterAll());
+                        filterer.AddFilter(new LevelFilterIndex(new IntComparison(currentList.Index_, IntComparison.Comparison.Greater)));
+                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Initial, playlistCmd.levelFormat));
                         break;
                     }
                 case "upcoming":
                     {
-                        PlaylistCMD playlistCmd = (PlaylistCMD)cmd.all.getCommand("playlist");
+                        PlaylistCMD playlistCmd = cmd.all.getCommand<PlaylistCMD>("playlist");
                         if (!playlistCmd.canUseCurrentPlaylist)
                         {
                             Utilities.sendMessage("Cannot modify current playlist right now.");
@@ -251,17 +253,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             break;
                         }
                         var levelsUpcoming = currentList.Playlist_.GetRange(currentList.Index_ + 1, currentList.Count_ - currentList.Index_ - 1);
-                        FilteredPlaylist preFilterer = Utilities.getFilteredPlaylist(p, levelsUpcoming, filterCmdData, false);
+                        FilteredPlaylist preFilterer = new FilteredPlaylist(levelsUpcoming);
+                        Utilities.sendFailures(Utilities.addFiltersToPlaylist(preFilterer, p, filterCmdData, false), 4);
                         // 2. Calculate filter results.
-                        List<LevelPlaylist.ModeAndLevelInfo> levels = preFilterer.Calculate();
+                        List<LevelPlaylist.ModeAndLevelInfo> levels = preFilterer.Calculate().levelList;
                         // 3. Update current playlist
                         currentList.Playlist_.RemoveRange(currentList.Index_ + 1, currentList.Count_ - currentList.Index_ - 1);
                         currentList.Playlist_.AddRange(levels);
                         // 4. Print results
                         Utilities.sendMessage("Filtered current playlist. Upcoming:");
-                        FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, currentList.Playlist_, "", false);
-                        filterer.AddFilter(new LevelFilterIndex(new IntComparison(currentList.Index_, IntComparison.Comparison.GreaterEqual)));
-                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, playlistCmd.levelFormat));
+                        FilteredPlaylist filterer = new FilteredPlaylist(currentList.Playlist_, -currentList.Index_ - 1);
+                        filterer.AddFilter(new LevelFilterAll());
+                        filterer.AddFilter(new LevelFilterIndex(new IntComparison(currentList.Index_, IntComparison.Comparison.Greater)));
+                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Initial, playlistCmd.levelFormat));
                         break;
                     }
             }

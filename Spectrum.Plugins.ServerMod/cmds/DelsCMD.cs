@@ -17,7 +17,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override void help(ClientPlayerInfo p)
         {
             Utilities.sendMessage(Utilities.formatCmd("!dels <indexStart> <indexEnd>") + ": remove the maps between indexStart and indexEnd from the playlist");
-            Utilities.sendMessage("The next map has an index of 1");
+            Utilities.sendMessage("The next map has an index of 0");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -66,7 +66,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             
             int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
 
-            int playListSize = G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - index;
+            int playListSize = G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - index - 1;
             if(id2 > playListSize)
             {
                 Utilities.sendMessage("The playlist has only " + playListSize + " maps.");
@@ -78,7 +78,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             var currentPlaylist = playlist.Playlist_;
             for (int id = id1; id <= id2; id++)
             {
-                currentPlaylist.RemoveAt(index + id);
+                currentPlaylist.RemoveAt(index + id + 1);
             }
 
             G.Sys.GameManager_.LevelPlaylist_.Clear();

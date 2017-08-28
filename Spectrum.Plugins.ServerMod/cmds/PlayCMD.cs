@@ -137,8 +137,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if (useVote && !p.IsLocal_)  // host can always force play, never uses vote.
             {
-                ((VoteHandler.VoteCMD)cmd.all.getCommand("vote")).forceNextUse();
-                ((VoteHandler.VoteCMD)cmd.all.getCommand("vote")).use(p, "y play " + message);
+                cmd.all.getCommand<VoteHandler.VoteCMD>("vote").forceNextUse();
+                cmd.all.getCommand<VoteHandler.VoteCMD>("vote").use(p, "y play " + message);
                 return;
             }
 
@@ -155,7 +155,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Utilities.sendFailures(Utilities.addFiltersToPlaylist(filterer, p, message, true), 4);
 
-            var list = filterer.Calculate();
+            var list = filterer.Calculate().levelList;
 
             if (list.Count == 0)
             {
@@ -167,7 +167,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
 
             var currentPlaylist = playlist.Playlist_;
-            AutoCMD autoCmd = (AutoCMD) cmd.all.getCommand("auto");
+            AutoCMD autoCmd = cmd.all.getCommand<AutoCMD>("auto");
             int origIndex = G.Sys.GameManager_.LevelPlaylist_.Index_;
             int index = autoCmd.getInsertIndex();
 

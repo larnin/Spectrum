@@ -93,9 +93,12 @@ See below for more information about filters.
 If this command is used as a client with __%level__, it search on your library.
 
 #### List:
-Permission: __ALL__ (can also be used as client)  
-Use: !list  
 Shows all connected clients and their IDs
+Permission: __ALL__  
+Use: !list [filters]  
+Shows the 10 next levels in the playlist if no filters are provided.  
+If filters are provided, shows levels according to the filters.  
+The first one is the next level.
 
 #### Load:
 Permission: __HOST__  
@@ -124,11 +127,11 @@ Permission: __ALL__ (can also be used as client)
 Use: !players [player search query]  
 Shows all players in the game that match the search query.
 
+
 #### Playlist:
-Permission: __ALL__  
-Use: !playlist  
-Shows the 10 next levels in the playlist.  
-The first one is the current level.
+Permission: __HOST__
+Use: !playlist <sub-command> [value]  
+Playlist management
 
 #### Plugin:
 Permission: __ALL__  

@@ -22,7 +22,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
-        public static string PluginVersion = "Version C.7.3.1";
+        public static string PluginVersion = "Version C.7.4.0";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -97,17 +97,16 @@ namespace Spectrum.Plugins.ServerMod
 
             Events.Network.ServerInitialized.Subscribe(data =>
             {
-                if (((UpdateCMD)cmd.all.getCommand("update")).updateCheck)
-                {
-                    G.Sys.GameManager_.StartCoroutine(serverInit());
-                }
+                G.Sys.GameManager_.StartCoroutine(serverInit());
             });
         }
 
         IEnumerator serverInit()
         {
             yield return new WaitForSeconds(1.0f);  // wait for the server to load
-            UpdateCMD.checkForUpdates(false);  // check for ServerMod updates
+            if (cmd.all.getCommand<UpdateCMD>().updateCheck)
+                UpdateCMD.checkForUpdates(false);  // check for ServerMod updates
+            cmd.all.getCommand<SettingsCMD>().showNewSettings();  // show any new settings
             yield break;
         }
 

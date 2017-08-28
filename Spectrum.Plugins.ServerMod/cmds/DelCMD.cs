@@ -14,7 +14,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override void help(ClientPlayerInfo p)
         {
             Utilities.sendMessage(Utilities.formatCmd("!del <index>") + ": remove the map at the targeted index from the playlist");
-            Utilities.sendMessage("The next map has an index of 1");
+            Utilities.sendMessage("The next map has an index of 0");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -34,15 +34,15 @@ namespace Spectrum.Plugins.ServerMod.cmds
             int id = 0;
             int.TryParse(message, out id);
 
-            if (id <= 0)
+            if (id < 0)
             {
-                Utilities.sendMessage("The id must be a positive number.");
+                Utilities.sendMessage("The id must be >= 0");
                 return;
             }
             
             int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
 
-            int playListSize = G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - index;
+            int playListSize = G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - index - 1;
             if(id > playListSize)
             {
                 Utilities.sendMessage("The playlist has only " + playListSize + " maps.");
@@ -52,7 +52,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             LevelPlaylist playlist = new LevelPlaylist();
             playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
             var currentPlaylist = playlist.Playlist_;
-            currentPlaylist.RemoveAt(index + id);
+            currentPlaylist.RemoveAt(index + id + 1);
 
             G.Sys.GameManager_.LevelPlaylist_.Clear();
 

@@ -32,13 +32,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
 
-            LevelCMD levelCmd = (LevelCMD) cmd.all.getCommand("level");
+            LevelCMD levelCmd = cmd.all.getCommand<LevelCMD>("level");
 
             var levelsUpcoming = currentList.Playlist_.GetRange(currentList.Index_ + 1, currentList.Count_ - currentList.Index_ - 1);
-            FilteredPlaylist filterer = Utilities.getFilteredPlaylist(p, levelsUpcoming, message, false);
+            FilteredPlaylist filterer = new FilteredPlaylist(levelsUpcoming);
+            Utilities.addFiltersToPlaylist(filterer, p, message, false);
             
             Utilities.sendMessage("[FFFFFF]Upcoming:[-]");
-            Utilities.sendMessage(Utilities.getPlaylistText(filterer, levelCmd.levelFormat));
+            Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Initial, levelCmd.levelFormat));
         }
     }
 }

@@ -122,8 +122,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Events.RaceMode.FinalCountdownActivate.Subscribe(data =>
             {
                 try {
-                    AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
-                    CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
+                    AutoSpecCMD autoSpecCommand = list.getCommand<AutoSpecCMD>("autospec");
+                    CountdownCMD countdownCommand = list.getCommand<CountdownCMD>("countdown");
                     if (G.Sys.PlayerManager_.PlayerList_.Count == 2 && autoSpecCommand.autoSpecMode)
                     {
                         countdownCommand.stopCountdown();
@@ -211,7 +211,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public int getMinPlayers()
         {
-            AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
+            AutoSpecCMD autoSpecCommand = list.getCommand<AutoSpecCMD>("autospec");
             return minPlayers + autoSpecCommand.getAutoSpecPlayers().Count;
         }
 
@@ -220,7 +220,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             int myIndex;
             if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
             {
-                AutoSpecCMD autoSpecCommand = (AutoSpecCMD)list.getCommand("autospec");
+                AutoSpecCMD autoSpecCommand = list.getCommand<AutoSpecCMD>("autospec");
                 var specCount = autoSpecCommand.getAutoSpecPlayers().Count;
                 if (specCount != 0) {
                     string specWord = specCount == 1 ? "is" : "are";
@@ -326,7 +326,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 if (Utilities.isCurrentLastLevel())
                 {
                     if (shuffleAtEnd)
-                        cmd.all.getCommand("shuffle").use(null, "");
+                        cmd.all.getCommand<ShuffleCMD>("shuffle").use(null, "");
                     else
                     {
                         if (G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count != 0)
@@ -401,7 +401,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 )
                 {
                     if (shuffleAtEnd)
-                        cmd.all.getCommand("shuffle").use(null, "");
+                        cmd.all.getCommand<ShuffleCMD>("shuffle").use(null, "");
                     else
                     {
                         if (G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count != 0)
@@ -445,9 +445,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 currentMapInsertIndex = voteLevels[voteLevels.Count - 1] + 1;
 
                 Utilities.sendMessage("Vote for the next map (write [FF0000]1[-], [00FF00]2[-], [0088FF]3[-], or [FFFFFF]0[-] to restart)! Votes end in 15 sec!");
-                Utilities.sendMessage("[b][FF0000]1[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]], voteText) + "[-]");
-                Utilities.sendMessage("[b][00FF00]2[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[2]], voteText) + "[-]");
-                Utilities.sendMessage("[b][0088FF]3[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[3]], voteText) + "[-]");
+                Utilities.sendMessage("[b][FF0000]1[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]], 1, voteText) + "[-]");
+                Utilities.sendMessage("[b][00FF00]2[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[2]], 2, voteText) + "[-]");
+                Utilities.sendMessage("[b][0088FF]3[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[3]], 3, voteText) + "[-]");
 
                 myIndex = index;
                 yield return new WaitForSeconds(15);
@@ -570,7 +570,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if (maxRunTime > 60)
             {
                 yield return new WaitForSeconds(maxRunTime - 60);
-                CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
+                CountdownCMD countdownCommand = list.getCommand<CountdownCMD>("countdown");
                 if (currentIndex == index && autoMode && !countdownCommand.countdownStarted)
                 {
                     Utilities.sendMessage("This map has run for the maximum time.");
@@ -581,7 +581,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
             else
             {
-                CountdownCMD countdownCommand = (CountdownCMD)list.getCommand("countdown");
+                CountdownCMD countdownCommand = list.getCommand<CountdownCMD>("countdown");
                 countdownCommand.startCountdown(maxRunTime);
             }
             yield return null;

@@ -30,7 +30,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
 
         public override LevelFilterResult FromChatString(string chatString, string option)
         {
-            PlaylistCMD playlistCmd = (PlaylistCMD) cmd.all.getCommand("playlist");
+            PlaylistCMD playlistCmd = cmd.all.getCommand<PlaylistCMD>("playlist");
             int count;
             LevelPlaylist list = playlistCmd.getPlaylistLevels(chatString, out count);
             if (count == 0)

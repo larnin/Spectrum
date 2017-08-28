@@ -33,8 +33,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             set { getSetting("updateCheck").Value = value; }
         }
         private static string updateCheckURL = "https://api.github.com/repos/corecii/spectrum/releases";
-        private static string updateCheckRemoteRegex = @"ServerMod\.(C\.\d+\.\d+\.\d+)";
-        private static string updateCheckLocalRegex = @"Version (C\.\d+\.\d+\.\d+)";
+        private static string updateCheckRemoteRegex = @"ServerMod\.(.\.\d+\.\d+\.\d+)";
+        public static string updateCheckLocalRegex = @"Version (.\.\d+\.\d+\.\d+)";
 
         private const string tagNameRegex = "\"tag_name\": ?\"(.+?)\",";
 

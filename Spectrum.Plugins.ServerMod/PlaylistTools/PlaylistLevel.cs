@@ -10,6 +10,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
         public enum Accept { Neutral, Allow, Deny}
 
         public LevelPlaylist.ModeAndLevelInfo level;
+        public int index;
 
         public Accept and = Accept.Neutral;
         public Accept or = Accept.Neutral;
@@ -29,6 +30,13 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
         public PlaylistLevel(LevelPlaylist.ModeAndLevelInfo level)
         {
             this.level = level;
+            index = 0;
+        }
+
+        public PlaylistLevel(LevelPlaylist.ModeAndLevelInfo level, int index)
+        {
+            this.level = level;
+            this.index = index;
         }
 
         public void And(bool accept)

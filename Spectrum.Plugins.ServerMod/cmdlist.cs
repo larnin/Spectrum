@@ -51,6 +51,22 @@ namespace Spectrum.Plugins.ServerMod
             
         }
 
+        public T getCommand<T>() where T : cmd
+        {
+            foreach (cmd c in cmds)
+                if (c is T)
+                    return (T) c;
+            return null;
+        }
+
+        public T getCommand<T>(string name) where T : cmd
+        {
+            foreach (cmd c in cmds)
+                if (c is T && c.name == name)
+                    return (T)c;
+            return null;
+        }
+
         public cmd getCommand(string name)
         {
             if (name.Length == 0)

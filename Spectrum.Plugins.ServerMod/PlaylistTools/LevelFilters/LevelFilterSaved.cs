@@ -22,7 +22,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
 
         public override LevelFilterResult FromChatString(string chatString, string option)
         {
-            FilterCMD filterCmd = (FilterCMD) cmd.all.getCommand("filter");
+            FilterCMD filterCmd = cmd.all.getCommand<FilterCMD>("filter");
             string filterName = null;
             string filter = null;
             string searchRegex = Utilities.getSearchRegex(chatString);
