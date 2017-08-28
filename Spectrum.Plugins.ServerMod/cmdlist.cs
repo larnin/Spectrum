@@ -20,6 +20,7 @@ namespace Spectrum.Plugins.ServerMod
                 new FilterCMD(),
                 new ForceStartCMD(),
                 new HelpCMD(),
+                new InfoCMD(),
                 new KickCMD(),
                 new LevelCMD(),
                 new ListCMD(),

@@ -27,7 +27,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             Utilities.sendMessage($"{Utilities.formatCmd("!settings reload")}: reload the settings from the file.");
             Utilities.sendMessage($"{Utilities.formatCmd("!settings summary")}: view the value of all settings.");
-            Utilities.sendMessage($"{Utilities.formatCmd("!settings default <setting>")}: reset <setting> to its default value");
+            Utilities.sendMessage($"{Utilities.formatCmd("!settings defaults")}: view the default of all settings.");
+            Utilities.sendMessage($"{Utilities.formatCmd("!settings reset <setting>")}: reset <setting> to its default value");
+            Utilities.sendMessage($"{Utilities.formatCmd("!settings default <setting>")}: view default for <setting>");
             Utilities.sendMessage($"{Utilities.formatCmd("!settings help <setting>")}: view a more detailed help message for <setting>");
             foreach (cmd Command in cmd.all.list())
             {
@@ -133,7 +135,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                     Utilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
                 }
-                else if (setting == "default")
+                else if (setting == "reset")
                 {
                     string settingHelp = msgMatch.Groups[2].Value.ToLower();
                     if (settingHelp.Length == 0)
@@ -151,6 +153,28 @@ namespace Spectrum.Plugins.ServerMod.cmds
                                 Utilities.sendMessage($"Setting {Setting.SettingsId} reset to default:");
                                 Utilities.sendMessage($"{Setting.Default}");
                                 Entry.save();
+                                return;
+                            }
+                        }
+                    }
+                    Utilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
+                }
+                else if (setting == "default")
+                {
+                    string settingHelp = msgMatch.Groups[2].Value.ToLower();
+                    if (settingHelp.Length == 0)
+                    {
+                        help(p);
+                        return;
+                    }
+                    foreach (cmd Command in cmd.all.list())
+                    {
+                        foreach (CmdSetting Setting in Command.settings)
+                        {
+                            if (Setting.SettingsId.ToLower() == settingHelp.ToLower())
+                            {
+                                Utilities.sendMessage($"{Setting.SettingsId} default:");
+                                Utilities.sendMessage($"{Setting.Default}");
                                 return;
                             }
                         }
@@ -209,6 +233,23 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             if (txt != "")
                             {
                                 Utilities.sendMessage($"[b][D00000]!{Command.name} Settings[-][/b]{txt}");
+                            }
+                        }
+                        return;
+                    }
+                    else if (setting == "defaults")
+                    {
+                        foreach (cmd Command in cmd.all.list())
+                        {
+                            string txt = "";
+                            foreach (CmdSetting Setting in Command.settings)
+                            {
+                                if (Setting.SettingsId != "")
+                                    txt += $"\n {Utilities.formatCmd($"{Setting.SettingsId}")}: {Setting.Default}";
+                            }
+                            if (txt != "")
+                            {
+                                Utilities.sendMessage($"[b][D00000]!{Command.name} Default Settings[-][/b]{txt}");
                             }
                         }
                         return;

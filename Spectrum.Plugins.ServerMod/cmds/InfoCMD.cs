@@ -6,26 +6,24 @@ using System.Linq;
 
 namespace Spectrum.Plugins.ServerMod.cmds
 {
-    class LevelCMD : cmd
+    class InfoCMD : cmd
     {
-        public string levelFormat
-        {
-            get { return (string)getSetting("levelFormat").Value; }
-            set { getSetting("levelFormat").Value = value; }
-        }
-        public override string name { get { return "level"; } }
+        public override string name { get { return "info"; } }
         public override PermType perm { get { return PermType.ALL; } }
         public override bool canUseAsClient { get { return true; } }
 
-        public override CmdSetting[] settings { get; } =
-        {
-            new CmdSettingLevelFormat()
-        };
+        public string infoFormat =
+              "[b][FFFFFF]%NAME%[-][/b] by %AUTHOR%\n"
+            + "%DIFFICULTY% %MODE%\n"
+            + "[994700]%MBRONZE%[-] [CCCCCC]%MSILVER%[-] [FFD900]%MGOLD%[-] [00EFFF]%MDIAMOND%[-]\n"
+            + "%STARSDEC% / 5 %STARS%\n"
+            + "%CREATED% Created\n"
+            + "%UPDATED% Updated";
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!level [name]") + ": Find a level who have that keyword on his name");
-            Utilities.sendMessage(Utilities.formatCmd("!level [filter] ") + ": Use filters to find a level");
+            Utilities.sendMessage(Utilities.formatCmd("!info [name]") + ": Find a level who have that keyword on his name");
+            Utilities.sendMessage(Utilities.formatCmd("!info [filter] ") + ": Use filters to find a level");
             List<LevelFilter> filters = new List<LevelFilter>();
             foreach (KeyValuePair<string, LevelFilter> filter in FilteredPlaylist.filterTypes)
             {
@@ -58,22 +56,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
 
             Utilities.sendFailures(Utilities.addFiltersToPlaylist(filterer, p, message, true), 4);
-            
-            Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Final, levelFormat));
+
+            var levels = filterer.Calculate();
+            if (levels.levelList.Count == 0)
+            {
+                Utilities.sendMessage("No levels found.");
+                return;
+            }
+            var level = levels.allowedList[0];
+
+            Utilities.sendMessage(Utilities.formatLevelInfoText(level.level, level.index, infoFormat));
+
+            if (levels.levelList.Count > 1)
+                Utilities.sendMessage($"Found {levels.levelList.Count - 1} more levels.");
         }
-    }
-    class CmdSettingLevelFormat : CmdSettingString
-    {
-        public override string FileId { get; } = "levelFormat";
-        public override string SettingsId { get; } = "levelFormat";
-
-        public override string DisplayName { get; } = "!level Level Format";
-        public override string HelpShort { get; } = "!level: Formatted text to display for each level, also for !list";
-        public override string HelpLong { get; } = "The text to display for each level, also for !list. Formatting options: "
-            + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%, %CREATED%, %UPDATED%, %INDEX%";
-
-        public override object Default { get; } = "%INDEX% %MODE%: [FFFFFF]%NAME%[-] by %AUTHOR%";
-
-        public override string UpdatedOnVersion { get; } = "C.7.4.0";
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
 {
@@ -10,12 +11,14 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
         public override string[] options { get; } = new string[] {"a", "author"};
 
         string match = "";
+        string matchRegex = "";
 
         public LevelFilterAuthor() { }
 
         public LevelFilterAuthor(string match)
         {
             this.match = match.ToLower().Trim();
+            matchRegex = Utilities.getSearchRegex(match);
         }
 
         public override void Apply(List<PlaylistLevel> levels)
@@ -41,7 +44,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
                 foreach (var level in levels)
                 {
                     var authorName = Utilities.getAuthorName(levelSetsManager.GetLevelInfo(level.level.levelNameAndPath_.levelPath_));
-                    level.Mode(mode, authorName.ToLower().Trim().Contains(match));
+                    level.Mode(mode, Regex.Match(authorName, matchRegex, RegexOptions.IgnoreCase).Success);
                 }
         }
 

@@ -303,7 +303,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
     class CmdSettingFilters : CmdSetting
     {
         public override string FileId { get; } = "filters";
-        public override string SettingsId { get; } = "filters";
+        public override string SettingsId { get; } = "";
 
         public override string DisplayName { get; } = "!filter Saved filters";
         public override string HelpShort { get; } = "!filter: List of saved filters";

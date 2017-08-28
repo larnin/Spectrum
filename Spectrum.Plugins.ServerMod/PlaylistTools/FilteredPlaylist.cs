@@ -233,7 +233,6 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools
                     instanceLevels.Sort(sortLevels);
                 }
             }
-            instanceLevels.RemoveAll(level => !level.allowed);
             return new CalculateResult(instanceLevels);
         }
     }
