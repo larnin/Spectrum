@@ -276,7 +276,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
     class CmdSettingRecentVersion : CmdSettingString
     {
         public override string FileId { get; } = "recentVersion";
-        public override string SettingsId { get; } = "recentVersion";
+        public override string SettingsId { get; } = "";
 
         public override string DisplayName { get; } = "Recent ServerMod Version";
         public override string HelpShort { get; } = "Stores the most recent version of ServerMod to detect when ServerMod has been updated.";
