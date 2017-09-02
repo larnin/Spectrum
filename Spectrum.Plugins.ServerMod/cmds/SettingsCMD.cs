@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class SettingsCMD : cmd
+    class SettingsCmd : Cmd
     {
         public override string name { get { return "settings"; } }
         public override PermType perm { get { return PermType.HOST; } }
@@ -32,7 +32,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd("!settings reset <setting>")}: reset <setting> to its default value");
             MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd("!settings default <setting>")}: view default for <setting>");
             MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd("!settings help <setting>")}: view a more detailed help message for <setting>");
-            foreach (cmd Command in cmd.all.list())
+            foreach (Cmd Command in Cmd.all.list())
             {
                 string txt = "";
                 foreach (CmdSetting Setting in Command.settings)
@@ -71,7 +71,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     if (style == "command" || style == "both")
                     {
                         string txt = "";
-                        foreach (cmd Command in cmd.all.list())
+                        foreach (Cmd Command in Cmd.all.list())
                         {
                             string txt2 = "";
                             foreach (CmdSetting Setting in Command.settings)
@@ -92,7 +92,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     if (style == "file" || style == "both")
                     {
                         string txt = "";
-                        foreach (cmd Command in cmd.all.list())
+                        foreach (Cmd Command in Cmd.all.list())
                         {
                             string txt2 = "";
                             foreach (CmdSetting Setting in Command.settings)
@@ -122,7 +122,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         help(p);
                         return;
                     }
-                    foreach (cmd Command in cmd.all.list())
+                    foreach (Cmd Command in Cmd.all.list())
                     {
                         foreach (CmdSetting Setting in Command.settings)
                         {
@@ -144,7 +144,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         help(p);
                         return;
                     }
-                    foreach (cmd Command in cmd.all.list())
+                    foreach (Cmd Command in Cmd.all.list())
                     {
                         foreach (CmdSetting Setting in Command.settings)
                         {
@@ -168,7 +168,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         help(p);
                         return;
                     }
-                    foreach (cmd Command in cmd.all.list())
+                    foreach (Cmd Command in Cmd.all.list())
                     {
                         foreach (CmdSetting Setting in Command.settings)
                         {
@@ -184,7 +184,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 }
                 else
                 {
-                    foreach (cmd Command in cmd.all.list())
+                    foreach (Cmd Command in Cmd.all.list())
                     {
                         foreach (CmdSetting Setting in Command.settings)
                         {
@@ -223,7 +223,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                     else if (setting == "summary")
                     {
-                        foreach (cmd Command in cmd.all.list())
+                        foreach (Cmd Command in Cmd.all.list())
                         {
                             string txt = "";
                             foreach (CmdSetting Setting in Command.settings)
@@ -240,7 +240,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                     else if (setting == "defaults")
                     {
-                        foreach (cmd Command in cmd.all.list())
+                        foreach (Cmd Command in Cmd.all.list())
                         {
                             string txt = "";
                             foreach (CmdSetting Setting in Command.settings)
@@ -257,7 +257,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                     else
                     {
-                        foreach (cmd Command in cmd.all.list())
+                        foreach (Cmd Command in Cmd.all.list())
                         {
                             foreach (CmdSetting Setting in Command.settings)
                             {
@@ -282,7 +282,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public void showNewSettings()
         {
-            var currentVersionMatch = Regex.Match(Entry.PluginVersion, UpdateCMD.updateCheckLocalRegex);
+            var currentVersionMatch = Regex.Match(Entry.PluginVersion, UpdateCmd.updateCheckLocalRegex);
             if (!currentVersionMatch.Success)
             {
                 MessageUtilities.sendMessage("Warning: Could not match current plugin version. Cannot show new settings or check for updates.");
@@ -295,7 +295,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Entry.save();
             MessageUtilities.sendMessage($"[b][D00000]New Settings Defaults for {Entry.PluginVersion}[-][/b]");
             var count = 0;
-            foreach (cmd Command in cmd.all.list())
+            foreach (Cmd Command in Cmd.all.list())
             {
                 string txt = "";
                 foreach (CmdSetting Setting in Command.settings)

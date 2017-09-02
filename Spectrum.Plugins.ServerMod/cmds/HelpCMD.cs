@@ -1,9 +1,9 @@
 ﻿
 using Spectrum.Plugins.ServerMod.Utilities;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class HelpCMD : cmd
+    class HelpCmd : Cmd
     {
         public override string name { get { return "help"; } }
         public override PermType perm { get { return PermType.ALL; } }
@@ -24,7 +24,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             int pos = message.IndexOf(' ');
             string commandName = (pos > 0 ? message.Substring(1, message.IndexOf(' ')) : message).Trim();
-            cmd c = cmd.all.getCommand(commandName);
+            Cmd c = Cmd.all.getCommand(commandName);
             if (c == null)
             {
                 MessageUtilities.sendMessage("The command '" + commandName + "' don't exist.");
@@ -45,9 +45,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
             var playerIsConnectedClient = !p.IsLocal_ && GeneralUtilities.isHost();
             MessageUtilities.sendMessage("Available commands:");
             string list = "";
-            foreach(var cName in cmd.all.commands())
+            foreach(var cName in Cmd.all.commands())
             {
-                cmd c = cmd.all.getCommand(cName);
+                Cmd c = Cmd.all.getCommand(cName);
 
                 var allowed = showAll;
                 if (playerIsLocal)

@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class FilterCMD : cmd
+    class FilterCmd : Cmd
     {
 
         public Dictionary<string, string> savedFilters
@@ -30,7 +30,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         
         Dictionary<string, List<string>> deleteConfirmation = new Dictionary<string, List<string>>();
 
-        public FilterCMD()
+        public FilterCmd()
         {
 
         }
@@ -195,7 +195,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                 case "current":
                     {
-                        PlaylistCMD playlistCmd = cmd.all.getCommand<PlaylistCMD>("playlist");
+                        PlaylistCmd playlistCmd = Cmd.all.getCommand<PlaylistCmd>("playlist");
                         if (!playlistCmd.canUseCurrentPlaylist)
                         {
                             MessageUtilities.sendMessage("Cannot modify current playlist right now.");
@@ -240,7 +240,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                 case "upcoming":
                     {
-                        PlaylistCMD playlistCmd = cmd.all.getCommand<PlaylistCMD>("playlist");
+                        PlaylistCmd playlistCmd = Cmd.all.getCommand<PlaylistCmd>("playlist");
                         if (!playlistCmd.canUseCurrentPlaylist)
                         {
                             MessageUtilities.sendMessage("Cannot modify current playlist right now.");

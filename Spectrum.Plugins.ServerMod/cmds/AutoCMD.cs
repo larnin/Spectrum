@@ -8,9 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class AutoCMD : cmd
+    class AutoCmd : Cmd
     {
         public bool voteNext
         {
@@ -69,7 +69,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         bool didFinish = false;
 
-        cmdlist list;
+        CmdList list;
 
         public override CmdSetting[] settings { get; } = {
             new CmdSettingAutoVote(),
@@ -84,7 +84,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public int currentMapInsertIndex = -1;
 
-        public AutoCMD(cmdlist list)
+        public AutoCmd(CmdList list)
         {
             this.list = list;
 
@@ -123,8 +123,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             Events.RaceMode.FinalCountdownActivate.Subscribe(data =>
             {
                 try {
-                    AutoSpecCMD autoSpecCommand = list.getCommand<AutoSpecCMD>("autospec");
-                    CountdownCMD countdownCommand = list.getCommand<CountdownCMD>("countdown");
+                    AutoSpecCmd autoSpecCommand = list.getCommand<AutoSpecCmd>("autospec");
+                    CountdownCmd countdownCommand = list.getCommand<CountdownCmd>("countdown");
                     if (G.Sys.PlayerManager_.PlayerList_.Count == 2 && autoSpecCommand.autoSpecMode)
                     {
                         countdownCommand.stopCountdown();
@@ -212,7 +212,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public int getMinPlayers()
         {
-            AutoSpecCMD autoSpecCommand = list.getCommand<AutoSpecCMD>("autospec");
+            AutoSpecCmd autoSpecCommand = list.getCommand<AutoSpecCmd>("autospec");
             return minPlayers + autoSpecCommand.getAutoSpecPlayers().Count;
         }
 
@@ -221,7 +221,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             int myIndex;
             if (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
             {
-                AutoSpecCMD autoSpecCommand = list.getCommand<AutoSpecCMD>("autospec");
+                AutoSpecCmd autoSpecCommand = list.getCommand<AutoSpecCmd>("autospec");
                 var specCount = autoSpecCommand.getAutoSpecPlayers().Count;
                 if (specCount != 0) {
                     string specWord = specCount == 1 ? "is" : "are";
@@ -327,7 +327,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 if (GeneralUtilities.isCurrentLastLevel())
                 {
                     if (shuffleAtEnd)
-                        cmd.all.getCommand<ShuffleCMD>("shuffle").use(null, "");
+                        Cmd.all.getCommand<ShuffleCmd>("shuffle").use(null, "");
                     else
                     {
                         if (G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count != 0)
@@ -402,7 +402,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 )
                 {
                     if (shuffleAtEnd)
-                        cmd.all.getCommand<ShuffleCMD>("shuffle").use(null, "");
+                        Cmd.all.getCommand<ShuffleCmd>("shuffle").use(null, "");
                     else
                     {
                         if (G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count != 0)
@@ -571,7 +571,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if (maxRunTime > 60)
             {
                 yield return new WaitForSeconds(maxRunTime - 60);
-                CountdownCMD countdownCommand = list.getCommand<CountdownCMD>("countdown");
+                CountdownCmd countdownCommand = list.getCommand<CountdownCmd>("countdown");
                 if (currentIndex == index && autoMode && !countdownCommand.countdownStarted)
                 {
                     MessageUtilities.sendMessage("This map has run for the maximum time.");
@@ -582,7 +582,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
             else
             {
-                CountdownCMD countdownCommand = list.getCommand<CountdownCMD>("countdown");
+                CountdownCmd countdownCommand = list.getCommand<CountdownCmd>("countdown");
                 countdownCommand.startCountdown(maxRunTime);
             }
             yield return null;

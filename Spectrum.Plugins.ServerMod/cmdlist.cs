@@ -1,49 +1,49 @@
-﻿using Spectrum.Plugins.ServerMod.cmds;
+﻿using Spectrum.Plugins.ServerMod.Cmds;
 using System.Collections.Generic;
 
 namespace Spectrum.Plugins.ServerMod
 {
-    class cmdlist
+    class CmdList
     {
-        private List<cmd> cmds = new List<cmd>();
+        private List<Cmd> cmds = new List<Cmd>();
 
-        public cmdlist()
+        public CmdList()
         {
-            cmd[] addCmds = new cmd[] {
-                new AutoCMD(this),
-                new AutoSpecCMD(),
-                new ClearCMD(),
-                new CountdownCMD(),
-                new DateCMD(),
-                new DelCMD(),
-                new DelsCMD(),
-                new FilterCMD(),
-                new ForceStartCMD(),
-                new HelpCMD(),
-                new InfoCMD(),
-                new KickCMD(),
-                new LevelCMD(),
-                new ListCMD(),
-                new LoadCMD(),
+            Cmd[] addCmds = new Cmd[] {
+                new AutoCmd(this),
+                new AutoSpecCmd(),
+                new ClearCmd(),
+                new CountdownCmd(),
+                new DateCmd(),
+                new DelCmd(),
+                new DelsCmd(),
+                new FilterCmd(),
+                new ForceStartCmd(),
+                new HelpCmd(),
+                new InfoCmd(),
+                new KickCmd(),
+                new LevelCmd(),
+                new ListCmd(),
+                new LoadCmd(),
                 //new NameCMD(), // not supported
-                new PlayCMD(),
-                new PlaylistCMD(),
-                new PlayersCMD(),
-                new PluginCMD(),
-                new RestartCMD(),
-                new RipCMD(),
-                new SaveCMD(),
-                new ScoresCMD(),
-                new ServerCMD(),
-                new SettingsCMD(),
-                new ShuffleCMD(),
-                new SpecCMD(),
-                new TimelimitCMD(),
-                new UpdateCMD(),
-                new WelcomeCMD(),
-                new WinCMD(),
+                new PlayCmd(),
+                new PlaylistCmd(),
+                new PlayersCmd(),
+                new PluginCmd(),
+                new RestartCmd(),
+                new RipCmd(),
+                new SaveCmd(),
+                new ScoresCmd(),
+                new ServerCmd(),
+                new SettingsCmd(),
+                new ShuffleCmd(),
+                new SpecCmd(),
+                new TimelimitCmd(),
+                new UpdateCmd(),
+                new WelcomeCmd(),
+                new WinCmd(),
             };
-            foreach (cmd addCmd in addCmds)
+            foreach (Cmd addCmd in addCmds)
                 cmds.Add(addCmd);
 
             VoteHandler voteHandler = new VoteHandler(this);
@@ -52,29 +52,29 @@ namespace Spectrum.Plugins.ServerMod
             
         }
 
-        public T getCommand<T>() where T : cmd
+        public T getCommand<T>() where T : Cmd
         {
-            foreach (cmd c in cmds)
+            foreach (Cmd c in cmds)
                 if (c is T)
                     return (T) c;
             return null;
         }
 
-        public T getCommand<T>(string name) where T : cmd
+        public T getCommand<T>(string name) where T : Cmd
         {
-            foreach (cmd c in cmds)
+            foreach (Cmd c in cmds)
                 if (c is T && c.name == name)
                     return (T)c;
             return null;
         }
 
-        public cmd getCommand(string name)
+        public Cmd getCommand(string name)
         {
             if (name.Length == 0)
                 return null;
             name = name.ToLower();
 
-            foreach(cmd c in cmds)
+            foreach(Cmd c in cmds)
                 if (c.name.Equals(name))
                     return c;
             return null;
@@ -87,9 +87,9 @@ namespace Spectrum.Plugins.ServerMod
                 l.Add(c.name);
             return l;
         }
-        public List<cmd> list()
+        public List<Cmd> list()
         {
-            List<cmd> l = new List<cmd>();
+            List<Cmd> l = new List<Cmd>();
             foreach (var c in cmds)
                 l.Add(c);
             return l;

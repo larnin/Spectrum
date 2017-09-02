@@ -2,9 +2,9 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class ServerCMD : cmd
+    class ServerCmd : Cmd
     {
         public override string name { get { return "server"; } }
         public override PermType perm { get { return PermType.ALL; } }

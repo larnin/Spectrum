@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class WinCMD : cmd
+    class WinCmd : Cmd
     {
         public override string name { get { return "win"; } }
         public override PermType perm { get { return PermType.ALL; } }

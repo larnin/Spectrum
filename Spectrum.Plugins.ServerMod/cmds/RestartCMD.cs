@@ -7,9 +7,9 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class RestartCMD : cmd
+    class RestartCmd : Cmd
     {
         public override string name { get { return "restart"; } }
         public override PermType perm { get { return PermType.ALL; } }

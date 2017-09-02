@@ -1,4 +1,4 @@
-﻿using Spectrum.Plugins.ServerMod.cmds;
+﻿using Spectrum.Plugins.ServerMod.Cmds;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +30,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
 
         public override LevelFilterResult FromChatString(string chatString, string option)
         {
-            PlaylistCMD playlistCmd = cmd.all.getCommand<PlaylistCMD>("playlist");
+            PlaylistCmd playlistCmd = Cmd.all.getCommand<PlaylistCmd>("playlist");
             int count;
             LevelPlaylist list = playlistCmd.getPlaylistLevels(chatString, out count);
             if (count == 0)

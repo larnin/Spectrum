@@ -4,9 +4,9 @@ using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using UnityEngine;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class CountdownCMD : cmd
+    class CountdownCmd : Cmd
     {
         public bool countdownStarted = false;
         DateTime countdownEndTime = DateTime.Now;
@@ -15,7 +15,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override PermType perm { get { return PermType.HOST; } }
         public override bool canUseAsClient { get { return false; } }
 
-        public CountdownCMD()
+        public CountdownCmd()
         {
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {

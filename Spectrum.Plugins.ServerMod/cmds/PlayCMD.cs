@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
     class CmdSettingPlayPlayersAddMaps : CmdSettingBool
     {
@@ -63,7 +63,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override object Default { get; } = "";
     }
-    class PlayCMD : cmd
+    class PlayCmd : Cmd
     {
         public bool playersCanAddMap
         {
@@ -106,7 +106,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         Dictionary<string, int> playerVotesThisRound = new Dictionary<string, int>();
 
-        public PlayCMD()
+        public PlayCmd()
         {
             Events.GameMode.ModeStarted.Subscribe(data =>
             {
@@ -138,8 +138,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if (useVote && !p.IsLocal_)  // host can always force play, never uses vote.
             {
-                cmd.all.getCommand<VoteHandler.VoteCMD>("vote").forceNextUse();
-                cmd.all.getCommand<VoteHandler.VoteCMD>("vote").use(p, "y play " + message);
+                Cmd.all.getCommand<VoteHandler.VoteCMD>("vote").forceNextUse();
+                Cmd.all.getCommand<VoteHandler.VoteCMD>("vote").use(p, "y play " + message);
                 return;
             }
 
@@ -168,7 +168,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
 
             var currentPlaylist = playlist.Playlist_;
-            AutoCMD autoCmd = cmd.all.getCommand<AutoCMD>("auto");
+            AutoCmd autoCmd = Cmd.all.getCommand<AutoCmd>("auto");
             int origIndex = G.Sys.GameManager_.LevelPlaylist_.Index_;
             int index = autoCmd.getInsertIndex();
 

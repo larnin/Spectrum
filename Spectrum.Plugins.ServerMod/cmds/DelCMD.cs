@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class DelCMD : cmd
+    class DelCmd : Cmd
     {
         public override string name { get { return "del"; } }
         public override PermType perm { get { return PermType.HOST; } }

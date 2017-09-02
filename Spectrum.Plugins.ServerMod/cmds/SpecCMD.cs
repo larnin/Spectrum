@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class SpecCMD : cmd
+    class SpecCmd : Cmd
     {
         public override string name { get { return "spec"; } }
         public override PermType perm { get { return PermType.HOST; } }

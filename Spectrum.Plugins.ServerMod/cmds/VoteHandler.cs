@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
     class VoteHandler
     {
@@ -20,12 +20,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
         
         private Dictionary<string, List<string>> votes;
 
-        private cmdlist list;
+        private CmdList list;
 
         public VoteCMD voteCommand;
         public VoteCtrlCMD voteControlCommand;
 
-        public VoteHandler(cmdlist list)
+        public VoteHandler(CmdList list)
         {
             this.list = list;
 
@@ -40,7 +40,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             voteControlCommand = new VoteCtrlCMD(this);
         }
 
-       public class VoteCtrlCMD : cmd
+       public class VoteCtrlCMD : Cmd
         {
             public override string name { get { return "votectrl"; } }
             public override PermType perm { get { return PermType.HOST; } }
@@ -177,7 +177,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
         }
 
-        public class VoteCMD : cmd
+        public class VoteCMD : Cmd
         {
             public override string name { get { return "vote"; } }
             public override PermType perm { get { return PermType.ALL; } }
@@ -322,8 +322,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     return;
                 }
 
-                AutoCMD autoCommand = parent.list.getCommand<AutoCMD>("auto");
-                AutoSpecCMD autoSpecCommand = parent.list.getCommand<AutoSpecCMD>("autospec");
+                AutoCmd autoCommand = parent.list.getCommand<AutoCmd>("auto");
+                AutoSpecCmd autoSpecCommand = parent.list.getCommand<AutoSpecCmd>("autospec");
                 int playerOffset = (autoCommand.autoMode && autoSpecCommand.autoSpecMode) ? -1 : 0;
 
                 int numPlayers = G.Sys.PlayerManager_.PlayerList_.Count + playerOffset;
@@ -424,7 +424,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) >= voteThresholds[voteType])
                     {
                         parent.votes[voteType].Clear();
-                        CountdownCMD command = parent.list.getCommand<CountdownCMD>("countdown");
+                        CountdownCmd command = parent.list.getCommand<CountdownCmd>("countdown");
                         command.stopCountdown();
                         MessageUtilities.sendMessage("Vote stop succeeded! Stopping countdown...");
                     }
@@ -449,7 +449,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     FilteredPlaylist filterer = new FilteredPlaylist(GeneralUtilities.getAllLevelsAndModes());
                     if (!p.IsLocal_)
                     {
-                        PlayCMD playCmd = cmd.all.getCommand<PlayCMD>("play");
+                        PlayCmd playCmd = Cmd.all.getCommand<PlayCmd>("play");
                         filterer.AddFiltersFromString(playCmd.playFilter);
                     }
                     GeneralUtilities.sendFailures(GeneralUtilities.addFiltersToPlaylist(filterer, p, levelName, true), 4);
@@ -462,7 +462,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     LevelPlaylist playlist = new LevelPlaylist();
                     playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
                     var currentPlaylist = playlist.Playlist_;
-                    AutoCMD autoCmd = cmd.all.getCommand<AutoCMD>("auto");
+                    AutoCmd autoCmd = Cmd.all.getCommand<AutoCmd>("auto");
                     int origIndex = G.Sys.GameManager_.LevelPlaylist_.Index_;
                     int index = autoCmd.getInsertIndex();
 
@@ -628,7 +628,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         void advanceLevel()
         {
-            AutoCMD autoCommand = list.getCommand<AutoCMD>("auto");
+            AutoCmd autoCommand = list.getCommand<AutoCmd>("auto");
             if (autoCommand.autoMode)
                 autoCommand.nextLevel();
             else G.Sys.GameManager_.StartCoroutine(waitAndGoNext());

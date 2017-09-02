@@ -1,4 +1,4 @@
-﻿using Spectrum.Plugins.ServerMod.cmds;
+﻿using Spectrum.Plugins.ServerMod.Cmds;
 using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;

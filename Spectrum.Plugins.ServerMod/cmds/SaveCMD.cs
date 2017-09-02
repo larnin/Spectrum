@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class SaveCMD : cmd
+    class SaveCmd : Cmd
     {
         public override string name { get { return "save"; } }
         public override PermType perm { get { return PermType.HOST; } }

@@ -3,9 +3,9 @@ using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Reflection;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class NameCMD : cmd
+    class NameCmd : Cmd
     {
         public override string name { get { return "name"; } }
         public override PermType perm { get { return PermType.LOCAL; } }

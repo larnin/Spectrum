@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class ListCMD : cmd
+    class ListCmd : Cmd
     {
         public override string name { get { return "list"; } }
         public override PermType perm { get { return PermType.ALL; } }
@@ -33,7 +33,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
 
-            LevelCMD levelCmd = cmd.all.getCommand<LevelCMD>("level");
+            LevelCmd levelCmd = Cmd.all.getCommand<LevelCmd>("level");
 
             var levelsUpcoming = currentList.Playlist_.GetRange(currentList.Index_ + 1, currentList.Count_ - currentList.Index_ - 1);
             FilteredPlaylist filterer = new FilteredPlaylist(levelsUpcoming);

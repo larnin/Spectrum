@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
     class CmdSettingPlaylistLevelFormat : CmdSettingString
     {
@@ -24,7 +24,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override object Default { get; } = "%INDEX%: %NAME%";
         public override string UpdatedOnVersion { get; } = "C.7.4.0";
     }
-    class PlaylistCMD : cmd
+    class PlaylistCmd : Cmd
     {
 
         public string levelFormat
@@ -45,7 +45,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         Dictionary<string, LevelPlaylist> selectedPlaylists = new Dictionary<string, LevelPlaylist>();
         Dictionary<string, List<string>> deleteConfirmation = new Dictionary<string, List<string>>();
 
-        public PlaylistCMD()
+        public PlaylistCmd()
         {
 
         }

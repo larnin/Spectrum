@@ -4,7 +4,7 @@ using Spectrum.API.Interfaces.Systems;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Spectrum.Plugins.ServerMod.cmds;
+using Spectrum.Plugins.ServerMod.Cmds;
 using System;
 using Spectrum.API.Configuration;
 using System.Linq;
@@ -106,9 +106,9 @@ namespace Spectrum.Plugins.ServerMod
         IEnumerator serverInit()
         {
             yield return new WaitForSeconds(1.0f);  // wait for the server to load
-            if (cmd.all.getCommand<UpdateCMD>().updateCheck)
-                UpdateCMD.checkForUpdates(false);  // check for ServerMod updates
-            cmd.all.getCommand<SettingsCMD>().showNewSettings();  // show any new settings
+            if (Cmd.all.getCommand<UpdateCmd>().updateCheck)
+                UpdateCmd.checkForUpdates(false);  // check for ServerMod updates
+            Cmd.all.getCommand<SettingsCmd>().showNewSettings();  // show any new settings
             yield break;
         }
 
@@ -125,7 +125,7 @@ namespace Spectrum.Plugins.ServerMod
 
                 int pos = message.IndexOf(' ');
                 string commandName = (pos > 0 ? message.Substring(1, pos) : message.Substring(1)).Trim();
-                cmd c = cmd.all.getCommand(commandName);
+                Cmd c = Cmd.all.getCommand(commandName);
                 if (c == null)
                     return;
                 if (!c.canUseAsClient && c.perm != PermType.LOCAL)
@@ -151,7 +151,7 @@ namespace Spectrum.Plugins.ServerMod
 
                 int pos = message.IndexOf(' ');
                 string commandName = (pos > 0 ? message.Substring(1, pos) : message.Substring(1)).Trim();
-                cmd c = cmd.all.getCommand(commandName);
+                Cmd c = Cmd.all.getCommand(commandName);
                 if (c == null)
                 {
                     MessageUtilities.sendMessage("The command '" + commandName + "' don't exist.");
@@ -185,7 +185,7 @@ namespace Spectrum.Plugins.ServerMod
                 
             int pos = message.IndexOf(' ');
             string commandName = (pos > 0 ? message.Substring(1, pos) : message.Substring(1)).Trim();
-            cmd c = cmd.all.getCommand(commandName);
+            Cmd c = Cmd.all.getCommand(commandName);
 
             if (c == null)
             {
@@ -205,7 +205,7 @@ namespace Spectrum.Plugins.ServerMod
             exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
         }
 
-        private void exec(cmd c, ClientPlayerInfo p, string message)
+        private void exec(Cmd c, ClientPlayerInfo p, string message)
         {
             try
             {
@@ -282,7 +282,7 @@ namespace Spectrum.Plugins.ServerMod
         {
             try
             {
-                foreach (cmd Command in cmd.all.list())
+                foreach (Cmd Command in Cmd.all.list())
                 {
                     foreach (CmdSetting Setting in Command.settings)
                     {
@@ -312,7 +312,7 @@ namespace Spectrum.Plugins.ServerMod
         {
             try
             {
-                foreach (cmd Command in cmd.all.list())
+                foreach (Cmd Command in Cmd.all.list())
                 {
                     foreach (CmdSetting Setting in Command.settings)
                     {

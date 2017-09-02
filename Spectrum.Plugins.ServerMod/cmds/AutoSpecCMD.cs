@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
     class CmdSettingAutoSpecLobby : CmdSettingBool
     {
@@ -31,7 +31,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override object Default { get; } = true;
     }
-    class AutoSpecCMD : cmd
+    class AutoSpecCmd : Cmd
     {
         public bool autoSpecMode
         {
@@ -71,7 +71,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         List<string> spectators = new List<string>();
 
-        public AutoSpecCMD()
+        public AutoSpecCmd()
         {
             Events.GameMode.Go.Subscribe(data =>
             {

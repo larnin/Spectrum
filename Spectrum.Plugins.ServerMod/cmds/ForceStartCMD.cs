@@ -1,9 +1,9 @@
 ﻿
 using Spectrum.Plugins.ServerMod.Utilities;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class ForceStartCMD : cmd
+    class ForceStartCmd : Cmd
     {
         public override string name { get { return "forcestart"; } }
         public override PermType perm { get { return PermType.HOST; } }

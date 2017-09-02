@@ -1,9 +1,9 @@
 ﻿using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class ShuffleCMD : cmd
+    class ShuffleCmd : Cmd
     {
         public override string name { get { return "shuffle"; } }
         public override PermType perm { get { return PermType.HOST; } }

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class DelsCMD : cmd
+    class DelsCmd : Cmd
     {
         public override string name { get { return "dels"; } }
         public override PermType perm { get { return PermType.HOST; } }

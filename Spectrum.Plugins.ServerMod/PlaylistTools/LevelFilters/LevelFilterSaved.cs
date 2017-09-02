@@ -1,4 +1,4 @@
-﻿using Spectrum.Plugins.ServerMod.cmds;
+﻿using Spectrum.Plugins.ServerMod.Cmds;
 using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
 
         public override LevelFilterResult FromChatString(string chatString, string option)
         {
-            FilterCMD filterCmd = cmd.all.getCommand<FilterCMD>("filter");
+            FilterCmd filterCmd = Cmd.all.getCommand<FilterCmd>("filter");
             string filterName = null;
             string filter = null;
             string searchRegex = GeneralUtilities.getSearchRegex(chatString);

@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class LevelCMD : cmd
+    class LevelCmd : Cmd
     {
         public string levelFormat
         {
@@ -54,7 +54,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if (!p.IsLocal_)
             {
-                PlayCMD playCmd = cmd.all.getCommand<PlayCMD>("play");
+                PlayCmd playCmd = Cmd.all.getCommand<PlayCmd>("play");
                 filterer.AddFiltersFromString(playCmd.playFilter);
             }
 

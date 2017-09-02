@@ -5,7 +5,7 @@ using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using UnityEngine;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
     class CmdSettingWelcomeMessage : CmdSettingString
     {
@@ -18,7 +18,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override object Default { get; } = "";
     }
-    class WelcomeCMD : cmd
+    class WelcomeCmd : Cmd
     {
         public string welcomeMessage
         {
@@ -35,7 +35,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             new CmdSettingWelcomeMessage()
         };
 
-        public WelcomeCMD()
+        public WelcomeCmd()
         {
 
             Events.Server.StartClientLate.Subscribe(data =>

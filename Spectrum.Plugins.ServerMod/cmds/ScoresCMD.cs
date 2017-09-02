@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
-    class ScoresCMD : cmd
+    class ScoresCmd : Cmd
     {
         public override string name { get { return "scores"; } }
         public override PermType perm { get { return PermType.ALL; } }

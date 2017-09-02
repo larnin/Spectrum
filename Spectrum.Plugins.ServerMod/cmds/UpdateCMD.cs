@@ -9,7 +9,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
     class CmdSettingUpdateCheck : CmdSettingBool
     {
@@ -22,7 +22,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override object Default { get; } = true;
     }
-    class UpdateCMD : cmd
+    class UpdateCmd : Cmd
     {
         public override string name { get { return "update"; } }
         public override PermType perm { get { return PermType.HOST; } }

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Spectrum.Plugins.ServerMod.cmds
+namespace Spectrum.Plugins.ServerMod.Cmds
 {
     enum PermType
     {
@@ -11,7 +11,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         LOCAL
     };
 
-    abstract class cmd
+    abstract class Cmd
     {
         public abstract string name { get; }
         public abstract PermType perm { get; }
@@ -20,7 +20,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public abstract void help(ClientPlayerInfo p);
         public abstract void use(ClientPlayerInfo p, string message);
 
-        public static cmdlist all = new cmdlist();
+        public static CmdList all = new CmdList();
 
         public virtual CmdSettings.CmdSetting[] settings { get; } = new CmdSettings.CmdSetting[0];
         public CmdSettings.CmdSetting getSetting(string FileId)
