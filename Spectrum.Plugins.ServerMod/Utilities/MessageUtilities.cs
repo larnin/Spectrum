@@ -109,5 +109,23 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 //Console.WriteLine("Log : " + message);
             }
         }
+        public static void sendMessage(ClientPlayerInfo p, string message)
+        {
+            pushMessageOption(new MessageStateOptionPlayer(p));
+            sendMessage(message);
+            popMessageOptions();
+        }
+        public static void sendMessage(MessageStateOption[] options, string message)
+        {
+            pushMessageOptions(options);
+            sendMessage(message);
+            popMessageOptions();
+        }
+        public static void sendMessage(List<MessageStateOption> options, string message)
+        {
+            pushMessageOptions(options);
+            sendMessage(message);
+            popMessageOptions();
+        }
     }
 }
