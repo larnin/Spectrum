@@ -1,5 +1,6 @@
 ﻿using Spectrum.Plugins.ServerMod.CmdSettings;
 using Spectrum.Plugins.ServerMod.PlaylistTools;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,8 +55,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             public override void help(ClientPlayerInfo p)
             {
-                Utilities.sendMessage(Utilities.formatCmd("!votectrl <voteType> <percent>") + ": Set <percent> as the amount of players needed for a <voteType> vote to succeed.");
-                Utilities.sendMessage("<percent> should be an integer 0 - 100. Set above 100 to disable.");
+                MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!votectrl <voteType> <percent>") + ": Set <percent> as the amount of players needed for a <voteType> vote to succeed.");
+                MessageUtilities.sendMessage("<percent> should be an integer 0 - 100. Set above 100 to disable.");
             }
 
             public override void use(ClientPlayerInfo p, string message)
@@ -74,14 +75,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                 if (!parent.voteCommand.voteThresholds.ContainsKey(voteType))
                 {
-                    Utilities.sendMessage($"Invalid <voteType>. ({voteType})");
+                    MessageUtilities.sendMessage($"Invalid <voteType>. ({voteType})");
                     help(p);
                     return;
                 }
 
                 parent.voteCommand.voteThresholds[voteType] = Convert.ToDouble(percent) / 100.0;
                 Entry.save();
-                Utilities.sendMessage($"Pass threshold for {voteType} changed to {percent}%");
+                MessageUtilities.sendMessage($"Pass threshold for {voteType} changed to {percent}%");
             }
         }
 
@@ -211,7 +212,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                 Events.GameMode.ModeStarted.Subscribe(data =>
                 {
-                    Utilities.testFunc(() =>
+                    GeneralUtilities.testFunc(() =>
                     {
                         parent.votes["skip"].Clear();
                         parent.votes["stop"].Clear();
@@ -223,21 +224,21 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             public override void help(ClientPlayerInfo p)
             {
-                Utilities.sendMessage(Utilities.formatCmd("!vote <voteType> <parameters>") + ": Vote for <voteType>");
-                Utilities.sendMessage(Utilities.formatCmd("!vote i <voteType>") + ": View information about <voteType>");
-                Utilities.sendMessage("voteTypes:");
-                Utilities.sendMessage(" " + Utilities.formatCmd("!vote skip") + ": skip the current map.");
-                Utilities.sendMessage(" " + Utilities.formatCmd("!vote stop") + ": stop the countdown.");
-                Utilities.sendMessage(" " + Utilities.formatCmd("!vote play <mapName>") + ": vote to play <mapName>. Use !level to find maps.");
-                Utilities.sendMessage("Examples:");
-                Utilities.sendMessage(" " + Utilities.formatCmd("!vote play inferno") + ": vote to play inferno");
-                Utilities.sendMessage(" " + Utilities.formatCmd("!vote i skip") + ": view info about the skip vote");
-                Utilities.sendMessage(" " + Utilities.formatCmd("!vote stop") + ": vote to stop the countdown");
+                MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!vote <voteType> <parameters>") + ": Vote for <voteType>");
+                MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!vote i <voteType>") + ": View information about <voteType>");
+                MessageUtilities.sendMessage("voteTypes:");
+                MessageUtilities.sendMessage(" " + GeneralUtilities.formatCmd("!vote skip") + ": skip the current map.");
+                MessageUtilities.sendMessage(" " + GeneralUtilities.formatCmd("!vote stop") + ": stop the countdown.");
+                MessageUtilities.sendMessage(" " + GeneralUtilities.formatCmd("!vote play <mapName>") + ": vote to play <mapName>. Use !level to find maps.");
+                MessageUtilities.sendMessage("Examples:");
+                MessageUtilities.sendMessage(" " + GeneralUtilities.formatCmd("!vote play inferno") + ": vote to play inferno");
+                MessageUtilities.sendMessage(" " + GeneralUtilities.formatCmd("!vote i skip") + ": view info about the skip vote");
+                MessageUtilities.sendMessage(" " + GeneralUtilities.formatCmd("!vote stop") + ": vote to stop the countdown");
                 /*
-                Utilities.sendMessage(" !vote <y/n> kick <player>: vote to kick <player> from the game.");
-                Utilities.sendMessage(" !vote <y/n> count <time>: vote for <time> to be the new max time.");
-                Utilities.sendMessage("  if <time> is 'off' then the vote is to disable max time.");
-                Utilities.sendMessage("  if <time> is 'bronze'/'silver'/'gold'/'diamond' it is the relevant time for the map.");
+                MessageUtilities.sendMessage(" !vote <y/n> kick <player>: vote to kick <player> from the game.");
+                MessageUtilities.sendMessage(" !vote <y/n> count <time>: vote for <time> to be the new max time.");
+                MessageUtilities.sendMessage("  if <time> is 'off' then the vote is to disable max time.");
+                MessageUtilities.sendMessage("  if <time> is 'bronze'/'silver'/'gold'/'diamond' it is the relevant time for the map.");
                 */
             }
 
@@ -254,7 +255,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 {
                     if (!votesAllowed)
                     {
-                        Utilities.sendMessage("Votes are disabled.");
+                        MessageUtilities.sendMessage("Votes are disabled.");
                         return;
                     }
                 }
@@ -303,9 +304,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                     else
                     {
-                        Utilities.sendMessage("Invalid <voteType>, or invalid [yes/no] You can use yes/no, y/n, 1/0, true/false, and t/f.");
-                        Utilities.sendMessage("You can use [info/i] to get info.");
-                        Utilities.sendMessage("<voteType>s: skip, stop, play");
+                        MessageUtilities.sendMessage("Invalid <voteType>, or invalid [yes/no] You can use yes/no, y/n, 1/0, true/false, and t/f.");
+                        MessageUtilities.sendMessage("You can use [info/i] to get info.");
+                        MessageUtilities.sendMessage("<voteType>s: skip, stop, play");
                         return;
                     }
 
@@ -316,7 +317,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                 if (!voteThresholds.ContainsKey(voteType))
                 {
-                    Utilities.sendMessage($"Invalid <voteType>. ({voteType})");
+                    MessageUtilities.sendMessage($"Invalid <voteType>. ({voteType})");
                     help(p);
                     return;
                 }
@@ -329,25 +330,25 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                 if (isInfo)
                 {
-                    Utilities.sendMessage($"Info for {voteType}:");
-                    Utilities.sendMessage($"Pass threshold: {Convert.ToInt32(Math.Floor(voteThresholds[voteType]*100))}%");
+                    MessageUtilities.sendMessage($"Info for {voteType}:");
+                    MessageUtilities.sendMessage($"Pass threshold: {Convert.ToInt32(Math.Floor(voteThresholds[voteType]*100))}%");
                     int value = parent.votes[voteType].Count;
-                    Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                    MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                     return;
                 }
 
 
                 if (voteType == "skip")
                 {
-                    if (Utilities.isOnLobby())
+                    if (GeneralUtilities.isOnLobby())
                     {
-                        Utilities.sendMessage("You can't vote to skip in the lobby!");
+                        MessageUtilities.sendMessage("You can't vote to skip in the lobby!");
                         return;
                     }
 
                     if (votedSkip)
                     {
-                        Utilities.sendMessage("Vote skip already succeeded.");
+                        MessageUtilities.sendMessage("Vote skip already succeeded.");
                         return;
                     }
 
@@ -355,25 +356,25 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                     int value = votes.Count;
 
-                    string playerVoteId = Utilities.getUniquePlayerString(p);
+                    string playerVoteId = GeneralUtilities.getUniquePlayerString(p);
                     if (voteValue)
                     {
                         if (votes.Contains(playerVoteId))
                         {
-                            Utilities.sendMessage($"{p.Username_} has already voted to skip {G.Sys.GameManager_.LevelName_}.");
+                            MessageUtilities.sendMessage($"{p.Username_} has already voted to skip {G.Sys.GameManager_.LevelName_}.");
                             return;
                         }
                         votes.Add(playerVoteId);
                         value = votes.Count;
-                        Utilities.sendMessage($"{p.Username_} voted to skip {G.Sys.GameManager_.LevelName_}.");
-                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        MessageUtilities.sendMessage($"{p.Username_} voted to skip {G.Sys.GameManager_.LevelName_}.");
+                        MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                     }
                     else
                     {
                         votes.Remove(playerVoteId);
                         value = votes.Count;
-                        Utilities.sendMessage($"{p.Username_} unvoted to skip {G.Sys.GameManager_.LevelName_}.");
-                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        MessageUtilities.sendMessage($"{p.Username_} unvoted to skip {G.Sys.GameManager_.LevelName_}.");
+                        MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                         return;
                     }
 
@@ -382,15 +383,15 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) >= voteThresholds[voteType])
                     {
                         votedSkip = true;
-                        Utilities.sendMessage("Vote skip succeeded! Skipping map...");
+                        MessageUtilities.sendMessage("Vote skip succeeded! Skipping map...");
                         parent.advanceLevel();
                     }
                 }
                 else if (voteType == "stop")
                 {
-                    if (Utilities.isOnLobby())
+                    if (GeneralUtilities.isOnLobby())
                     {
-                        Utilities.sendMessage("You can't vote to stop the countdown in the lobby!");
+                        MessageUtilities.sendMessage("You can't vote to stop the countdown in the lobby!");
                         return;
                     }
 
@@ -398,25 +399,25 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     
                     int value = votes.Count;
 
-                    string playerVoteId = Utilities.getUniquePlayerString(p);
+                    string playerVoteId = GeneralUtilities.getUniquePlayerString(p);
                     if (voteValue)
                     {
                         if (votes.Contains(playerVoteId))
                         {
-                            Utilities.sendMessage($"{p.Username_} has already voted to stop the countdown.");
+                            MessageUtilities.sendMessage($"{p.Username_} has already voted to stop the countdown.");
                             return;
                         }
                         votes.Add(playerVoteId);
                         value = votes.Count;
-                        Utilities.sendMessage($"{p.Username_} voted to stop the countdown.");
-                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        MessageUtilities.sendMessage($"{p.Username_} voted to stop the countdown.");
+                        MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                     }
                     else
                     {
                         votes.Remove(playerVoteId);
                         value = votes.Count;
-                        Utilities.sendMessage($"{p.Username_} unvoted to stop the countdown.");
-                        Utilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        MessageUtilities.sendMessage($"{p.Username_} unvoted to stop the countdown.");
+                        MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                         return;
                     }
 
@@ -425,33 +426,33 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         parent.votes[voteType].Clear();
                         CountdownCMD command = parent.list.getCommand<CountdownCMD>("countdown");
                         command.stopCountdown();
-                        Utilities.sendMessage("Vote stop succeeded! Stopping countdown...");
+                        MessageUtilities.sendMessage("Vote stop succeeded! Stopping countdown...");
                     }
                 }
                 else if (voteType == "play")
                 {
 
-                    if (Utilities.isOnLobby())
+                    if (GeneralUtilities.isOnLobby())
                     {
-                        Utilities.sendMessage("You can't vote for the next level in the lobby.");
+                        MessageUtilities.sendMessage("You can't vote for the next level in the lobby.");
                         return;
                     }
 
                     if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
                     {
-                        Utilities.sendMessage("You can't vote for levels in trackmogrify.");
+                        MessageUtilities.sendMessage("You can't vote for levels in trackmogrify.");
                         return;
                     }
 
                     string levelName = parameter;
 
-                    FilteredPlaylist filterer = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
+                    FilteredPlaylist filterer = new FilteredPlaylist(GeneralUtilities.getAllLevelsAndModes());
                     if (!p.IsLocal_)
                     {
                         PlayCMD playCmd = cmd.all.getCommand<PlayCMD>("play");
                         filterer.AddFiltersFromString(playCmd.playFilter);
                     }
-                    Utilities.sendFailures(Utilities.addFiltersToPlaylist(filterer, p, levelName, true), 4);
+                    GeneralUtilities.sendFailures(GeneralUtilities.addFiltersToPlaylist(filterer, p, levelName, true), 4);
 
                     List<LevelPlaylist.ModeAndLevelInfo> lvls = filterer.Calculate().levelList;
                     List<LevelResultsSortInfo> levelResults = new List<LevelResultsSortInfo>();
@@ -480,12 +481,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             }
                             else
                             {
-                                //Utilities.sendMessage($"{p.Username_} unvoted for these maps.");
+                                //MessageUtilities.sendMessage($"{p.Username_} unvoted for these maps.");
                                 levelResults.Add(new LevelResultsSortInfo(lvl, 0, numPlayers, threshold, -1));
                                 continue;
                             }
                         }
-                        string playerVoteId = Utilities.getUniquePlayerString(p);
+                        string playerVoteId = GeneralUtilities.getUniquePlayerString(p);
                         if (!voteValue)
                         {
                             votes.Remove(playerVoteId);
@@ -493,7 +494,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             {
                                 parent.votes.Remove(id);
                             }
-                            //Utilities.sendMessage($"{p.Username_} unvoted for these maps.");
+                            //MessageUtilities.sendMessage($"{p.Username_} unvoted for these maps.");
                             levelResults.Add(new LevelResultsSortInfo(lvl, votes.Count, numPlayers, threshold, -1));
                             continue;
                         }
@@ -501,7 +502,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         {
                             if (votes.Contains(playerVoteId))
                             {
-                                //Utilities.sendMessage($"{p.Username_} has already voted for these maps.");
+                                //MessageUtilities.sendMessage($"{p.Username_} has already voted for these maps.");
                                 levelResults.Add(new LevelResultsSortInfo(lvl, votes.Count, numPlayers, threshold, 0));
                                 //return;
                                 continue;
@@ -529,7 +530,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                     if (lvls.Count == 0)
                     {
-                        Utilities.sendMessage("Can't find any levels with the filter '" + levelName + "'.");
+                        MessageUtilities.sendMessage("Can't find any levels with the filter '" + levelName + "'.");
                     }
 
                     string newMessage;
@@ -551,11 +552,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     {
                         if (count > 10)
                         {
-                            Utilities.sendMessage(newMessage + $"and {count - 10} more unvoted.");
+                            MessageUtilities.sendMessage(newMessage + $"and {count - 10} more unvoted.");
                         }
                         else
                         {
-                            Utilities.sendMessage(newMessage + "unvoted.");
+                            MessageUtilities.sendMessage(newMessage + "unvoted.");
                         }
                     }
 
@@ -575,11 +576,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     {
                         if (count > 10)
                         {
-                            Utilities.sendMessage(newMessage + $"and {count - 10} more voted.");
+                            MessageUtilities.sendMessage(newMessage + $"and {count - 10} more voted.");
                         }
                         else
                         {
-                            Utilities.sendMessage(newMessage + "voted.");
+                            MessageUtilities.sendMessage(newMessage + "voted.");
                         }
                     }
 
@@ -599,11 +600,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     {
                         if (count > 10)
                         {
-                            Utilities.sendMessage(newMessage + $"and {count - 10} more added.");
+                            MessageUtilities.sendMessage(newMessage + $"and {count - 10} more added.");
                         }
                         else
                         {
-                            Utilities.sendMessage(newMessage + "added.");
+                            MessageUtilities.sendMessage(newMessage + "added.");
                         }
                     }
                 }
@@ -635,17 +636,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator waitAndGoNext()
         {
-            if (!Utilities.isOnLobby())
+            if (!GeneralUtilities.isOnLobby())
             {
-                Utilities.sendMessage("Going to the next level in 10 seconds...");
-                Utilities.sendMessage("Next level is : " + Utilities.getNextLevelName());
+                MessageUtilities.sendMessage("Going to the next level in 10 seconds...");
+                MessageUtilities.sendMessage("Next level is : " + GeneralUtilities.getNextLevelName());
                 yield return new WaitForSeconds(10.0f);
-                if (!Utilities.isOnLobby())
+                if (!GeneralUtilities.isOnLobby())
                 {
-                    if (Utilities.isCurrentLastLevel())
+                    if (GeneralUtilities.isCurrentLastLevel())
                     {
                         G.Sys.GameManager_.GoToLobby();
-                        Utilities.sendMessage("No more levels in the playlist.");
+                        MessageUtilities.sendMessage("No more levels in the playlist.");
                     }
                     else G.Sys.GameManager_.GoToNextLevel(true);
                 }

@@ -1,5 +1,6 @@
 ﻿using Events;
 using Events.RaceMode;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using UnityEngine;
 
@@ -18,7 +19,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
                     onModeFinish();
                 });
@@ -26,7 +27,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.RaceMode.FinalCountdownCancel.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
                     onCountdownStop();
                 });
@@ -34,9 +35,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.Server.StartClientLate.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
-                    if (Utilities.isOnline() && Utilities.isHost())
+                    if (GeneralUtilities.isOnline() && GeneralUtilities.isHost())
                         onClientJoin(data.client_);
                 });
             });
@@ -44,16 +45,16 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!countdown") + ": Start the 60 sec final countdown");
-            Utilities.sendMessage(Utilities.formatCmd("!countdown <time>") + ": Start the final countdown with <time> seconds");
-            Utilities.sendMessage(Utilities.formatCmd("!countdown stop") + ": Stop the final countdown");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!countdown") + ": Start the 60 sec final countdown");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!countdown <time>") + ": Start the final countdown with <time> seconds");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!countdown stop") + ": Stop the final countdown");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if(! Utilities.isOnGamemode())
+            if(! GeneralUtilities.isOnGamemode())
             {
-                Utilities.sendMessage("You can't do that here !");
+                MessageUtilities.sendMessage("You can't do that here !");
                 return;
             }
 
@@ -71,18 +72,18 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 }
                 catch(Exception)
                 {
-                    Utilities.sendMessage("The time must be a number");
+                    MessageUtilities.sendMessage("The time must be a number");
                     return;
                 }
             }
             if (time < 10 || time > 300)
             {
-                Utilities.sendMessage("The time must be between 10 and 300 seconds");
+                MessageUtilities.sendMessage("The time must be between 10 and 300 seconds");
                 return;
             }
 
             startCountdown(time);
-            Utilities.sendMessage("Final countdown started for " + time + " seconds !");
+            MessageUtilities.sendMessage("Final countdown started for " + time + " seconds !");
         }
 
         public void startCountdown(int seconds)
@@ -126,7 +127,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 StaticTargetedEvent<FinalCountdownActivate.Data>.Broadcast(RPCMode.All, new FinalCountdownActivate.Data(Timex.ModeTime_ + finalTime, finalTime));
                 return;
             }
-            Utilities.sendMessage("Final countdown stopped");
+            MessageUtilities.sendMessage("Final countdown stopped");
         }
     }
 }

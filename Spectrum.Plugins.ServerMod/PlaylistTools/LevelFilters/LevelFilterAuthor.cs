@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
         public LevelFilterAuthor(string match)
         {
             this.match = match.ToLower().Trim();
-            matchRegex = Utilities.getSearchRegex(match);
+            matchRegex = GeneralUtilities.getSearchRegex(match);
         }
 
         public override void Apply(List<PlaylistLevel> levels)
@@ -28,7 +29,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
             var exactMatch = false;
             foreach (var level in levels)
             {
-                var authorName = Utilities.getAuthorName(levelSetsManager.GetLevelInfo(level.level.levelNameAndPath_.levelPath_));
+                var authorName = GeneralUtilities.getAuthorName(levelSetsManager.GetLevelInfo(level.level.levelNameAndPath_.levelPath_));
                 if (authorName.ToLower().Trim() == match)
                 {
                     exactMatch = true;
@@ -37,13 +38,13 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
             if (exactMatch)
                 foreach (var level in levels)
                 {
-                    var authorName = Utilities.getAuthorName(levelSetsManager.GetLevelInfo(level.level.levelNameAndPath_.levelPath_));
+                    var authorName = GeneralUtilities.getAuthorName(levelSetsManager.GetLevelInfo(level.level.levelNameAndPath_.levelPath_));
                     level.Mode(mode, authorName.ToLower().Trim() == match);
                 }
             else
                 foreach (var level in levels)
                 {
-                    var authorName = Utilities.getAuthorName(levelSetsManager.GetLevelInfo(level.level.levelNameAndPath_.levelPath_));
+                    var authorName = GeneralUtilities.getAuthorName(levelSetsManager.GetLevelInfo(level.level.levelNameAndPath_.levelPath_));
                     level.Mode(mode, Regex.Match(authorName, matchRegex, RegexOptions.IgnoreCase).Success);
                 }
         }

@@ -1,6 +1,7 @@
 ﻿using Events;
 using Events.GameMode;
 using Spectrum.Plugins.ServerMod.CmdSettings;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -74,7 +75,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             Events.GameMode.Go.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
                     onModeStart();
                 });
@@ -83,14 +84,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!autospec") + ": Toggle automatic spectating");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!autospec") + ": Toggle automatic spectating");
         }
 
         public bool playerIsAutoSpec(ClientPlayerInfo p)
         {
-            if (!Utilities.isHost() && !p.IsLocal_)
+            if (!GeneralUtilities.isHost() && !p.IsLocal_)
                 return false;
-            return spectators.Contains(Utilities.getUniquePlayerString(p));
+            return spectators.Contains(GeneralUtilities.getUniquePlayerString(p));
         }
 
         public List<ClientPlayerInfo> getAutoSpecPlayers()
@@ -114,21 +115,21 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 if (!p.IsLocal_)
                 {
-                    Utilities.sendMessage("You are not allowed to autospec other players.");
-                    Utilities.sendMessage("You can use " + Utilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
+                    MessageUtilities.sendMessage("You are not allowed to autospec other players.");
+                    MessageUtilities.sendMessage("You can use " + GeneralUtilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
                 }
-                else if (!Utilities.isHost())
+                else if (!GeneralUtilities.isHost())
                 {
-                    Utilities.sendMessage("You can only autospec other players while in your own server.");
-                    Utilities.sendMessage("You can use " + Utilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
+                    MessageUtilities.sendMessage("You can only autospec other players while in your own server.");
+                    MessageUtilities.sendMessage("You can use " + GeneralUtilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
                 }
                 else
                 {
                     var off = "";
                     var on = "";
-                    foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
+                    foreach (ClientPlayerInfo client in GeneralUtilities.getClientsBySearch(message))
                     {
-                        string uniq = Utilities.getUniquePlayerString(client);
+                        string uniq = GeneralUtilities.getUniquePlayerString(client);
                         if (spectators.Contains(uniq))
                         {
                             spectators.Remove(uniq);
@@ -148,25 +149,25 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         }
                     }
                     if (off != "")
-                        Utilities.sendMessage($"Auto spectator mode turned off for " + off);
+                        MessageUtilities.sendMessage($"Auto spectator mode turned off for " + off);
                     if (on != "")
-                        Utilities.sendMessage($"Auto spectator mode turned on for " + on);
+                        MessageUtilities.sendMessage($"Auto spectator mode turned on for " + on);
                     if (on == "" && off == "")
-                        Utilities.sendMessage("Could not find any players with that name or index");
+                        MessageUtilities.sendMessage("Could not find any players with that name or index");
                 }
             }
             else
             {
-                string uniq = Utilities.getUniquePlayerString(p);
+                string uniq = GeneralUtilities.getUniquePlayerString(p);
                 if (spectators.Contains(uniq))
                 {
                     spectators.Remove(uniq);
-                    Utilities.sendMessage($"Auto spectator mode turned off for {p.Username_}");
+                    MessageUtilities.sendMessage($"Auto spectator mode turned off for {p.Username_}");
                 }
                 else
                 {
                     spectators.Add(uniq);
-                    Utilities.sendMessage($"Auto spectator mode turned on for {p.Username_}");
+                    MessageUtilities.sendMessage($"Auto spectator mode turned on for {p.Username_}");
                     spectatePlayer(p);
                 }
             }
@@ -174,20 +175,20 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         private void onModeStart()
         {
-            if (Utilities.isOnline())
+            if (GeneralUtilities.isOnline())
                 G.Sys.GameManager_.StartCoroutine(spectate());
 
         }
 
         private void spectatePlayer(ClientPlayerInfo player)
         {
-            if (!Utilities.isOnGamemode())
+            if (!GeneralUtilities.isOnGamemode())
                 return;
             if (!autoSpecAllowPlayers && !player.IsLocal_)
                 return;
             if (player.IsLocal_)
             {
-                if (G.Sys.PlayerManager_.PlayerList_.Count == 1 && Utilities.isHost() && autoSpecReturnToLobby)
+                if (G.Sys.PlayerManager_.PlayerList_.Count == 1 && GeneralUtilities.isHost() && autoSpecReturnToLobby)
                 {
                     G.Sys.GameManager_.GoToLobby();
                 }

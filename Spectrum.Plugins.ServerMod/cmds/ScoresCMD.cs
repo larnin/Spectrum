@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -12,14 +13,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!scores") + ": depending to the gamemode, it will show the current distances, times or points of players.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!scores") + ": depending to the gamemode, it will show the current distances, times or points of players.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if(Utilities.isOnLobby())
+            if(GeneralUtilities.isOnLobby())
             {
-                Utilities.sendMessage("You can't do that on the lobby !");
+                MessageUtilities.sendMessage("You can't do that on the lobby !");
                 return;
             }
 
@@ -51,12 +52,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             playerStr += "None";
                             break;
                     }
-                    Utilities.sendMessage(playerStr);
+                    MessageUtilities.sendMessage(playerStr);
                 }
             }
             catch(Exception e)
             {
-                Utilities.sendMessage("Error !");
+                MessageUtilities.sendMessage("Error !");
                 Console.WriteLine(e);
             }
         }

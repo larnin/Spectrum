@@ -1,6 +1,7 @@
 ﻿using Events;
 using Events.RaceMode;
 using Spectrum.Plugins.ServerMod.CmdSettings;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using UnityEngine;
 
@@ -39,9 +40,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.Server.StartClientLate.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
-                    if (Utilities.isOnline() && Utilities.isHost())
+                    if (GeneralUtilities.isOnline() && GeneralUtilities.isHost())
                         onClientJoin(data.client_);
                 });
             });
@@ -49,16 +50,16 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!welcome") + ": Hear the welcome message.");
-            if (Utilities.isHost())
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!welcome") + ": Hear the welcome message.");
+            if (GeneralUtilities.isHost())
             {
-                Utilities.sendMessage("You can set the welcome message with !settings");
+                MessageUtilities.sendMessage("You can set the welcome message with !settings");
             }
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            Utilities.sendMessage(welcomeMessage.Replace("%USERNAME%", p.Username_));
+            MessageUtilities.sendMessage(welcomeMessage.Replace("%USERNAME%", p.Username_));
         }
 
         
@@ -71,11 +72,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 {
                     if (current.NetworkPlayer_ == client)
                     {
-                        Utilities.sendMessage(welcomeMessage.Replace("%USERNAME%", current.Username_));
+                        MessageUtilities.sendMessage(welcomeMessage.Replace("%USERNAME%", current.Username_));
                         return;
                     }
                 }
-                Utilities.sendMessage(welcomeMessage.Replace("%USERNAME%", "Player"));
+                MessageUtilities.sendMessage(welcomeMessage.Replace("%USERNAME%", "Player"));
             }
         }
 

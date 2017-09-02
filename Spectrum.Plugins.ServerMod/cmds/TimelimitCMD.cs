@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!timelimit [time]") + ": Change the max time for the reverse tag map");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!timelimit [time]") + ": Change the max time for the reverse tag map");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -30,12 +31,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if(time < 30 || time > 1800)
             {
-                Utilities.sendMessage("The time must be between 30 and 1800 sec (30min).");
+                MessageUtilities.sendMessage("The time must be between 30 and 1800 sec (30min).");
                 return;
             }
 
             G.Sys.GameManager_.NextModeTimeLimit_ = time;
-            Utilities.sendMessage("Next time gamemode will be " + time + " seconds length.");
+            MessageUtilities.sendMessage("Next time gamemode will be " + time + " seconds length.");
         }
     }
 }

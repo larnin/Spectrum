@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,12 +14,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!date") + ": Write the time and date.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!date") + ": Write the time and date.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            Utilities.sendMessage("Current date: [FFFFFF]" + DateTime.Now.ToString() + "[-]");
+            MessageUtilities.sendMessage("Current date: [FFFFFF]" + DateTime.Now.ToString() + "[-]");
         }
     }
 }

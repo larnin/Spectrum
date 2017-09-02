@@ -13,6 +13,7 @@ using Spectrum.Plugins.ServerMod.CmdSettings;
 using Spectrum.Plugins.ServerMod.PlaylistTools;
 using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
 using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters.Sorts;
+using Spectrum.Plugins.ServerMod.Utilities;
 
 namespace Spectrum.Plugins.ServerMod
 {
@@ -22,13 +23,14 @@ namespace Spectrum.Plugins.ServerMod
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
+
         public static string PluginVersion = "Version C.7.4.0";
 
         private static Settings Settings = new Settings(typeof(Entry));
 
         public void Initialize(IManager manager)
         {
-            Utilities.testFunc(() =>
+            GeneralUtilities.testFunc(() =>
             {
                 var levelFilters = new LevelFilter[]
                 {
@@ -70,13 +72,13 @@ namespace Spectrum.Plugins.ServerMod
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                Utilities.sendMessage("You can't load a playlist in trackmogrify");
+                MessageUtilities.sendMessage("You can't load a playlist in trackmogrify");
                 return;
             }
 
             Events.Local.ChatSubmitMessage.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
                     Chat_MessageSent(data.message_);
                 });
@@ -84,14 +86,14 @@ namespace Spectrum.Plugins.ServerMod
 
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
-                    var author = Utilities.ExtractMessageAuthor(data.message_);
+                    var author = GeneralUtilities.ExtractMessageAuthor(data.message_);
                     var steamName = SteamworksManager.GetUserName().ToLower().Trim();
                     var profileName = G.Sys.PlayerManager_.Current_.profile_.Name_.ToLower().Trim();
 
-                    if (!Utilities.IsSystemMessage(data.message_) && (author.ToLower().Trim() != steamName && author.ToLower().Trim() != profileName))
-                        Chat_MessageReceived(author, Utilities.ExtractMessageBody(data.message_));
+                    if (!GeneralUtilities.IsSystemMessage(data.message_) && (author.ToLower().Trim() != steamName && author.ToLower().Trim() != profileName))
+                        Chat_MessageReceived(author, GeneralUtilities.ExtractMessageBody(data.message_));
                 });
             });
 
@@ -112,13 +114,13 @@ namespace Spectrum.Plugins.ServerMod
 
         private void Chat_MessageSent(string message)
         {
-            var client = Utilities.localClient();
+            var client = GeneralUtilities.localClient();
             if (client == null)
                 Console.WriteLine("Error: Local client can't be found !");
 
             if (message.StartsWith("%"))
             {
-                if (Utilities.isHost())
+                if (GeneralUtilities.isHost())
                     return;
 
                 int pos = message.IndexOf(' ');
@@ -128,7 +130,7 @@ namespace Spectrum.Plugins.ServerMod
                     return;
                 if (!c.canUseAsClient && c.perm != PermType.LOCAL)
                 {
-                    Utilities.sendMessage("You can't use that command as client");
+                    MessageUtilities.sendMessage("You can't use that command as client");
                     return;
                 }
                 exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
@@ -144,7 +146,7 @@ namespace Spectrum.Plugins.ServerMod
                     return;
                 }
 
-                if (!Utilities.isHost())
+                if (!GeneralUtilities.isHost())
                     return;
 
                 int pos = message.IndexOf(' ');
@@ -152,7 +154,7 @@ namespace Spectrum.Plugins.ServerMod
                 cmd c = cmd.all.getCommand(commandName);
                 if (c == null)
                 {
-                    Utilities.sendMessage("The command '" + commandName + "' don't exist.");
+                    MessageUtilities.sendMessage("The command '" + commandName + "' don't exist.");
                     return;
                 }
 
@@ -171,10 +173,10 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
-            if (!Utilities.isHost())
+            if (!GeneralUtilities.isHost())
                 return;
 
-            var client = Utilities.clientFromName(author);
+            var client = GeneralUtilities.clientFromName(author);
             if (client == null)
             {
                 Console.WriteLine("Error: client can't be found");
@@ -187,7 +189,7 @@ namespace Spectrum.Plugins.ServerMod
 
             if (c == null)
             {
-                Utilities.sendMessage("The command '" + commandName + "' don't exist.");
+                MessageUtilities.sendMessage("The command '" + commandName + "' don't exist.");
                 return;
             }
 
@@ -196,7 +198,7 @@ namespace Spectrum.Plugins.ServerMod
 
             if(c.perm != PermType.ALL)
             {
-                Utilities.sendMessage("You don't have the permission to do that !");
+                MessageUtilities.sendMessage("You don't have the permission to do that !");
                 return;
             }
 
@@ -211,7 +213,7 @@ namespace Spectrum.Plugins.ServerMod
             }
             catch (Exception error)
             {
-                Utilities.sendMessage("Error");
+                MessageUtilities.sendMessage("Error");
                 Console.WriteLine(error);
             }
         }
@@ -223,7 +225,7 @@ namespace Spectrum.Plugins.ServerMod
 
         private void printClient()
         {
-            Utilities.sendMessage(Utilities.localClient().GetChatName() + " " + PluginVersion);
+            MessageUtilities.sendMessage(GeneralUtilities.localClient().GetChatName() + " " + PluginVersion);
         }
 
         private static void reloadSettingsFromFile()

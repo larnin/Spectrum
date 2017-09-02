@@ -1,6 +1,7 @@
 ﻿using Events;
 using Events.GameMode;
 using Spectrum.Plugins.ServerMod.CmdSettings;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -89,7 +90,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
                     onModeFinish();
                 });
@@ -97,7 +98,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.GameMode.ModeStarted.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
                     onModeStart();
                 });
@@ -105,7 +106,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.GameMode.Go.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
                     onGo();
                 });
@@ -113,7 +114,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
             {
-                Utilities.testFunc(() =>
+                GeneralUtilities.testFunc(() =>
                 {
                     onChatEvent(data.message_);
                 });
@@ -139,9 +140,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!auto") + ": Toggle the server auto mode.");
-            Utilities.sendMessage("You must have a playlist to activate the auto server");
-            Utilities.sendMessage("You can change auto mode settings with the !settings command or in the settings file.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!auto") + ": Toggle the server auto mode.");
+            MessageUtilities.sendMessage("You must have a playlist to activate the auto server");
+            MessageUtilities.sendMessage("You can change auto mode settings with the !settings command or in the settings file.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -150,17 +151,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if (!autoMode)
             {
                 autoMode = true;
-                Utilities.sendMessage("Auto mode started!");
-                if (Utilities.isOnLobby())
+                MessageUtilities.sendMessage("Auto mode started!");
+                if (GeneralUtilities.isOnLobby())
                     G.Sys.GameManager_.StartCoroutine(startFromLobby());
-                else if (Utilities.isModeFinished())
+                else if (GeneralUtilities.isModeFinished())
                     G.Sys.GameManager_.StartCoroutine(waitAndGoNext());
                 else onModeStart();
             }
             else
             {
                 autoMode = false;
-                Utilities.sendMessage("Auto mode stopped!");
+                MessageUtilities.sendMessage("Auto mode stopped!");
             }
         }
 
@@ -169,8 +170,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if (!voting)
                 return;
 
-            var author = Utilities.ExtractMessageAuthor(message);
-            var text = Utilities.ExtractMessageBody(message);
+            var author = GeneralUtilities.ExtractMessageAuthor(message);
+            var text = GeneralUtilities.ExtractMessageBody(message);
             var value = 0;
             if (!int.TryParse(text, out value))
                 return;
@@ -197,7 +198,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         private void onModeStart()
         {
-            if (!Utilities.isOnline())
+            if (!GeneralUtilities.isOnline())
                 autoMode = false;
             index++;
             currentMapInsertIndex = -1;
@@ -224,11 +225,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 var specCount = autoSpecCommand.getAutoSpecPlayers().Count;
                 if (specCount != 0) {
                     string specWord = specCount == 1 ? "is" : "are";
-                    Utilities.sendMessage($"Waiting for there to be {minPlayers} players. ({specCount} {specWord} auto-spectating)");
+                    MessageUtilities.sendMessage($"Waiting for there to be {minPlayers} players. ({specCount} {specWord} auto-spectating)");
                 }
                 else
                 {
-                    Utilities.sendMessage($"Waiting for there to be {minPlayers} players.");
+                    MessageUtilities.sendMessage($"Waiting for there to be {minPlayers} players.");
                 }
                 while (G.Sys.PlayerManager_.PlayerList_.Count < getMinPlayers() && autoMode)
                 {
@@ -247,14 +248,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return list;
             var startIndex = start;
             var firstOnlineIndex = startIndex;
-            var NextLevel = Utilities.getLevel(firstOnlineIndex);
+            var NextLevel = GeneralUtilities.getLevel(firstOnlineIndex);
             while (true)
             {
                 if (NextLevel == null)
                     firstOnlineIndex = 0;
                 else
                 {
-                    if (Utilities.isLevelOnline(NextLevel))
+                    if (GeneralUtilities.isLevelOnline(NextLevel))
                     {
                         list.Add(firstOnlineIndex);
                         if (list.Count == limit)
@@ -264,7 +265,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                     firstOnlineIndex++;
                 }
-                NextLevel = Utilities.getLevel(firstOnlineIndex);
+                NextLevel = GeneralUtilities.getLevel(firstOnlineIndex);
                 if (firstOnlineIndex == startIndex)
                     return list;
             }
@@ -312,7 +313,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator waitAndGoNext()
         {
-            if (!Utilities.isOnLobby())
+            if (!GeneralUtilities.isOnLobby())
             {
                 int myIndex = index; // index and myIndex are used to check if the level advances before auto does it.
                 foreach (float f in waitForMinPlayers())
@@ -323,7 +324,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     yield break;
 
                 int nextLevelIndex;
-                if (Utilities.isCurrentLastLevel())
+                if (GeneralUtilities.isCurrentLastLevel())
                 {
                     if (shuffleAtEnd)
                         cmd.all.getCommand<ShuffleCMD>("shuffle").use(null, "");
@@ -349,25 +350,25 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     if (nextLevelIndex == -1)
                     {
                         autoMode = false;
-                        Utilities.sendMessage("The only levels available are offline levels (not official and not on the workshop).");
-                        Utilities.sendMessage("Qutting auto mode...");
-                        Utilities.sendMessage("You can disable this behavior with " + Utilities.formatCmd("!settings autoSkipOffline false"));
+                        MessageUtilities.sendMessage("The only levels available are offline levels (not official and not on the workshop).");
+                        MessageUtilities.sendMessage("Qutting auto mode...");
+                        MessageUtilities.sendMessage("You can disable this behavior with " + GeneralUtilities.formatCmd("!settings autoSkipOffline false"));
                         yield break;
                     }
                 }
 
                 currentMapInsertIndex = nextLevelIndex + 1;
 
-                var level = Utilities.getLevel(nextLevelIndex);
-                Utilities.sendMessage("Going to the next level in 10 seconds...");
-                Utilities.sendMessage("Next level is: " + level.levelName_);
+                var level = GeneralUtilities.getLevel(nextLevelIndex);
+                MessageUtilities.sendMessage("Going to the next level in 10 seconds...");
+                MessageUtilities.sendMessage("Next level is: " + level.levelName_);
                 myIndex = index;
                 yield return new WaitForSeconds(10.0f);
                 if (index != myIndex)
                     yield break;
-                if (autoMode && !Utilities.isOnLobby())
+                if (autoMode && !GeneralUtilities.isOnLobby())
                 {
-                    Utilities.testFunc(() =>
+                    GeneralUtilities.testFunc(() =>
                     {
                         G.Sys.GameManager_.LevelPlaylist_.SetIndex(nextLevelIndex - 1);
                         G.Sys.GameManager_.GoToNextLevel(true);
@@ -381,7 +382,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         IEnumerator voteAndGoNext()
         {
-            if (!Utilities.isOnLobby())
+            if (!GeneralUtilities.isOnLobby())
             {
                 int myIndex = index;
                 foreach (float f in waitForMinPlayers())
@@ -426,9 +427,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     {
                         voting = false;
                         autoMode = false;
-                        Utilities.sendMessage("The playlist does not have at least 3 online levels. Online levels are official levels and workshop levels only.");
-                        Utilities.sendMessage("Qutting auto mode...");
-                        Utilities.sendMessage("You can disable this behavior with " + Utilities.formatCmd("!settings autoSkipOffline false"));
+                        MessageUtilities.sendMessage("The playlist does not have at least 3 online levels. Online levels are official levels and workshop levels only.");
+                        MessageUtilities.sendMessage("Qutting auto mode...");
+                        MessageUtilities.sendMessage("You can disable this behavior with " + GeneralUtilities.formatCmd("!settings autoSkipOffline false"));
                         yield break;
                     }
                 }
@@ -444,10 +445,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
                 currentMapInsertIndex = voteLevels[voteLevels.Count - 1] + 1;
 
-                Utilities.sendMessage("Vote for the next map (write [FF0000]1[-], [00FF00]2[-], [0088FF]3[-], or [FFFFFF]0[-] to restart)! Votes end in 15 sec!");
-                Utilities.sendMessage("[b][FF0000]1[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]], 1, voteText) + "[-]");
-                Utilities.sendMessage("[b][00FF00]2[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[2]], 2, voteText) + "[-]");
-                Utilities.sendMessage("[b][0088FF]3[-] :[/b] [FFFFFF]" + Utilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[3]], 3, voteText) + "[-]");
+                MessageUtilities.sendMessage("Vote for the next map (write [FF0000]1[-], [00FF00]2[-], [0088FF]3[-], or [FFFFFF]0[-] to restart)! Votes end in 15 sec!");
+                MessageUtilities.sendMessage("[b][FF0000]1[-] :[/b] [FFFFFF]" + GeneralUtilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[1]], 1, voteText) + "[-]");
+                MessageUtilities.sendMessage("[b][00FF00]2[-] :[/b] [FFFFFF]" + GeneralUtilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[2]], 2, voteText) + "[-]");
+                MessageUtilities.sendMessage("[b][0088FF]3[-] :[/b] [FFFFFF]" + GeneralUtilities.formatLevelInfoText(G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[3]], 3, voteText) + "[-]");
 
                 myIndex = index;
                 yield return new WaitForSeconds(15);
@@ -457,12 +458,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     yield break;
                 }
 
-                if (autoMode && !Utilities.isOnLobby())
+                if (autoMode && !GeneralUtilities.isOnLobby())
                 {
                     int index = bestVote();
                     if(index == 0)
-                        Utilities.sendMessage("Restarting the current level!");
-                    else Utilities.sendMessage("Level [b][FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[index]].levelNameAndPath_.levelName_ + "[-][/b] selected !");
+                        MessageUtilities.sendMessage("Restarting the current level!");
+                    else MessageUtilities.sendMessage("Level [b][FFFFFF]" + G.Sys.GameManager_.LevelPlaylist_.Playlist_[voteLevels[index]].levelNameAndPath_.levelName_ + "[-][/b] selected !");
                     voting = false;
 
                     myIndex = this.index;
@@ -470,9 +471,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     if (this.index != myIndex)
                         yield break;
                         
-                    if (autoMode && !Utilities.isOnLobby())
+                    if (autoMode && !GeneralUtilities.isOnLobby())
                     {
-                        Utilities.testFunc(() =>
+                        GeneralUtilities.testFunc(() =>
                         {
                             setToNextMap(voteLevels[index], voteLevels[voteLevels.Count - 1]);
                             G.Sys.GameManager_.GoToNextLevel(true);
@@ -495,7 +496,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             {
                 if (hasRanOnce)
                 {
-                    Utilities.sendMessage("Starting the game in 10 seconds...");
+                    MessageUtilities.sendMessage("Starting the game in 10 seconds...");
 
                     myIndex = index;
                     yield return new WaitForSeconds(10.0f);
@@ -528,7 +529,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     }
                     if (!canContinue)
                     {
-                        Utilities.sendMessage($"Waiting for all players to be ready. ({players}is not ready.)");
+                        MessageUtilities.sendMessage($"Waiting for all players to be ready. ({players}is not ready.)");
                         myIndex = index;
                         yield return new WaitForSeconds(5.0f);
                         if (index != myIndex)
@@ -539,7 +540,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 } while (!canContinue);
                 total = total + 1;
             }
-            if (Utilities.isOnLobby())
+            if (GeneralUtilities.isOnLobby())
             {
                 if (skipOffline)
                 {
@@ -547,9 +548,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     if (firstOnlineLevelIndex == -1)
                     {
                         autoMode = false;
-                        Utilities.sendMessage("The only levels available are offline levels (not official and not on the workshop).");
-                        Utilities.sendMessage("Qutting auto mode...");
-                        Utilities.sendMessage("You can disable this behavior with " + Utilities.formatCmd("!settings autoSkipOffline false"));
+                        MessageUtilities.sendMessage("The only levels available are offline levels (not official and not on the workshop).");
+                        MessageUtilities.sendMessage("Qutting auto mode...");
+                        MessageUtilities.sendMessage("You can disable this behavior with " + GeneralUtilities.formatCmd("!settings autoSkipOffline false"));
                         yield break;
                     }
                     G.Sys.GameManager_.LevelPlaylist_.SetIndex(firstOnlineLevelIndex);
@@ -563,7 +564,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         {
             if (advanceMessage != "")
             {
-                Utilities.sendMessage(advanceMessage);
+                MessageUtilities.sendMessage(advanceMessage);
             }
             didFinish = false;
             int currentIndex = index;
@@ -573,7 +574,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 CountdownCMD countdownCommand = list.getCommand<CountdownCMD>("countdown");
                 if (currentIndex == index && autoMode && !countdownCommand.countdownStarted)
                 {
-                    Utilities.sendMessage("This map has run for the maximum time.");
+                    MessageUtilities.sendMessage("This map has run for the maximum time.");
 
                     // start countdown for 60 seconds. Everyone is marked DNF at 60 seconds.
                     countdownCommand.startCountdown(60);
@@ -590,7 +591,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         int bestVote()
         {
             var choice = 1;
-            Utilities.testFunc(() =>
+            GeneralUtilities.testFunc(() =>
             {
                 List<int> values = new List<int>();
                 for (int i = 0; i <= maxtVoteValue; i++)

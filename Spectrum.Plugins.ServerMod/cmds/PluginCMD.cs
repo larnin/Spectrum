@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!plugin") + ": Shows all players who have the plugin and versions");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!plugin") + ": Shows all players who have the plugin and versions");
         }
 
         public override void use(ClientPlayerInfo p, string message)

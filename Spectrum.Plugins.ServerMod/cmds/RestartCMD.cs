@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,21 +17,21 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!restart") + ": Restart the current map");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!restart") + ": Restart the current map");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if(!Utilities.isOnGamemode())
+            if(!GeneralUtilities.isOnGamemode())
             {
-                Utilities.sendMessage("Can't restart on lobby !");
+                MessageUtilities.sendMessage("Can't restart on lobby !");
                 return;
             }
 
             var serverLogic = G.Sys.GameManager_.GetComponent<ServerLogic>();
             if(serverLogic == null)
             {
-                Utilities.sendMessage("ServerLogic null !");
+                MessageUtilities.sendMessage("ServerLogic null !");
                 return;
             }
 

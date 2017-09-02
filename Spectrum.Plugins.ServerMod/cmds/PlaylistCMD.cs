@@ -2,6 +2,7 @@
 using Spectrum.Plugins.ServerMod.CmdSettings;
 using Spectrum.Plugins.ServerMod.PlaylistTools;
 using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,31 +52,31 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!playlist") + " saves, loads, creates, deletes, and filters playlists");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist list [search]") + ": List all playlists");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist new [filter]") + ": Creates a new playlist.");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist load <name>") + ": Load playlist, [FFFFFF]current[-] is the one being played and isn't saved, [FFFFFF]upcoming[-] is the next levels and isn't saved");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist save [name]") + ": Save playlist, [FFFFFF]current[-] is the one being played, [FFFFFF]upcoming[-] is the next levels");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist active") + ": Show the name of the loaded playlist.");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist del <name>") + ": Delete a playlist");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist show [filter]") + ": Show the levels in the loaded playlist");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist filter <filter>") + ": Filter the loaded playlist");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist add <filter>") + ": Add levels to the end of the loaded playlist");
-            Utilities.sendMessage(Utilities.formatCmd("!playlist clear") + ": Clear the loaded playlist");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist") + " saves, loads, creates, deletes, and filters playlists");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist list [search]") + ": List all playlists");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist new [filter]") + ": Creates a new playlist.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist load <name>") + ": Load playlist, [FFFFFF]current[-] is the one being played and isn't saved, [FFFFFF]upcoming[-] is the next levels and isn't saved");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist save [name]") + ": Save playlist, [FFFFFF]current[-] is the one being played, [FFFFFF]upcoming[-] is the next levels");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist active") + ": Show the name of the loaded playlist.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist del <name>") + ": Delete a playlist");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist show [filter]") + ": Show the levels in the loaded playlist");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist filter <filter>") + ": Filter the loaded playlist");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist add <filter>") + ": Add levels to the end of the loaded playlist");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist clear") + ": Clear the loaded playlist");
         }
 
         public bool canUseCurrentPlaylist
         {
             get
             {
-                return Utilities.isHost();
+                return GeneralUtilities.isHost();
             }
         }
 
         public List<string> getPlaylists(string search)
         {
-            var searchRegex = Utilities.getSearchRegex(search);
-            List<string> playlists = Utilities.playlists();
+            var searchRegex = GeneralUtilities.getSearchRegex(search);
+            List<string> playlists = GeneralUtilities.playlists();
             playlists.RemoveAll((string s) => !Resource.FileExist(s));
             playlists = playlists.ConvertAll(playlist => Resource.GetFileNameWithoutExtension(playlist));
             if (canUseCurrentPlaylist)
@@ -95,8 +96,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public LevelPlaylist getPlaylistLevels(string search, out int count)
         {
-            var searchRegex = Utilities.getSearchRegex(search);
-            List<string> playlists = Utilities.playlists();
+            var searchRegex = GeneralUtilities.getSearchRegex(search);
+            List<string> playlists = GeneralUtilities.playlists();
             playlists.RemoveAll((string s) => !Resource.FileExist(s));
             playlists.RemoveAll(playlist => !Regex.IsMatch(Resource.GetFileNameWithoutExtension(playlist), searchRegex, RegexOptions.IgnoreCase));
 
@@ -160,7 +161,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         {
                             G.Sys.GameManager_.LevelPlaylist_.Copy(selectedPlaylist);
                             G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
-                            Utilities.updateGameManagerCurrentLevel();
+                            GeneralUtilities.updateGameManagerCurrentLevel();
                             StaticTargetedEvent<Events.ServerToClient.SetLevelName.Data>.Broadcast(RPCMode.All, G.Sys.GameManager_.CreateSetLevelNameEventData());
                             return true;
                         }
@@ -179,7 +180,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                                 currentPlaylist.Add(level);
                             }
                             currentPlaylist.IsCustom_ = true;
-                            Utilities.updateGameManagerCurrentLevel();
+                            GeneralUtilities.updateGameManagerCurrentLevel();
                             StaticTargetedEvent<Events.ServerToClient.SetLevelName.Data>.Broadcast(RPCMode.All, G.Sys.GameManager_.CreateSetLevelNameEventData());
                             return true;
                         }
@@ -203,13 +204,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 help(p);
                 return;
             }
-            string uniquePlayerString = Utilities.getUniquePlayerString(p);
+            string uniquePlayerString = GeneralUtilities.getUniquePlayerString(p);
             string playlistCmd = playlistCmdMatch.Groups[1].Value.ToLower();
             string playlistCmdData = playlistCmdMatch.Groups[2].Value;
             switch (playlistCmd)
             {
                 default:
-                    Utilities.sendMessage($"[A00000]Invalid sub-command `{playlistCmd}`[-]");
+                    MessageUtilities.sendMessage($"[A00000]Invalid sub-command `{playlistCmd}`[-]");
                     help(p);
                     break;
                 case "list":
@@ -220,19 +221,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             results += "\n" + (playlist == "current" ? playlist : Resource.GetFileNameWithoutExtension(playlist));
                         if (results == "")
                             results = "None";
-                        Utilities.sendMessage("[FFFFFF]Playlists: [-]" + results);
+                        MessageUtilities.sendMessage("[FFFFFF]Playlists: [-]" + results);
                         break;
                     }
                 case "new":
                     {
                         LevelPlaylist list = LevelPlaylist.Create(true);
                         list.Name_ = "New Playlist";
-                        FilteredPlaylist levels = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
-                        Utilities.addFiltersToPlaylist(levels, p, playlistCmdData, true);
+                        FilteredPlaylist levels = new FilteredPlaylist(GeneralUtilities.getAllLevelsAndModes());
+                        GeneralUtilities.addFiltersToPlaylist(levels, p, playlistCmdData, true);
                         list.Playlist_.AddRange(levels.Calculate().levelList);
                         selectedPlaylists[uniquePlayerString] = list;
-                        Utilities.sendMessage("[FFFFFF]New playlist with...[-]");
-                        Utilities.sendMessage(Utilities.getPlaylistText(levels, Utilities.IndexMode.Final, levelFormat));
+                        MessageUtilities.sendMessage("[FFFFFF]New playlist with...[-]");
+                        MessageUtilities.sendMessage(GeneralUtilities.getPlaylistText(levels, GeneralUtilities.IndexMode.Final, levelFormat));
                         break;
                     }
                 case "load":
@@ -241,13 +242,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         LevelPlaylist selectedPlaylist = getPlaylistLevels(playlistCmdData, out matchingCount);
                         if (matchingCount == 0)
                         {
-                            Utilities.sendMessage("[A00000]Could not find any playlists with that search[-]");
+                            MessageUtilities.sendMessage("[A00000]Could not find any playlists with that search[-]");
                             break;
                         }
                         else if (matchingCount == 1)
-                            Utilities.sendMessage($"{selectedPlaylist.Name_} is now active");
+                            MessageUtilities.sendMessage($"{selectedPlaylist.Name_} is now active");
                         else
-                            Utilities.sendMessage($"{selectedPlaylist.Name_} is now active, but {matchingCount - 1} others matched too");
+                            MessageUtilities.sendMessage($"{selectedPlaylist.Name_} is now active, but {matchingCount - 1} others matched too");
                         
                         selectedPlaylists[uniquePlayerString] = selectedPlaylist;
                         break;
@@ -257,17 +258,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         LevelPlaylist selectedPlaylist;
                         if (!selectedPlaylists.TryGetValue(uniquePlayerString, out selectedPlaylist))
                         {
-                            Utilities.sendMessage("[A00000]You have no active playlist[-]");
+                            MessageUtilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
                         if (selectedPlaylist.Playlist_.Count == 0)
                         {
-                            Utilities.sendMessage("[A00000]Your active playlist is empty[-]");
+                            MessageUtilities.sendMessage("[A00000]Your active playlist is empty[-]");
                             break;
                         }
                         if (playlistCmdData == "")
                         {
-                            Utilities.sendMessage($"[A05000]No name given. Using existing name: {selectedPlaylist.Name_}");
+                            MessageUtilities.sendMessage($"[A05000]No name given. Using existing name: {selectedPlaylist.Name_}");
                             playlistCmdData = selectedPlaylist.Name_;
                         }
                         bool result = savePlaylist(selectedPlaylist, playlistCmdData);
@@ -275,18 +276,18 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         {
                             case "current":
                                 if (result)
-                                    Utilities.sendMessage("Set current playlist to active playlist.");
+                                    MessageUtilities.sendMessage("Set current playlist to active playlist.");
                                 else
-                                    Utilities.sendMessage("You cannot save to the current playlist right now.");
+                                    MessageUtilities.sendMessage("You cannot save to the current playlist right now.");
                                 break;
                             case "upcoming":
                                 if (result)
-                                    Utilities.sendMessage("Set upcoming levels to active playlist.");
+                                    MessageUtilities.sendMessage("Set upcoming levels to active playlist.");
                                 else
-                                    Utilities.sendMessage("You cannot save to the current playlist right now.");
+                                    MessageUtilities.sendMessage("You cannot save to the current playlist right now.");
                                 break;
                             default:
-                                Utilities.sendMessage($"Saved playlist as {playlistCmdData}.");
+                                MessageUtilities.sendMessage($"Saved playlist as {playlistCmdData}.");
                                 break;
                         }
                         break;
@@ -296,17 +297,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         LevelPlaylist selectedPlaylist;
                         if (!selectedPlaylists.TryGetValue(uniquePlayerString, out selectedPlaylist))
                         {
-                            Utilities.sendMessage("[A00000]You have no active playlist[-]");
+                            MessageUtilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
-                        Utilities.sendMessage(selectedPlaylist.Name_);
+                        MessageUtilities.sendMessage(selectedPlaylist.Name_);
                         break;
                     }
                 case "del":
                     {
                         if (playlistCmdData == "")
                         {
-                            Utilities.sendMessage("[A00000]You must enter a name[-]");
+                            MessageUtilities.sendMessage("[A00000]You must enter a name[-]");
                             break;
                         }
                         List<string> toDelete;
@@ -320,19 +321,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
                                         FileEx.Delete(playlist);
                                         count++;
                                     }
-                                Utilities.sendMessage($"Deleted {count} playlists.");
+                                MessageUtilities.sendMessage($"Deleted {count} playlists.");
                                 deleteConfirmation.Remove(uniquePlayerString);
                                 break;
                             }
                             else if (playlistCmdData.ToLower() == "no")
                             {
                                 deleteConfirmation.Remove(uniquePlayerString);
-                                Utilities.sendMessage("Cancelled deletion.");
+                                MessageUtilities.sendMessage("Cancelled deletion.");
                                 break;
                             }
                         }
-                        var searchRegex = Utilities.getSearchRegex(playlistCmdData);
-                        List<string> playlists = Utilities.playlists();
+                        var searchRegex = GeneralUtilities.getSearchRegex(playlistCmdData);
+                        List<string> playlists = GeneralUtilities.playlists();
                         playlists.RemoveAll((string s) => !Resource.FileExist(s));
                         toDelete = new List<string>();
                         var results = "";
@@ -346,10 +347,10 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         if (count > 0)
                         {
                             deleteConfirmation[uniquePlayerString] = toDelete;
-                            Utilities.sendMessage($"[FFFFFF]Use [A05000]!playlist del yes[-] to delete {count} playlists:[-] {results}");
+                            MessageUtilities.sendMessage($"[FFFFFF]Use [A05000]!playlist del yes[-] to delete {count} playlists:[-] {results}");
                         }
                         else
-                            Utilities.sendMessage("[A00000]No playlists found[-]");
+                            MessageUtilities.sendMessage("[A00000]No playlists found[-]");
                     }
                     break;
                 case "show":
@@ -357,12 +358,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         LevelPlaylist selectedPlaylist;
                         if (!selectedPlaylists.TryGetValue(uniquePlayerString, out selectedPlaylist))
                         {
-                            Utilities.sendMessage("[A00000]You have no active playlist[-]");
+                            MessageUtilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
                         FilteredPlaylist filterer = new FilteredPlaylist(selectedPlaylist.Playlist_);
-                        Utilities.addFiltersToPlaylist(filterer, p, playlistCmdData, false);
-                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Initial, levelFormat));
+                        GeneralUtilities.addFiltersToPlaylist(filterer, p, playlistCmdData, false);
+                        MessageUtilities.sendMessage(GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Initial, levelFormat));
                         break;
                     }
                 case "filter":
@@ -370,15 +371,15 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         LevelPlaylist selectedPlaylist;
                         if (!selectedPlaylists.TryGetValue(uniquePlayerString, out selectedPlaylist))
                         {
-                            Utilities.sendMessage("[A00000]You have no active playlist[-]");
+                            MessageUtilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
                         FilteredPlaylist filterer = new FilteredPlaylist(selectedPlaylist.Playlist_);
-                        Utilities.addFiltersToPlaylist(filterer, p, playlistCmdData, false);
+                        GeneralUtilities.addFiltersToPlaylist(filterer, p, playlistCmdData, false);
                         selectedPlaylist.Playlist_.Clear();
                         selectedPlaylist.Playlist_.AddRange(filterer.Calculate().levelList);
-                        Utilities.sendMessage("[FFFFFF]Filtered:[-]");
-                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Final, levelFormat));
+                        MessageUtilities.sendMessage("[FFFFFF]Filtered:[-]");
+                        MessageUtilities.sendMessage(GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Final, levelFormat));
                         break;
                     }
                 case "add":
@@ -386,14 +387,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         LevelPlaylist selectedPlaylist;
                         if (!selectedPlaylists.TryGetValue(uniquePlayerString, out selectedPlaylist))
                         {
-                            Utilities.sendMessage("[A00000]You have no active playlist[-]");
+                            MessageUtilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
-                        FilteredPlaylist filterer = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
-                        Utilities.addFiltersToPlaylist(filterer, p, playlistCmdData, true);
+                        FilteredPlaylist filterer = new FilteredPlaylist(GeneralUtilities.getAllLevelsAndModes());
+                        GeneralUtilities.addFiltersToPlaylist(filterer, p, playlistCmdData, true);
                         selectedPlaylist.Playlist_.AddRange(filterer.Calculate().levelList);
-                        Utilities.sendMessage("[FFFFFF]Added:[-]");
-                        Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Final, levelFormat));
+                        MessageUtilities.sendMessage("[FFFFFF]Added:[-]");
+                        MessageUtilities.sendMessage(GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Final, levelFormat));
                         break;
                     }
                 case "clear":
@@ -401,11 +402,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         LevelPlaylist selectedPlaylist;
                         if (!selectedPlaylists.TryGetValue(uniquePlayerString, out selectedPlaylist))
                         {
-                            Utilities.sendMessage("[A00000]You have no active playlist[-]");
+                            MessageUtilities.sendMessage("[A00000]You have no active playlist[-]");
                             break;
                         }
                         selectedPlaylist.Playlist_.Clear();
-                        Utilities.sendMessage("[FFFFFF]Cleared[-]");
+                        MessageUtilities.sendMessage("[FFFFFF]Cleared[-]");
                         break;
                     }
             }

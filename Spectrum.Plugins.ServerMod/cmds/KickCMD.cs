@@ -1,5 +1,6 @@
 ﻿using Events;
 using Events.GameMode;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!kick <search string>") + ": Kick players using <search string>");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!kick <search string>") + ": Kick players using <search string>");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -27,15 +28,15 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
 
             var affects = "";
-            foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
+            foreach (ClientPlayerInfo client in GeneralUtilities.getClientsBySearch(message))
             {
                 affects += $"{ client.Username_}, ";
                 G.Sys.NetworkingManager_.DisconnectPlayer(client.Index_);
             }
             if (affects == "")
-                Utilities.sendMessage("Could not find any players with that name or index");
+                MessageUtilities.sendMessage("Could not find any players with that name or index");
             else
-                Utilities.sendMessage("Kicked " + affects);
+                MessageUtilities.sendMessage("Kicked " + affects);
         }
     }
 }

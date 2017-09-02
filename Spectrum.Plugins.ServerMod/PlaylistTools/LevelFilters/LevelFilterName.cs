@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
         public LevelFilterName(string match)
         {
             this.match = match.ToLower();
-            matchRegex = Utilities.getSearchRegex(match);
+            matchRegex = GeneralUtilities.getSearchRegex(match);
         }
 
         public override void Apply(List<PlaylistLevel> levels)

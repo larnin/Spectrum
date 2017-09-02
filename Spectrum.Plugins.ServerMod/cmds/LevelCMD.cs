@@ -1,5 +1,6 @@
 ﻿using Spectrum.Plugins.ServerMod.CmdSettings;
 using Spectrum.Plugins.ServerMod.PlaylistTools;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +25,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!level [name]") + ": Find a level who have that keyword on his name");
-            Utilities.sendMessage(Utilities.formatCmd("!level [filter] ") + ": Use filters to find a level");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!level [name]") + ": Find a level who have that keyword on his name");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!level [filter] ") + ": Use filters to find a level");
             List<LevelFilter> filters = new List<LevelFilter>();
             foreach (KeyValuePair<string, LevelFilter> filter in FilteredPlaylist.filterTypes)
             {
@@ -36,9 +37,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
             foreach (LevelFilter filter in filters)
                 foreach (string option in filter.options)
                     filtersStr += "-" + option + " ";
-            Utilities.sendMessage("Valid filters: " + filtersStr);
-            Utilities.sendMessage("Filter types:  default (and): -filter; not default: !filter; and: &filter; or: |filter; and not: &!filter; or not: |!filter");
-            Utilities.sendMessage("The level must be known by the server to be shown");
+            MessageUtilities.sendMessage("Valid filters: " + filtersStr);
+            MessageUtilities.sendMessage("Filter types:  default (and): -filter; not default: !filter; and: &filter; or: |filter; and not: &!filter; or not: |!filter");
+            MessageUtilities.sendMessage("The level must be known by the server to be shown");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -49,7 +50,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             }
 
-            FilteredPlaylist filterer = new FilteredPlaylist(Utilities.getAllLevelsAndModes());
+            FilteredPlaylist filterer = new FilteredPlaylist(GeneralUtilities.getAllLevelsAndModes());
 
             if (!p.IsLocal_)
             {
@@ -57,9 +58,9 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 filterer.AddFiltersFromString(playCmd.playFilter);
             }
 
-            Utilities.sendFailures(Utilities.addFiltersToPlaylist(filterer, p, message, true), 4);
+            GeneralUtilities.sendFailures(GeneralUtilities.addFiltersToPlaylist(filterer, p, message, true), 4);
             
-            Utilities.sendMessage(Utilities.getPlaylistText(filterer, Utilities.IndexMode.Final, levelFormat));
+            MessageUtilities.sendMessage(GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Final, levelFormat));
         }
     }
     class CmdSettingLevelFormat : CmdSettingString

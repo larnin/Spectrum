@@ -1,4 +1,5 @@
 ﻿using Spectrum.Plugins.ServerMod.CmdSettings;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +19,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!win") + ": Win the game !");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!win") + ": Win the game !");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
             Random r = new Random();
             float color = (float)r.NextDouble() * 360;
-            Utilities.sendMessage("[b][" + ColorEx.ColorToHexNGUI(new ColorHSB(color, 1.0f, 1.0f, 1f).ToColor()) + "]" + winList[r.Next(winList.Count)] + "[-][/b]");
+            MessageUtilities.sendMessage("[b][" + ColorEx.ColorToHexNGUI(new ColorHSB(color, 1.0f, 1.0f, 1f).ToColor()) + "]" + winList[r.Next(winList.Count)] + "[-][/b]");
         }
 
         public List<string> winList

@@ -1,5 +1,6 @@
 ﻿using Events;
 using Events.GameMode;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!spec [id/name]") + ": Forces a player to spectate the game.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!spec [id/name]") + ": Forces a player to spectate the game.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -27,15 +28,15 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
 
             var affects = "";
-            foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
+            foreach (ClientPlayerInfo client in GeneralUtilities.getClientsBySearch(message))
             {
                 StaticTargetedEvent<Finished.Data>.Broadcast(client.NetworkPlayer_, default(Finished.Data));
                 affects += $"{ client.Username_}, ";
             }
             if (affects == "")
-                Utilities.sendMessage("Could not find any players with that name or index");
+                MessageUtilities.sendMessage("Could not find any players with that name or index");
             else
-                Utilities.sendMessage(affects + "is now spectating.");
+                MessageUtilities.sendMessage(affects + "is now spectating.");
         }
     }
 }

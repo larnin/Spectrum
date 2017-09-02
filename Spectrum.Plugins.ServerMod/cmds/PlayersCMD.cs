@@ -1,5 +1,6 @@
 ﻿using Events;
 using Events.GameMode;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,23 +16,23 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!players <search string>") + ": Find players using <search string>");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!players <search string>") + ": Find players using <search string>");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
             var affects = "";
-            foreach (ClientPlayerInfo client in Utilities.getClientsBySearch(message))
+            foreach (ClientPlayerInfo client in GeneralUtilities.getClientsBySearch(message))
             {
                 affects += $"{ client.Username_} ({client.Index_})";
-                if (Utilities.isHost() && client.IsLocal_)
+                if (GeneralUtilities.isHost() && client.IsLocal_)
                     affects += " (HOST)";
                 affects += ", ";
             }
             if (affects == "")
-                Utilities.sendMessage("Could not find any players with that name or index");
+                MessageUtilities.sendMessage("Could not find any players with that name or index");
             else
-                Utilities.sendMessage("Found: " + affects);
+                MessageUtilities.sendMessage("Found: " + affects);
         }
     }
 }

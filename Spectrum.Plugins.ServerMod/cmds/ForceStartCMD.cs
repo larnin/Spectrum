@@ -1,4 +1,6 @@
 ﻿
+using Spectrum.Plugins.ServerMod.Utilities;
+
 namespace Spectrum.Plugins.ServerMod.cmds
 {
     class ForceStartCMD : cmd
@@ -9,19 +11,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!forcestart") + ": Forces the game to start regardless of the ready states of players in the lobby.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!forcestart") + ": Forces the game to start regardless of the ready states of players in the lobby.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if(!Utilities.isOnLobby())
+            if(!GeneralUtilities.isOnLobby())
             {
-                Utilities.sendMessage("You can't force the start here !");
+                MessageUtilities.sendMessage("You can't force the start here !");
                 return;
             }
 
             G.Sys.GameManager_.GoToCurrentLevel();
-            Utilities.sendMessage("Game started !");
+            MessageUtilities.sendMessage("Game started !");
         }
     }
 }

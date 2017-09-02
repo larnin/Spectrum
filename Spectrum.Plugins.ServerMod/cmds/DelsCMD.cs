@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,8 +17,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!dels <indexStart> <indexEnd>") + ": remove the maps between indexStart and indexEnd from the playlist");
-            Utilities.sendMessage("The next map has an index of 0");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!dels <indexStart> <indexEnd>") + ": remove the maps between indexStart and indexEnd from the playlist");
+            MessageUtilities.sendMessage("The next map has an index of 0");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -30,7 +31,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                Utilities.sendMessage("You can't manage the playlist in trackmogrify");
+                MessageUtilities.sendMessage("You can't manage the playlist in trackmogrify");
                 return;
             }
 
@@ -39,7 +40,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if (!match.Success)
             {
                 help(p);
-                Utilities.sendMessage("For example, !dels 0 5");
+                MessageUtilities.sendMessage("For example, !dels 0 5");
             }
 
             string id1s = match.Groups[1].Value;
@@ -56,12 +57,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if (id1 < 0 || id2 < 0)
             {
-                Utilities.sendMessage("The indices must be positive numbers or 0.");
+                MessageUtilities.sendMessage("The indices must be positive numbers or 0.");
                 return;
             }
             else if (id1 > id2)
             {
-                Utilities.sendMessage("indexStart must be <= indexEnd.");
+                MessageUtilities.sendMessage("indexStart must be <= indexEnd.");
             }
             
             int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
@@ -69,7 +70,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             int playListSize = G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - index - 1;
             if(id2 > playListSize)
             {
-                Utilities.sendMessage("The playlist has only " + playListSize + " maps.");
+                MessageUtilities.sendMessage("The playlist has only " + playListSize + " maps.");
                 return;
             }
 
@@ -87,7 +88,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
             G.Sys.GameManager_.LevelPlaylist_.SetIndex(index);
 
-            Utilities.sendMessage($"{id2 - id1 + 1} maps removed !");
+            MessageUtilities.sendMessage($"{id2 - id1 + 1} maps removed !");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
             DateTime date;
             if (DateTime.TryParse(input.Trim(), out date))
             {
-                value = (uint)Utilities.ConvertToUnixTimestamp(date);
+                value = (uint)GeneralUtilities.ConvertToUnixTimestamp(date);
                 return true;
             }
             else

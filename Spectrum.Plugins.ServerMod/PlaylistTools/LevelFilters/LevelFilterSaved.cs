@@ -1,4 +1,5 @@
 ﻿using Spectrum.Plugins.ServerMod.cmds;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
             FilterCMD filterCmd = cmd.all.getCommand<FilterCMD>("filter");
             string filterName = null;
             string filter = null;
-            string searchRegex = Utilities.getSearchRegex(chatString);
+            string searchRegex = GeneralUtilities.getSearchRegex(chatString);
             var count = 0;
             foreach (KeyValuePair<string, string> pair in filterCmd.savedFilters)
             {

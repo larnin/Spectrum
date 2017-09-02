@@ -1,4 +1,5 @@
 ﻿using Spectrum.Plugins.ServerMod.cmds;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +18,13 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
             if (p == null)
                 activePlayerString = "";
             else
-                activePlayerString = Utilities.getUniquePlayerString(p);
+                activePlayerString = GeneralUtilities.getUniquePlayerString(p);
         }
 
         public static void SaveFilter(ClientPlayerInfo p, string filterText)
         {
             if (p != null)
-                lastFilter[Utilities.getUniquePlayerString(p)] = filterText;
+                lastFilter[GeneralUtilities.getUniquePlayerString(p)] = filterText;
         }
 
         public override string[] options { get; } = new string[] {"l", "last"};

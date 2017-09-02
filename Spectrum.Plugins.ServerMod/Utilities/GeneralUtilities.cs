@@ -1,4 +1,5 @@
 ﻿using Events;
+using Events.ChatLog;
 using Events.ClientToAllClients;
 using Spectrum.Plugins.ServerMod.PlaylistTools;
 using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
@@ -11,20 +12,10 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
-namespace Spectrum.Plugins.ServerMod
+namespace Spectrum.Plugins.ServerMod.Utilities
 {
-    static class Utilities
+    static class GeneralUtilities
     {
-        public static void sendMessage(string message)
-        {
-            //StaticEvent<ChatSubmitMessage.Data>.Broadcast(new ChatSubmitMessage.Data(message));
-            //Chat.SendAction(message);
-#pragma warning disable CS0618 // Type or member is obsolete
-            StaticTransceivedEvent<ChatMessage.Data>.Broadcast(new ChatMessage.Data((message).Colorize("[AAAAAA]")));
-#pragma warning restore CS0618 // Type or member is obsolete
-            //Console.WriteLine("Log : " + message);
-        }
-
         public static string formatCmd(string commandString)
         {
             return "[D0D0D0]" + commandString + "[-]";
@@ -44,9 +35,9 @@ namespace Spectrum.Plugins.ServerMod
                 {
                     if (isHost())
                     {
-                        sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
-                        sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
-                        sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                        MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                        MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                        MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
                     }
                 }
                 catch (Exception e2)
@@ -221,7 +212,7 @@ namespace Spectrum.Plugins.ServerMod
             }
             catch (Exception e)
             {
-                Utilities.sendMessage("Error !");
+                MessageUtilities.sendMessage("Error !");
                 Console.WriteLine(e);
                 return false;
             }
@@ -256,10 +247,10 @@ namespace Spectrum.Plugins.ServerMod
             {
                 if (count >= max - 1 && failures.Count > max)
                 {
-                    Utilities.sendMessage($"[A00000]and {failures.Count - count} more.[-]");
+                    MessageUtilities.sendMessage($"[A00000]and {failures.Count - count} more.[-]");
                     break;
                 }
-                Utilities.sendMessage("[A00000]" + failure + "[-]");
+                MessageUtilities.sendMessage("[A00000]" + failure + "[-]");
                 count++;
             }
         }
@@ -344,7 +335,7 @@ namespace Spectrum.Plugins.ServerMod
             for (int i = 0; i < Math.Min(levels.allowedList.Count, FilteredPlaylist.pageSize); i++)
             {
                 var levelIndex = indexMode == IndexMode.Initial ? levels.allowedList[i].index : i;
-                levelList += Utilities.formatLevelInfoText(levels.allowedList[i].level, levelIndex, levelFormat) + "\n";
+                levelList += GeneralUtilities.formatLevelInfoText(levels.allowedList[i].level, levelIndex, levelFormat) + "\n";
             }
             if (pageString != null)
                 levelList += $"[FFFFFF]Page {pageString}[-]";
@@ -477,7 +468,7 @@ namespace Spectrum.Plugins.ServerMod
         public static string formatLevelInfoText(LevelNameAndPathPair level, GameModeID mode, int index, string levelInfoText)
         {
             var resText = levelInfoText;
-            Utilities.testFunc(() =>
+            GeneralUtilities.testFunc(() =>
             {
                 bool isPointsMode = G.Sys.GameManager_.Mode_ is PointsBasedMode;
                 var levelSetsManager = G.Sys.LevelSets_;
@@ -512,8 +503,8 @@ namespace Spectrum.Plugins.ServerMod
                         .Replace("%STARS%", SteamworksUGC.GetWorkshopRatingText(workshopLevelInfo))
                         .Replace("%STARSINT%", ((int)(workshopLevelInfo.voteScore_ / 0.2f)).ToString())
                         .Replace("%STARSDEC%", (workshopLevelInfo.voteScore_ / 0.2f).ToString("F2"))
-                        .Replace("%CREATED%", Utilities.ConvertFromUnixTimestamp(workshopLevelInfo.timeCreated_).ToString("d", CultureInfo.CurrentCulture))
-                        .Replace("%UPDATED%", Utilities.ConvertFromUnixTimestamp(workshopLevelInfo.timeUpdated_).ToString("d", CultureInfo.CurrentCulture));
+                        .Replace("%CREATED%", GeneralUtilities.ConvertFromUnixTimestamp(workshopLevelInfo.timeCreated_).ToString("d", CultureInfo.CurrentCulture))
+                        .Replace("%UPDATED%", GeneralUtilities.ConvertFromUnixTimestamp(workshopLevelInfo.timeUpdated_).ToString("d", CultureInfo.CurrentCulture));
                 }
                 else
                 {

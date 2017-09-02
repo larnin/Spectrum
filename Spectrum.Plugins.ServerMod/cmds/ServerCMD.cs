@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System.Linq;
 using UnityEngine;
 
 namespace Spectrum.Plugins.ServerMod.cmds
@@ -11,23 +12,23 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!server") + ": Show the server name");
-            Utilities.sendMessage(Utilities.formatCmd("!server [new name]") + ": Modify the server name");
-            Utilities.sendMessage(Utilities.formatCmd("!server private [password]") + ": Set the server private");
-            Utilities.sendMessage(Utilities.formatCmd("!server public") + ": Set the server public");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!server") + ": Show the server name");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!server [new name]") + ": Modify the server name");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!server private [password]") + ": Set the server private");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!server public") + ": Set the server public");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            if (message == "" || !Utilities.isHost() || p == null)
+            if (message == "" || !GeneralUtilities.isHost() || p == null)
             {
-                Utilities.sendMessage(G.Sys.NetworkingManager_.serverTitle_);
+                MessageUtilities.sendMessage(G.Sys.NetworkingManager_.serverTitle_);
                 return;
             }
 
             if(!p.IsLocal_)
             {
-                Utilities.sendMessage("You don't have the permission to do that !");
+                MessageUtilities.sendMessage("You don't have the permission to do that !");
                 return;
             }
 
@@ -58,7 +59,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             G.Sys.NetworkingManager_.privateServer_ = true;
             Network.incomingPassword = pass;
             updateMaster();
-            Utilities.sendMessage("The server is now private !");
+            MessageUtilities.sendMessage("The server is now private !");
         }
 
         private void setServerPublic()
@@ -67,14 +68,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
             G.Sys.NetworkingManager_.privateServer_ = false;
             Network.incomingPassword = "";
             updateMaster();
-            Utilities.sendMessage("The server is now public !");
+            MessageUtilities.sendMessage("The server is now public !");
         }
 
         private void setServerName(string name)
         {
             G.Sys.NetworkingManager_.serverTitle_ = name;
             updateMaster();
-            Utilities.sendMessage("The server is renamed to " + name);
+            MessageUtilities.sendMessage("The server is renamed to " + name);
         }
 
         private void updateMaster()

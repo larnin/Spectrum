@@ -1,4 +1,5 @@
 ﻿using Spectrum.Plugins.ServerMod.CmdSettings;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!update") + ": Check for updates to ServerMod");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!update") + ": Check for updates to ServerMod");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -63,26 +64,26 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     {
                         if (sendMessageIfNone)
                         {
-                            Utilities.sendMessage("No updates to ServerMod available.");
+                            MessageUtilities.sendMessage("No updates to ServerMod available.");
                         }
                     }
                     else
                     {
-                        Utilities.sendMessage("[A0D0A0]There are updates for ServerMod available.[-]");
-                        Utilities.sendMessage("[00D000]You are on " + Entry.PluginVersion + "[-]");
-                        Utilities.sendMessage("[A0D0A0]Newer versions:[-]");
+                        MessageUtilities.sendMessage("[A0D0A0]There are updates for ServerMod available.[-]");
+                        MessageUtilities.sendMessage("[00D000]You are on " + Entry.PluginVersion + "[-]");
+                        MessageUtilities.sendMessage("[A0D0A0]Newer versions:[-]");
                         int count = 0;
                         foreach (string update in updates)
                         {
                             if (count == 0)
-                                Utilities.sendMessage("[00F000]" + update + "[-]");
+                                MessageUtilities.sendMessage("[00F000]" + update + "[-]");
                             else if (count == 3)
                             {
-                                Utilities.sendMessage($"[A0D0A0]And {updates.Count - count} more...[-]");
+                                MessageUtilities.sendMessage($"[A0D0A0]And {updates.Count - count} more...[-]");
                                 break;
                             }
                             else
-                                Utilities.sendMessage("[A0D0A0]" + update + "[-]");
+                                MessageUtilities.sendMessage("[A0D0A0]" + update + "[-]");
                             count++;
                         }
                     }

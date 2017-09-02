@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!clear") + ": Remove everything on the playlist.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!clear") + ": Remove everything on the playlist.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -23,13 +24,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                Utilities.sendMessage("You can't manage the playlist in trackmogrify");
+                MessageUtilities.sendMessage("You can't manage the playlist in trackmogrify");
                 return;
             }
 
             if (playlist.Count_ == 0)
             {
-                Utilities.sendMessage("The playlist is empty !");
+                MessageUtilities.sendMessage("The playlist is empty !");
                 return;
             }
             
@@ -43,7 +44,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             G.Sys.GameManager_.NextLevelPath_ = item.levelNameAndPath_.levelPath_;
             G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
             
-            Utilities.sendMessage("Playlist cleared !");
+            MessageUtilities.sendMessage("Playlist cleared !");
         }
     }
 }

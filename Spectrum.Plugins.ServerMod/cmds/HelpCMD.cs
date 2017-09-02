@@ -1,4 +1,6 @@
 ﻿
+using Spectrum.Plugins.ServerMod.Utilities;
+
 namespace Spectrum.Plugins.ServerMod.cmds
 {
     class HelpCMD : cmd
@@ -9,7 +11,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage("Realy ? You're stuck at the bottom of a well ?");
+            MessageUtilities.sendMessage("Realy ? You're stuck at the bottom of a well ?");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -25,23 +27,23 @@ namespace Spectrum.Plugins.ServerMod.cmds
             cmd c = cmd.all.getCommand(commandName);
             if (c == null)
             {
-                Utilities.sendMessage("The command '" + commandName + "' don't exist.");
+                MessageUtilities.sendMessage("The command '" + commandName + "' don't exist.");
                 return;
             }
             c.help(p);
-            Utilities.sendMessage("Permission level: " + c.perm);
+            MessageUtilities.sendMessage("Permission level: " + c.perm);
             if (c.perm == PermType.LOCAL)
-                Utilities.sendMessage("This command can only be used by the local player");
+                MessageUtilities.sendMessage("This command can only be used by the local player");
 
         }
 
         private void listCmd(ClientPlayerInfo p, bool showAll)
         {
             var playerIsLocal = p.IsLocal_;
-            var playerIsHost = p.IsLocal_ && Utilities.isHost();
-            var playerIsClient = p.IsLocal_ && !Utilities.isHost();
-            var playerIsConnectedClient = !p.IsLocal_ && Utilities.isHost();
-            Utilities.sendMessage("Available commands:");
+            var playerIsHost = p.IsLocal_ && GeneralUtilities.isHost();
+            var playerIsClient = p.IsLocal_ && !GeneralUtilities.isHost();
+            var playerIsConnectedClient = !p.IsLocal_ && GeneralUtilities.isHost();
+            MessageUtilities.sendMessage("Available commands:");
             string list = "";
             foreach(var cName in cmd.all.commands())
             {
@@ -82,12 +84,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     list += ", ";   
                 }
             }
-            Utilities.sendMessage(list.Remove(list.Length - 2));
-            if (p.IsLocal_ || (p.IsLocal_ && Utilities.isHost())) 
-                Utilities.sendMessage("(H) = host only / (L) = local client");
-            Utilities.sendMessage("Use !help <command> for more information on the command.");
+            MessageUtilities.sendMessage(list.Remove(list.Length - 2));
+            if (p.IsLocal_ || (p.IsLocal_ && GeneralUtilities.isHost())) 
+                MessageUtilities.sendMessage("(H) = host only / (L) = local client");
+            MessageUtilities.sendMessage("Use !help <command> for more information on the command.");
             if (playerIsLocal && !playerIsHost)
-                Utilities.sendMessage("Use !help all to see every command, including ones you cannot use right now.");
+                MessageUtilities.sendMessage("Use !help all to see every command, including ones you cannot use right now.");
         }
     }
 }

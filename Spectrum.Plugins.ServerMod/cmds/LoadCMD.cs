@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +14,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!load") + ": Show all the available playlists.");
-            Utilities.sendMessage(Utilities.formatCmd("!load [playlist name]") + ": Load a playlist.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!load") + ": Show all the available playlists.");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!load [playlist name]") + ": Load a playlist.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -28,7 +29,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             var name = Resource.PersonalLevelPlaylistsDirPath_  + message + ".xml";
             if(!Resource.FileExist(name))
             {
-                Utilities.sendMessage("The playlist " + message + " don't exist !");
+                MessageUtilities.sendMessage("The playlist " + message + " don't exist !");
                 return;
             }
             
@@ -38,19 +39,19 @@ namespace Spectrum.Plugins.ServerMod.cmds
             var playlistComp = gameObject.GetComponent<LevelPlaylist>();
             G.Sys.GameManager_.LevelPlaylist_.Copy(playlistComp);
 
-            Utilities.sendMessage("Playlist Loaded : " + G.Sys.GameManager_.LevelPlaylist_.Count_ + " levels.");
+            MessageUtilities.sendMessage("Playlist Loaded : " + G.Sys.GameManager_.LevelPlaylist_.Count_ + " levels.");
 
-            if (Utilities.isOnGamemode() && item != null)
+            if (GeneralUtilities.isOnGamemode() && item != null)
                 G.Sys.GameManager_.LevelPlaylist_.Playlist_.Insert(0, item);
         }
 
         void printPlaylists()
         {
-            var liste = Utilities.playlists();
+            var liste = GeneralUtilities.playlists();
             liste.RemoveAll((string s) => !Resource.FileExist(s));
-            Utilities.sendMessage(liste.Count + " playlists found :");
+            MessageUtilities.sendMessage(liste.Count + " playlists found :");
             foreach (var v in liste)
-                Utilities.sendMessage(Resource.GetFileNameWithoutExtension(v));
+                MessageUtilities.sendMessage(Resource.GetFileNameWithoutExtension(v));
         }
     }
 }

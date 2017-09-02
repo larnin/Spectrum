@@ -1,5 +1,6 @@
 ﻿using Spectrum.API;
 using Spectrum.Plugins.ServerMod.CmdSettings;
+using Spectrum.Plugins.ServerMod.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,23 +26,23 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage($"{Utilities.formatCmd("!settings reload")}: reload the settings from the file.");
-            Utilities.sendMessage($"{Utilities.formatCmd("!settings summary")}: view the value of all settings.");
-            Utilities.sendMessage($"{Utilities.formatCmd("!settings defaults")}: view the default of all settings.");
-            Utilities.sendMessage($"{Utilities.formatCmd("!settings reset <setting>")}: reset <setting> to its default value");
-            Utilities.sendMessage($"{Utilities.formatCmd("!settings default <setting>")}: view default for <setting>");
-            Utilities.sendMessage($"{Utilities.formatCmd("!settings help <setting>")}: view a more detailed help message for <setting>");
+            MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd("!settings reload")}: reload the settings from the file.");
+            MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd("!settings summary")}: view the value of all settings.");
+            MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd("!settings defaults")}: view the default of all settings.");
+            MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd("!settings reset <setting>")}: reset <setting> to its default value");
+            MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd("!settings default <setting>")}: view default for <setting>");
+            MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd("!settings help <setting>")}: view a more detailed help message for <setting>");
             foreach (cmd Command in cmd.all.list())
             {
                 string txt = "";
                 foreach (CmdSetting Setting in Command.settings)
                 {
                     if (Setting.SettingsId != "")
-                       txt += $"\n {Utilities.formatCmd($"!settings {Setting.SettingsId} {Setting.UsageParameters}")}: {Setting.HelpShort}";
+                       txt += $"\n {GeneralUtilities.formatCmd($"!settings {Setting.SettingsId} {Setting.UsageParameters}")}: {Setting.HelpShort}";
                 }
                 if (txt != "")
                 {
-                    Utilities.sendMessage($"[b][D00000]!{Command.name} Settings[-][/b]{txt}");
+                    MessageUtilities.sendMessage($"[b][D00000]!{Command.name} Settings[-][/b]{txt}");
                 }
             }
         }
@@ -127,13 +128,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         {
                             if (Setting.SettingsId.ToLower() == settingHelp.ToLower())
                             {
-                                Utilities.sendMessage($"{Utilities.formatCmd($"!settings {Setting.SettingsId} {Setting.UsageParameters}")}");
-                                Utilities.sendMessage(Setting.HelpLong);
+                                MessageUtilities.sendMessage($"{GeneralUtilities.formatCmd($"!settings {Setting.SettingsId} {Setting.UsageParameters}")}");
+                                MessageUtilities.sendMessage(Setting.HelpLong);
                                 return;
                             }
                         }
                     }
-                    Utilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
+                    MessageUtilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
                 }
                 else if (setting == "reset")
                 {
@@ -150,14 +151,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             if (Setting.SettingsId.ToLower() == settingHelp.ToLower())
                             {
                                 Setting.Value = Setting.Default;
-                                Utilities.sendMessage($"Setting {Setting.SettingsId} reset to default:");
-                                Utilities.sendMessage($"{Setting.Default}");
+                                MessageUtilities.sendMessage($"Setting {Setting.SettingsId} reset to default:");
+                                MessageUtilities.sendMessage($"{Setting.Default}");
                                 Entry.save();
                                 return;
                             }
                         }
                     }
-                    Utilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
+                    MessageUtilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
                 }
                 else if (setting == "default")
                 {
@@ -173,13 +174,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
                         {
                             if (Setting.SettingsId.ToLower() == settingHelp.ToLower())
                             {
-                                Utilities.sendMessage($"{Setting.SettingsId} default:");
-                                Utilities.sendMessage($"{Setting.Default}");
+                                MessageUtilities.sendMessage($"{Setting.SettingsId} default:");
+                                MessageUtilities.sendMessage($"{Setting.Default}");
                                 return;
                             }
                         }
                     }
-                    Utilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
+                    MessageUtilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
                 }
                 else
                 {
@@ -191,12 +192,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             {
                                 UpdateResult result = Setting.UpdateFromString(msgMatch.Groups[2].Value);
                                 if (!result.Valid)
-                                    Utilities.sendMessage($"Failed to set setting: {result.Message}");
+                                    MessageUtilities.sendMessage($"Failed to set setting: {result.Message}");
                                 else
                                 {
-                                    Utilities.sendMessage($"Set {Setting.SettingsId} successfully.");
+                                    MessageUtilities.sendMessage($"Set {Setting.SettingsId} successfully.");
                                     if (result.Message != "")
-                                        Utilities.sendMessage(result.Message);
+                                        MessageUtilities.sendMessage(result.Message);
                                 }
                                 Setting.Value = result.NewValue;
                                 Entry.save();
@@ -204,7 +205,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             }
                         }
                     }
-                    Utilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[1].Value}`");
+                    MessageUtilities.sendMessage($"Could not find setting by the name of `{msgMatch.Groups[1].Value}`");
                     return;
                 }
 
@@ -228,11 +229,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             foreach (CmdSetting Setting in Command.settings)
                             {
                                 if (Setting.SettingsId != "")
-                                    txt += $"\n {Utilities.formatCmd($"{Setting.SettingsId}")}: {Setting.Value}";
+                                    txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}: {Setting.Value}";
                             }
                             if (txt != "")
                             {
-                                Utilities.sendMessage($"[b][D00000]!{Command.name} Settings[-][/b]{txt}");
+                                MessageUtilities.sendMessage($"[b][D00000]!{Command.name} Settings[-][/b]{txt}");
                             }
                         }
                         return;
@@ -245,11 +246,11 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             foreach (CmdSetting Setting in Command.settings)
                             {
                                 if (Setting.SettingsId != "")
-                                    txt += $"\n {Utilities.formatCmd($"{Setting.SettingsId}")}: {Setting.Default}";
+                                    txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}: {Setting.Default}";
                             }
                             if (txt != "")
                             {
-                                Utilities.sendMessage($"[b][D00000]!{Command.name} Default Settings[-][/b]{txt}");
+                                MessageUtilities.sendMessage($"[b][D00000]!{Command.name} Default Settings[-][/b]{txt}");
                             }
                         }
                         return;
@@ -262,7 +263,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                             {
                                 if (Setting.SettingsId.ToLower() == setting.ToLower())
                                 {
-                                    Utilities.sendMessage($"Value of {Setting.SettingsId}: {Setting.Value}");
+                                    MessageUtilities.sendMessage($"Value of {Setting.SettingsId}: {Setting.Value}");
                                     return;
                                 }
                             }
@@ -276,7 +277,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
         void reload(ClientPlayerInfo p)
         {
             Entry.reload();
-            Utilities.sendMessage("Settings reloaded from file!");
+            MessageUtilities.sendMessage("Settings reloaded from file!");
         }
 
         public void showNewSettings()
@@ -284,7 +285,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             var currentVersionMatch = Regex.Match(Entry.PluginVersion, UpdateCMD.updateCheckLocalRegex);
             if (!currentVersionMatch.Success)
             {
-                Utilities.sendMessage("Warning: Could not match current plugin version. Cannot show new settings or check for updates.");
+                MessageUtilities.sendMessage("Warning: Could not match current plugin version. Cannot show new settings or check for updates.");
                 return;
             }
             var currentVersion = currentVersionMatch.Groups[1].Value;
@@ -292,7 +293,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 return;
             getSetting("recentVersion").Value = currentVersion;
             Entry.save();
-            Utilities.sendMessage($"[b][D00000]New Settings Defaults for {Entry.PluginVersion}[-][/b]");
+            MessageUtilities.sendMessage($"[b][D00000]New Settings Defaults for {Entry.PluginVersion}[-][/b]");
             var count = 0;
             foreach (cmd Command in cmd.all.list())
             {
@@ -300,18 +301,18 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 foreach (CmdSetting Setting in Command.settings)
                 {
                     if (Setting.SettingsId != "" && Setting.UpdatedOnVersion == currentVersion && !Setting.Value.Equals(Setting.Default))
-                        txt += $"\n {Utilities.formatCmd($"{Setting.SettingsId}")}:\n  [FFFFFF]Default:[-] {Setting.Default}\n  [FFFFFF]  Yours:[-] {Setting.Value}";
+                        txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}:\n  [FFFFFF]Default:[-] {Setting.Default}\n  [FFFFFF]  Yours:[-] {Setting.Value}";
                 }
                 if (txt != "")
                 {
                     count++;
-                    Utilities.sendMessage($"[D00000]!{Command.name} Settings[-]{txt}");
+                    MessageUtilities.sendMessage($"[D00000]!{Command.name} Settings[-]{txt}");
                 }
             }
             if (count == 0)
-                Utilities.sendMessage("None");
+                MessageUtilities.sendMessage("None");
             else
-                Utilities.sendMessage($"[FFFFFF]Use {Utilities.formatCmd("!settings default <setting>")} to reset a setting to its default.");
+                MessageUtilities.sendMessage($"[FFFFFF]Use {GeneralUtilities.formatCmd("!settings default <setting>")} to reset a setting to its default.");
         }
     }
     class CmdSettingRecentVersion : CmdSettingString

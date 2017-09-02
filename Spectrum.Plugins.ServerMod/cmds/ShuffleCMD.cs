@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectrum.Plugins.ServerMod.Utilities;
+using System;
 
 namespace Spectrum.Plugins.ServerMod.cmds
 {
@@ -10,7 +11,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            Utilities.sendMessage(Utilities.formatCmd("!shuffle") + ": Shuffle the current playlist");
+            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!shuffle") + ": Shuffle the current playlist");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -20,17 +21,17 @@ namespace Spectrum.Plugins.ServerMod.cmds
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                Utilities.sendMessage("You can't manage the playlist in trackmogrify");
+                MessageUtilities.sendMessage("You can't manage the playlist in trackmogrify");
                 return;
             }
 
             if (playlist.Count_ == 0)
             {
-                Utilities.sendMessage("The playlist is empty !");
+                MessageUtilities.sendMessage("The playlist is empty !");
                 return;
             }
 
-            if (Utilities.isOnGamemode())
+            if (GeneralUtilities.isOnGamemode())
                 shuffleOnGame(playlist);
             else shuffleOnLobby(playlist);
 
@@ -38,13 +39,13 @@ namespace Spectrum.Plugins.ServerMod.cmds
             G.Sys.GameManager_.NextLevelName_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelName_;
             G.Sys.GameManager_.NextLevelPath_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelPath_;
 
-            Utilities.sendMessage("Playlist shuffled !");
+            MessageUtilities.sendMessage("Playlist shuffled !");
         }
 
         void shuffleOnLobby(LevelPlaylist playlist)
         {
             var shuffledList = playlist.Playlist_;
-            Utilities.Shuffle(playlist.Playlist_, new Random());
+            GeneralUtilities.Shuffle(playlist.Playlist_, new Random());
             G.Sys.GameManager_.LevelPlaylist_.Clear();
             foreach (var lvl in shuffledList)
                 G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
@@ -57,7 +58,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             playlist.Playlist_.RemoveAt(index);
 
             var shuffledList = playlist.Playlist_;
-            Utilities.Shuffle(playlist.Playlist_, new Random());
+            GeneralUtilities.Shuffle(playlist.Playlist_, new Random());
             G.Sys.GameManager_.LevelPlaylist_.Clear();
             G.Sys.GameManager_.LevelPlaylist_.Add(item);
             foreach (var lvl in shuffledList)
