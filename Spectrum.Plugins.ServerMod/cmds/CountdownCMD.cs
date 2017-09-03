@@ -45,16 +45,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!countdown") + ": Start the 60 sec final countdown");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!countdown <time>") + ": Start the final countdown with <time> seconds");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!countdown stop") + ": Stop the final countdown");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!countdown") + ": Start the 60 sec final countdown");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!countdown <time>") + ": Start the final countdown with <time> seconds");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!countdown stop") + ": Stop the final countdown");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
             if(! GeneralUtilities.isOnGamemode())
             {
-                MessageUtilities.sendMessage("You can't do that here !");
+                MessageUtilities.sendMessage(p, "You can't do that here !");
                 return;
             }
 
@@ -72,13 +72,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 }
                 catch(Exception)
                 {
-                    MessageUtilities.sendMessage("The time must be a number");
+                    MessageUtilities.sendMessage(p, "The time must be a number");
                     return;
                 }
             }
             if (time < 10 || time > 300)
             {
-                MessageUtilities.sendMessage("The time must be between 10 and 300 seconds");
+                MessageUtilities.sendMessage(p, "The time must be between 10 and 300 seconds");
                 return;
             }
 

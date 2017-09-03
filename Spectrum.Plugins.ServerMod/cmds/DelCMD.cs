@@ -14,8 +14,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!del <index>") + ": remove the map at the targeted index from the playlist");
-            MessageUtilities.sendMessage("The next map has an index of 0");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!del <index>") + ": remove the map at the targeted index from the playlist");
+            MessageUtilities.sendMessage(p, "The next map has an index of 0");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -28,7 +28,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                MessageUtilities.sendMessage("You can't manage the playlist in trackmogrify");
+                MessageUtilities.sendMessage(p, "You can't manage the playlist in trackmogrify");
                 return;
             }
 
@@ -37,7 +37,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             if (id < 0)
             {
-                MessageUtilities.sendMessage("The id must be >= 0");
+                MessageUtilities.sendMessage(p, "The id must be >= 0");
                 return;
             }
             
@@ -46,7 +46,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             int playListSize = G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - index - 1;
             if(id > playListSize)
             {
-                MessageUtilities.sendMessage("The playlist has only " + playListSize + " maps.");
+                MessageUtilities.sendMessage(p, "The playlist has only " + playListSize + " maps.");
                 return;
             }
 
@@ -61,7 +61,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 G.Sys.GameManager_.LevelPlaylist_.Add(lvl);
             G.Sys.GameManager_.LevelPlaylist_.SetIndex(index);
 
-            MessageUtilities.sendMessage("Map removed !");
+            MessageUtilities.sendMessage(p, "Map removed !");
         }
     }
 }

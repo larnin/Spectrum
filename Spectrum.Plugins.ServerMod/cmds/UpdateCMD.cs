@@ -46,12 +46,14 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!update") + ": Check for updates to ServerMod");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!update") + ": Check for updates to ServerMod");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
+            MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
             checkForUpdates(true);
+            MessageUtilities.popMessageOptions();
         }
 
         public static void checkForUpdates(bool sendMessageIfNone)

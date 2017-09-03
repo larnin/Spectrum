@@ -50,16 +50,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!welcome") + ": Hear the welcome message.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!welcome") + ": Hear the welcome message.");
             if (GeneralUtilities.isHost())
             {
-                MessageUtilities.sendMessage("You can set the welcome message with !settings");
+                MessageUtilities.sendMessage(p, "You can set the welcome message with !settings");
             }
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
-            MessageUtilities.sendMessage(welcomeMessage.Replace("%USERNAME%", p.Username_));
+            MessageUtilities.sendMessage(p, welcomeMessage.Replace("%USERNAME%", p.Username_));
         }
 
         
@@ -72,7 +72,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 {
                     if (current.NetworkPlayer_ == client)
                     {
-                        MessageUtilities.sendMessage(welcomeMessage.Replace("%USERNAME%", current.Username_));
+                        MessageUtilities.sendMessage(current, welcomeMessage.Replace("%USERNAME%", current.Username_));
                         return;
                     }
                 }

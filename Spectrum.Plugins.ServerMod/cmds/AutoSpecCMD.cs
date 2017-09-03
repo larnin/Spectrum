@@ -84,7 +84,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!autospec") + ": Toggle automatic spectating");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!autospec") + ": Toggle automatic spectating");
         }
 
         public bool playerIsAutoSpec(ClientPlayerInfo p)
@@ -115,13 +115,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             {
                 if (!p.IsLocal_)
                 {
-                    MessageUtilities.sendMessage("You are not allowed to autospec other players.");
-                    MessageUtilities.sendMessage("You can use " + GeneralUtilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
+                    MessageUtilities.sendMessage(p, "You are not allowed to autospec other players.");
+                    MessageUtilities.sendMessage(p, "You can use " + GeneralUtilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
                 }
                 else if (!GeneralUtilities.isHost())
                 {
-                    MessageUtilities.sendMessage("You can only autospec other players while in your own server.");
-                    MessageUtilities.sendMessage("You can use " + GeneralUtilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
+                    MessageUtilities.sendMessage(p, "You can only autospec other players while in your own server.");
+                    MessageUtilities.sendMessage(p, "You can use " + GeneralUtilities.formatCmd("!autospec") + " alone to toggle autospec for yourself.");
                 }
                 else
                 {
@@ -153,7 +153,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     if (on != "")
                         MessageUtilities.sendMessage($"Auto spectator mode turned on for " + on);
                     if (on == "" && off == "")
-                        MessageUtilities.sendMessage("Could not find any players with that name or index");
+                        MessageUtilities.sendMessage(p, "Could not find any players with that name or index");
                 }
             }
             else

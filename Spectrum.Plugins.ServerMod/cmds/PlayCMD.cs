@@ -120,12 +120,12 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override void help(ClientPlayerInfo p)
         {
             if (useVote)
-                MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!play [lvl name]") + ": Vote to add a level to the playlist.");
+                MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!play [lvl name]") + ": Vote to add a level to the playlist.");
             else
-                MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!play [lvl name]") + ": Adds a level to the playlist as the next to be played.");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!play [filter]") + ": Use filters to find a level");
-            MessageUtilities.sendMessage("Valid filters: -mode -m -name -n -author -a -index -i -last -l -all");
-            MessageUtilities.sendMessage("The level must be known by the server to be shown");
+                MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!play [lvl name]") + ": Adds a level to the playlist as the next to be played.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!play [filter]") + ": Use filters to find a level");
+            MessageUtilities.sendMessage(p, "Valid filters: -mode -m -name -n -author -a -index -i -last -l -all");
+            MessageUtilities.sendMessage(p, "The level must be known by the server to be shown");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -145,7 +145,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                MessageUtilities.sendMessage("You can't manage the playlist in trackmogrify.");
+                MessageUtilities.sendMessage(p, "You can't manage the playlist in trackmogrify.");
                 return;
             }
 
@@ -154,13 +154,15 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             if (!p.IsLocal_)
                 filterer.AddFiltersFromString(playFilter);
 
+            MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
             GeneralUtilities.sendFailures(GeneralUtilities.addFiltersToPlaylist(filterer, p, message, true), 4);
+            MessageUtilities.popMessageOptions();
 
             var list = filterer.Calculate().levelList;
 
             if (list.Count == 0)
             {
-                MessageUtilities.sendMessage("Can't find a level with the filter '" + message + "'.");
+                MessageUtilities.sendMessage(p, "Can't find a level with the filter '" + message + "'.");
                 return;
             }
 
@@ -194,12 +196,12 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             {
                 if (countRound + 1 > maxPerRoundLocal)
                 {
-                    MessageUtilities.sendMessage($"You have reached the maximum amount of maps you can add per round ({maxPerRound})");
+                    MessageUtilities.sendMessage(p, $"You have reached the maximum amount of maps you can add per round ({maxPerRound})");
                     break;
                 }
                 if (countCmd + 1 > maxPerCmdLocal)
                 {
-                    MessageUtilities.sendMessage("You have reached the maximum amount of maps you can add per " + GeneralUtilities.formatCmd("!play") + $" ({maxPerCmd})");
+                    MessageUtilities.sendMessage(p, "You have reached the maximum amount of maps you can add per " + GeneralUtilities.formatCmd("!play") + $" ({maxPerCmd})");
                     break;
                 }
                 countRound++;
@@ -222,7 +224,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 if (countCmd > 10)
                     lvlsStr = lvlsStr + $" and {countCmd - 10} more";
 
-                MessageUtilities.sendMessage("Level(s) " + lvlsStr + " added to the playlist !");
+                MessageUtilities.sendMessage(p, "Level(s) " + lvlsStr + " added to the playlist !");
             }
         }
     }

@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!spec [id/name]") + ": Forces a player to spectate the game.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!spec [id/name]") + ": Forces a player to spectate the game.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -34,9 +34,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 affects += $"{ client.Username_}, ";
             }
             if (affects == "")
-                MessageUtilities.sendMessage("Could not find any players with that name or index");
+                MessageUtilities.sendMessage(p, "Could not find any players with that name or index");
             else
-                MessageUtilities.sendMessage(affects + "is now spectating.");
+                MessageUtilities.sendMessage(p, affects + "is now spectating.");
         }
     }
 }

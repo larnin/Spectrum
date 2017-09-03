@@ -14,7 +14,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!clear") + ": Remove everything on the playlist.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!clear") + ": Remove everything on the playlist.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -24,13 +24,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                MessageUtilities.sendMessage("You can't manage the playlist in trackmogrify");
+                MessageUtilities.sendMessage(p, "You can't manage the playlist in trackmogrify");
                 return;
             }
 
             if (playlist.Count_ == 0)
             {
-                MessageUtilities.sendMessage("The playlist is empty !");
+                MessageUtilities.sendMessage(p, "The playlist is empty !");
                 return;
             }
             
@@ -44,7 +44,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             G.Sys.GameManager_.NextLevelPath_ = item.levelNameAndPath_.levelPath_;
             G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
             
-            MessageUtilities.sendMessage("Playlist cleared !");
+            MessageUtilities.sendMessage(p, "Playlist cleared !");
         }
     }
 }

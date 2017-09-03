@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!players <search string>") + ": Find players using <search string>");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!players <search string>") + ": Find players using <search string>");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -30,9 +30,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 affects += ", ";
             }
             if (affects == "")
-                MessageUtilities.sendMessage("Could not find any players with that name or index");
+                MessageUtilities.sendMessage(p, "Could not find any players with that name or index");
             else
-                MessageUtilities.sendMessage("Found: " + affects);
+                MessageUtilities.sendMessage(p, "Found: " + affects);
         }
     }
 }

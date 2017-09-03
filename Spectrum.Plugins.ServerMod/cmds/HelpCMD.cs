@@ -11,7 +11,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage("Realy ? You're stuck at the bottom of a well ?");
+            MessageUtilities.sendMessage(p, "Really? You're stuck at the bottom of a well?");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -27,13 +27,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             Cmd c = Cmd.all.getCommand(commandName);
             if (c == null)
             {
-                MessageUtilities.sendMessage("The command '" + commandName + "' don't exist.");
+                MessageUtilities.sendMessage(p, "The command '" + commandName + "' don't exist.");
                 return;
             }
             c.help(p);
-            MessageUtilities.sendMessage("Permission level: " + c.perm);
+            MessageUtilities.sendMessage(p, "Permission level: " + c.perm);
             if (c.perm == PermType.LOCAL)
-                MessageUtilities.sendMessage("This command can only be used by the local player");
+                MessageUtilities.sendMessage(p, "This command can only be used by the local player");
 
         }
 
@@ -43,7 +43,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             var playerIsHost = p.IsLocal_ && GeneralUtilities.isHost();
             var playerIsClient = p.IsLocal_ && !GeneralUtilities.isHost();
             var playerIsConnectedClient = !p.IsLocal_ && GeneralUtilities.isHost();
-            MessageUtilities.sendMessage("Available commands:");
+            MessageUtilities.sendMessage(p, "Available commands:");
             string list = "";
             foreach(var cName in Cmd.all.commands())
             {
@@ -84,12 +84,12 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     list += ", ";   
                 }
             }
-            MessageUtilities.sendMessage(list.Remove(list.Length - 2));
+            MessageUtilities.sendMessage(p, list.Remove(list.Length - 2));
             if (p.IsLocal_ || (p.IsLocal_ && GeneralUtilities.isHost())) 
-                MessageUtilities.sendMessage("(H) = host only / (L) = local client");
-            MessageUtilities.sendMessage("Use !help <command> for more information on the command.");
+                MessageUtilities.sendMessage(p, "(H) = host only / (L) = local client");
+            MessageUtilities.sendMessage(p, "Use !help <command> for more information on the command.");
             if (playerIsLocal && !playerIsHost)
-                MessageUtilities.sendMessage("Use !help all to see every command, including ones you cannot use right now.");
+                MessageUtilities.sendMessage(p, "Use !help all to see every command, including ones you cannot use right now.");
         }
     }
 }

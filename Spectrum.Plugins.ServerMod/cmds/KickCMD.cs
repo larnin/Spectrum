@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!kick <search string>") + ": Kick players using <search string>");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!kick <search string>") + ": Kick players using <search string>");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -34,7 +34,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 G.Sys.NetworkingManager_.DisconnectPlayer(client.Index_);
             }
             if (affects == "")
-                MessageUtilities.sendMessage("Could not find any players with that name or index");
+                MessageUtilities.sendMessage(p, "Could not find any players with that name or index");
             else
                 MessageUtilities.sendMessage("Kicked " + affects);
         }

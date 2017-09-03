@@ -97,7 +97,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 return;
             if (currentState.forPlayer && currentState.player.IsLocal_)
             {
-                StaticEvent<AddMessage.Data>.Broadcast(new AddMessage.Data(message));
+                // slightly blue text for local-only messages
+                StaticEvent<AddMessage.Data>.Broadcast(new AddMessage.Data((message).Colorize("[55AAAA]")));
             }
             else
             {

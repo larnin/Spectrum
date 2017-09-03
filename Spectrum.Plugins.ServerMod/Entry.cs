@@ -70,12 +70,6 @@ namespace Spectrum.Plugins.ServerMod
             load();  // load existing data
             save();  // save defaults that were not loaded
 
-            if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
-            {
-                MessageUtilities.sendMessage("You can't load a playlist in trackmogrify");
-                return;
-            }
-
             Events.Local.ChatSubmitMessage.Subscribe(data =>
             {
                 GeneralUtilities.testFunc(() =>
@@ -130,7 +124,7 @@ namespace Spectrum.Plugins.ServerMod
                     return;
                 if (!c.canUseAsClient && c.perm != PermType.LOCAL)
                 {
-                    MessageUtilities.sendMessage("You can't use that command as client");
+                    MessageUtilities.sendMessage(client, "You can't use that command as client");
                     return;
                 }
                 exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
@@ -154,7 +148,7 @@ namespace Spectrum.Plugins.ServerMod
                 Cmd c = Cmd.all.getCommand(commandName);
                 if (c == null)
                 {
-                    MessageUtilities.sendMessage("The command '" + commandName + "' don't exist.");
+                    MessageUtilities.sendMessage(client,  "The command '" + commandName + "' doesn't exist.");
                     return;
                 }
 
@@ -189,7 +183,7 @@ namespace Spectrum.Plugins.ServerMod
 
             if (c == null)
             {
-                MessageUtilities.sendMessage("The command '" + commandName + "' don't exist.");
+                MessageUtilities.sendMessage(client, "The command '" + commandName + "' don't exist.");
                 return;
             }
 
@@ -198,7 +192,7 @@ namespace Spectrum.Plugins.ServerMod
 
             if(c.perm != PermType.ALL)
             {
-                MessageUtilities.sendMessage("You don't have the permission to do that !");
+                MessageUtilities.sendMessage(client, "You don't have the permission to do that!");
                 return;
             }
 

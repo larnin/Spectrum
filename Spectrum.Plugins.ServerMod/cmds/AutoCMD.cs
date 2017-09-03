@@ -140,9 +140,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!auto") + ": Toggle the server auto mode.");
-            MessageUtilities.sendMessage("You must have a playlist to activate the auto server");
-            MessageUtilities.sendMessage("You can change auto mode settings with the !settings command or in the settings file.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!auto") + ": Toggle the server auto mode.");
+            MessageUtilities.sendMessage(p, "You must have a playlist to activate the auto server");
+            MessageUtilities.sendMessage(p, "You can change auto mode settings with the !settings command or in the settings file.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

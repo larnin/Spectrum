@@ -14,7 +14,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!date") + ": Write the time and date.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!date") + ": Write the time and date.");
         }
 
         public override void use(ClientPlayerInfo p, string message)

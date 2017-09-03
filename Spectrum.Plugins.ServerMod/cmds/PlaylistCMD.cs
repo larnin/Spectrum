@@ -52,17 +52,17 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist") + " saves, loads, creates, deletes, and filters playlists");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist list [search]") + ": List all playlists");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist new [filter]") + ": Creates a new playlist.");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist load <name>") + ": Load playlist, [FFFFFF]current[-] is the one being played and isn't saved, [FFFFFF]upcoming[-] is the next levels and isn't saved");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist save [name]") + ": Save playlist, [FFFFFF]current[-] is the one being played, [FFFFFF]upcoming[-] is the next levels");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist active") + ": Show the name of the loaded playlist.");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist del <name>") + ": Delete a playlist");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist show [filter]") + ": Show the levels in the loaded playlist");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist filter <filter>") + ": Filter the loaded playlist");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist add <filter>") + ": Add levels to the end of the loaded playlist");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!playlist clear") + ": Clear the loaded playlist");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist") + " saves, loads, creates, deletes, and filters playlists");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist list [search]") + ": List all playlists");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist new [filter]") + ": Creates a new playlist.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist load <name>") + ": Load playlist, [FFFFFF]current[-] is the one being played and isn't saved, [FFFFFF]upcoming[-] is the next levels and isn't saved");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist save [name]") + ": Save playlist, [FFFFFF]current[-] is the one being played, [FFFFFF]upcoming[-] is the next levels");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist active") + ": Show the name of the loaded playlist.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist del <name>") + ": Delete a playlist");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist show [filter]") + ": Show the levels in the loaded playlist");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist filter <filter>") + ": Filter the loaded playlist");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist add <filter>") + ": Add levels to the end of the loaded playlist");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!playlist clear") + ": Clear the loaded playlist");
         }
 
         public bool canUseCurrentPlaylist
@@ -204,6 +204,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 help(p);
                 return;
             }
+            MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
             string uniquePlayerString = GeneralUtilities.getUniquePlayerString(p);
             string playlistCmd = playlistCmdMatch.Groups[1].Value.ToLower();
             string playlistCmdData = playlistCmdMatch.Groups[2].Value;
@@ -410,6 +411,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         break;
                     }
             }
+            MessageUtilities.popMessageOptions();
         }
     }
 }

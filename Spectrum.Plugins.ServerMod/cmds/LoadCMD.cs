@@ -14,22 +14,24 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!load") + ": Show all the available playlists.");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!load [playlist name]") + ": Load a playlist.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!load") + ": Show all the available playlists.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!load [playlist name]") + ": Load a playlist.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
             if (message == "")
             {
+                MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
                 printPlaylists();
+                MessageUtilities.popMessageOptions();
                 return;
             }
 
             var name = Resource.PersonalLevelPlaylistsDirPath_  + message + ".xml";
             if(!Resource.FileExist(name))
             {
-                MessageUtilities.sendMessage("The playlist " + message + " don't exist !");
+                MessageUtilities.sendMessage(p, "The playlist " + message + " don't exist !");
                 return;
             }
             
@@ -39,7 +41,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             var playlistComp = gameObject.GetComponent<LevelPlaylist>();
             G.Sys.GameManager_.LevelPlaylist_.Copy(playlistComp);
 
-            MessageUtilities.sendMessage("Playlist Loaded : " + G.Sys.GameManager_.LevelPlaylist_.Count_ + " levels.");
+            MessageUtilities.sendMessage(p, "Playlist Loaded : " + G.Sys.GameManager_.LevelPlaylist_.Count_ + " levels.");
 
             if (GeneralUtilities.isOnGamemode() && item != null)
                 G.Sys.GameManager_.LevelPlaylist_.Playlist_.Insert(0, item);

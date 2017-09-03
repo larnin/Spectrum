@@ -37,17 +37,17 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!filter") + " save, list, and delete playlists");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!filter list [search]") + ": List all filters");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!filter save <name> <filter>") + ": Saves a new filter");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!filter show <name>") + ": Show what the filter looks like");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!filter del <name>") + ": Delete a filter");
-            // MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!filter current <filter>") + ": Filter the currently-playing levels.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!filter") + " save, list, and delete playlists");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!filter list [search]") + ": List all filters");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!filter save <name> <filter>") + ": Saves a new filter");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!filter show <name>") + ": Show what the filter looks like");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!filter del <name>") + ": Delete a filter");
+            // MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!filter current <filter>") + ": Filter the currently-playing levels.");
             // Not advertising `!filter current` because it's too difficult to show the pros/cons between current and upcoming here.
             //  Most of the time, players will want to use upcoming. If they're using current, they might end up replaying levels.
             //  If a player wants to replay levels, they probably want to use the `!playlist` commands instead, which resets index to 0.
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!filter upcoming <filter>") + ": Filter the upcoming levels.");
-            MessageUtilities.sendMessage("Use the [FFFFFF]-filter <name>[-] filter to use saved filters.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!filter upcoming <filter>") + ": Filter the upcoming levels.");
+            MessageUtilities.sendMessage(p, "Use the [FFFFFF]-filter <name>[-] filter to use saved filters.");
         }
 
         public bool canUseCurrentPlaylist
@@ -72,7 +72,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             switch (filterCmd)
             {
                 default:
-                    MessageUtilities.sendMessage($"[A00000]Invalid sub-command `{filterCmd}`[-]");
+                    MessageUtilities.sendMessage(p, $"[A00000]Invalid sub-command `{filterCmd}`[-]");
                     help(p);
                     break;
                 case "list":
@@ -88,7 +88,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         }
                         if (results.Length == 0)
                             results = " None";
-                        MessageUtilities.sendMessage("[FFFFFF]Found:[-]" + results);
+                        MessageUtilities.sendMessage(p, "[FFFFFF]Found:[-]" + results);
                         break;
                     }
                 case "save":
@@ -96,7 +96,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         Match nameFilterMatch = Regex.Match(filterCmdData, @"^(.+?)\s+(.*)$");
                         if (!playlistCmdMatch.Success)
                         {
-                            MessageUtilities.sendMessage("[A00000]Bad format for save[-]");
+                            MessageUtilities.sendMessage(p, "[A00000]Bad format for save[-]");
                             help(p);
                             return;
                         }
@@ -104,13 +104,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         var saveFilter = nameFilterMatch.Groups[2].Value;
                         if (saveAt == "")
                         {
-                            MessageUtilities.sendMessage("[A00000]Name required[-]");
+                            MessageUtilities.sendMessage(p, "[A00000]Name required[-]");
                             help(p);
                             return;
                         }
                         else if (saveFilter == "")
                         {
-                            MessageUtilities.sendMessage("[A00000]Filter required[-]");
+                            MessageUtilities.sendMessage(p, "[A00000]Filter required[-]");
                             help(p);
                             return;
                         }
@@ -121,18 +121,20 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         if (!result.value.Any(filter => filter is PlaylistTools.LevelFilters.LevelFilterLast))
                             PlaylistTools.LevelFilters.LevelFilterLast.SaveFilter(p, saveFilter);
                         else
-                            MessageUtilities.sendMessage("[FFA000]The filter -last will always pull from your last-used filter "
+                            MessageUtilities.sendMessage(p, "[FFA000]The filter -last will always pull from your last-used filter "
                                 + "and does not have a consistent value. If you want to save your last used filter, "
                                 + "you will need to re-type it.");
+                        MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
                         GeneralUtilities.sendFailures(result.failures, 4);
-                        MessageUtilities.sendMessage($"Saved filter to [FFFFFF]{saveAt}[-]:\n[FFFFFF]{saveFilter}[-]");
+                        MessageUtilities.popMessageOptions();
+                        MessageUtilities.sendMessage(p, $"Saved filter to [FFFFFF]{saveAt}[-]:\n[FFFFFF]{saveFilter}[-]");
                         break;
                     }
                 case "del":
                     {
                         if (filterCmdData == "")
                         {
-                            MessageUtilities.sendMessage("[A00000]You must enter a name[-]");
+                            MessageUtilities.sendMessage(p, "[A00000]You must enter a name[-]");
                             break;
                         }
                         List<string> toDelete;
@@ -146,7 +148,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                                         savedFilters.Remove(filterName);
                                         count++;
                                     }
-                                MessageUtilities.sendMessage($"Deleted {count} filters.");
+                                MessageUtilities.sendMessage(p, $"Deleted {count} filters.");
                                 deleteConfirmation.Remove(uniquePlayerString);
                                 Entry.save();
                                 break;
@@ -154,7 +156,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             else if (filterCmdData.ToLower() == "no")
                             {
                                 deleteConfirmation.Remove(uniquePlayerString);
-                                MessageUtilities.sendMessage("Cancelled deletion.");
+                                MessageUtilities.sendMessage(p, "Cancelled deletion.");
                                 break;
                             }
                         }
@@ -171,10 +173,10 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         if (count > 0)
                         {
                             deleteConfirmation[uniquePlayerString] = toDelete;
-                            MessageUtilities.sendMessage($"[FFFFFF]Use [A05000]!filter del yes[-] to delete {count} filters:[-] {results}");
+                            MessageUtilities.sendMessage(p, $"[FFFFFF]Use [A05000]!filter del yes[-] to delete {count} filters:[-] {results}");
                         }
                         else
-                            MessageUtilities.sendMessage("[A00000]No filters found[-]");
+                            MessageUtilities.sendMessage(p, "[A00000]No filters found[-]");
                     }
                     break;
                 case "show":
@@ -190,7 +192,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         }
                         if (results.Length == 0)
                             results = " None";
-                        MessageUtilities.sendMessage("[FFFFFF]Found:[-]" + results);
+                        MessageUtilities.sendMessage(p, "[FFFFFF]Found:[-]" + results);
                         break;
                     }
                 case "current":
@@ -198,14 +200,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         PlaylistCmd playlistCmd = Cmd.all.getCommand<PlaylistCmd>("playlist");
                         if (!playlistCmd.canUseCurrentPlaylist)
                         {
-                            MessageUtilities.sendMessage("Cannot modify current playlist right now.");
+                            MessageUtilities.sendMessage(p, "Cannot modify current playlist right now.");
                             break;
                         }
                         Console.WriteLine($"Filter txt: {filterCmdData}");
                         // 1. load current playlist into filter
                         LevelPlaylist currentList = G.Sys.GameManager_.LevelPlaylist_;
                         FilteredPlaylist preFilterer = new FilteredPlaylist(currentList.Playlist_);
+                        MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
                         GeneralUtilities.sendFailures(GeneralUtilities.addFiltersToPlaylist(preFilterer, p, filterCmdData, false), 4);
+                        MessageUtilities.popMessageOptions();
                         // 2. add filter that always allows the current level and helps us find it after calculation.
                         var indexFilter = new ForceCurrentIndexFilter(currentList.Index_);
                         preFilterer.AddFilter(indexFilter);
@@ -223,19 +227,19 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             else
                             {
                                 currentList.SetIndex(0);
-                                MessageUtilities.sendMessage("[A05000]Warning: could not find current level in new playlist (2). Reset to beginning.[-]");
+                                MessageUtilities.sendMessage(p, "[A05000]Warning: could not find current level in new playlist (2). Reset to beginning.[-]");
                             }
                         }
                         else
                         {
                             currentList.SetIndex(0);
-                            MessageUtilities.sendMessage("[A05000]Warning: could not find current level in new playlist. Reset to beginning.[-]");
+                            MessageUtilities.sendMessage(p, "[A05000]Warning: could not find current level in new playlist. Reset to beginning.[-]");
                         }
-                        MessageUtilities.sendMessage("Filtered current playlist. Upcoming:");
+                        MessageUtilities.sendMessage(p, "Filtered current playlist. Upcoming:");
                         FilteredPlaylist filterer = new FilteredPlaylist(currentList.Playlist_, -currentList.Index_ - 1);
                         filterer.AddFilter(new LevelFilterAll());
                         filterer.AddFilter(new LevelFilterIndex(new IntComparison(currentList.Index_, IntComparison.Comparison.Greater)));
-                        MessageUtilities.sendMessage(GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Initial, playlistCmd.levelFormat));
+                        MessageUtilities.sendMessage(p, GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Initial, playlistCmd.levelFormat));
                         break;
                     }
                 case "upcoming":
@@ -243,30 +247,32 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         PlaylistCmd playlistCmd = Cmd.all.getCommand<PlaylistCmd>("playlist");
                         if (!playlistCmd.canUseCurrentPlaylist)
                         {
-                            MessageUtilities.sendMessage("Cannot modify current playlist right now.");
+                            MessageUtilities.sendMessage(p, "Cannot modify current playlist right now.");
                             break;
                         }
                         // 1. load current playlist into filter
                         LevelPlaylist currentList = G.Sys.GameManager_.LevelPlaylist_;
                         if (currentList.Index_ == currentList.Count_ - 1)
                         {
-                            MessageUtilities.sendMessage("Cannot filter upcoming because you are on the last item of the list.");
+                            MessageUtilities.sendMessage(p, "Cannot filter upcoming because you are on the last item of the list.");
                             break;
                         }
                         var levelsUpcoming = currentList.Playlist_.GetRange(currentList.Index_ + 1, currentList.Count_ - currentList.Index_ - 1);
                         FilteredPlaylist preFilterer = new FilteredPlaylist(levelsUpcoming);
+                        MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
                         GeneralUtilities.sendFailures(GeneralUtilities.addFiltersToPlaylist(preFilterer, p, filterCmdData, false), 4);
+                        MessageUtilities.popMessageOptions();
                         // 2. Calculate filter results.
                         List<LevelPlaylist.ModeAndLevelInfo> levels = preFilterer.Calculate().levelList;
                         // 3. Update current playlist
                         currentList.Playlist_.RemoveRange(currentList.Index_ + 1, currentList.Count_ - currentList.Index_ - 1);
                         currentList.Playlist_.AddRange(levels);
                         // 4. Print results
-                        MessageUtilities.sendMessage("Filtered current playlist. Upcoming:");
+                        MessageUtilities.sendMessage(p, "Filtered current playlist. Upcoming:");
                         FilteredPlaylist filterer = new FilteredPlaylist(currentList.Playlist_, -currentList.Index_ - 1);
                         filterer.AddFilter(new LevelFilterAll());
                         filterer.AddFilter(new LevelFilterIndex(new IntComparison(currentList.Index_, IntComparison.Comparison.Greater)));
-                        MessageUtilities.sendMessage(GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Initial, playlistCmd.levelFormat));
+                        MessageUtilities.sendMessage(p, GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Initial, playlistCmd.levelFormat));
                         break;
                     }
             }

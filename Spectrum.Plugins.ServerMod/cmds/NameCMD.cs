@@ -13,7 +13,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!name [newName]") + ": Allow you to change your name");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!name [newName]") + ": Allow you to change your name");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -21,7 +21,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             var clientLogic = G.Sys.PlayerManager_.GetComponent<ClientLogic>();
             if(clientLogic == null)
             {
-                MessageUtilities.sendMessage("Error : Client logic null !");
+                MessageUtilities.sendMessage(p, "Error : Client logic null !");
                 return;
             }
 
@@ -33,12 +33,12 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 var name = client.GetType().GetField("username_", BindingFlags.NonPublic | BindingFlags.Instance);
                 name.SetValue(client, message);
 
-                MessageUtilities.sendMessage(oldName + " renamed to " + client.Username_);
+                MessageUtilities.sendMessage(p, oldName + " renamed to " + client.Username_);
             }
             catch(Exception e)
             {
                 Console.WriteLine(e);
-                MessageUtilities.sendMessage("Error : can't change your name !");
+                MessageUtilities.sendMessage(p, "Error : can't change your name !");
             }
         }
     }

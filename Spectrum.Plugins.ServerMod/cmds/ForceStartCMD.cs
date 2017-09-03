@@ -11,14 +11,14 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!forcestart") + ": Forces the game to start regardless of the ready states of players in the lobby.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!forcestart") + ": Forces the game to start regardless of the ready states of players in the lobby.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
             if(!GeneralUtilities.isOnLobby())
             {
-                MessageUtilities.sendMessage("You can't force the start here !");
+                MessageUtilities.sendMessage(p, "You can't force the start here !");
                 return;
             }
 

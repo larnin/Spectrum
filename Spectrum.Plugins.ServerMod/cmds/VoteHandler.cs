@@ -55,8 +55,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             public override void help(ClientPlayerInfo p)
             {
-                MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!votectrl <voteType> <percent>") + ": Set <percent> as the amount of players needed for a <voteType> vote to succeed.");
-                MessageUtilities.sendMessage("<percent> should be an integer 0 - 100. Set above 100 to disable.");
+                MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!votectrl <voteType> <percent>") + ": Set <percent> as the amount of players needed for a <voteType> vote to succeed.");
+                MessageUtilities.sendMessage(p, "<percent> should be an integer 0 - 100. Set above 100 to disable.");
             }
 
             public override void use(ClientPlayerInfo p, string message)
@@ -75,14 +75,14 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
                 if (!parent.voteCommand.voteThresholds.ContainsKey(voteType))
                 {
-                    MessageUtilities.sendMessage($"Invalid <voteType>. ({voteType})");
+                    MessageUtilities.sendMessage(p, $"Invalid <voteType>. ({voteType})");
                     help(p);
                     return;
                 }
 
                 parent.voteCommand.voteThresholds[voteType] = Convert.ToDouble(percent) / 100.0;
                 Entry.save();
-                MessageUtilities.sendMessage($"Pass threshold for {voteType} changed to {percent}%");
+                MessageUtilities.sendMessage(p, $"Pass threshold for {voteType} changed to {percent}%");
             }
         }
 
@@ -224,6 +224,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             public override void help(ClientPlayerInfo p)
             {
+                MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
                 MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!vote <voteType> <parameters>") + ": Vote for <voteType>");
                 MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!vote i <voteType>") + ": View information about <voteType>");
                 MessageUtilities.sendMessage("voteTypes:");
@@ -240,6 +241,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 MessageUtilities.sendMessage("  if <time> is 'off' then the vote is to disable max time.");
                 MessageUtilities.sendMessage("  if <time> is 'bronze'/'silver'/'gold'/'diamond' it is the relevant time for the map.");
                 */
+                MessageUtilities.popMessageOptions();
             }
 
             public void forceNextUse()
@@ -255,7 +257,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 {
                     if (!votesAllowed)
                     {
-                        MessageUtilities.sendMessage("Votes are disabled.");
+                        MessageUtilities.sendMessage(p, "Votes are disabled.");
                         return;
                     }
                 }
@@ -304,9 +306,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     }
                     else
                     {
-                        MessageUtilities.sendMessage("Invalid <voteType>, or invalid [yes/no] You can use yes/no, y/n, 1/0, true/false, and t/f.");
-                        MessageUtilities.sendMessage("You can use [info/i] to get info.");
-                        MessageUtilities.sendMessage("<voteType>s: skip, stop, play");
+                        MessageUtilities.sendMessage(p, "Invalid <voteType>, or invalid [yes/no] You can use yes/no, y/n, 1/0, true/false, and t/f.");
+                        MessageUtilities.sendMessage(p, "You can use [info/i] to get info.");
+                        MessageUtilities.sendMessage(p, "<voteType>s: skip, stop, play");
                         return;
                     }
 
@@ -317,7 +319,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
                 if (!voteThresholds.ContainsKey(voteType))
                 {
-                    MessageUtilities.sendMessage($"Invalid <voteType>. ({voteType})");
+                    MessageUtilities.sendMessage(p, $"Invalid <voteType>. ({voteType})");
                     help(p);
                     return;
                 }
@@ -330,10 +332,10 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
                 if (isInfo)
                 {
-                    MessageUtilities.sendMessage($"Info for {voteType}:");
-                    MessageUtilities.sendMessage($"Pass threshold: {Convert.ToInt32(Math.Floor(voteThresholds[voteType]*100))}%");
+                    MessageUtilities.sendMessage(p, $"Info for {voteType}:");
+                    MessageUtilities.sendMessage(p, $"Pass threshold: {Convert.ToInt32(Math.Floor(voteThresholds[voteType]*100))}%");
                     int value = parent.votes[voteType].Count;
-                    MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                    MessageUtilities.sendMessage(p, $"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                     return;
                 }
 
@@ -342,13 +344,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 {
                     if (GeneralUtilities.isOnLobby())
                     {
-                        MessageUtilities.sendMessage("You can't vote to skip in the lobby!");
+                        MessageUtilities.sendMessage(p, "You can't vote to skip in the lobby!");
                         return;
                     }
 
                     if (votedSkip)
                     {
-                        MessageUtilities.sendMessage("Vote skip already succeeded.");
+                        MessageUtilities.sendMessage(p, "Vote skip already succeeded.");
                         return;
                     }
 
@@ -361,7 +363,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         if (votes.Contains(playerVoteId))
                         {
-                            MessageUtilities.sendMessage($"{p.Username_} has already voted to skip {G.Sys.GameManager_.LevelName_}.");
+                            MessageUtilities.sendMessage(p, $"{p.Username_} has already voted to skip {G.Sys.GameManager_.LevelName_}.");
                             return;
                         }
                         votes.Add(playerVoteId);
@@ -391,7 +393,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 {
                     if (GeneralUtilities.isOnLobby())
                     {
-                        MessageUtilities.sendMessage("You can't vote to stop the countdown in the lobby!");
+                        MessageUtilities.sendMessage(p, "You can't vote to stop the countdown in the lobby!");
                         return;
                     }
 
@@ -404,7 +406,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         if (votes.Contains(playerVoteId))
                         {
-                            MessageUtilities.sendMessage($"{p.Username_} has already voted to stop the countdown.");
+                            MessageUtilities.sendMessage(p, $"{p.Username_} has already voted to stop the countdown.");
                             return;
                         }
                         votes.Add(playerVoteId);
@@ -434,13 +436,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
                     if (GeneralUtilities.isOnLobby())
                     {
-                        MessageUtilities.sendMessage("You can't vote for the next level in the lobby.");
+                        MessageUtilities.sendMessage(p, "You can't vote for the next level in the lobby.");
                         return;
                     }
 
                     if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
                     {
-                        MessageUtilities.sendMessage("You can't vote for levels in trackmogrify.");
+                        MessageUtilities.sendMessage(p, "You can't vote for levels in trackmogrify.");
                         return;
                     }
 
@@ -452,7 +454,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         PlayCmd playCmd = Cmd.all.getCommand<PlayCmd>("play");
                         filterer.AddFiltersFromString(playCmd.playFilter);
                     }
+                    MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
                     GeneralUtilities.sendFailures(GeneralUtilities.addFiltersToPlaylist(filterer, p, levelName, true), 4);
+                    MessageUtilities.popMessageOptions();
 
                     List<LevelPlaylist.ModeAndLevelInfo> lvls = filterer.Calculate().levelList;
                     List<LevelResultsSortInfo> levelResults = new List<LevelResultsSortInfo>();
@@ -530,7 +534,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
                     if (lvls.Count == 0)
                     {
-                        MessageUtilities.sendMessage("Can't find any levels with the filter '" + levelName + "'.");
+                        MessageUtilities.sendMessage(p, "Can't find any levels with the filter '" + levelName + "'.");
                     }
 
                     string newMessage;
@@ -552,11 +556,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         if (count > 10)
                         {
-                            MessageUtilities.sendMessage(newMessage + $"and {count - 10} more unvoted.");
+                            MessageUtilities.sendMessage(p, newMessage + $"and {count - 10} more unvoted.");
                         }
                         else
                         {
-                            MessageUtilities.sendMessage(newMessage + "unvoted.");
+                            MessageUtilities.sendMessage(p, newMessage + "unvoted.");
                         }
                     }
 
@@ -576,11 +580,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         if (count > 10)
                         {
-                            MessageUtilities.sendMessage(newMessage + $"and {count - 10} more voted.");
+                            MessageUtilities.sendMessage(p, newMessage + $"and {count - 10} more voted.");
                         }
                         else
                         {
-                            MessageUtilities.sendMessage(newMessage + "voted.");
+                            MessageUtilities.sendMessage(p, newMessage + "voted.");
                         }
                     }
 

@@ -14,7 +14,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!plugin") + ": Shows all players who have the plugin and versions");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!plugin") + ": Shows all players who have the plugin and versions");
         }
 
         public override void use(ClientPlayerInfo p, string message)

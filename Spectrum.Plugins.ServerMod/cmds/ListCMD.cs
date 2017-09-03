@@ -14,7 +14,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!list [filter]") + ": Show next levels in the current playlist with optional filter");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!list [filter]") + ": Show next levels in the current playlist with optional filter");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -24,12 +24,12 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             if(currentList.Index_ >= currentList.Count_)
             {
-                MessageUtilities.sendMessage("There are no levels in the playlist!");
+                MessageUtilities.sendMessage(p, "There are no levels in the playlist!");
                 return;
             }
             else if (currentList.Index_ == currentList.Count_ - 1)
             {
-                MessageUtilities.sendMessage("You are on the last level of the playlist!");
+                MessageUtilities.sendMessage(p, "You are on the last level of the playlist!");
                 return;
             }
 
@@ -39,8 +39,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             FilteredPlaylist filterer = new FilteredPlaylist(levelsUpcoming);
             GeneralUtilities.addFiltersToPlaylist(filterer, p, message, false);
             
-            MessageUtilities.sendMessage("[FFFFFF]Upcoming:[-]");
-            MessageUtilities.sendMessage(GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Initial, levelCmd.levelFormat));
+            MessageUtilities.sendMessage(p, "[FFFFFF]Upcoming:[-]");
+            MessageUtilities.sendMessage(p, GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Initial, levelCmd.levelFormat));
         }
     }
 }

@@ -12,23 +12,23 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!server") + ": Show the server name");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!server [new name]") + ": Modify the server name");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!server private [password]") + ": Set the server private");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!server public") + ": Set the server public");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!server") + ": Show the server name");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!server [new name]") + ": Modify the server name");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!server private [password]") + ": Set the server private");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!server public") + ": Set the server public");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
             if (message == "" || !GeneralUtilities.isHost() || p == null)
             {
-                MessageUtilities.sendMessage(G.Sys.NetworkingManager_.serverTitle_);
+                MessageUtilities.sendMessage(p, G.Sys.NetworkingManager_.serverTitle_);
                 return;
             }
 
             if(!p.IsLocal_)
             {
-                MessageUtilities.sendMessage("You don't have the permission to do that !");
+                MessageUtilities.sendMessage(p, "You don't have the permission to do that !");
                 return;
             }
 
@@ -40,17 +40,23 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     help(p);
                     return;
                 }
+                MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
                 setServerPrivate(message.Substring(message.IndexOf(' ')+1));
+                MessageUtilities.popMessageOptions();
                 return;
             }
 
             if(words[0].ToLower() == "public")
             {
+                MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
                 setServerPublic();
+                MessageUtilities.popMessageOptions();
                 return;
             }
 
+            MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
             setServerName(message);
+            MessageUtilities.popMessageOptions();
         }
 
         private void setServerPrivate(string pass)

@@ -14,14 +14,14 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!save [name]") + ": Save the current playlist.");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!save [name]") + ": Save the current playlist.");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                MessageUtilities.sendMessage("You can't save a playlist in trackmogrify");
+                MessageUtilities.sendMessage(p, "You can't save a playlist in trackmogrify");
                 return;
             }
 
@@ -37,7 +37,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             G.Sys.GameManager_.LevelPlaylist_.Save();
             G.Sys.GameManager_.LevelPlaylist_.name = name;
 
-            MessageUtilities.sendMessage("Playlist saved as :" + message);
+            MessageUtilities.sendMessage(p, "Playlist saved as :" + message);
         }
     }
 }

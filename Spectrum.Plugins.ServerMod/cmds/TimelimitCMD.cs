@@ -15,7 +15,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!timelimit [time]") + ": Change the max time for the reverse tag map");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!timelimit [time]") + ": Change the max time for the reverse tag map");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -31,12 +31,12 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             if(time < 30 || time > 1800)
             {
-                MessageUtilities.sendMessage("The time must be between 30 and 1800 sec (30min).");
+                MessageUtilities.sendMessage(p, "The time must be between 30 and 1800 sec (30min).");
                 return;
             }
 
             G.Sys.GameManager_.NextModeTimeLimit_ = time;
-            MessageUtilities.sendMessage("Next time gamemode will be " + time + " seconds length.");
+            MessageUtilities.sendMessage(p, "Next time gamemode will be " + time + " seconds length.");
         }
     }
 }

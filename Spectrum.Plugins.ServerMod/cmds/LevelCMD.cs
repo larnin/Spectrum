@@ -25,8 +25,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!level [name]") + ": Find a level who have that keyword on his name");
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!level [filter] ") + ": Use filters to find a level");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!level [name]") + ": Find a level who have that keyword on his name");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!level [filter] ") + ": Use filters to find a level");
             List<LevelFilter> filters = new List<LevelFilter>();
             foreach (KeyValuePair<string, LevelFilter> filter in FilteredPlaylist.filterTypes)
             {
@@ -37,9 +37,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             foreach (LevelFilter filter in filters)
                 foreach (string option in filter.options)
                     filtersStr += "-" + option + " ";
-            MessageUtilities.sendMessage("Valid filters: " + filtersStr);
-            MessageUtilities.sendMessage("Filter types:  default (and): -filter; not default: !filter; and: &filter; or: |filter; and not: &!filter; or not: |!filter");
-            MessageUtilities.sendMessage("The level must be known by the server to be shown");
+            MessageUtilities.sendMessage(p, "Valid filters: " + filtersStr);
+            MessageUtilities.sendMessage(p, "Filter types:  default (and): -filter; not default: !filter; and: &filter; or: |filter; and not: &!filter; or not: |!filter");
+            MessageUtilities.sendMessage(p, "The level must be known by the server to be shown");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -58,9 +58,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 filterer.AddFiltersFromString(playCmd.playFilter);
             }
 
+            MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(p));
             GeneralUtilities.sendFailures(GeneralUtilities.addFiltersToPlaylist(filterer, p, message, true), 4);
+            MessageUtilities.popMessageOptions();
             
-            MessageUtilities.sendMessage(GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Final, levelFormat));
+            MessageUtilities.sendMessage(p, GeneralUtilities.getPlaylistText(filterer, GeneralUtilities.IndexMode.Final, levelFormat));
         }
     }
     class CmdSettingLevelFormat : CmdSettingString

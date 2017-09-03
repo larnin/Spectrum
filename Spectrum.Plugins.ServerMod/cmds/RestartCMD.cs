@@ -17,21 +17,21 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!restart") + ": Restart the current map");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!restart") + ": Restart the current map");
         }
 
         public override void use(ClientPlayerInfo p, string message)
         {
             if(!GeneralUtilities.isOnGamemode())
             {
-                MessageUtilities.sendMessage("Can't restart on lobby !");
+                MessageUtilities.sendMessage(p, "Can't restart on lobby !");
                 return;
             }
 
             var serverLogic = G.Sys.GameManager_.GetComponent<ServerLogic>();
             if(serverLogic == null)
             {
-                MessageUtilities.sendMessage("ServerLogic null !");
+                MessageUtilities.sendMessage(p, "ServerLogic null !");
                 return;
             }
 

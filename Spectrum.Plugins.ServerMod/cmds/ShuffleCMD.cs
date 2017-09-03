@@ -11,7 +11,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void help(ClientPlayerInfo p)
         {
-            MessageUtilities.sendMessage(GeneralUtilities.formatCmd("!shuffle") + ": Shuffle the current playlist");
+            MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!shuffle") + ": Shuffle the current playlist");
         }
 
         public override void use(ClientPlayerInfo p, string message)
@@ -21,13 +21,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {
-                MessageUtilities.sendMessage("You can't manage the playlist in trackmogrify");
+                MessageUtilities.sendMessage(p, "You can't manage the playlist in trackmogrify");
                 return;
             }
 
             if (playlist.Count_ == 0)
             {
-                MessageUtilities.sendMessage("The playlist is empty !");
+                MessageUtilities.sendMessage(p, "The playlist is empty !");
                 return;
             }
 
@@ -39,7 +39,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             G.Sys.GameManager_.NextLevelName_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelName_;
             G.Sys.GameManager_.NextLevelPath_ = G.Sys.GameManager_.LevelPlaylist_.Playlist_[0].levelNameAndPath_.levelPath_;
 
-            MessageUtilities.sendMessage("Playlist shuffled !");
+            MessageUtilities.sendMessage(p, "Playlist shuffled !");
         }
 
         void shuffleOnLobby(LevelPlaylist playlist)
