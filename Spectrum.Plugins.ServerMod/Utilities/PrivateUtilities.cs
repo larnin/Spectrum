@@ -27,10 +27,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             {
                 ClientLogic logic = tObj.GetComponent<ClientLogic>();
                 if (logic != null)
-                {
-                    Console.WriteLine(tObj.name);
                     return logic;
-                }
             }
             return null;
         }

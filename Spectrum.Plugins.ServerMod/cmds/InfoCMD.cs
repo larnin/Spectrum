@@ -15,11 +15,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public string infoFormat =
               "[b][FFFFFF]%NAME%[-][/b] by %AUTHOR%\n"
-            + "%DIFFICULTY% %MODE%\n"
+            + "%DIFFICULTY% %MODE% %STARSDEC% / 5 %STARS%\n"
             + "[994700]%MBRONZE%[-] [CCCCCC]%MSILVER%[-] [FFD900]%MGOLD%[-] [00EFFF]%MDIAMOND%[-]\n"
-            + "%STARSDEC% / 5 %STARS%\n"
-            + "%CREATED% Created\n"
-            + "%UPDATED% Updated";
+            + "%CREATED% crt; %UPDATED% upd;";
 
         public override void help(ClientPlayerInfo p)
         {
