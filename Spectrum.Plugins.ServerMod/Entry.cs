@@ -110,65 +110,55 @@ namespace Spectrum.Plugins.ServerMod
         {
             var client = GeneralUtilities.localClient();
             if (client == null)
+            {
                 Console.WriteLine("Error: Local client can't be found !");
-
-            if (message.StartsWith("%"))
-            {
-                if (GeneralUtilities.isHost())
-                    return;
-
-                int pos = message.IndexOf(' ');
-                string commandName = (pos > 0 ? message.Substring(1, pos) : message.Substring(1)).Trim();
-                Cmd c = Cmd.all.getCommand(commandName);
-                if (c == null)
-                    return;
-                if (!c.canUseAsClient && c.perm != PermType.LOCAL)
-                {
-                    MessageUtilities.sendMessage(client, "You can't use that command as client");
-                    return;
-                }
-                exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
+                return;
             }
-            else
-            {
-                if (!message.StartsWith("!"))
-                    return;
 
-                if (message.ToLower().Trim() == "!plugin")
-                {
-                    printClient();
-                    return;
-                }
-
-                if (!GeneralUtilities.isHost())
-                    return;
-
-                int pos = message.IndexOf(' ');
-                string commandName = (pos > 0 ? message.Substring(1, pos) : message.Substring(1)).Trim();
-                Cmd c = Cmd.all.getCommand(commandName);
-                if (c == null)
-                {
-                    MessageUtilities.sendMessage(client,  "The command '" + commandName + "' doesn't exist.");
-                    return;
-                }
-
-                exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
-            }
-        }
-
-        private void Chat_MessageReceived(string author, string message)
-        {
-            if (!message.StartsWith("!"))
+            var commandInfo = MessageUtilities.getCommandInfo(message);
+            if (!commandInfo.matches || (GeneralUtilities.isHost() ? commandInfo.local : !commandInfo.local))
                 return;
 
-            if (message.ToLower().Trim() == "!plugin")
+            Cmd cmd = Cmd.all.getCommand(commandInfo.commandName);
+            if (cmd == null)
+            {
+                MessageUtilities.sendMessage(client, "The command '" + commandInfo.commandName + "' doesn't exist.");
+                return;
+            }
+
+            if (commandInfo.local && !cmd.canUseAsClient && cmd.perm != PermType.LOCAL)
+            {
+                MessageUtilities.sendMessage(client, "You can't use that command as client");
+                return;
+            }
+
+            if (!commandInfo.local && commandInfo.commandName.ToLower() == "plugin")
             {
                 printClient();
                 return;
             }
 
+            if (commandInfo.forceVisible)
+                MessageUtilities.pushMessageOption(new MessageStateOptionPlayer());
+            exec(cmd, client, commandInfo.commandParams);
+            if (commandInfo.forceVisible)
+                MessageUtilities.popMessageOptions();
+        }
+
+        private void Chat_MessageReceived(string author, string message)
+        {
             if (!GeneralUtilities.isHost())
                 return;
+
+            var commandInfo = MessageUtilities.getCommandInfo(message);
+            if (!commandInfo.matches || commandInfo.local)
+                return;
+
+            if (commandInfo.commandName.ToLower() == "plugin")
+            {
+                printClient();
+                return;
+            }
 
             var client = GeneralUtilities.clientFromName(author);
             if (client == null)
@@ -176,27 +166,25 @@ namespace Spectrum.Plugins.ServerMod
                 Console.WriteLine("Error: client can't be found");
                 return;
             }
-                
-            int pos = message.IndexOf(' ');
-            string commandName = (pos > 0 ? message.Substring(1, pos) : message.Substring(1)).Trim();
-            Cmd c = Cmd.all.getCommand(commandName);
 
-            if (c == null)
+            Cmd cmd = Cmd.all.getCommand(commandInfo.commandName);
+            if (cmd == null)
             {
-                MessageUtilities.sendMessage(client, "The command '" + commandName + "' don't exist.");
+                MessageUtilities.sendMessage(client, "The command '" + commandInfo.commandName + "' doesn't exist.");
                 return;
             }
 
-            if (c.perm == PermType.LOCAL)
-                return;
-
-            if(c.perm != PermType.ALL)
+            if (cmd.perm != PermType.ALL)
             {
                 MessageUtilities.sendMessage(client, "You don't have the permission to do that!");
                 return;
             }
 
-            exec(c, client, pos > 0 ? message.Substring(pos + 1).Trim() : "");
+            if (commandInfo.forceVisible)
+                MessageUtilities.pushMessageOption(new MessageStateOptionPlayer());
+            exec(cmd, client, commandInfo.commandParams);
+            if (commandInfo.forceVisible)
+                MessageUtilities.popMessageOptions();
         }
 
         private void exec(Cmd c, ClientPlayerInfo p, string message)

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Spectrum.Plugins.ServerMod.Utilities
 {
@@ -53,10 +54,21 @@ namespace Spectrum.Plugins.ServerMod.Utilities
         {
             this.player = player;
         }
+        public MessageStateOptionPlayer()
+        {
+            this.player = null;
+        }
         public override void Apply(MessageState messageState)
         {
-            messageState.forPlayer = true;
-            messageState.player = player;
+            if (player == null)
+            {
+                messageState.forPlayer = false;
+            }
+            else
+            {
+                messageState.forPlayer = true;
+                messageState.player = player;
+            }
         }
     }
     static class MessageUtilities
@@ -98,7 +110,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             if (currentState.forPlayer && currentState.player.IsLocal_)
             {
                 // slightly blue text for local-only messages
-                StaticEvent<AddMessage.Data>.Broadcast(new AddMessage.Data((message).Colorize("[55AAAA]")));
+                StaticEvent<AddMessage.Data>.Broadcast(new AddMessage.Data((message).Colorize("[70AAAA]")));
             }
             else
             {
@@ -127,6 +139,34 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             pushMessageOptions(options);
             sendMessage(message);
             popMessageOptions();
+        }
+
+        public static CommandInfo getCommandInfo(string input)
+        {
+            var match = Regex.Match(input, @"^(([!%])\2?)(\S+)\s*(\S*)\s*$");
+            if (!match.Success)
+                return new CommandInfo();
+            else
+                return new CommandInfo(match.Groups[2].Value == "%", match.Groups[1].Value.Length == 2,
+                    match.Groups[3].Value, match.Groups[4].Value);
+        }
+    }
+    public class CommandInfo
+    {
+        public bool matches = false;
+        public bool local;
+        public bool forceVisible;
+        public string commandName;
+        public string commandParams;
+
+        public CommandInfo() { }
+        public CommandInfo(bool local, bool forceVisible, string commandName, string commandParams)
+        {
+            matches = true;
+            this.local = local;
+            this.forceVisible = forceVisible;
+            this.commandName = commandName;
+            this.commandParams = commandParams;
         }
     }
 }
