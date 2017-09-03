@@ -44,6 +44,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatReplicationManager.cs" />
     <Compile Include="CmdSettings\CmdSetting.cs" />
     <Compile Include="CmdList.cs" />
     <Compile Include="CmdSettings\CmdSettingSeconds.cs" />

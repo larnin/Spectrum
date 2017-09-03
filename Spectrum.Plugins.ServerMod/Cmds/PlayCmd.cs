@@ -224,7 +224,10 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 if (countCmd > 10)
                     lvlsStr = lvlsStr + $" and {countCmd - 10} more";
 
-                MessageUtilities.sendMessage(p, "Level(s) " + lvlsStr + " added to the playlist !");
+                if (p.IsLocal_)
+                    MessageUtilities.sendMessage(p, "Level(s) " + lvlsStr + " added to the playlist !");
+                else
+                    MessageUtilities.sendMessage("Level(s) " + lvlsStr + " added to the playlist by " + p.GetChatName() + "!");
             }
         }
     }

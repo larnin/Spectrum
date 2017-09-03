@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -20,16 +21,38 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 .GetValue(obj);
         }
 
-        public static ClientLogic getClientLogic()
+        public static T getComponent<T>() where T : MonoBehaviour
         {
             GameObject[] objs = UnityEngine.Object.FindObjectsOfType<GameObject>();
             foreach (GameObject tObj in objs)
             {
-                ClientLogic logic = tObj.GetComponent<ClientLogic>();
-                if (logic != null)
-                    return logic;
+                T component = tObj.GetComponent<T>();
+                if (component != null)
+                    return component;
             }
             return null;
+        }
+
+        public static StaticEvent<T>.Delegate removeParticularSubscriber<T>(MonoBehaviour component)
+        {
+            SubscriberList list = (SubscriberList)PrivateUtilities.getPrivateField(component, "subscriberList_");
+            StaticEvent<T>.Delegate func = null;
+            var index = 0;
+            foreach (var subscriber in list)
+            {
+                if (subscriber is StaticEvent<T>.Subscriber)
+                {
+                    func = (StaticEvent<T>.Delegate)PrivateUtilities.getPrivateField(subscriber, "func_");
+                    subscriber.Unsubscribe();
+                    break;
+                }
+                index++;
+            }
+            if (func != null)
+            {
+                list.RemoveAt(index);
+            }
+            return func;
         }
     }
 }

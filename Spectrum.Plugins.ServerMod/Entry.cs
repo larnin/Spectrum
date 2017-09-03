@@ -17,23 +17,40 @@ using Spectrum.Plugins.ServerMod.Utilities;
 using System.Reflection;
 using Events;
 using Events.Local;
+using Events.Server;
+using Events.ServerToClient;
+using System.Text;
+using Events.ChatLog;
+using Events.ClientToAllClients;
 
 namespace Spectrum.Plugins.ServerMod
 {
     public class Entry : IPlugin
     {
+        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.0.0");
+        private static Settings Settings = new Settings(typeof(Entry));
+        public static bool IsFirstRun = false;
+        public static Entry Instance = null;
+
         public string FriendlyName => "Server commands Mod";
         public string Author => "Corecii";
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
 
-        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.0.0");
-        public static bool IsFirstRun = false;
 
-        private static Settings Settings = new Settings(typeof(Entry));
+        StaticEvent<ChatSubmitMessage.Data>.Delegate replicateLocalChatFunc = null;
+        StaticEvent<ChatMessage.Data>.Delegate addMessageFromRemote = null;
+        public ChatReplicationManager chatReplicationManager = null;
+        bool sendingLocalChat = false;
 
         public void Initialize(IManager manager)
         {
+            if (Instance != null)
+            {
+                Console.WriteLine("Attempt to create a second Entry");
+                throw new Exception("There should only be one Entry");
+            }
+            Instance = this;
             GeneralUtilities.testFunc(() =>
             {
                 var levelFilters = new LevelFilter[]
@@ -87,47 +104,31 @@ namespace Spectrum.Plugins.ServerMod
                 GeneralUtilities.testFunc(() =>
                 {
                     var author = GeneralUtilities.ExtractMessageAuthor(data.message_);
-                    var steamName = SteamworksManager.GetUserName().ToLower().Trim();
-                    var profileName = G.Sys.PlayerManager_.Current_.profile_.Name_.ToLower().Trim();
 
-                    if (!GeneralUtilities.IsSystemMessage(data.message_) && (author.ToLower().Trim() != steamName && author.ToLower().Trim() != profileName))
-                        Chat_MessageReceived(author, GeneralUtilities.ExtractMessageBody(data.message_));
+                    if (!GeneralUtilities.IsSystemMessage(data.message_) && !sendingLocalChat)
+                        Chat_MessageReceived(author, GeneralUtilities.ExtractMessageBody(data.message_), data);
+                    else
+                    {
+                        addMessageFromRemote(data);
+                        if (GeneralUtilities.isHost())
+                            chatReplicationManager.AddPublic(data.message_);
+                    }
+
+                    sendingLocalChat = false;
                 });
             });
 
             Events.Network.ServerInitialized.Subscribe(data =>
             {
+                chatReplicationManager.Clear();
                 G.Sys.GameManager_.StartCoroutine(serverInit());
             });
 
-            replicateChatFunc = removeClientLogicChatSubmitSubscriber();
-        }
-        StaticEvent<ChatSubmitMessage.Data>.Delegate replicateChatFunc = null;
+            replicateLocalChatFunc = PrivateUtilities.removeParticularSubscriber<ChatSubmitMessage.Data>(PrivateUtilities.getComponent<ClientLogic>());
+            addMessageFromRemote = PrivateUtilities.removeParticularSubscriber<ChatMessage.Data>(G.Sys.NetworkingManager_);
 
-        StaticEvent<ChatSubmitMessage.Data>.Delegate removeClientLogicChatSubmitSubscriber()
-        {
-            // this disconnects and returns the default function that replicates chat to the server and other players
-            // by disconnecting it, we can keep commands that we run private so the player doesn't have to worry about
-            // clogging up the chat
-            var clientLogic = PrivateUtilities.getClientLogic();
-            SubscriberList list = (SubscriberList) PrivateUtilities.getPrivateField(clientLogic, "subscriberList_");
-            StaticEvent<ChatSubmitMessage.Data>.Delegate func = null;
-            var index = 0;
-            foreach (var subscriber in list)
-            {
-                if (subscriber is StaticEvent<ChatSubmitMessage.Data>.Subscriber)
-                {
-                    func = (StaticEvent<ChatSubmitMessage.Data>.Delegate) PrivateUtilities.getPrivateField(subscriber, "func_");
-                    subscriber.Unsubscribe();
-                    break;
-                }
-                index++;
-            }
-            if (func != null)
-            {
-                list.RemoveAt(index);
-            }
-            return func;
+            chatReplicationManager = new ChatReplicationManager();
+            chatReplicationManager.Setup();
         }
 
         IEnumerator serverInit()
@@ -149,7 +150,8 @@ namespace Spectrum.Plugins.ServerMod
             var showRegularChat = !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat);
             if (showRegularChat)
             {
-                replicateChatFunc?.Invoke(messageData);
+                sendingLocalChat = true;
+                replicateLocalChatFunc?.Invoke(messageData);
                 if (!commandInfo.matches)
                     return;
             }
@@ -194,20 +196,30 @@ namespace Spectrum.Plugins.ServerMod
                 MessageUtilities.popMessageOptions();
         }
 
-        private void Chat_MessageReceived(string author, string message)
+        private void Chat_MessageReceived(string author, string message, ChatMessage.Data original)
         {
-            if (!GeneralUtilities.isHost())
-                return;
-
             var commandInfo = MessageUtilities.getCommandInfo(message);
-            if (!commandInfo.matches || commandInfo.local)
-                return;
 
-            if (commandInfo.commandName.ToLower() == "plugin")
-            {
+            if (commandInfo.matches && commandInfo.commandName.ToLower() == "plugin")
                 printClient();
+
+            if (!GeneralUtilities.isHost())
+            {
+                addMessageFromRemote(original);
                 return;
             }
+
+            Cmd cmd = commandInfo.matches ? Cmd.all.getCommand(commandInfo.commandName) : null;
+
+            var showRegularChat = !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat) || commandInfo.local;
+            if (showRegularChat)
+            {
+                chatReplicationManager.AddPublic(original.message_);
+                addMessageFromRemote(original);
+            }
+
+            if (!commandInfo.matches || commandInfo.commandName.ToLower() == "plugin")
+                return;
 
             var client = GeneralUtilities.clientFromName(author);
             if (client == null)
@@ -216,16 +228,25 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
-            Cmd cmd = Cmd.all.getCommand(commandInfo.commandName);
+            if (!showRegularChat)
+            {
+                MessageUtilities.sendMessage(client, $"[00CCCC]{message}[-]");
+                chatReplicationManager.MarkAllForReplication();
+            }
+
             if (cmd == null)
             {
                 MessageUtilities.sendMessage(client, "The command '" + commandInfo.commandName + "' doesn't exist.");
+                chatReplicationManager.MarkForReplication(client.NetworkPlayer_);
+                chatReplicationManager.ReplicateNeeded();
                 return;
             }
 
             if (cmd.perm != PermType.ALL)
             {
-                MessageUtilities.sendMessage(client, "You don't have the permission to do that!");
+                MessageUtilities.sendMessage(client, "You don't have permission to do that!");
+                chatReplicationManager.MarkForReplication(client.NetworkPlayer_);
+                chatReplicationManager.ReplicateNeeded();
                 return;
             }
 
@@ -234,6 +255,7 @@ namespace Spectrum.Plugins.ServerMod
             exec(cmd, client, commandInfo.commandParams);
             if (commandInfo.forceVisible)
                 MessageUtilities.popMessageOptions();
+            chatReplicationManager.ReplicateNeeded();
         }
 
         private void exec(Cmd c, ClientPlayerInfo p, string message)

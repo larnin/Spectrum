@@ -107,10 +107,16 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             var currentState = computeMessageState();
             if (!currentState.shown)
                 return;
-            if (currentState.forPlayer && currentState.player.IsLocal_)
+            if (currentState.forPlayer)
             {
                 // slightly blue text for local-only messages
-                StaticEvent<AddMessage.Data>.Broadcast(new AddMessage.Data((message).Colorize("[70AAAA]")));
+                if (currentState.player.IsLocal_)
+                    StaticEvent<AddMessage.Data>.Broadcast(new AddMessage.Data((message).Colorize("[70AAAA]")));
+                else
+                {
+                    Entry.Instance.chatReplicationManager.AddPersonal(currentState.player.NetworkPlayer_, (message).Colorize("[70AAAA]"));
+                    Entry.Instance.chatReplicationManager.MarkForReplication(currentState.player.NetworkPlayer_);
+                }
             }
             else
             {

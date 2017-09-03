@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace Spectrum.Plugins.ServerMod.Utilities
 {
@@ -61,7 +62,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             return G.Sys.NetworkingManager_.IsServer_;
         }
 
-        public static void Shuffle<T>(this IList<T> list, Random rnd)
+        public static void Shuffle<T>(this IList<T> list, System.Random rnd)
         {
             for (var i = 0; i < list.Count; i++)
                 list.Swap(i, rnd.Next(i, list.Count));
@@ -86,7 +87,12 @@ namespace Spectrum.Plugins.ServerMod.Utilities
 
         public static string getUniquePlayerString(ClientPlayerInfo p)
         {
-            return $"{p.Username_}:{p.NetworkPlayer_.externalIP}:{p.NetworkPlayer_.externalPort}";
+            return p.NetworkPlayer_.guid;
+        }
+
+        public static string getUniquePlayerString(NetworkPlayer p)
+        {
+            return p.guid;
         }
 
         public static string getSearchRegex(string search)

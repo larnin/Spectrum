@@ -288,6 +288,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                                     MessageUtilities.sendMessage("You cannot save to the current playlist right now.");
                                 break;
                             default:
+                                selectedPlaylist.Name_ = playlistCmdData;
                                 MessageUtilities.sendMessage($"Saved playlist as {playlistCmdData}.");
                                 break;
                         }
