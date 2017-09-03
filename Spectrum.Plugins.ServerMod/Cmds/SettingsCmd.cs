@@ -284,7 +284,10 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         {
             var currentVersion = Entry.PluginVersion;
             if (Entry.IsFirstRun)  // if player is new, don't show info for everything up from C.7.3.1, which would happen otherwise.
+            {
                 getSetting<CmdSettingRecentVersion>().Value = currentVersion;
+                Entry.save();
+            }
             var previousVersion = getSetting<CmdSettingRecentVersion>().Value;
             if (currentVersion == previousVersion)
                 return;
@@ -297,8 +300,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 string txt = "";
                 foreach (CmdSetting Setting in Command.settings)
                 {
-                    if (Setting.SettingsId != "" && Setting.UpdatedOnVersion > previousVersion && !Setting.ValueTypeless.Equals(Setting.DefaultTypeless))
-                        txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}:\n  [FFFFFF]Default:[-] {Setting.DefaultTypeless}\n  [FFFFFF]  Yours:[-] {Setting.ValueTypeless}";
+                    if (Setting.SettingsId != "" && Setting.UpdatedOnVersion > previousVersion && (Setting.New || !Setting.ValueTypeless.Equals(Setting.DefaultTypeless)))
+                        if (Setting.New)
+                            txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}: New Setting\n  [FFFFFF]Default:[-] {Setting.DefaultTypeless}";
+                        else
+                            txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}:\n  [FFFFFF]Default:[-] {Setting.DefaultTypeless}\n  [FFFFFF]  Yours:[-] {Setting.ValueTypeless}";
                 }
                 if (txt != "")
                 {
@@ -309,7 +315,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             if (count == 0)
                 MessageUtilities.sendMessage("None");
             else
-                MessageUtilities.sendMessage($"[FFFFFF]Use {GeneralUtilities.formatCmd("!settings default <setting>")} to reset a setting to its default.");
+                MessageUtilities.sendMessage($"[FFFFFF]Use {GeneralUtilities.formatCmd("!settings reset <setting>")} to reset a setting to its default.");
+            MessageUtilities.sendMessage("");
 
             foreach (var notice in ReleaseNotices.Notices)
             {
@@ -317,6 +324,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 {
                     MessageUtilities.sendMessage($"[b][00D000]Notices for version {notice.version}[-][/b]");
                     MessageUtilities.sendMessage(notice.notes);
+                    MessageUtilities.sendMessage("");
                 }
                 else
                     break;

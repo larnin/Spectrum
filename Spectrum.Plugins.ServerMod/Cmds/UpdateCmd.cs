@@ -29,7 +29,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override string DisplayName { get; } = "Show pre-releases";
         public override string HelpShort { get; } = "Show pre-releases in updates list";
-        public override string HelpLong { get; } = "Whether or not to show pre-release version in the updates list. Note that at the time of writing this, all versions are pre-release versions.";
+        public override string HelpLong { get; } = "Whether or not to show pre-release versions in the updates list. Note that at the time of writing this, all versions are pre-release versions.";
 
         public override bool Default { get; } = true;
         public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");

@@ -8,6 +8,7 @@ namespace Spectrum.Plugins.ServerMod.CmdSettings
 {
     abstract class CmdSetting
     {
+        public bool New = true;
         public abstract string FileId { get; }  // for settings.json
         public virtual string SettingsId { get { return FileId; } }  // for !settings
 
@@ -27,12 +28,11 @@ namespace Spectrum.Plugins.ServerMod.CmdSettings
     }
     abstract class CmdSetting<T> : CmdSetting
     {
-        private bool useDefault = true;
         public T value;
         public virtual T Value
         {
-            get { return useDefault ? Default : this.value;  }
-            set { this.value = value; useDefault = false; }
+            get { return New ? Default : this.value;  }
+            set { this.value = value; New = false; }
         }
         public override object ValueTypeless
         {
