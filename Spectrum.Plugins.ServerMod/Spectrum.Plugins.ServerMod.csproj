@@ -123,9 +123,11 @@
     <Compile Include="PlaylistTools\FilteredPlaylist.cs" />
     <Compile Include="PlaylistTools\PlaylistLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReleaseNotices.cs" />
     <Compile Include="Utilities\GeneralUtilities.cs" />
     <Compile Include="Utilities\MessageUtilities.cs" />
     <Compile Include="Utilities\PrivateUtilities.cs" />
+    <Compile Include="Utilities\ServerModVersion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

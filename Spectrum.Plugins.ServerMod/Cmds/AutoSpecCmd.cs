@@ -19,7 +19,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!autospec: return to lobby if no one is playing";
         public override string HelpLong { get; } = "Whether or not to return to the lobby if everyone leaves while auto-spectate is running.";
 
-        public override object Default { get; } = false;
+        public override bool Default { get; } = false;
     }
     class CmdSettingAutoSpecAllowPlayers : CmdSettingBool
     {
@@ -29,7 +29,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!autospec: allow players to use autospec when hosting";
         public override string HelpLong { get; } = "Whether or not players/clients can use the !autospec command";
 
-        public override object Default { get; } = true;
+        public override bool Default { get; } = true;
     }
     class AutoSpecCmd : Cmd
     {
@@ -50,13 +50,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public bool autoSpecReturnToLobby
         {
-            get { return (bool)getSetting("autoSpecReturnToLobby").Value; }
-            set { getSetting("autoSpecReturnToLobby").Value = value; }
+            get { return getSetting<CmdSettingAutoSpecLobby>().Value; }
+            set { getSetting<CmdSettingAutoSpecLobby>().Value = value; }
         }
         public bool autoSpecAllowPlayers
         {
-            get { return (bool)getSetting("autoSpecAllowPlayers").Value; }
-            set { getSetting("autoSpecAllowPlayers").Value = value; }
+            get { return getSetting<CmdSettingAutoSpecAllowPlayers>().Value; }
+            set { getSetting<CmdSettingAutoSpecAllowPlayers>().Value = value; }
         }
 
         public override string name { get { return "autospec"; } }

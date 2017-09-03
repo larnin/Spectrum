@@ -17,7 +17,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!play: Allow players to add maps";
         public override string HelpLong { get; } = "Whether or not players can add maps using !play";
 
-        public override object Default { get; } = false;
+        public override bool Default { get; } = false;
     }
     class CmdSettingPlayMaxPerCmd : CmdSettingInt
     {
@@ -28,7 +28,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!play: allow players to add only a certain number of maps each time they use `!play`";
         public override string HelpLong { get; } = "Limit players to adding a certain number of maps with !play. A value of 0 allows any number of maps.";
 
-        public override object Default { get; } = 0;
+        public override int Default { get; } = 0;
     }
     class CmdSettingPlayMaxPerRound : CmdSettingInt
     {
@@ -39,7 +39,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!play: allow players to add only a certain number of maps per round";
         public override string HelpLong { get; } = "Limit players to adding a certain number of maps with !play. A value of 0 allows any number of maps.";
 
-        public override object Default { get; } = 1;
+        public override int Default { get; } = 1;
     }
     class CmdSettingPlayIsVote : CmdSettingBool
     {
@@ -50,7 +50,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!play acts as !vote play for players.";
         public override string HelpLong { get; } = "For non-hosts, !play will use !vote play instead of adding maps directly. The host still adds maps directly.";
 
-        public override object Default { get; } = false;
+        public override bool Default { get; } = false;
     }
     class CmdSettingPlayFilter : CmdSettingString
     {
@@ -61,34 +61,34 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!play: limit addable maps to a filter. Also affects !level and !vote play";
         public override string HelpLong { get; } = "For non-hosts, !play will only allow mpas to be added if they match a filter. Use `!settings playFilter clear` to clear.";
 
-        public override object Default { get; } = "";
+        public override string Default { get; } = "";
     }
     class PlayCmd : Cmd
     {
         public bool playersCanAddMap
         {
-            get { return (bool)getSetting("playersCanAddMap").Value; }
-            set { getSetting("playersCanAddMap").Value = value; }
+            get { return getSetting<CmdSettingPlayPlayersAddMaps>().Value; }
+            set { getSetting<CmdSettingPlayPlayersAddMaps>().Value = value; }
         }
         public int maxPerCmd
         {
-            get { return (int)getSetting("playMaxPerCmd").Value; }
-            set { getSetting("playMaxPerCmd").Value = value; }
+            get { return getSetting<CmdSettingPlayMaxPerCmd>().Value; }
+            set { getSetting<CmdSettingPlayMaxPerCmd>().Value = value; }
         }
         public int maxPerRound
         {
-            get { return (int)getSetting("playMaxPerRound").Value; }
-            set { getSetting("playMaxPerRound").Value = value; }
+            get { return getSetting<CmdSettingPlayMaxPerRound>().Value; }
+            set { getSetting<CmdSettingPlayMaxPerRound>().Value = value; }
         }
         public bool useVote
         {
-            get { return (bool)getSetting("playIsVote").Value; }
-            set { getSetting("playIsVote").Value = value; }
+            get { return getSetting<CmdSettingPlayIsVote>().Value; }
+            set { getSetting<CmdSettingPlayIsVote>().Value = value; }
         }
         public string playFilter
         {
-            get { return (string)getSetting("playFilter").Value; }
-            set { getSetting("playFilter").Value = value; }
+            get { return getSetting<CmdSettingPlayFilter>().Value; }
+            set { getSetting<CmdSettingPlayFilter>().Value = value; }
         }
 
         public override string name { get { return "play"; } }

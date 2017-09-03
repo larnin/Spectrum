@@ -5,19 +5,19 @@ using System.Text;
 
 namespace Spectrum.Plugins.ServerMod.CmdSettings
 {
-    abstract class CmdSettingString : CmdSetting
+    abstract class CmdSettingString : CmdSetting<string>
     {
         public override string UsageParameters { get; } = "<text>";
-        public override UpdateResult UpdateFromString(string input)
+        public override UpdateResult<string> UpdateFromString(string input)
         {
-            return new UpdateResult(true, input.ToLower() == "clear" ? "" : input);
+            return new UpdateResult<string>(true, input.ToLower() == "clear" ? "" : input);
         }
-        public override UpdateResult UpdateFromObject(object input)
+        public override UpdateResult<string> UpdateFromObject(object input)
         {
-            if (input.GetType() == typeof(string))
-                return new UpdateResult(true, input);
+            if (input is string)
+                return new UpdateResult<string>(true, (string)input);
             else
-                return new UpdateResult(false, Default, "Type should be a string (\"text\")");
+                return new UpdateResult<string>(false, Default, "Type should be a string (\"text\")");
         }
     }
 }

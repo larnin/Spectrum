@@ -32,11 +32,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public List<string> winList
         {
-            get { return (List<string>)getSetting("win").Value; }
-            set { getSetting("win").Value = value; }
+            get { return getSetting<CmdSettingWinList>().Value; }
+            set { getSetting<CmdSettingWinList>().Value = value; }
         }
     }
-    class CmdSettingWinList : CmdSetting
+    class CmdSettingWinList : CmdSetting<List<string>>
     {
         public override string FileId { get; } = "win";
         public override string SettingsId { get; } = "";  // disabled
@@ -45,25 +45,25 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "Possible !win phrases";
         public override string HelpLong { get { return HelpShort; } }
 
-        public override UpdateResult UpdateFromString(string input)
+        public override UpdateResult<List<string>> UpdateFromString(string input)
         {
             throw new NotImplementedException();
         }
 
-        public override UpdateResult UpdateFromObject(object input)
+        public override UpdateResult<List<string>> UpdateFromObject(object input)
         {
             try
             {
-                return new UpdateResult(true, ((string[])input).ToList());
+                return new UpdateResult<List<string>>(true, ((string[])input).ToList());
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Error reading list: {e}");
-                return new UpdateResult(false, Default, "Error reading list. Resetting to default.");
+                return new UpdateResult<List<string>>(false, Default, "Error reading list. Resetting to default.");
             }
         }
 
-        public override object Default
+        public override List<string> Default
         {
             get
             {

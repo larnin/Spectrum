@@ -11,8 +11,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     {
         public string levelFormat
         {
-            get { return (string)getSetting("levelFormat").Value; }
-            set { getSetting("levelFormat").Value = value; }
+            get { return getSetting<CmdSettingLevelFormat>().Value; }
+            set { getSetting<CmdSettingLevelFormat>().Value = value; }
         }
         public override string name { get { return "level"; } }
         public override PermType perm { get { return PermType.ALL; } }
@@ -75,8 +75,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpLong { get; } = "The text to display for each level, also for !list. Formatting options: "
             + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%, %CREATED%, %UPDATED%, %INDEX%";
 
-        public override object Default { get; } = "%INDEX% %MODE%: [FFFFFF]%NAME%[-] by %AUTHOR%";
+        public override string Default { get; } = "%INDEX% %MODE%: [FFFFFF]%NAME%[-] by %AUTHOR%";
 
-        public override string UpdatedOnVersion { get; } = "C.7.4.0";
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.7.4.0");
     }
 }

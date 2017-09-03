@@ -33,11 +33,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public List<string> ripList
         {
-            get { return (List<string>)getSetting("rip").Value; }
-            set { getSetting("rip").Value = value; }
+            get { return getSetting<CmdSettingRipList>().Value; }
+            set { getSetting<CmdSettingRipList>().Value = value; }
         }
     }
-    class CmdSettingRipList : CmdSetting
+    class CmdSettingRipList : CmdSetting<List<string>>
     {
         public override string FileId { get; } = "rip";
         public override string SettingsId { get; } = "";  // disabled
@@ -46,25 +46,25 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "Possible !rip phrases";
         public override string HelpLong { get { return HelpShort; } }
 
-        public override UpdateResult UpdateFromString(string input)
+        public override UpdateResult<List<string>> UpdateFromString(string input)
         {
             throw new NotImplementedException();
         }
 
-        public override UpdateResult UpdateFromObject(object input)
+        public override UpdateResult<List<string>> UpdateFromObject(object input)
         {
             try
             {
-                return new UpdateResult(true, ((string[])input).ToList());
+                return new UpdateResult<List<string>>(true, ((string[])input).ToList());
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Error reading list: {e}");
-                return new UpdateResult(false, Default, "Error reading list. Resetting to default.");
+                return new UpdateResult<List<string>>(false, Default, "Error reading list. Resetting to default.");
             }
         }
 
-        public override object Default
+        public override List<string> Default
         {
             get
             {

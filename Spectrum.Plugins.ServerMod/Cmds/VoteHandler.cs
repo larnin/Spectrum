@@ -95,7 +95,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             public override string HelpShort { get; } = "!vote enable/disable";
             public override string HelpLong { get; } = "Whether or not players can use votes with !vote";
 
-            public override object Default { get; } = false;
+            public override bool Default { get; } = false;
         }
         class CmdSettingVoteThreshold : CmdSettingInt
         {
@@ -109,7 +109,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             public override string HelpShort { get { return "The percent where " + ThresholdName + " vote passes"; } }
             public override string HelpLong { get { return HelpShort; } }
 
-            public override object Default { get { return DefaultThreshold; } }
+            public override int Default { get { return DefaultThreshold; } }
 
             public override int LowerBound { get; } = 0;
             
@@ -126,7 +126,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 this.Value = Value;
             }
         }
-        class CmdSettingVoteThresholds : CmdSetting
+        class CmdSettingVoteThresholds : CmdSetting<Dictionary<string, double>>
         {
             public override string FileId { get; } = "voteSystemThresholds";
             public override string SettingsId { get; } = "";  // disabled
@@ -135,7 +135,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             public override string HelpShort { get; } = "The thresholds at which each vote passes";
             public override string HelpLong { get { return HelpShort; } }
 
-            public override object Default
+            public override Dictionary<string, double> Default
             {
                 get
                 {
@@ -149,16 +149,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 }
             }
 
-            public override UpdateResult UpdateFromString(string input)
+            public override UpdateResult<Dictionary<string, double>> UpdateFromString(string input)
             {
                 throw new NotImplementedException();
             }
 
-            public override UpdateResult UpdateFromObject(object input)
+            public override UpdateResult<Dictionary<string, double>> UpdateFromObject(object input)
             {
                 if (input.GetType() != typeof(Dictionary<string, object>))
                 {
-                    return new UpdateResult(false, Default, "Invalid dictionary. Resetting to default.");
+                    return new UpdateResult<Dictionary<string, double>>(false, Default, "Invalid dictionary. Resetting to default.");
                 }
                 try
                 {
@@ -167,12 +167,12 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         thresholds[entry.Key] = (double)entry.Value;
                     }
-                    return new UpdateResult(true, thresholds);
+                    return new UpdateResult<Dictionary<string, double>>(true, thresholds);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine($"Error reading dictionary: {e}");
-                    return new UpdateResult(false, Default, "Error reading dictionary. Resetting to default.");
+                    return new UpdateResult<Dictionary<string, double>>(false, Default, "Error reading dictionary. Resetting to default.");
                 }
             }
         }
@@ -187,13 +187,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             public bool votesAllowed
             {
-                get { return (bool)getSetting("allowVoteSystem").Value; }
-                set { getSetting("allowVoteSystem").Value = value; }
+                get { return getSetting<CmdSettingVotesEnabled>().Value; }
+                set { getSetting<CmdSettingVotesEnabled>().Value = value; }
             }
             public Dictionary<string, double> voteThresholds
             {
-                get { return (Dictionary<string, double>)getSetting("voteSystemThresholds").Value; }
-                set { getSetting("voteSystemThresholds").Value = value; }
+                get { return getSetting<CmdSettingVoteThresholds>().Value; }
+                set { getSetting<CmdSettingVoteThresholds>().Value = value; }
             }
 
             private bool doForceNextUse = false;

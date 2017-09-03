@@ -27,7 +27,8 @@ namespace Spectrum.Plugins.ServerMod
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
 
-        public static string PluginVersion = "Version C.7.4.0";
+        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.0.0");
+        public static bool IsFirstRun = false;
 
         private static Settings Settings = new Settings(typeof(Entry));
 
@@ -255,7 +256,7 @@ namespace Spectrum.Plugins.ServerMod
 
         private void printClient()
         {
-            MessageUtilities.sendMessage(GeneralUtilities.localClient().GetChatName() + " " + PluginVersion);
+            MessageUtilities.sendMessage(GeneralUtilities.localClient().GetChatName() + " Version " + PluginVersion);
         }
 
         private static void reloadSettingsFromFile()
@@ -312,6 +313,7 @@ namespace Spectrum.Plugins.ServerMod
         {
             try
             {
+                var settingsCount = 0;
                 foreach (Cmd Command in Cmd.all.list())
                 {
                     foreach (CmdSetting Setting in Command.settings)
@@ -321,16 +323,19 @@ namespace Spectrum.Plugins.ServerMod
                             var value = Settings[Setting.FileId];
                             if (value != null)
                             {
-                                UpdateResult result = Setting.UpdateFromObject(value);
+                                settingsCount++;
+                                UpdateResult result = Setting.UpdateFromObjectTypeless(value);
                                 if (!result.Valid)
                                     Console.WriteLine($"Invalid value for {Setting.FileId}: {result.Message}");
                                 else if (result.Message != "")
                                     Console.WriteLine(result.Message);
-                                Setting.Value = result.NewValue;
+                                Setting.ValueTypeless = result.NewValueTypeless;
                             }
                         }
                     }
                 }
+                if (settingsCount == 0)
+                    IsFirstRun = true;
             }
             catch (Exception e)
             {
@@ -348,7 +353,7 @@ namespace Spectrum.Plugins.ServerMod
                     {
                         if (Setting.FileId != "")
                         {
-                            Settings[Setting.FileId] = Setting.Value;
+                            Settings[Setting.FileId] = Setting.SaveValue;
                         }
                     }
                 }

@@ -14,43 +14,43 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     {
         public bool voteNext
         {
-            get { return (bool)getSetting("voteNext").Value; }
-            set { getSetting("voteNext").Value = value; }
+            get { return getSetting<CmdSettingAutoVote>().Value; }
+            set { getSetting<CmdSettingAutoVote>().Value = value; }
         }
         public bool shuffleAtEnd
         {
-            get { return (bool)getSetting("autoShuffleAtEnd").Value; }
-            set { getSetting("autoShuffleAtEnd").Value = value; }
+            get { return getSetting<CmdSettingAutoShuffle>().Value; }
+            set { getSetting<CmdSettingAutoShuffle>().Value = value; }
         }
         public bool uniqueEndVotes
         {
-            get { return (bool)getSetting("autoUniqueVotes").Value; }
-            set { getSetting("autoUniqueVotes").Value = value; }
+            get { return getSetting<CmdSettingAutoUniqueVotes>().Value; }
+            set { getSetting<CmdSettingAutoUniqueVotes>().Value = value; }
         }
         public string advanceMessage
         {
-            get { return (string)getSetting("autoAdvanceMsg").Value; }
-            set { getSetting("autoAdvanceMsg").Value = value; }
+            get { return getSetting<CmdSettingAutoMessage>().Value; }
+            set { getSetting<CmdSettingAutoMessage>().Value = value; }
         }
         public int maxRunTime
         {
-            get { return (int)getSetting("autoMaxTime").Value; }
-            set { getSetting("autoMaxTime").Value = value; }
+            get { return getSetting<CmdSettingAutoMaxTime>().Value; }
+            set { getSetting<CmdSettingAutoMaxTime>().Value = value; }
         }
         public int minPlayers
         {
-            get { return (int)getSetting("autoMinPlayers").Value; }
-            set { getSetting("autoMinPlayers").Value = value; }
+            get { return getSetting<CmdSettingAutoMinPlayers>().Value; }
+            set { getSetting<CmdSettingAutoMinPlayers>().Value = value; }
         }
         public bool skipOffline
         {
-            get { return (bool)getSetting("autoSkipOffline").Value; }
-            set { getSetting("autoSkipOffline").Value = value; }
+            get { return getSetting<CmdSettingSkipOfflineTracks>().Value; }
+            set { getSetting<CmdSettingSkipOfflineTracks>().Value = value; }
         }
         public string voteText
         {
-            get { return (string)getSetting("autoVoteText").Value; }
-            set { getSetting("autoVoteText").Value = value; }
+            get { return getSetting<CmdSettingVoteText>().Value; }
+            set { getSetting<CmdSettingVoteText>().Value = value; }
         }
 
         const int maxtVoteValue = 3;
@@ -667,7 +667,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!auto: Level-end votes";
         public override string HelpLong { get; } = "Whether or not players can vote for the next map at the end of a level in auto mode";
 
-        public override object Default { get; } = false;
+        public override bool Default { get; } = false;
     }
     class CmdSettingAutoShuffle : CmdSettingBool
     {
@@ -678,7 +678,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!auto: Shuffle at end of playlist";
         public override string HelpLong { get; } = "Whether or not the playlist should be shuffled when it finishes in auto mode";
 
-        public override object Default { get; } = true;
+        public override bool Default { get; } = true;
     }
     class CmdSettingAutoUniqueVotes : CmdSettingBool
     {
@@ -689,7 +689,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!auto: Level-end voting choices are unique";
         public override string HelpLong { get; } = "Whether or not levels should be re-ordered after votes so the next vote has all-new options";
 
-        public override object Default { get; } = true;
+        public override bool Default { get; } = true;
     }
     class CmdSettingAutoMessage : CmdSettingString
     {
@@ -700,7 +700,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!auto: Level advance message";
         public override string HelpLong { get; } = "The message to display when the level advances. `clear` to turn off.";
 
-        public override object Default { get; } = "";
+        public override string Default { get; } = "";
     }
     class CmdSettingAutoMinPlayers : CmdSettingInt
     {
@@ -710,7 +710,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!auto: Min players for auto mode to adv. level";
         public override string HelpLong { get; } = "How many players auto mode needs before it will advance to the next level";
 
-        public override object Default { get; } = 1;
+        public override int Default { get; } = 1;
         public override int LowerBound { get; } = 0;
     }
     class CmdSettingAutoMaxTime : CmdSettingSeconds
@@ -721,7 +721,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!auto: Max time before level adv.";
         public override string HelpLong { get; } = "Maximum amount of time a level can run for in auto mode before it advances to the next";
 
-        public override object Default { get; } = 900;
+        public override int Default { get; } = 900;
     }
     class CmdSettingSkipOfflineTracks : CmdSettingBool
     {
@@ -732,7 +732,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!auto: Skip tracks that can't be downloaded from the workshop";
         public override string HelpLong { get; } = "Whether or not levels that are not official levels and are not workshop levels should be skipped over in auto mode";
 
-        public override object Default { get; } = true;
+        public override bool Default { get; } = true;
     }
     class CmdSettingVoteText : CmdSettingString
     {
@@ -744,7 +744,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpLong { get; } = "The text to display for level-end votes. Formatting options: "
             + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%, %CREATED%, %UPDATED%";
 
-        public override object Default { get; } = "[b]%NAME% [A0A0A0]by %AUTHOR%[-][/b]";
+        public override string Default { get; } = "[b]%NAME% [A0A0A0]by %AUTHOR%[-][/b]";
     }
 }
  

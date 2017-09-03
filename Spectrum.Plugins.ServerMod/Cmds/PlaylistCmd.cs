@@ -21,16 +21,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpLong { get; } = "The text to display for each level. Formatting options: "
             + "%NAME%, %DIFFICULTY%, %MODE%, %MBRONZE%, %MSILVER%, %MGOLD%, %MDIAMOND%, %AUTHOR%, %STARS%, %STARSINT%, %STARSDEC%, %CREATED%, %UPDATED%";
 
-        public override object Default { get; } = "%INDEX%: %NAME%";
-        public override string UpdatedOnVersion { get; } = "C.7.4.0";
+        public override string Default { get; } = "%INDEX%: %NAME%";
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.7.4.0");
     }
     class PlaylistCmd : Cmd
     {
 
         public string levelFormat
         {
-            get { return (string)getSetting("playlistLevelFormat").Value; }
-            set { getSetting("playlistLevelFormat").Value = value; }
+            get { return getSetting<CmdSettingPlaylistLevelFormat>().Value; }
+            set { getSetting<CmdSettingPlaylistLevelFormat>().Value = value; }
         }
 
         public override string name { get { return "playlist"; } }

@@ -16,14 +16,14 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "Show a welcome message";
         public override string HelpLong { get; } = "The welcome message to show to players. `clear` to turn off. `%USERNAME%` is replaced with the player's name.";
 
-        public override object Default { get; } = "";
+        public override string Default { get; } = "";
     }
     class WelcomeCmd : Cmd
     {
         public string welcomeMessage
         {
-            get { return (string)getSetting("welcome").Value; }
-            set { getSetting("welcome").Value = value; }
+            get { return getSetting<CmdSettingWelcomeMessage>().Value; }
+            set { getSetting<CmdSettingWelcomeMessage>().Value = value; }
         }
 
         public override string name { get { return "welcome"; } }

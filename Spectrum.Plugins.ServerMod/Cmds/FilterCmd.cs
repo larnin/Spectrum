@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public Dictionary<string, string> savedFilters
         {
-            get { return (Dictionary<string, string>)getSetting("filters").Value; }
+            get { return getSetting<CmdSettingFilters>().Value; }
         }
 
         public override string name { get { return "filter"; } }
@@ -307,7 +307,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             return new LevelFilterResult("Cannot create by chat");
         }
     }
-    class CmdSettingFilters : CmdSetting
+    class CmdSettingFilters : CmdSetting<Dictionary<string, string>>
     {
         public override string FileId { get; } = "filters";
         public override string SettingsId { get; } = "";
@@ -316,16 +316,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "!filter: List of saved filters";
         public override string HelpLong { get { return HelpShort; } }
 
-        public override UpdateResult UpdateFromString(string input)
+        public override UpdateResult<Dictionary<string, string>> UpdateFromString(string input)
         {
             throw new NotImplementedException();
         }
 
-        public override UpdateResult UpdateFromObject(object input)
+        public override UpdateResult<Dictionary<string, string>> UpdateFromObject(object input)
         {
             if (input.GetType() != typeof(Dictionary<string, object>))
             {
-                return new UpdateResult(false, Default, "Invalid dictionary. Resetting to default.");
+                return new UpdateResult<Dictionary<string, string>>(false, Default, "Invalid dictionary. Resetting to default.");
             }
             try
             {
@@ -334,16 +334,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 {
                     data[entry.Key] = (string)entry.Value;
                 }
-                return new UpdateResult(true, data);
+                return new UpdateResult<Dictionary<string, string>>(true, data);
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Error reading dictionary: {e}");
-                return new UpdateResult(false, Default, "Error reading dictionary. Resetting to default.");
+                return new UpdateResult<Dictionary<string, string>>(false, Default, "Error reading dictionary. Resetting to default.");
             }
         }
 
-        public override object Default
+        public override Dictionary<string, string> Default
         {
             get
             {

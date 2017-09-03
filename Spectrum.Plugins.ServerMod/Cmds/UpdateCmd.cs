@@ -20,7 +20,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "Show updates on server start";
         public override string HelpLong { get; } = "Whether or not to show updates to ServerMod when a server is started";
 
-        public override object Default { get; } = true;
+        public override bool Default { get; } = true;
     }
     class UpdateCmd : Cmd
     {
@@ -30,8 +30,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public bool updateCheck
         {
-            get { return (bool)getSetting("updateCheck").Value; }
-            set { getSetting("updateCheck").Value = value; }
+            get { return getSetting<CmdSettingUpdateCheck>().Value; }
+            set { getSetting<CmdSettingUpdateCheck>().Value = value; }
         }
         private static string updateCheckURL = "https://api.github.com/repos/corecii/spectrum/releases";
         private static string updateCheckRemoteRegex = @"ServerMod\.(.\.\d+\.\d+\.\d+)";
@@ -75,7 +75,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         MessageUtilities.sendMessage("[00D000]You are on " + Entry.PluginVersion + "[-]");
                         MessageUtilities.sendMessage("[A0D0A0]Newer versions:[-]");
                         int count = 0;
-                        foreach (string update in updates)
+                        foreach (ServerModVersion update in updates)
                         {
                             if (count == 0)
                                 MessageUtilities.sendMessage("[00F000]" + update + "[-]");
@@ -97,7 +97,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             }));
         }
 
-        public delegate void updateCallback(List<string> versions);
+        public delegate void updateCallback(List<ServerModVersion> versions);
         
         public static IEnumerator getUpdates(updateCallback callback)
         {
@@ -144,14 +144,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             var result = reader.ReadToEnd();
             response.Close();
 
-            var localVersion = Regex.Match(Entry.PluginVersion, updateCheckLocalRegex).Groups[1].Value;
+            var localVersion = Entry.PluginVersion;
 
-            List<string> versions = new List<string>();
+            List<ServerModVersion> versions = new List<ServerModVersion>();
 
             foreach (Match match in Regex.Matches(result, tagNameRegex))
             {
-                var remoteVersion = Regex.Match(match.Groups[1].Value, updateCheckRemoteRegex).Groups[1].Value;
-                if (remoteVersion == localVersion)
+                ServerModVersion remoteVersion;
+                if (!ServerModVersion.TryParse(Regex.Match(match.Groups[1].Value, updateCheckRemoteRegex).Groups[1].Value, out remoteVersion))
+                    continue;
+                if (remoteVersion <= localVersion)
                 {
                     break;
                 }

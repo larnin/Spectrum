@@ -35,5 +35,27 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             }
             return null;
         }
+        public T getSetting<T>() where T : CmdSettings.CmdSetting
+        {
+            foreach (var setting in settings)
+            {
+                if (setting is T)
+                {
+                    return (T)setting;
+                }
+            }
+            return null;
+        }
+        public T getSetting<T>(string FileId) where T : CmdSettings.CmdSetting
+        {
+            foreach (var setting in settings)
+            {
+                if (setting is T && setting.FileId == FileId)
+                {
+                    return (T)setting;
+                }
+            }
+            return null;
+        }
     }
 }

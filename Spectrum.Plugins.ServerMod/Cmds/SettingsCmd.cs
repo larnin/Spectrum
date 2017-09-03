@@ -77,7 +77,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             foreach (CmdSetting Setting in Command.settings)
                             {
                                 if (Setting.SettingsId != "")
-                                    txt2 += $"  * `!settings {Setting.SettingsId} {Setting.UsageParameters}`  \n{Setting.HelpMarkdown}  \nDefault: {Setting.Default}  \n";
+                                    txt2 += $"  * `!settings {Setting.SettingsId} {Setting.UsageParameters}`  \n{Setting.HelpMarkdown}  \nDefault: {Setting.DefaultTypeless}  \n";
                             }
                             if (txt2 != "")
                                 txt += $"* `!{Command.name}` Settings\n" + txt2;
@@ -98,7 +98,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             foreach (CmdSetting Setting in Command.settings)
                             {
                                 if (Setting.FileId != "")
-                                 txt2 += $"* `\"{Setting.FileId}\" :  {Setting.UsageParameters},`  \n{Setting.HelpMarkdown}  \nDefault: {Setting.Default}  \n";
+                                 txt2 += $"* `\"{Setting.FileId}\" :  {Setting.UsageParameters},`  \n{Setting.HelpMarkdown}  \nDefault: {Setting.DefaultTypeless}  \n";
                             }
                             if (txt2 != "")
                                 txt += txt2;
@@ -150,9 +150,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         {
                             if (Setting.SettingsId.ToLower() == settingHelp.ToLower())
                             {
-                                Setting.Value = Setting.Default;
+                                Setting.ValueTypeless = Setting.DefaultTypeless;
                                 MessageUtilities.sendMessage(p, $"Setting {Setting.SettingsId} reset to default:");
-                                MessageUtilities.sendMessage(p, $"{Setting.Default}");
+                                MessageUtilities.sendMessage(p, $"{Setting.DefaultTypeless}");
                                 Entry.save();
                                 return;
                             }
@@ -175,7 +175,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             if (Setting.SettingsId.ToLower() == settingHelp.ToLower())
                             {
                                 MessageUtilities.sendMessage(p, $"{Setting.SettingsId} default:");
-                                MessageUtilities.sendMessage(p, $"{Setting.Default}");
+                                MessageUtilities.sendMessage(p, $"{Setting.DefaultTypeless}");
                                 return;
                             }
                         }
@@ -190,7 +190,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         {
                             if (Setting.SettingsId.ToLower() == setting.ToLower())
                             {
-                                UpdateResult result = Setting.UpdateFromString(msgMatch.Groups[2].Value);
+                                UpdateResult result = Setting.UpdateFromStringTypeless(msgMatch.Groups[2].Value);
                                 if (!result.Valid)
                                     MessageUtilities.sendMessage(p, $"Failed to set setting: {result.Message}");
                                 else
@@ -199,7 +199,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                                     if (result.Message != "")
                                         MessageUtilities.sendMessage(p, result.Message);
                                 }
-                                Setting.Value = result.NewValue;
+                                Setting.ValueTypeless = result.NewValueTypeless;
                                 Entry.save();
                                 return;
                             }
@@ -229,7 +229,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             foreach (CmdSetting Setting in Command.settings)
                             {
                                 if (Setting.SettingsId != "")
-                                    txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}: {Setting.Value}";
+                                    txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}: {Setting.ValueTypeless}";
                             }
                             if (txt != "")
                             {
@@ -246,7 +246,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             foreach (CmdSetting Setting in Command.settings)
                             {
                                 if (Setting.SettingsId != "")
-                                    txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}: {Setting.Default}";
+                                    txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}: {Setting.DefaultTypeless}";
                             }
                             if (txt != "")
                             {
@@ -263,7 +263,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             {
                                 if (Setting.SettingsId.ToLower() == setting.ToLower())
                                 {
-                                    MessageUtilities.sendMessage(p, $"Value of {Setting.SettingsId}: {Setting.Value}");
+                                    MessageUtilities.sendMessage(p, $"Value of {Setting.SettingsId}: {Setting.ValueTypeless}");
                                     return;
                                 }
                             }
@@ -282,16 +282,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public void showNewSettings()
         {
-            var currentVersionMatch = Regex.Match(Entry.PluginVersion, UpdateCmd.updateCheckLocalRegex);
-            if (!currentVersionMatch.Success)
-            {
-                MessageUtilities.sendMessage("Warning: Could not match current plugin version. Cannot show new settings or check for updates.");
+            var currentVersion = Entry.PluginVersion;
+            if (Entry.IsFirstRun)  // if player is new, don't show info for everything up from C.7.3.1, which would happen otherwise.
+                getSetting<CmdSettingRecentVersion>().Value = currentVersion;
+            var previousVersion = getSetting<CmdSettingRecentVersion>().Value;
+            if (currentVersion == previousVersion)
                 return;
-            }
-            var currentVersion = currentVersionMatch.Groups[1].Value;
-            if (currentVersion == (string)(getSetting("recentVersion").Value))
-                return;
-            getSetting("recentVersion").Value = currentVersion;
+            getSetting<CmdSettingRecentVersion>().Value = currentVersion;
             Entry.save();
             MessageUtilities.sendMessage($"[b][D00000]New Settings Defaults for {Entry.PluginVersion}[-][/b]");
             var count = 0;
@@ -300,8 +297,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 string txt = "";
                 foreach (CmdSetting Setting in Command.settings)
                 {
-                    if (Setting.SettingsId != "" && Setting.UpdatedOnVersion == currentVersion && !Setting.Value.Equals(Setting.Default))
-                        txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}:\n  [FFFFFF]Default:[-] {Setting.Default}\n  [FFFFFF]  Yours:[-] {Setting.Value}";
+                    if (Setting.SettingsId != "" && Setting.UpdatedOnVersion > previousVersion && !Setting.ValueTypeless.Equals(Setting.DefaultTypeless))
+                        txt += $"\n {GeneralUtilities.formatCmd($"{Setting.SettingsId}")}:\n  [FFFFFF]Default:[-] {Setting.DefaultTypeless}\n  [FFFFFF]  Yours:[-] {Setting.ValueTypeless}";
                 }
                 if (txt != "")
                 {
@@ -313,9 +310,20 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 MessageUtilities.sendMessage("None");
             else
                 MessageUtilities.sendMessage($"[FFFFFF]Use {GeneralUtilities.formatCmd("!settings default <setting>")} to reset a setting to its default.");
+
+            foreach (var notice in ReleaseNotices.Notices)
+            {
+                if (notice.version > previousVersion)
+                {
+                    MessageUtilities.sendMessage($"[b][00D000]Notices for version {notice.version}[-][/b]");
+                    MessageUtilities.sendMessage(notice.notes);
+                }
+                else
+                    break;
+            }
         }
     }
-    class CmdSettingRecentVersion : CmdSettingString
+    class CmdSettingRecentVersion : CmdSetting<ServerModVersion>
     {
         public override string FileId { get; } = "recentVersion";
         public override string SettingsId { get; } = "";
@@ -324,7 +332,25 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "Stores the most recent version of ServerMod to detect when ServerMod has been updated.";
         public override string HelpLong { get { return HelpShort; } }
 
-        public override object Default { get { return ""; } }
-        public override string UpdatedOnVersion { get; } = "C.7.4.0";
+        public override object SaveValue { get { return Value.ToString(); } }
+        public override ServerModVersion Default { get { return new ServerModVersion("C.7.3.1"); } }  // the version before version info was added
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
+
+        public override UpdateResult<ServerModVersion> UpdateFromString(string input)
+        {
+            ServerModVersion version;
+            if (ServerModVersion.TryParse(input, out version))
+                return new UpdateResult<ServerModVersion>(true, version);
+            else
+                return new UpdateResult<ServerModVersion>(false, Value, "Failed to parse ServerModVersion");
+        }
+
+        public override UpdateResult<ServerModVersion> UpdateFromObject(object input)
+        {
+            if (input is string)
+                return UpdateFromString((string)input);
+            else
+                return new UpdateResult<ServerModVersion>(true, (ServerModVersion)input);
+        }
     }
 }
