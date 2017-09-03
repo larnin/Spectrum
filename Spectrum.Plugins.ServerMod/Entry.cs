@@ -14,6 +14,9 @@ using Spectrum.Plugins.ServerMod.PlaylistTools;
 using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
 using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters.Sorts;
 using Spectrum.Plugins.ServerMod.Utilities;
+using System.Reflection;
+using Events;
+using Events.Local;
 
 namespace Spectrum.Plugins.ServerMod
 {
@@ -74,7 +77,7 @@ namespace Spectrum.Plugins.ServerMod
             {
                 GeneralUtilities.testFunc(() =>
                 {
-                    Chat_MessageSent(data.message_);
+                    Chat_MessageSent(data);
                 });
             });
 
@@ -95,6 +98,35 @@ namespace Spectrum.Plugins.ServerMod
             {
                 G.Sys.GameManager_.StartCoroutine(serverInit());
             });
+
+            replicateChatFunc = removeClientLogicChatSubmitSubscriber();
+        }
+        StaticEvent<ChatSubmitMessage.Data>.Delegate replicateChatFunc = null;
+
+        StaticEvent<ChatSubmitMessage.Data>.Delegate removeClientLogicChatSubmitSubscriber()
+        {
+            // this disconnects and returns the default function that replicates chat to the server and other players
+            // by disconnecting it, we can keep commands that we run private so the player doesn't have to worry about
+            // clogging up the chat
+            var clientLogic = PrivateUtilities.getClientLogic();
+            SubscriberList list = (SubscriberList) PrivateUtilities.getPrivateField(clientLogic, "subscriberList_");
+            StaticEvent<ChatSubmitMessage.Data>.Delegate func = null;
+            var index = 0;
+            foreach (var subscriber in list)
+            {
+                if (subscriber is StaticEvent<ChatSubmitMessage.Data>.Subscriber)
+                {
+                    func = (StaticEvent<ChatSubmitMessage.Data>.Delegate) PrivateUtilities.getPrivateField(subscriber, "func_");
+                    subscriber.Unsubscribe();
+                    break;
+                }
+                index++;
+            }
+            if (func != null)
+            {
+                list.RemoveAt(index);
+            }
+            return func;
         }
 
         IEnumerator serverInit()
@@ -106,8 +138,24 @@ namespace Spectrum.Plugins.ServerMod
             yield break;
         }
 
-        private void Chat_MessageSent(string message)
+        private void Chat_MessageSent(ChatSubmitMessage.Data messageData)
         {
+            string message = messageData.message_;
+
+            var commandInfo = MessageUtilities.getCommandInfo(message);
+            Cmd cmd = Cmd.all.getCommand(commandInfo.commandName);
+
+            var showRegularChat = !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat);
+            if (showRegularChat)
+            {
+                replicateChatFunc?.Invoke(messageData);
+                if (!commandInfo.matches)
+                    return;
+            }
+
+            if (GeneralUtilities.isHost() ? commandInfo.local : !commandInfo.local)
+                return;
+
             var client = GeneralUtilities.localClient();
             if (client == null)
             {
@@ -115,11 +163,11 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
-            var commandInfo = MessageUtilities.getCommandInfo(message);
-            if (!commandInfo.matches || (GeneralUtilities.isHost() ? commandInfo.local : !commandInfo.local))
-                return;
+            if (!showRegularChat)
+            {
+                MessageUtilities.sendMessage(client, $"[00CCCC]{message}[-]");
+            }
 
-            Cmd cmd = Cmd.all.getCommand(commandInfo.commandName);
             if (cmd == null)
             {
                 MessageUtilities.sendMessage(client, "The command '" + commandInfo.commandName + "' doesn't exist.");
