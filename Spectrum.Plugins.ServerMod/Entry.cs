@@ -143,7 +143,7 @@ namespace Spectrum.Plugins.ServerMod
             string message = messageData.message_;
 
             var commandInfo = MessageUtilities.getCommandInfo(message);
-            Cmd cmd = Cmd.all.getCommand(commandInfo.commandName);
+            Cmd cmd = commandInfo.matches ? Cmd.all.getCommand(commandInfo.commandName) : null;
 
             var showRegularChat = !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat);
             if (showRegularChat)

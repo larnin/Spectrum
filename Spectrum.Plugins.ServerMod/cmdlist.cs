@@ -70,7 +70,7 @@ namespace Spectrum.Plugins.ServerMod
 
         public Cmd getCommand(string name)
         {
-            if (name.Length == 0)
+            if (string.IsNullOrEmpty(name))
                 return null;
             name = name.ToLower();
 
