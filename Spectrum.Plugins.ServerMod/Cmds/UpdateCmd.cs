@@ -22,6 +22,18 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override bool Default { get; } = true;
     }
+    class CmdSettingShowPrerelease : CmdSettingBool
+    {
+        public override string FileId { get; } = "updateShowPrerelease";
+        public override string SettingsId { get; } = "updateShowPrerelease";
+
+        public override string DisplayName { get; } = "Show pre-releases";
+        public override string HelpShort { get; } = "Show pre-releases in updates list";
+        public override string HelpLong { get; } = "Whether or not to show pre-release version in the updates list. Note that at the time of writing this, all versions are pre-release versions.";
+
+        public override bool Default { get; } = true;
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
+    }
     class UpdateCmd : Cmd
     {
         public override string name { get { return "update"; } }
@@ -33,15 +45,32 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             get { return getSetting<CmdSettingUpdateCheck>().Value; }
             set { getSetting<CmdSettingUpdateCheck>().Value = value; }
         }
+        public bool showPrerelease
+        {
+            get { return getSetting<CmdSettingShowPrerelease>().Value; }
+            set { getSetting<CmdSettingShowPrerelease>().Value = value; }
+        }
+
+        public static bool showPrereleaseStatic
+        {
+            get
+            {
+                return Cmd.all.getCommand<UpdateCmd>("update").showPrerelease;
+            }
+        }
+
         private static string updateCheckURL = "https://api.github.com/repos/corecii/spectrum/releases";
         private static string updateCheckRemoteRegex = @"ServerMod\.(.\.\d+\.\d+\.\d+)";
-        public static string updateCheckLocalRegex = @"Version (.\.\d+\.\d+\.\d+)";
+
+        public static string changesRegexOuter = @"Changes\:[\r\n]+((?:(?:\* [^\r\n]+[\r\n]*)(?:\s+\* [^\r\n]+[\r\n]*)*)+)";
+        public static string changesRegexInner = @"(?:\* ([^\r\n]+)[\r\n]*)(?:\s+\* [^\r\n]+[\r\n]*)*";
 
         private const string tagNameRegex = "\"tag_name\": ?\"(.+?)\",";
 
         public override CmdSetting[] settings { get; } =
         {
-            new CmdSettingUpdateCheck()
+            new CmdSettingUpdateCheck(),
+            new CmdSettingShowPrerelease()
         };
 
         public override void help(ClientPlayerInfo p)
@@ -58,10 +87,27 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public static void checkForUpdates(bool sendMessageIfNone)
         {
-            G.Sys.GameManager_.StartCoroutine(getUpdates(updates =>
+            G.Sys.GameManager_.StartCoroutine(getUpdates(releases =>
             {
                 try
                 {
+                    var updates = new List<Dictionary<string, object>>();
+                    foreach (var release in releases)
+                    {
+                        if (!(bool)release["draft"])
+                        {
+                            string releaseTag = (string)release["tag_name"];
+                            var releaseTagMatch = Regex.Match(releaseTag, updateCheckRemoteRegex);
+                            if (releaseTagMatch.Success)
+                            {
+                                var version = new ServerModVersion(releaseTagMatch.Groups[1].Value);
+                                if (version <= Entry.PluginVersion)
+                                    break;
+                                updates.Add(release);
+                            }
+                        }
+                    }
+                    ///
                     if (updates.Count == 0)
                     {
                         if (sendMessageIfNone)
@@ -71,23 +117,61 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     }
                     else
                     {
-                        MessageUtilities.sendMessage("[A0D0A0]There are updates for ServerMod available.[-]");
-                        MessageUtilities.sendMessage("[00D000]You are on " + Entry.PluginVersion + "[-]");
-                        MessageUtilities.sendMessage("[A0D0A0]Newer versions:[-]");
+                        string printTxt = "";
+                        printTxt += ("[A0D0A0]There are updates for ServerMod available.[-]\n");
+                        printTxt += ("[00D000]You are on " + Entry.PluginVersion + "[-]\n");
+                        printTxt += ("[A0D0A0]Newer versions:[-]\n");
+                        int preCount = 0;
                         int count = 0;
-                        foreach (ServerModVersion update in updates)
+                        foreach (var release in updates)
                         {
-                            if (count == 0)
-                                MessageUtilities.sendMessage("[00F000]" + update + "[-]");
-                            else if (count == 3)
+                            string releaseTag = (string)release["tag_name"];
+                            var releaseTagMatch = Regex.Match(releaseTag, updateCheckRemoteRegex);
+                            var version = new ServerModVersion(releaseTagMatch.Groups[1].Value);
+                            if (count == 3)
                             {
-                                MessageUtilities.sendMessage($"[A0D0A0]And {updates.Count - count} more...[-]");
+                                printTxt += ($"  [A0D0A0]and {updates.Count - count} more...[-]\n");
                                 break;
                             }
+                            bool prerelease = (bool)release["prerelease"];
+                            if (prerelease && !showPrereleaseStatic)
+                            {
+                                preCount++;
+                                continue;
+                            }
+                            string prereleaseText = (prerelease ? " [707070](pre-release)[-]" : "");
+                            if (count == 0)
+                            {
+                                if (preCount > 0)
+                                    printTxt += ($"  [508050]({preCount} pre-releases)[-]\n");
+                                printTxt += ("  [00F000]" + version + "[-]" + prereleaseText + "\n");
+                                string body = (string)release["body"];
+                                var outerMatch = Regex.Match(body, changesRegexOuter);
+                                if (outerMatch.Success)
+                                {
+                                    var innerMatches = Regex.Matches(outerMatch.Groups[1].Value, changesRegexInner);
+                                    var releaseNoteCount = 0;
+                                    foreach (Match innerMatch in innerMatches)
+                                    {
+                                        if (releaseNoteCount == 4)
+                                        {
+                                            if (innerMatches.Count > 4)
+                                                printTxt += ($"  and {innerMatches.Count - 4} more.\n");
+                                            break;
+                                        }
+                                        printTxt += ("  • " + innerMatch.Groups[1].Value + "\n");
+                                        releaseNoteCount++;
+                                    }
+                                }
+                            }
                             else
-                                MessageUtilities.sendMessage("[A0D0A0]" + update + "[-]");
+                                printTxt += ("  [A0D0A0]" + version + "[-]" + prereleaseText + "\n");
                             count++;
                         }
+                        if (preCount > 0 && count == 0)
+                            MessageUtilities.sendMessage($"[508050]ServerMod: {preCount} pre-release updates available[-]");
+                        else
+                            MessageUtilities.sendMessage(printTxt.Substring(0, printTxt.Length - 1));
                     }
                 }
                 catch (Exception e)
@@ -97,7 +181,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             }));
         }
 
-        public delegate void updateCallback(List<ServerModVersion> versions);
+        public delegate void updateCallback(List<Dictionary<string, object>> releases);
         
         public static IEnumerator getUpdates(updateCallback callback)
         {
@@ -144,23 +228,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             var result = reader.ReadToEnd();
             response.Close();
 
-            var localVersion = Entry.PluginVersion;
+            var jsonReader = new JsonFx.Json.JsonReader();
 
-            List<ServerModVersion> versions = new List<ServerModVersion>();
+            var releases = jsonReader.Read<List<Dictionary<string, object>>>(result);
 
-            foreach (Match match in Regex.Matches(result, tagNameRegex))
-            {
-                ServerModVersion remoteVersion;
-                if (!ServerModVersion.TryParse(Regex.Match(match.Groups[1].Value, updateCheckRemoteRegex).Groups[1].Value, out remoteVersion))
-                    continue;
-                if (remoteVersion <= localVersion)
-                {
-                    break;
-                }
-                versions.Add(remoteVersion);
-            }
-
-            callback(versions);
+            callback(releases);
             ///
             yield break;
         }

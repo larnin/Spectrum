@@ -27,16 +27,17 @@ namespace Spectrum.Plugins.ServerMod.CmdSettings
     }
     abstract class CmdSetting<T> : CmdSetting
     {
+        private bool useDefault = true;
         public T value;
         public virtual T Value
         {
-            get { return this.value == null ? Default : this.value;  }
-            set { this.value = value; }
+            get { return useDefault ? Default : this.value;  }
+            set { this.value = value; useDefault = false; }
         }
         public override object ValueTypeless
         {
             get { return Value; }
-            set { Value = (T)value; }
+            set { Value = (T) value; }
         }
         public abstract T Default { get; }
         public override object DefaultTypeless

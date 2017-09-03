@@ -143,7 +143,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
 
         public static CommandInfo getCommandInfo(string input)
         {
-            var match = Regex.Match(input, @"^(([!%])\2?)(\S+)\s*(\S*)\s*$");
+            var match = Regex.Match(input, @"^(([!%])\2?)(\S+)\s*(.*)\s*$");
             if (!match.Success)
                 return new CommandInfo();
             else
