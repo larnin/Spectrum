@@ -99,22 +99,35 @@ namespace Spectrum.Plugins.ServerMod
                 });
             });
 
+            var sendingClientToAllClientsMessage = false;
+            AddMessage.Subscribe(data =>
+            {
+                if (!sendingClientToAllClientsMessage
+                && (MessageUtilities.currentState == null || !MessageUtilities.currentState.forPlayer)
+                && GeneralUtilities.isHost())
+                    chatReplicationManager.AddPublic(data.message_);
+            });
+
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
             {
                 GeneralUtilities.testFunc(() =>
                 {
+                    sendingClientToAllClientsMessage = true;
                     var author = GeneralUtilities.ExtractMessageAuthor(data.message_);
 
+                    Console.WriteLine("Message: " + data.message_);
                     if (!GeneralUtilities.IsSystemMessage(data.message_) && !sendingLocalChat)
                         Chat_MessageReceived(author, GeneralUtilities.ExtractMessageBody(data.message_), data);
                     else
                     {
+                        Console.WriteLine("  Adding.");
                         addMessageFromRemote(data);
                         if (GeneralUtilities.isHost())
                             chatReplicationManager.AddPublic(data.message_);
                     }
 
                     sendingLocalChat = false;
+                    sendingClientToAllClientsMessage = false;
                 });
             });
 
@@ -147,6 +160,8 @@ namespace Spectrum.Plugins.ServerMod
             var commandInfo = MessageUtilities.getCommandInfo(message);
             Cmd cmd = commandInfo.matches ? Cmd.all.getCommand(commandInfo.commandName) : null;
 
+            string logMessage = "";
+
             var showRegularChat = !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat);
             if (showRegularChat)
             {
@@ -154,10 +169,8 @@ namespace Spectrum.Plugins.ServerMod
                 replicateLocalChatFunc?.Invoke(messageData);
                 if (!commandInfo.matches)
                     return;
+                logMessage = message;
             }
-
-            if (GeneralUtilities.isHost() ? commandInfo.local : !commandInfo.local)
-                return;
 
             var client = GeneralUtilities.localClient();
             if (client == null)
@@ -169,23 +182,41 @@ namespace Spectrum.Plugins.ServerMod
             if (!showRegularChat)
             {
                 MessageUtilities.sendMessage(client, $"[00CCCC]{message}[-]");
+                logMessage = $"[00CCCC]{message}[-]";
+            }
+            
+            MessageStateOptionLog cmdLog = new MessageStateOptionLog(new List<string>());
+            MessageUtilities.pushMessageOption(cmdLog);
+
+            if (GeneralUtilities.isHost() ? commandInfo.local : !commandInfo.local)
+            {
+                MessageUtilities.sendMessage(client, "Invalid command because local as host or non-local as client.");
+                LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
+                MessageUtilities.popMessageOptions();
+                return;
             }
 
             if (cmd == null)
             {
                 MessageUtilities.sendMessage(client, "The command '" + commandInfo.commandName + "' doesn't exist.");
+                LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
+                MessageUtilities.popMessageOptions();
                 return;
             }
 
             if (commandInfo.local && !cmd.canUseAsClient && cmd.perm != PermType.LOCAL)
             {
                 MessageUtilities.sendMessage(client, "You can't use that command as client");
+                LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
+                MessageUtilities.popMessageOptions();
                 return;
             }
 
             if (!commandInfo.local && commandInfo.commandName.ToLower() == "plugin")
             {
                 printClient();
+                LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
+                MessageUtilities.popMessageOptions();
                 return;
             }
 
@@ -194,6 +225,8 @@ namespace Spectrum.Plugins.ServerMod
             exec(cmd, client, commandInfo.commandParams);
             if (commandInfo.forceVisible)
                 MessageUtilities.popMessageOptions();
+            LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
+            MessageUtilities.popMessageOptions();
         }
 
         private void Chat_MessageReceived(string author, string message, ChatMessage.Data original)
@@ -209,6 +242,8 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
+            string logMessage = "";
+
             Cmd cmd = commandInfo.matches ? Cmd.all.getCommand(commandInfo.commandName) : null;
 
             var showRegularChat = !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat) || commandInfo.local;
@@ -216,10 +251,8 @@ namespace Spectrum.Plugins.ServerMod
             {
                 chatReplicationManager.AddPublic(original.message_);
                 addMessageFromRemote(original);
+                logMessage = message;
             }
-
-            if (!commandInfo.matches || commandInfo.commandName.ToLower() == "plugin")
-                return;
 
             var client = GeneralUtilities.clientFromName(author);
             if (client == null)
@@ -228,17 +261,26 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
+            if (!commandInfo.matches || commandInfo.commandName.ToLower() == "plugin")
+                return;
+
             if (!showRegularChat)
             {
                 MessageUtilities.sendMessage(client, $"[00CCCC]{message}[-]");
                 chatReplicationManager.MarkAllForReplication();
+                logMessage = $"[00CCCC]{message}[-]";
             }
+
+            MessageStateOptionLog cmdLog = new MessageStateOptionLog(new List<string>());
+            MessageUtilities.pushMessageOption(cmdLog);
 
             if (cmd == null)
             {
                 MessageUtilities.sendMessage(client, "The command '" + commandInfo.commandName + "' doesn't exist.");
                 chatReplicationManager.MarkForReplication(client.NetworkPlayer_);
                 chatReplicationManager.ReplicateNeeded();
+                LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
+                MessageUtilities.popMessageOptions();
                 return;
             }
 
@@ -247,6 +289,8 @@ namespace Spectrum.Plugins.ServerMod
                 MessageUtilities.sendMessage(client, "You don't have permission to do that!");
                 chatReplicationManager.MarkForReplication(client.NetworkPlayer_);
                 chatReplicationManager.ReplicateNeeded();
+                LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
+                MessageUtilities.popMessageOptions();
                 return;
             }
 
@@ -256,6 +300,8 @@ namespace Spectrum.Plugins.ServerMod
             if (commandInfo.forceVisible)
                 MessageUtilities.popMessageOptions();
             chatReplicationManager.ReplicateNeeded();
+            LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
+            MessageUtilities.popMessageOptions();
         }
 
         private void exec(Cmd c, ClientPlayerInfo p, string message)

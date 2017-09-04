@@ -11,6 +11,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
 {
     class MessageState
     {
+        public List<string> log = null;
         public bool shown = true;
         public bool forPlayer = false;
         public ClientPlayerInfo player = null;
@@ -71,6 +72,31 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             }
         }
     }
+    class MessageStateOptionLog : MessageStateOption
+    {
+        List<string> log;
+        public MessageStateOptionLog(List<string> log)
+        {
+            this.log = log;
+        }
+        public MessageStateOptionLog()
+        {
+            this.log = null;
+        }
+        public override void Apply(MessageState messageState)
+        {
+            messageState.log = log;
+        }
+        public string GetLogString()
+        {
+            string logString = "";
+            foreach (string logValue in log)
+            {
+                logString += logValue + "\n";
+            }
+            return logString.Substring(0, logString.Length - 1);
+        }
+    }
     static class MessageUtilities
     {
         static List<MessageStateOption[]> messageOptionStack = new List<MessageStateOption[]>();
@@ -102,11 +128,15 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 option.Apply(state);
             return state;
         }
+        public static MessageState currentState = null;
         public static void sendMessage(string message)
         {
-            var currentState = computeMessageState();
+            currentState = computeMessageState();
             if (!currentState.shown)
+            {
+                currentState = null;
                 return;
+            }
             if (currentState.forPlayer)
             {
                 // slightly blue text for local-only messages
@@ -117,6 +147,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                     Entry.Instance.chatReplicationManager.AddPersonal(currentState.player.NetworkPlayer_, (message).Colorize("[70AAAA]"));
                     Entry.Instance.chatReplicationManager.MarkForReplication(currentState.player.NetworkPlayer_);
                 }
+                if (currentState.log != null)
+                    currentState.log.Add((message).Colorize("[70AAAA]"));
             }
             else
             {
@@ -126,7 +158,10 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 StaticTransceivedEvent<ChatMessage.Data>.Broadcast(new ChatMessage.Data((message).Colorize("[AAAAAA]")));
 #pragma warning restore CS0618 // Type or member is obsolete
                 //Console.WriteLine("Log : " + message);
+                if (currentState.log != null)
+                    currentState.log.Add((message).Colorize("[AAAAAA]"));
             }
+            currentState = null;
         }
         public static void sendMessage(ClientPlayerInfo p, string message)
         {

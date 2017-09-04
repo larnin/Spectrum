@@ -25,6 +25,7 @@ namespace Spectrum.Plugins.ServerMod
                 new LevelCmd(),
                 new ListCmd(),
                 new LoadCmd(),
+                new LogCmd(),
                 //new NameCmd(), // not supported
                 new PlayCmd(),
                 new PlaylistCmd(),

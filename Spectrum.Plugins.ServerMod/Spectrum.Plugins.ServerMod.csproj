@@ -58,6 +58,7 @@
     <Compile Include="Cmds\ClearCmd.cs" />
     <Compile Include="Cmds\DateCmd.cs" />
     <Compile Include="Cmds\DelsCmd.cs" />
+    <Compile Include="Cmds\LogCmd.cs" />
     <Compile Include="Cmds\InfoCmd.cs" />
     <Compile Include="Cmds\LoadCmd.cs" />
     <Compile Include="Cmds\KickCmd.cs" />
