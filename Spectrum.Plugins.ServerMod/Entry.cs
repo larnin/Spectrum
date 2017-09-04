@@ -114,13 +114,11 @@ namespace Spectrum.Plugins.ServerMod
                 {
                     sendingClientToAllClientsMessage = true;
                     var author = GeneralUtilities.ExtractMessageAuthor(data.message_);
-
-                    Console.WriteLine("Message: " + data.message_);
+                    
                     if (!GeneralUtilities.IsSystemMessage(data.message_) && !sendingLocalChat)
                         Chat_MessageReceived(author, GeneralUtilities.ExtractMessageBody(data.message_), data);
                     else
                     {
-                        Console.WriteLine("  Adding.");
                         addMessageFromRemote(data);
                         if (GeneralUtilities.isHost())
                             chatReplicationManager.AddPublic(data.message_);
@@ -162,7 +160,7 @@ namespace Spectrum.Plugins.ServerMod
 
             string logMessage = "";
 
-            var showRegularChat = !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat);
+            var showRegularChat = !LogCmd.localHostCommands || !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat);
             if (showRegularChat)
             {
                 sendingLocalChat = true;
@@ -220,10 +218,10 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
-            if (commandInfo.forceVisible)
+            if (commandInfo.forceVisible && LogCmd.localHostResults)
                 MessageUtilities.pushMessageOption(new MessageStateOptionPlayer());
             exec(cmd, client, commandInfo.commandParams);
-            if (commandInfo.forceVisible)
+            if (commandInfo.forceVisible && LogCmd.localHostResults)
                 MessageUtilities.popMessageOptions();
             LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
             MessageUtilities.popMessageOptions();
@@ -246,7 +244,7 @@ namespace Spectrum.Plugins.ServerMod
 
             Cmd cmd = commandInfo.matches ? Cmd.all.getCommand(commandInfo.commandName) : null;
 
-            var showRegularChat = !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat) || commandInfo.local;
+            var showRegularChat = !LogCmd.localClientCommands || !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat) || commandInfo.local;
             if (showRegularChat)
             {
                 chatReplicationManager.AddPublic(original.message_);
@@ -294,10 +292,10 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
-            if (commandInfo.forceVisible)
+            if (commandInfo.forceVisible && LogCmd.localHostResults)
                 MessageUtilities.pushMessageOption(new MessageStateOptionPlayer());
             exec(cmd, client, commandInfo.commandParams);
-            if (commandInfo.forceVisible)
+            if (commandInfo.forceVisible && LogCmd.localHostResults)
                 MessageUtilities.popMessageOptions();
             chatReplicationManager.ReplicateNeeded();
             LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
