@@ -115,6 +115,8 @@ namespace Spectrum.Plugins.ServerMod
             string publicLog = DiffLine.DiffLinesToString(publicDiff);
             string personalLog = DiffLine.DiffLinesToString(personalDiff);
 
+            Console.WriteLine("Diff:\n" + DiffLine.DiffLinesToStringInfo(personalDiff));
+
             publicChatBuffer.Clear();
             AddPublic(publicLog);
 
@@ -278,7 +280,9 @@ namespace Spectrum.Plugins.ServerMod
             {
                 personalDiff.Add(new DiffLine(line));
             }
-            personalDiff.Add(new DiffLine());
+            var finalLine = new DiffLine();
+            finalLine.Remove = true;
+            personalDiff.Add(finalLine);
             return personalDiff;
         }
 
@@ -327,8 +331,9 @@ namespace Spectrum.Plugins.ServerMod
         public static List<string> DiffLinesToList(List<DiffLine> lines)
         {
             List<string> newList = new List<string>();
-            foreach (DiffLine diffLine in lines)
+            for (int i = 0; i < lines.Count; i++)
             {
+                var diffLine = lines[i];
                 foreach (string line in diffLine.New)
                     newList.Add(line);
                 if (!diffLine.Remove)
@@ -355,8 +360,9 @@ namespace Spectrum.Plugins.ServerMod
         public static List<string> DiffLinesToListInfo(List<DiffLine> lines)
         {
             List<string> newList = new List<string>();
-            foreach (DiffLine diffLine in lines)
+            for (int i = 0; i < lines.Count; i++)
             {
+                var diffLine = lines[i];
                 foreach (string line in diffLine.New)
                     newList.Add("+ " + line);
                 if (!diffLine.Remove)
