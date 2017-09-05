@@ -415,6 +415,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
 
         public static bool isLevelOnline(LevelNameAndPathPair TestLevel)
         {
+            if (!SteamworksManager.IsSteamBuild_)
+                return true;
             var levelSetsManager = G.Sys.LevelSets_;
             foreach (var Level in levelSetsManager.OfficialLevelNameAndPathPairs_)
             {
@@ -480,7 +482,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 var levelSetsManager = G.Sys.LevelSets_;
                 var levelInfo = levelSetsManager.GetLevelInfo(level.levelPath_);
                 WorkshopLevelInfo workshopLevelInfo = null;
-                G.Sys.SteamworksManager_.UGC_.TryGetWorkshopLevelData(levelInfo.relativePath_, out workshopLevelInfo);
+                if (SteamworksManager.IsSteamBuild_)
+                    G.Sys.SteamworksManager_.UGC_.TryGetWorkshopLevelData(levelInfo.relativePath_, out workshopLevelInfo);
                 resText = resText
                     .Replace("%NAME%", levelInfo.levelName_)
                     .Replace("%DIFFICULTY%", levelInfo.difficulty_.ToString())

@@ -23,6 +23,8 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters.Sorts
 
         public override int Sort(PlaylistLevel a, PlaylistLevel b)
         {
+            if (!SteamworksManager.IsSteamBuild_)
+                return 0;
             var levelSetsManager = G.Sys.LevelSets_;
             var ugc = G.Sys.SteamworksManager_.UGC_;
             WorkshopLevelInfo aWorkshopLevelInfo;

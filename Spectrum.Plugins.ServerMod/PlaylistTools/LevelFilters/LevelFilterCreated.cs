@@ -30,7 +30,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
             foreach (var level in levels)
             {
                 WorkshopLevelInfo workshopLevelInfo = null;
-                if (ugc.TryGetWorkshopLevelData(levelSetsManager.GetLevelInfo(level.level.levelNameAndPath_.levelPath_).relativePath_, out workshopLevelInfo))
+                if (!SteamworksManager.IsSteamBuild_ ? false : ugc.TryGetWorkshopLevelData(levelSetsManager.GetLevelInfo(level.level.levelNameAndPath_.levelPath_).relativePath_, out workshopLevelInfo))
                     level.Mode(mode, comparison.Compare(workshopLevelInfo.timeCreated_));
                 else
                     level.Mode(mode, false);

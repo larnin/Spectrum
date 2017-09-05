@@ -179,8 +179,8 @@ namespace Spectrum.Plugins.ServerMod
 
             if (!showRegularChat)
             {
-                MessageUtilities.sendMessage(client, $"[00CCCC]{message}[-]");
-                logMessage = $"[00CCCC]{message}[-]";
+                MessageUtilities.sendMessage(client, $"[00FFFF]{message}[-]");
+                logMessage = $"[00FFFF]{message}[-]";
             }
             
             MessageStateOptionLog cmdLog = new MessageStateOptionLog(new List<string>());
@@ -278,9 +278,9 @@ namespace Spectrum.Plugins.ServerMod
 
             if (!showRegularChat)
             {
-                MessageUtilities.sendMessage(client, $"[00CCCC]{message}[-]");
+                MessageUtilities.sendMessage(client, $"[00FFFF]{message}[-]");
                 chatReplicationManager.MarkAllForReplication();
-                logMessage = $"[00CCCC]{message}[-]";
+                logMessage = $"[00FFFF]{message}[-]";
             }
 
             MessageStateOptionLog cmdLog = new MessageStateOptionLog(new List<string>());
