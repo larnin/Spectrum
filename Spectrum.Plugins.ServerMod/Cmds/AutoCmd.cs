@@ -88,6 +88,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         {
             this.list = list;
 
+            Events.Network.ServerInitialized.Subscribe(data =>
+            {
+                autoMode = false;
+            });
+
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {
                 GeneralUtilities.testFunc(() =>
@@ -306,7 +311,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public int getInsertIndex()
         {
             if (currentMapInsertIndex == -1)
-                return G.Sys.GameManager_.LevelPlaylist_.Index_ + 1;
+                return G.Sys.GameManager_.LevelPlaylist_.Count_ == 0 ? 0 : G.Sys.GameManager_.LevelPlaylist_.Index_ + 1;
             else
                 return currentMapInsertIndex;
         }

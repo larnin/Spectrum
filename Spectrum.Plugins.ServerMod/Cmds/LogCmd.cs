@@ -87,7 +87,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         {
             if (logCount == 0)
                 return;
-            if (Regex.Match(Command, @"^(?:\[[^\]]*\])*\!log").Success)  //checks for `!log` preceded by 0 or more tags.
+            if (Regex.Match(Command, @"^(?:\[[^\]]*\])*([\!\%])\1?log").Success)  //checks for `!log` preceded by 0 or more tags.
                 return;  // don't log the !log command. makes things too confusing and hard to use.
 
             // finds the number of color tags and closing tags, then adds to the beginning/end to make sure they match
@@ -214,8 +214,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     }
     class CmdSettingLocalHostCommand : CmdSettingBool
     {
-        public override string FileId { get; } = "localHostCmd";
-        public override string SettingsId { get; } = "localHostCommand";
+        public override string FileId { get; } = "localHostCommand";
+        public override string SettingsId { get; } = "localHostCmd";
 
         public override string DisplayName { get; } = "Host Command Visibility";
         public override string HelpShort { get; } = "Whether host command use should only be displayed to the host.";
@@ -225,8 +225,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     }
     class CmdSettingLocalHostResults : CmdSettingBool
     {
-        public override string FileId { get; } = "localHostRes";
-        public override string SettingsId { get; } = "localHostResults";
+        public override string FileId { get; } = "localHostResults";
+        public override string SettingsId { get; } = "localHostRes";
 
         public override string DisplayName { get; } = "Host Results Visibility";
         public override string HelpShort { get; } = "Whether host command results should only be displayed to the host.";
@@ -236,8 +236,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     }
     class CmdSettingLocalClientCommand : CmdSettingBool
     {
-        public override string FileId { get; } = "localClientCmd";
-        public override string SettingsId { get; } = "localClientCommand";
+        public override string FileId { get; } = "localClientCommand";
+        public override string SettingsId { get; } = "localClientCmd";
 
         public override string DisplayName { get; } = "Client Command Visibility";
         public override string HelpShort { get; } = "Whether client command use should only be displayed to the client.";
@@ -247,8 +247,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     }
     class CmdSettingLocalClientResults : CmdSettingBool
     {
-        public override string FileId { get; } = "localClientRes";
-        public override string SettingsId { get; } = "localClientResults";
+        public override string FileId { get; } = "localClientResults";
+        public override string SettingsId { get; } = "localClientRes";
 
         public override string DisplayName { get; } = "Client Results Visibility";
         public override string HelpShort { get; } = "Whether client command results should only be displayed to the client.";

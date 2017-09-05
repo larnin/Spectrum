@@ -1,8 +1,11 @@
 ﻿using Events;
+using Events.ChatLog;
+using Events.Network;
 using Events.Server;
 using Events.ServerToClient;
 using Spectrum.Plugins.ServerMod.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,10 +30,42 @@ namespace Spectrum.Plugins.ServerMod
             needsReplication = new List<string>();
         }
 
-        public void Setup()
+        public int RemoveEventListeners()
         {
             ChatLog chatLog = ChatLog.Instance_;
             PrivateUtilities.removeParticularSubscriber<WelcomeClient.Data>(chatLog);
+            PrivateUtilities.removeParticularSubscriber<SetServerChat.Data>(chatLog);
+            var chatInputV2s = PrivateUtilities.getComponents<ChatInputV2>();
+            PrivateUtilities.removeParticularSubscribers<SetServerChat.Data, ChatInputV2>(chatInputV2s);
+            return chatInputV2s.Count;
+        }
+
+        IEnumerator RemoveEventListenersCoroutine()
+        {
+            var count = 0;
+            while (count == 0)
+            {
+                count = RemoveEventListeners();
+                if (count == 0)
+                    yield return new WaitForSeconds(0.1f);
+            }
+            yield break;
+        }
+
+        public void Setup()
+        {
+            RemoveEventListeners();
+
+            ServerInitialized.Subscribe(data =>
+            {
+                Clear();
+                G.Sys.GameManager_.StartCoroutine(RemoveEventListenersCoroutine());
+            });
+            ConnectedToServer.Subscribe(data =>
+            {
+                Clear();
+            });
+            
             WelcomeClient.Subscribe(data =>
             {
                 ReplicatePersonal(data.client_);
@@ -40,6 +75,55 @@ namespace Spectrum.Plugins.ServerMod
                 personalChatBuffers.Remove(GeneralUtilities.getUniquePlayerString(data.player_));
                 needsReplication.Remove(GeneralUtilities.getUniquePlayerString(data.player_));
             });
+            // fix remote logs
+            SetServerChat.Subscribe(data =>
+            {
+                GeneralUtilities.testFunc(() =>
+                {
+                    RemoveEventListeners();
+
+                    AddRemoteLog(data.chatText_);
+                });
+            });
+        }
+
+        public void AddRemoteLog(string remoteLog)
+        {
+            var localClient = GeneralUtilities.localClient();
+            if (localClient == null)
+            {
+                Clear();
+                AddPublic(remoteLog);
+                ChatLog.SetLog(remoteLog);
+                G.Sys.GameManager_.StartCoroutine(RemoveEventListenersCoroutine());
+                return;
+            }
+
+            var localNetworkPlayer = localClient.NetworkPlayer_;
+            var personalBuffer = GetPersonalBuffer(localNetworkPlayer);
+
+            List<DiffLine> publicDiff = DiffLine.GetDiffLines(publicChatBuffer);
+            List<DiffLine> personalDiff = DiffLine.GetDiffLines(publicChatBuffer);
+
+            string[] remoteLogArray = System.Text.RegularExpressions.Regex.Split(remoteLog, $"\r\n|\n|\r");
+
+            DiffLine.ExecuteDiff(publicDiff, remoteLogArray);
+
+            DiffLine.ExecuteDiff(personalDiff, personalBuffer);
+            DiffLine.ExecuteDiff(personalDiff, remoteLogArray);
+
+            string publicLog = DiffLine.DiffLinesToString(publicDiff);
+            string personalLog = DiffLine.DiffLinesToString(personalDiff);
+
+            publicChatBuffer.Clear();
+            AddPublic(publicLog);
+
+            personalBuffer.Clear();
+            AddPersonalNoAddLocal(localNetworkPlayer, personalLog);
+
+            ChatLog.SetLog(personalLog);
+            foreach (var chatInput in PrivateUtilities.getComponents<ChatInputV2>())
+                PrivateUtilities.callPrivateMethod(chatInput, "OnEventSetServerChat", new SetServerChat.Data(personalLog));
         }
 
         public CircularBuffer<string> GetPersonalBuffer(NetworkPlayer p)
@@ -63,7 +147,7 @@ namespace Spectrum.Plugins.ServerMod
             {
                 if (text.Length > 0)
                 {
-                    publicChatBuffer.Add(message);
+                    publicChatBuffer.Add(text);
                     foreach (var personalBuffer in personalChatBuffers.Values)
                     {
                         personalBuffer.Add(text);
@@ -75,7 +159,20 @@ namespace Spectrum.Plugins.ServerMod
         public void AddPersonal(NetworkPlayer p, string message)
         {
             if (p.IsLocal())
-                return;
+                StaticEvent<AddMessage.Data>.Broadcast(new AddMessage.Data(message));
+            var personalBuffer = GetPersonalBuffer(p);
+            string[] array = message.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.None);
+            foreach (string text in array)
+            {
+                if (text.Length > 0)
+                {
+                    personalBuffer.Add(text);
+                }
+            }
+        }
+
+        public void AddPersonalNoAddLocal(NetworkPlayer p, string message)
+        {
             var personalBuffer = GetPersonalBuffer(p);
             string[] array = message.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.None);
             foreach (string text in array)
@@ -156,6 +253,133 @@ namespace Spectrum.Plugins.ServerMod
             publicChatBuffer.Clear();
             personalChatBuffers.Clear();
             needsReplication.Clear();
+        }
+    }
+    public class DiffLine
+    {
+        public string Original;
+        public List<string> New;
+        public bool Remove = false;
+        public DiffLine()
+        {
+            Original = string.Empty;
+            New = new List<string>();
+        }
+        public DiffLine(string original)
+        {
+            Original = original;
+            New = new List<string>();
+        }
+
+        public static List<DiffLine> GetDiffLines(IEnumerable<string> lines)
+        {
+            List<DiffLine> personalDiff = new List<DiffLine>();
+            foreach (string line in lines)
+            {
+                personalDiff.Add(new DiffLine(line));
+            }
+            personalDiff.Add(new DiffLine());
+            return personalDiff;
+        }
+
+        public static void ExecuteDiff(List<DiffLine> personalDiff, IEnumerable<string> linesInput)
+        {
+            List<string> lines = new List<string>(linesInput);
+            lines.Add(string.Empty);
+            int currentDiffLineIndex = 0;
+            foreach (string line in lines)
+            {
+                if (currentDiffLineIndex >= personalDiff.Count)
+                    currentDiffLineIndex = personalDiff.Count - 1;
+                DiffLine currentDiffLine = personalDiff[currentDiffLineIndex];
+                if (currentDiffLine.Original != line)
+                {
+                    int foundInnerIndex = -1;
+                    for (int indexInner = currentDiffLineIndex + 1; indexInner < personalDiff.Count; indexInner++)
+                    {
+                        DiffLine currentDiffLineInner = personalDiff[indexInner];
+                        if (currentDiffLineInner.Original.TrimEnd() == line.TrimEnd())
+                        {
+                            foundInnerIndex = indexInner;
+                            break;
+                        }
+                    }
+                    if (foundInnerIndex != -1)
+                    {
+                        for (int indexInner = foundInnerIndex; indexInner >= currentDiffLineIndex; indexInner--)
+                        {
+                            personalDiff[indexInner].Remove = true;
+                        }
+                        currentDiffLineIndex = foundInnerIndex + 1;
+                    }
+                    else
+                    {
+                        currentDiffLine.New.Add(line);
+                    }
+                }
+                else
+                {
+                    currentDiffLineIndex++;
+                }
+            }
+        }
+
+        public static List<string> DiffLinesToList(List<DiffLine> lines)
+        {
+            List<string> newList = new List<string>();
+            foreach (DiffLine diffLine in lines)
+            {
+                foreach (string line in diffLine.New)
+                    newList.Add(line);
+                if (!diffLine.Remove)
+                    newList.Add(diffLine.Original);
+            }
+            return newList;
+        }
+
+        public static string DiffLinesToString(List<DiffLine> lines)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (string value in DiffLinesToList(lines))
+            {
+                stringBuilder.AppendLine(value);
+            }
+            int length = Environment.NewLine.Length;
+            if (stringBuilder.Length > length)
+            {
+                stringBuilder.Length -= length;
+            }
+            return stringBuilder.ToString();
+        }
+
+        public static List<string> DiffLinesToListInfo(List<DiffLine> lines)
+        {
+            List<string> newList = new List<string>();
+            foreach (DiffLine diffLine in lines)
+            {
+                foreach (string line in diffLine.New)
+                    newList.Add("+ " + line);
+                if (!diffLine.Remove)
+                    newList.Add("| " + diffLine.Original);
+                else
+                    newList.Add("- " + diffLine.Original);
+            }
+            return newList;
+        }
+
+        public static string DiffLinesToStringInfo(List<DiffLine> lines)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (string value in DiffLinesToListInfo(lines))
+            {
+                stringBuilder.AppendLine(value);
+            }
+            int length = Environment.NewLine.Length;
+            if (stringBuilder.Length > length)
+            {
+                stringBuilder.Length -= length;
+            }
+            return stringBuilder.ToString();
         }
     }
 }

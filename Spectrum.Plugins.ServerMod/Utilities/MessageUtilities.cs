@@ -116,6 +116,11 @@ namespace Spectrum.Plugins.ServerMod.Utilities
         {
             return messageOptionStack.Pop();
         }
+        public static void popMessageOptions(int count)
+        {
+            for (int i = 0; i < count; i++)
+                messageOptionStack.Pop();
+        }
         public static MessageState computeMessageState()
         {
             MessageState state = new MessageState();
@@ -140,13 +145,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             if (currentState.forPlayer)
             {
                 // slightly blue text for local-only messages
-                if (currentState.player.IsLocal_)
-                    StaticEvent<AddMessage.Data>.Broadcast(new AddMessage.Data((message).Colorize("[70AAAA]")));
-                else
-                {
-                    Entry.Instance.chatReplicationManager.AddPersonal(currentState.player.NetworkPlayer_, (message).Colorize("[70AAAA]"));
-                    Entry.Instance.chatReplicationManager.MarkForReplication(currentState.player.NetworkPlayer_);
-                }
+                Entry.Instance.chatReplicationManager.AddPersonal(currentState.player.NetworkPlayer_, (message).Colorize("[70AAAA]"));
+                Entry.Instance.chatReplicationManager.MarkForReplication(currentState.player.NetworkPlayer_);
                 if (currentState.log != null)
                     currentState.log.Add((message).Colorize("[70AAAA]"));
             }
