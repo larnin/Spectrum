@@ -182,6 +182,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             public override string name { get { return "vote"; } }
             public override PermType perm { get { return PermType.ALL; } }
             public override bool canUseAsClient { get { return false; } }
+            public override bool alwaysShowChat { get; } = true;
 
             public VoteHandler parent;
 
@@ -363,7 +364,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         if (votes.Contains(playerVoteId))
                         {
-                            MessageUtilities.sendMessage(p, $"{p.Username_} has already voted to skip {G.Sys.GameManager_.LevelName_}.");
+                            MessageUtilities.sendMessage($"{p.Username_} has already voted to skip {G.Sys.GameManager_.LevelName_}.");
                             return;
                         }
                         votes.Add(playerVoteId);
@@ -406,7 +407,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         if (votes.Contains(playerVoteId))
                         {
-                            MessageUtilities.sendMessage(p, $"{p.Username_} has already voted to stop the countdown.");
+                            MessageUtilities.sendMessage($"{p.Username_} has already voted to stop the countdown.");
                             return;
                         }
                         votes.Add(playerVoteId);
@@ -556,11 +557,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         if (count > 10)
                         {
-                            MessageUtilities.sendMessage(p, newMessage + $"and {count - 10} more unvoted.");
+                            MessageUtilities.sendMessage($"{p.Username_} unvoted for {newMessage} and {count - 10} more.");
                         }
                         else
                         {
-                            MessageUtilities.sendMessage(p, newMessage + "unvoted.");
+                            MessageUtilities.sendMessage($"{p.Username_} unvoted for {newMessage}.");
                         }
                     }
 
@@ -580,11 +581,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         if (count > 10)
                         {
-                            MessageUtilities.sendMessage(p, newMessage + $"and {count - 10} more voted.");
+                            MessageUtilities.sendMessage($"{p.Username_} voted for {newMessage} and {count - 10} more.");
                         }
                         else
                         {
-                            MessageUtilities.sendMessage(p, newMessage + "voted.");
+                            MessageUtilities.sendMessage($"{p.Username_} voted for {newMessage}.");
                         }
                     }
 

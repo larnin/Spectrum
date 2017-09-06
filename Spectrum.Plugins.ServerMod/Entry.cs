@@ -286,7 +286,7 @@ namespace Spectrum.Plugins.ServerMod
             MessageStateOptionLog cmdLog = new MessageStateOptionLog(new List<string>());
             MessageUtilities.pushMessageOption(cmdLog);
 
-            if (LogCmd.localHostResults)
+            if (LogCmd.localClientResults)
                 MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(client));
             else
                 MessageUtilities.pushMessageOption(new MessageStateOptionPlayer());
@@ -313,7 +313,7 @@ namespace Spectrum.Plugins.ServerMod
 
             MessageUtilities.popMessageOptions();
 
-            bool renderToPublic = commandInfo.forceVisible || !LogCmd.localHostResults;
+            bool renderToPublic = commandInfo.forceVisible || !LogCmd.localClientResults;
 
             if (renderToPublic)
                 MessageUtilities.pushMessageOption(new MessageStateOptionPlayer());

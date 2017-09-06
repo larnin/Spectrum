@@ -103,25 +103,27 @@ namespace Spectrum.Plugins.ServerMod
             var personalBuffer = GetPersonalBuffer(localNetworkPlayer);
 
             List<DiffLine> publicDiff = DiffLine.GetDiffLines(publicChatBuffer);
-            List<DiffLine> personalDiff = DiffLine.GetDiffLines(publicChatBuffer);
 
             string[] remoteLogArray = System.Text.RegularExpressions.Regex.Split(remoteLog, $"\r\n|\n|\r");
 
             DiffLine.ExecuteDiff(publicDiff, remoteLogArray);
 
-            DiffLine.ExecuteDiff(personalDiff, personalBuffer);
-            DiffLine.ExecuteDiff(personalDiff, remoteLogArray);
-
             string publicLog = DiffLine.DiffLinesToString(publicDiff);
+
+            List<DiffLine> personalDiff = publicDiff; //DiffLine.GetDiffLines(DiffLine.DiffLinesToList(publicDiff));
+
+            DiffLine.ExecuteDiff(personalDiff, personalBuffer, true, true);
+            
             string personalLog = DiffLine.DiffLinesToString(personalDiff);
 
-            Console.WriteLine("Diff:\n" + DiffLine.DiffLinesToStringInfo(personalDiff));
-
             publicChatBuffer.Clear();
-            AddPublic(publicLog);
+            AddPublicNoPersonal(publicLog);
 
             personalBuffer.Clear();
             AddPersonalNoAddLocal(localNetworkPlayer, personalLog);
+
+            Console.WriteLine("\n\n Public Diff:\n" + DiffLine.DiffLinesToStringInfo(publicDiff));
+            Console.WriteLine("\n Personal Diff:\n" + DiffLine.DiffLinesToStringInfo(personalDiff));
 
             ChatLog.SetLog(personalLog);
             foreach (var chatInput in PrivateUtilities.getComponents<ChatInputV2>())
@@ -154,6 +156,18 @@ namespace Spectrum.Plugins.ServerMod
                     {
                         personalBuffer.Add(text);
                     }
+                }
+            }
+        }
+
+        public void AddPublicNoPersonal(string message)
+        {
+            string[] array = message.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.None);
+            foreach (string text in array)
+            {
+                if (text.Length > 0)
+                {
+                    publicChatBuffer.Add(text);
                 }
             }
         }
@@ -288,8 +302,14 @@ namespace Spectrum.Plugins.ServerMod
 
         public static void ExecuteDiff(List<DiffLine> personalDiff, IEnumerable<string> linesInput)
         {
+            ExecuteDiff(personalDiff, linesInput, false, false);
+        }
+
+        public static void ExecuteDiff(List<DiffLine> personalDiff, IEnumerable<string> linesInput, bool addOnly, bool addFirst)
+        {
             List<string> lines = new List<string>(linesInput);
             lines.Add(string.Empty);
+            int currentLineAddIndex = 0;
             int currentDiffLineIndex = 0;
             foreach (string line in lines)
             {
@@ -299,31 +319,38 @@ namespace Spectrum.Plugins.ServerMod
                 if (currentDiffLine.Original != line)
                 {
                     int foundInnerIndex = -1;
-                    for (int indexInner = currentDiffLineIndex + 1; indexInner < personalDiff.Count; indexInner++)
-                    {
-                        DiffLine currentDiffLineInner = personalDiff[indexInner];
-                        if (currentDiffLineInner.Original.TrimEnd() == line.TrimEnd())
+                    if (!addOnly)
+                        for (int indexInner = currentDiffLineIndex + 1; indexInner < personalDiff.Count; indexInner++)
                         {
-                            foundInnerIndex = indexInner;
-                            break;
+                            DiffLine currentDiffLineInner = personalDiff[indexInner];
+                            if (currentDiffLineInner.Original.TrimEnd() == line.TrimEnd())
+                            {
+                                foundInnerIndex = indexInner;
+                                break;
+                            }
                         }
-                    }
                     if (foundInnerIndex != -1)
                     {
-                        for (int indexInner = foundInnerIndex; indexInner >= currentDiffLineIndex; indexInner--)
+                        for (int indexInner = foundInnerIndex - 1; indexInner >= currentDiffLineIndex; indexInner--)
                         {
                             personalDiff[indexInner].Remove = true;
                         }
                         currentDiffLineIndex = foundInnerIndex + 1;
+                        currentLineAddIndex = 0;
                     }
                     else
                     {
-                        currentDiffLine.New.Add(line);
+                        if (addFirst)
+                            currentDiffLine.New.Insert(currentLineAddIndex, line);
+                        else
+                            currentDiffLine.New.Add(line);
+                        currentLineAddIndex++;
                     }
                 }
                 else
                 {
                     currentDiffLineIndex++;
+                    currentLineAddIndex = 0;
                 }
             }
         }
