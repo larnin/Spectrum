@@ -99,21 +99,17 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
+            string[] remoteLogArray = System.Text.RegularExpressions.Regex.Split(remoteLog, $"\r\n|\n|\r");
+
             var localNetworkPlayer = localClient.NetworkPlayer_;
             var personalBuffer = GetPersonalBuffer(localNetworkPlayer);
 
             List<DiffLine> publicDiff = DiffLine.GetDiffLines(publicChatBuffer);
-
-            string[] remoteLogArray = System.Text.RegularExpressions.Regex.Split(remoteLog, $"\r\n|\n|\r");
-
             DiffLine.ExecuteDiff(publicDiff, remoteLogArray);
-
             string publicLog = DiffLine.DiffLinesToString(publicDiff);
 
-            List<DiffLine> personalDiff = publicDiff; //DiffLine.GetDiffLines(DiffLine.DiffLinesToList(publicDiff));
-
-            DiffLine.ExecuteDiff(personalDiff, personalBuffer, true, true);
-            
+            List<DiffLine> personalDiff = publicDiff;
+            DiffLine.ExecuteDiff(personalDiff, personalBuffer, true, true);  // true, true: only add lines, add lines before any other previously added lines
             string personalLog = DiffLine.DiffLinesToString(personalDiff);
 
             publicChatBuffer.Clear();
@@ -121,9 +117,6 @@ namespace Spectrum.Plugins.ServerMod
 
             personalBuffer.Clear();
             AddPersonalNoAddLocal(localNetworkPlayer, personalLog);
-
-            Console.WriteLine("\n\n Public Diff:\n" + DiffLine.DiffLinesToStringInfo(publicDiff));
-            Console.WriteLine("\n Personal Diff:\n" + DiffLine.DiffLinesToStringInfo(personalDiff));
 
             ChatLog.SetLog(personalLog);
             foreach (var chatInput in PrivateUtilities.getComponents<ChatInputV2>())
