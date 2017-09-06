@@ -94,7 +94,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             {
                 logString += logValue + "\n";
             }
-            return logString.Substring(0, logString.Length - 1);
+            return logString.Length == 0 ? "" : logString.Substring(0, logString.Length - 1);
         }
     }
     static class MessageUtilities
@@ -115,6 +115,10 @@ namespace Spectrum.Plugins.ServerMod.Utilities
         public static MessageStateOption[] popMessageOptions()
         {
             return messageOptionStack.Pop();
+        }
+        public static void popAllMessageOptions()
+        {
+            popMessageOptions(messageOptionStack.Count);
         }
         public static void popMessageOptions(int count)
         {

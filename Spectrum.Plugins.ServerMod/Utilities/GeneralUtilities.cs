@@ -510,8 +510,9 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 {
                     resText = resText
                         .Replace("%STARS%", SteamworksUGC.GetWorkshopRatingText(workshopLevelInfo))
-                        .Replace("%STARSINT%", ((int)(workshopLevelInfo.voteScore_ / 0.2f)).ToString())
+                        .Replace("%STARSINT%", ((int)(workshopLevelInfo.voteScore_ / 0.2f + 0.5f)).ToString())
                         .Replace("%STARSDEC%", (workshopLevelInfo.voteScore_ / 0.2f).ToString("F2"))
+                        .Replace("%STARSPCT%", ((int)(workshopLevelInfo.voteScore_*100f)).ToString())
                         .Replace("%CREATED%", GeneralUtilities.ConvertFromUnixTimestamp(workshopLevelInfo.timeCreated_).ToString("d", CultureInfo.CurrentCulture))
                         .Replace("%UPDATED%", GeneralUtilities.ConvertFromUnixTimestamp(workshopLevelInfo.timeUpdated_).ToString("d", CultureInfo.CurrentCulture));
                 }
@@ -519,8 +520,9 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 {
                     resText = resText
                         .Replace("%STARS%", "None")
-                        .Replace("%STARSINT%", "X")
+                        .Replace("%STARSINT%", "X") 
                         .Replace("%STARSDEC%", "X")
+                        .Replace("%STARSPCT%", "X")
                         .Replace("%CREATED%", "")
                         .Replace("%UPDATED%", "");
                 }

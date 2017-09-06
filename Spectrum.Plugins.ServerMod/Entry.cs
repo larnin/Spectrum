@@ -238,7 +238,7 @@ namespace Spectrum.Plugins.ServerMod
             if (renderToPublic)
                 MessageUtilities.popMessageOptions();
             LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
-            MessageUtilities.popMessageOptions();
+            MessageUtilities.popAllMessageOptions();
         }
 
         private void Chat_MessageReceived(string author, string message, ChatMessage.Data original)
@@ -269,7 +269,7 @@ namespace Spectrum.Plugins.ServerMod
             var client = GeneralUtilities.clientFromName(author);
             if (client == null)
             {
-                Console.WriteLine("Error: client can't be found");
+                Console.WriteLine($"Error: client can't be found for name: {author}");
                 return;
             }
 
@@ -322,7 +322,7 @@ namespace Spectrum.Plugins.ServerMod
                 MessageUtilities.popMessageOptions();
             chatReplicationManager.ReplicateNeeded();
             LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
-            MessageUtilities.popMessageOptions();
+            MessageUtilities.popAllMessageOptions();
         }
 
         private void exec(Cmd c, ClientPlayerInfo p, string message)
