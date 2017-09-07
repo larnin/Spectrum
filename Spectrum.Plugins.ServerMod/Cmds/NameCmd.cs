@@ -9,7 +9,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     {
         public override string name { get { return "name"; } }
         public override PermType perm { get { return PermType.LOCAL; } }
-        public override bool canUseAsClient { get { return true; } }
+        public override bool canUseLocal { get { return true; } }
 
         public override void help(ClientPlayerInfo p)
         {

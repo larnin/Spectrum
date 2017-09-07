@@ -16,7 +16,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         }
         public override string name { get { return "level"; } }
         public override PermType perm { get { return PermType.ALL; } }
-        public override bool canUseAsClient { get { return true; } }
+        public override bool canUseLocal { get { return true; } }
 
         public override CmdSetting[] settings { get; } =
         {

@@ -221,7 +221,7 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
-            if (commandInfo.local && !cmd.canUseAsClient && cmd.perm != PermType.LOCAL)
+            if (commandInfo.local && !cmd.canUseLocal && cmd.perm != PermType.LOCAL)
             {
                 MessageUtilities.sendMessage(client, "You can't use that command as client");
                 LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());

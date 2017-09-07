@@ -61,7 +61,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override string name { get { return "autospec"; } }
         public override PermType perm { get { return autoSpecAllowPlayers ? PermType.ALL : PermType.LOCAL; } }
-        public override bool canUseAsClient { get { return true; } }
+        public override bool canUseLocal { get { return true; } }
 
         public override CmdSetting[] settings { get; } =
         {

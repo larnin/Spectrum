@@ -7,7 +7,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     {
         public override string name { get { return "help"; } }
         public override PermType perm { get { return PermType.ALL; } }
-        public override bool canUseAsClient { get { return true; } }
+        public override bool canUseLocal { get { return true; } }
 
         public override void help(ClientPlayerInfo p)
         {
@@ -52,7 +52,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 var allowed = showAll;
                 if (playerIsLocal)
                 {
-                    if (c.perm == PermType.LOCAL || c.canUseAsClient)
+                    if (c.perm == PermType.LOCAL || c.canUseLocal)
                     {
                         allowed = true;
                     }
@@ -78,7 +78,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     if (c.perm == PermType.HOST)
                         list += "(H)";
 
-                    if (p.IsLocal_ && (c.perm == PermType.LOCAL || c.canUseAsClient))
+                    if (p.IsLocal_ && (c.perm == PermType.LOCAL || c.canUseLocal))
                         list += "(L)";
 
                     list += ", ";   

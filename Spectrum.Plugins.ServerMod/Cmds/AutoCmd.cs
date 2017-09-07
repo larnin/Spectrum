@@ -65,7 +65,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override string name { get { return "auto"; } }
         public override PermType perm { get { return PermType.HOST; } }
-        public override bool canUseAsClient { get { return false; } }
+        public override bool canUseLocal { get { return false; } }
 
         bool didFinish = false;
 

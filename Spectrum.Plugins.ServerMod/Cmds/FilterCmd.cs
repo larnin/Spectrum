@@ -21,7 +21,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override string name { get { return "filter"; } }
         public override PermType perm { get { return PermType.HOST; } }
-        public override bool canUseAsClient { get { return true; } }
+        public override bool canUseLocal { get { return true; } }
 
         public override CmdSetting[] settings { get; } =
         {

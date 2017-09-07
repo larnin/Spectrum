@@ -15,7 +15,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     {
         public abstract string name { get; }
         public abstract PermType perm { get; }
-        public abstract bool canUseAsClient { get; }
+        public abstract bool canUseLocal { get; }
 
         public virtual bool showChatPublic(ClientPlayerInfo p)
         {
