@@ -79,7 +79,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             var currentPlaylist = playlist.Playlist_;
             for (int id = id1; id <= id2; id++)
             {
-                currentPlaylist.RemoveAt(index + id + 1);
+                currentPlaylist.RemoveAt(index + id1 + 1);
             }
 
             G.Sys.GameManager_.LevelPlaylist_.Clear();
