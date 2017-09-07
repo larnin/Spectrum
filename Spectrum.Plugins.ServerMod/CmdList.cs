@@ -31,7 +31,7 @@ namespace Spectrum.Plugins.ServerMod
                 new PlaylistCmd(),
                 new PlayersCmd(),
                 new PluginCmd(),
-                new RestartCmd(),
+                // new RestartCmd(),
                 new RipCmd(),
                 new SaveCmd(),
                 new ScoresCmd(),
