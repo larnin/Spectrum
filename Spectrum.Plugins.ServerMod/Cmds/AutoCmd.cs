@@ -180,8 +180,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             if (!voting)
                 return;
 
-            var author = GeneralUtilities.ExtractMessageAuthor(message);
-            var text = GeneralUtilities.ExtractMessageBody(message);
+            var author = MessageUtilities.ExtractMessageAuthor(message);
+            var text = MessageUtilities.ExtractMessageBody(message);
             var value = 0;
             if (!int.TryParse(text, out value))
                 return;

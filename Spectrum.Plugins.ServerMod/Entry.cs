@@ -112,10 +112,10 @@ namespace Spectrum.Plugins.ServerMod
                 GeneralUtilities.testFunc(() =>
                 {
                     sendingClientToAllClientsMessage = true;
-                    var author = GeneralUtilities.ExtractMessageAuthor(data.message_);
+                    var author = MessageUtilities.ExtractMessageAuthor(data.message_);
                     
-                    if (!GeneralUtilities.IsSystemMessage(data.message_) && !sendingLocalChat && !string.IsNullOrEmpty(author))
-                        Chat_MessageReceived(author, GeneralUtilities.ExtractMessageBody(data.message_), data);
+                    if (!MessageUtilities.IsSystemMessage(data.message_) && !sendingLocalChat && !string.IsNullOrEmpty(author))
+                        Chat_MessageReceived(author, MessageUtilities.ExtractMessageBody(data.message_), data);
                     else
                     {
                         addMessageFromRemote(data);

@@ -352,43 +352,6 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             return levelList;
         }
 
-        static string authorMessageRegex = @"^\[[A-Fa-f0-9]{6}\](.+?)\[[A-Fa-f0-9]{6}\]: (.*)$";
-        //take from newer spectrum version (stable can't use messages events)
-        public static string ExtractMessageAuthor(string message)
-        {
-            try
-            {
-                Match msgMatch = Regex.Match(message, authorMessageRegex);
-
-                return NGUIText.StripSymbols(msgMatch.Groups[1].Value).Trim();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine($"Error getting player name: {e}");
-                return string.Empty;
-            }
-        }
-
-        public static bool IsSystemMessage(string message)
-        {
-            return message.Contains("[c]") && message.Contains("[/c]");
-        }
-
-        public static string ExtractMessageBody(string message)
-        {
-            try
-            {
-                Match msgMatch = Regex.Match(message, authorMessageRegex);
-                if (!msgMatch.Success)
-                    return string.Empty;
-                return msgMatch.Groups[2].Value;
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-
         public static DateTime ConvertFromUnixTimestamp(double timestamp)
         {
             DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
