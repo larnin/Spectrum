@@ -18,6 +18,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void use(ClientPlayerInfo p, string message)
         {
+            if (string.IsNullOrEmpty(message))
+            {
+                help(p);
+                return;
+            }
 
             var client = GeneralUtilities.localClient();
             if (client == null)
