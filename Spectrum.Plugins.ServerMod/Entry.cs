@@ -291,7 +291,11 @@ namespace Spectrum.Plugins.ServerMod
                         Console.WriteLine("Error: Local client can't be found !");
                         return;
                     }
-                    string usedCmd = MessageUtilities.closeTags(client.GetChatName()) + " used " + logMessage;
+                    string usedCmd;
+                    if (cmd == null || cmd.perm != PermType.ALL)
+                        usedCmd = MessageUtilities.closeTags(client.GetChatName()) + " tried to use " + logMessage;
+                    else
+                        usedCmd = MessageUtilities.closeTags(client.GetChatName()) + " used " + logMessage;
                     MessageUtilities.sendMessage(hostClient, usedCmd);
                 }
             }

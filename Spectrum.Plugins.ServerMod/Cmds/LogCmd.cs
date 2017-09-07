@@ -51,6 +51,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override CmdSetting[] settings { get; } =
         {
             new CmdSettingLogCount(),
+            new CmdSettingShowHostCommand(),
+            new CmdSettingShowHostResults(),
             new CmdSettingLocalHostCommand(),
             new CmdSettingLocalHostResults(),
             new CmdSettingLocalClientCommand(),
@@ -233,8 +235,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
     }
     class CmdSettingShowHostResults : CmdSettingBool
     {
-        public override string FileId { get; } = "showHostCommand";
-        public override string SettingsId { get; } = "showHostCmd";
+        public override string FileId { get; } = "showHostResults";
+        public override string SettingsId { get; } = "showHostRes";
 
         public override string DisplayName { get; } = "Show All Command Results to Host";
         public override string HelpShort { get; } = "Whether the host should see the results of all commands used.";
