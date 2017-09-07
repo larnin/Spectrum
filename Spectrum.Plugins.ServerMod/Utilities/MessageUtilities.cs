@@ -207,11 +207,11 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             foreach (string[] tagPair in tagPairs)
             {
                 var openingTagMatches = Regex.Matches(input, tagPair[0]);
-                var closingTagMatches = Regex.Matches(input, tagPair[3]);
+                var closingTagMatches = Regex.Matches(input, tagPair[2]);
                 for (int i = 0; i < closingTagMatches.Count - openingTagMatches.Count; i++)
                     logName = tagPair[1] + logName;
                 for (int i = 0; i < openingTagMatches.Count - closingTagMatches.Count; i++)
-                    logName += tagPair[4];
+                    logName += tagPair[3];
             }
             return logName;
         }
