@@ -283,10 +283,25 @@ namespace Spectrum.Plugins.ServerMod
                 logMessage = $"[00FFFF]{message}[-]";
                 MessageUtilities.sendMessage(client, logMessage);
                 chatReplicationManager.MarkAllForReplication();
+                if (LogCmd.showHostAllCommands)
+                {
+                    var hostClient = GeneralUtilities.localClient();
+                    if (hostClient == null)
+                    {
+                        Console.WriteLine("Error: Local client can't be found !");
+                        return;
+                    }
+                    string usedCmd = MessageUtilities.closeTags(client.GetChatName()) + " used " + logMessage;
+                    MessageUtilities.sendMessage(hostClient, usedCmd);
+                }
             }
 
             MessageStateOptionLog cmdLog = new MessageStateOptionLog(new List<string>());
             MessageUtilities.pushMessageOption(cmdLog);
+
+
+            if (LogCmd.showHostAllResults)
+                MessageUtilities.pushMessageOption(new MessageStateOptionShowToHost(true));
 
             if (LogCmd.localClientResults)
                 MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(client));
@@ -299,7 +314,7 @@ namespace Spectrum.Plugins.ServerMod
                 chatReplicationManager.MarkForReplication(client.NetworkPlayer_);
                 chatReplicationManager.ReplicateNeeded();
                 LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
-                MessageUtilities.popMessageOptions(2);
+                MessageUtilities.popAllMessageOptions();
                 return;
             }
 
@@ -309,40 +324,20 @@ namespace Spectrum.Plugins.ServerMod
                 chatReplicationManager.MarkForReplication(client.NetworkPlayer_);
                 chatReplicationManager.ReplicateNeeded();
                 LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
-                MessageUtilities.popMessageOptions(2);
+                MessageUtilities.popAllMessageOptions();
                 return;
             }
 
             MessageUtilities.popMessageOptions();
-
-            bool renderToPublic = commandInfo.forceVisible || !LogCmd.localClientResults;
-
-            if (renderToPublic)
+            
+            if (commandInfo.forceVisible || !LogCmd.localClientResults)
                 MessageUtilities.pushMessageOption(new MessageStateOptionPlayer());
+
             exec(cmd, client, commandInfo.commandParams);
-            if (renderToPublic)
-                MessageUtilities.popMessageOptions();
+
             chatReplicationManager.ReplicateNeeded();
             LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
             MessageUtilities.popAllMessageOptions();
-            if (LogCmd.showHostAllCommands || LogCmd.showHostAllResults)
-            {
-                var hostClient = GeneralUtilities.localClient();
-                if (hostClient == null)
-                {
-                    Console.WriteLine("Error: Local client can't be found !");
-                    return;
-                }
-                if (LogCmd.showHostAllCommands)
-                {
-                    string usedCmd = MessageUtilities.closeTags(client.GetChatName()) + " used " + logMessage;
-                    MessageUtilities.sendMessage(hostClient, usedCmd);
-                }
-                if (LogCmd.showHostAllResults)
-                {
-                    MessageUtilities.sendMessage(hostClient, cmdLog.GetLogString());
-                }
-            }
         }
 
         private void exec(Cmd c, ClientPlayerInfo p, string message)

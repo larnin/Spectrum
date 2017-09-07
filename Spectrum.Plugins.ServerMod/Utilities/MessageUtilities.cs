@@ -13,28 +13,26 @@ namespace Spectrum.Plugins.ServerMod.Utilities
     {
         public List<string> log = null;
         public bool shown = true;
+        public bool showToHost = false;
         public bool forPlayer = false;
         public ClientPlayerInfo player = null;
-        public MessageState(bool shown, ClientPlayerInfo player)
-        {
-            this.shown = shown;
-            forPlayer = player != null;
-            this.player = player;
-        }
-        public MessageState(bool shown)
-        {
-            this.shown = shown;
-        }
-        public MessageState(ClientPlayerInfo player)
-        {
-            forPlayer = player != null;
-            this.player = player;
-        }
         public MessageState() { }
     }
     abstract class MessageStateOption
     {
         public abstract void Apply(MessageState messageState);
+    }
+    class MessageStateOptionShowToHost : MessageStateOption
+    {
+        bool showToHost;
+        public MessageStateOptionShowToHost(bool showToHost)
+        {
+            this.showToHost = showToHost;
+        }
+        public override void Apply(MessageState messageState)
+        {
+            messageState.showToHost = showToHost;
+        }
     }
     class MessageStateOptionShown : MessageStateOption
     {
@@ -153,6 +151,16 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 Entry.Instance.chatReplicationManager.MarkForReplication(currentState.player.NetworkPlayer_);
                 if (currentState.log != null)
                     currentState.log.Add((message).Colorize("[70AAAA]"));
+                if (currentState.showToHost && !currentState.player.IsLocal_)
+                {
+                    var client = GeneralUtilities.localClient();
+                    if (client == null)
+                    {
+                        Console.WriteLine("Error: Local client can't be found (sendMessage) !");
+                        return;
+                    }
+                    Entry.Instance.chatReplicationManager.AddPersonal(client.NetworkPlayer_, (message).Colorize("[70AAAA]"));
+                }
             }
             else
             {
