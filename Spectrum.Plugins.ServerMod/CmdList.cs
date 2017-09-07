@@ -34,6 +34,7 @@ namespace Spectrum.Plugins.ServerMod
                 // new RestartCmd(),
                 new RipCmd(),
                 new SaveCmd(),
+                new SayCmd(),
                 new ScoresCmd(),
                 new ServerCmd(),
                 new SettingsCmd(),

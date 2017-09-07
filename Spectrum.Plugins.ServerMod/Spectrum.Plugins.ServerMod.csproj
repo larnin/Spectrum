@@ -63,6 +63,7 @@
     <Compile Include="Cmds\LoadCmd.cs" />
     <Compile Include="Cmds\KickCmd.cs" />
     <Compile Include="Cmds\FilterCmd.cs" />
+    <Compile Include="Cmds\SayCmd.cs" />
     <Compile Include="Cmds\PlaylistCmd.cs" />
     <Compile Include="Cmds\PluginCmd.cs" />
     <Compile Include="Cmds\Cmd.cs" />
