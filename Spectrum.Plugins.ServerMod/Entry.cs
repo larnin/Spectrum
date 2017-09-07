@@ -107,7 +107,7 @@ namespace Spectrum.Plugins.ServerMod
                     chatReplicationManager.AddPublic(data.message_);
             });
 
-            Events.ClientToAllClients.ChatMessage.Subscribe(data =>
+            ChatMessage.Subscribe(data =>
             {
                 GeneralUtilities.testFunc(() =>
                 {
@@ -364,7 +364,9 @@ namespace Spectrum.Plugins.ServerMod
 
         private void printClient()
         {
+            var optionsList = MessageUtilities.popAllMessageOptions();
             MessageUtilities.sendMessage(GeneralUtilities.localClient().GetChatName() + " Version " + PluginVersion);
+            MessageUtilities.pushMessageOptionsList(optionsList);
         }
 
         private static void reloadSettingsFromFile()

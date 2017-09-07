@@ -110,18 +110,25 @@ namespace Spectrum.Plugins.ServerMod.Utilities
         {
             messageOptionStack.Push(stateOptions.ToArray<MessageStateOption>());
         }
+        public static void pushMessageOptionsList(List<MessageStateOption[]> stateOptionsList)
+        {
+            foreach (var stateOptions in stateOptionsList)
+                messageOptionStack.Push(stateOptions.ToArray<MessageStateOption>());
+        }
         public static MessageStateOption[] popMessageOptions()
         {
             return messageOptionStack.Pop();
         }
-        public static void popAllMessageOptions()
+        public static List<MessageStateOption[]> popAllMessageOptions()
         {
-            popMessageOptions(messageOptionStack.Count);
+            return popMessageOptions(messageOptionStack.Count);
         }
-        public static void popMessageOptions(int count)
+        public static List<MessageStateOption[]> popMessageOptions(int count)
         {
+            List<MessageStateOption[]> options = new List<MessageStateOption[]>();
             for (int i = 0; i < count; i++)
-                messageOptionStack.Pop();
+                options.Insert(0, messageOptionStack.Pop());
+            return options;
         }
         public static MessageState computeMessageState()
         {
