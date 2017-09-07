@@ -24,8 +24,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             var affects = "";
             foreach (ClientPlayerInfo client in GeneralUtilities.getClientsBySearch(message))
             {
-                affects += $"{ client.Username_} ({client.Index_})";
-                if (GeneralUtilities.isHost() && client.IsLocal_)
+                affects += $"{client.Index_}: {client.Username_}";
+                if ((GeneralUtilities.isHost() && client.IsLocal_) || (!GeneralUtilities.isHost() && client.Index_ == 0))
                     affects += " (HOST)";
                 affects += ", ";
             }
