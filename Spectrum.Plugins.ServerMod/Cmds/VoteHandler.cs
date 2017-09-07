@@ -182,7 +182,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             public override string name { get { return "vote"; } }
             public override PermType perm { get { return PermType.ALL; } }
             public override bool canUseAsClient { get { return false; } }
-            public override bool alwaysShowChat { get; } = true;
+
+            public override bool showChatPublic(ClientPlayerInfo p)
+            {
+                return true;
+            }
 
             public VoteHandler parent;
 

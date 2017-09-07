@@ -94,7 +94,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string name { get { return "play"; } }
         public override PermType perm { get { return (playersCanAddMap || useVote) ? PermType.ALL : PermType.HOST; } }
         public override bool canUseAsClient { get { return false; } }
-        public override bool alwaysShowChatClient { get; } = true;
+
+        public override bool showChatPublic(ClientPlayerInfo p)
+        {
+            return !p.IsLocal_;
+        }
 
         public override CmdSetting[] settings { get; } =
         {

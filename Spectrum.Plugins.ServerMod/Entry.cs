@@ -159,8 +159,10 @@ namespace Spectrum.Plugins.ServerMod
 
             string logMessage = "";
 
+            var client = GeneralUtilities.localClient();
+
             var showRegularChat = (!commandInfo.local && !GeneralUtilities.isHost()) || !LogCmd.localHostCommands
-                || !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat);
+                || !commandInfo.matches || commandInfo.forceVisible || (cmd != null && client != null && cmd.showChatPublic(client));
             if (showRegularChat)
             {
                 sendingLocalChat = true;
@@ -170,7 +172,6 @@ namespace Spectrum.Plugins.ServerMod
                 logMessage = message;
             }
 
-            var client = GeneralUtilities.localClient();
             if (client == null)
             {
                 Console.WriteLine("Error: Local client can't be found !");
@@ -254,11 +255,13 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
-            string logMessage = "";
-
             Cmd cmd = commandInfo.matches ? Cmd.all.getCommand(commandInfo.commandName) : null;
 
-            var showRegularChat = !LogCmd.localClientCommands || !commandInfo.matches || commandInfo.forceVisible || (cmd != null && cmd.alwaysShowChat) || commandInfo.local;
+            string logMessage = "";
+            
+            var client = GeneralUtilities.clientFromName(author);
+
+            var showRegularChat = !LogCmd.localClientCommands || !commandInfo.matches || commandInfo.forceVisible || (cmd != null && client != null && cmd.showChatPublic(client)) || commandInfo.local;
             if (showRegularChat)
             {
                 chatReplicationManager.AddPublic(original.message_);
@@ -266,7 +269,6 @@ namespace Spectrum.Plugins.ServerMod
                 logMessage = message;
             }
 
-            var client = GeneralUtilities.clientFromName(author);
             if (client == null)
             {
                 Console.WriteLine($"Error: client can't be found for name: {author}");

@@ -16,8 +16,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public abstract string name { get; }
         public abstract PermType perm { get; }
         public abstract bool canUseAsClient { get; }
-        public virtual bool alwaysShowChat { get; } = false;
-        public virtual bool alwaysShowChatClient { get { return alwaysShowChat; } }
+
+        public virtual bool showChatPublic(ClientPlayerInfo p)
+        {
+            return false;
+        }
 
         public abstract void help(ClientPlayerInfo p);
         public abstract void use(ClientPlayerInfo p, string message);

@@ -11,7 +11,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string name { get { return "win"; } }
         public override PermType perm { get { return PermType.ALL; } }
         public override bool canUseAsClient { get { return true; } }
-        public override bool alwaysShowChat { get; } = true;
+
+        public override bool showChatPublic(ClientPlayerInfo p)
+        {
+            return true;
+        }
 
         public override CmdSetting[] settings { get; } =
         {
