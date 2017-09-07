@@ -72,6 +72,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             get { return Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingLocalHostResults>().Value; }
             set { Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingLocalHostResults>().Value = value; }
         }
+        static public bool showHostAllCommands
+        {
+            get { return Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingShowHostCommand>().Value; }
+            set { Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingShowHostCommand>().Value = value; }
+        }
+        static public bool showHostAllResults
+        {
+            get { return Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingShowHostResults>().Value; }
+            set { Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingShowHostResults>().Value = value; }
+        }
         static public bool localClientCommands
         {
             get { return Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingLocalClientCommand>().Value; }
@@ -91,13 +101,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 return;  // don't log the !log command. makes things too confusing and hard to use.
 
             // finds the number of color tags and closing tags, then adds to the beginning/end to make sure they match
-            string logName = FromPlayer.GetChatName();
-            var colorTagMatches = Regex.Matches(logName, @"\[[A-Za-z0-9]{6}\]");
-            var closingTagMatches = Regex.Matches(logName, @"\[\-\]");
-            for (int i = 0; i < closingTagMatches.Count - colorTagMatches.Count; i++)
-                logName = "[FFFFFF]" + logName;
-            for (int i = 0; i < colorTagMatches.Count - closingTagMatches.Count; i++)
-                logName += "[-]";
+            string logName = MessageUtilities.closeTags(FromPlayer.GetChatName());
 
             Logs.Insert(0, new CmdLog(logName, Command, Results));
             while (Logs.Count > logCount)
@@ -192,8 +196,10 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             string pageTxt = $"[FFFFFF]Page {page}/{playerSpecificLogs.Count/pageSize} for {originalPlayerName}";
             if (showDetailedLogs)
                 pageTxt += $", index {indexStart} to {indexEnd} (detailed)[-]\n";
+            else if (playerName == ".*")
+                pageTxt += " (!log <page> <index> for detailed logs)[-]";
             else
-                pageTxt += " (add index for detailed logs)[-]";
+                pageTxt += " (!log [player] <page> <index> for detailed logs)[-]";
             MessageUtilities.sendMessage(p, pageTxt);
             if (response.Length == 0)
                 MessageUtilities.sendMessage(p, "No logs found.");
@@ -209,8 +215,33 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string DisplayName { get; } = "!log Log Count";
         public override string HelpShort { get; } = "!log: How many logs to keep";
         public override string HelpLong { get { return HelpShort; } }
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
 
         public override int Default { get; } = 100;
+    }
+    class CmdSettingShowHostCommand : CmdSettingBool
+    {
+        public override string FileId { get; } = "showHostCommand";
+        public override string SettingsId { get; } = "showHostCmd";
+
+        public override string DisplayName { get; } = "Show All Commands to Host";
+        public override string HelpShort { get; } = "Whether the host should see all commands used.";
+        public override string HelpLong { get { return HelpShort; } }
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
+
+        public override bool Default { get; } = true;
+    }
+    class CmdSettingShowHostResults : CmdSettingBool
+    {
+        public override string FileId { get; } = "showHostCommand";
+        public override string SettingsId { get; } = "showHostCmd";
+
+        public override string DisplayName { get; } = "Show All Command Results to Host";
+        public override string HelpShort { get; } = "Whether the host should see the results of all commands used.";
+        public override string HelpLong { get { return HelpShort; } }
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
+
+        public override bool Default { get; } = false;
     }
     class CmdSettingLocalHostCommand : CmdSettingBool
     {
@@ -220,6 +251,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string DisplayName { get; } = "Host Command Visibility";
         public override string HelpShort { get; } = "Whether host command use should only be displayed to the host.";
         public override string HelpLong { get { return HelpShort; } }
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
 
         public override bool Default { get; } = true;
     }
@@ -231,6 +263,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string DisplayName { get; } = "Host Results Visibility";
         public override string HelpShort { get; } = "Whether host command results should only be displayed to the host.";
         public override string HelpLong { get { return HelpShort; } }
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
 
         public override bool Default { get; } = true;
     }
@@ -242,6 +275,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string DisplayName { get; } = "Client Command Visibility";
         public override string HelpShort { get; } = "Whether client command use should only be displayed to the client.";
         public override string HelpLong { get { return HelpShort + " If this is on, commands might flicker for other clients as the command is erased from their screen."; } }
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
 
         public override bool Default { get; } = false;
     }
@@ -253,6 +287,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string DisplayName { get; } = "Client Results Visibility";
         public override string HelpShort { get; } = "Whether client command results should only be displayed to the client.";
         public override string HelpLong { get { return HelpShort; } }
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
 
         public override bool Default { get; } = true;
     }

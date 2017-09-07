@@ -73,12 +73,12 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 }
                 if (allowed)
                 {
-                    list += cName;
+                    list += "!" + cName;
 
                     if (c.perm == PermType.HOST)
                         list += "(H)";
 
-                    if (c.perm == PermType.LOCAL || c.canUseAsClient)
+                    if (p.IsLocal_ && (c.perm == PermType.LOCAL || c.canUseAsClient))
                         list += "(L)";
 
                     list += ", ";   

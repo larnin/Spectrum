@@ -11,10 +11,12 @@ namespace Spectrum.Plugins.ServerMod
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
             new ReleaseNotice("C.8.0.0",
-                "• Local and host commands, and their results, now show up only to you.\n" +
+                "• Commands, and their results, now show up only to you or the player that used it.\n" +
                 "• [70AAAA]Blue colored text[-] is local text.\n" +
+                "• Commands from clients will still show to all players.\n" +
                 "• Use " + GeneralUtilities.formatCmd("!!command") + " or " + GeneralUtilities.formatCmd("%%command") + " to show the command and its results to everyone.\n" +
-                "• Some commands, such as " + GeneralUtilities.formatCmd("!rip") + " will always show to everyone."
+                "• Some commands, such as " + GeneralUtilities.formatCmd("!rip") + " will always show to everyone.\n" +
+                "• !log shows command logs."
                 )
         };
     }

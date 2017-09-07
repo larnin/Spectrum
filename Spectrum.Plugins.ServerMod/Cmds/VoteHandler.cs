@@ -358,6 +358,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     List<string> votes = parent.votes[voteType];
 
                     int value = votes.Count;
+                    
 
                     string playerVoteId = GeneralUtilities.getUniquePlayerString(p);
                     if (voteValue)
@@ -370,7 +371,14 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         votes.Add(playerVoteId);
                         value = votes.Count;
                         MessageUtilities.sendMessage($"{p.Username_} voted to skip {G.Sys.GameManager_.LevelName_}.");
-                        MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) < voteThresholds[voteType])
+                            MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        else
+                        {
+                            votedSkip = true;
+                            MessageUtilities.sendMessage("Vote skip succeeded! Skipping map...");
+                            parent.advanceLevel();
+                        }
                     }
                     else
                     {
@@ -379,15 +387,6 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         MessageUtilities.sendMessage($"{p.Username_} unvoted to skip {G.Sys.GameManager_.LevelName_}.");
                         MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                         return;
-                    }
-
-
-
-                    if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) >= voteThresholds[voteType])
-                    {
-                        votedSkip = true;
-                        MessageUtilities.sendMessage("Vote skip succeeded! Skipping map...");
-                        parent.advanceLevel();
                     }
                 }
                 else if (voteType == "stop")
@@ -413,7 +412,15 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         votes.Add(playerVoteId);
                         value = votes.Count;
                         MessageUtilities.sendMessage($"{p.Username_} voted to stop the countdown.");
-                        MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) < voteThresholds[voteType])
+                            MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
+                        else
+                        {
+                            parent.votes[voteType].Clear();
+                            CountdownCmd command = parent.list.getCommand<CountdownCmd>("countdown");
+                            command.stopCountdown();
+                            MessageUtilities.sendMessage("Vote stop succeeded! Stopping countdown...");
+                        }
                     }
                     else
                     {
@@ -422,14 +429,6 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         MessageUtilities.sendMessage($"{p.Username_} unvoted to stop the countdown.");
                         MessageUtilities.sendMessage($"Votes: {value}/{Convert.ToInt32(Math.Ceiling(voteThresholds[voteType] * Convert.ToDouble(numPlayers)))}");
                         return;
-                    }
-
-                    if (Convert.ToDouble(value) / Convert.ToDouble(numPlayers) >= voteThresholds[voteType])
-                    {
-                        parent.votes[voteType].Clear();
-                        CountdownCmd command = parent.list.getCommand<CountdownCmd>("countdown");
-                        command.stopCountdown();
-                        MessageUtilities.sendMessage("Vote stop succeeded! Stopping countdown...");
                     }
                 }
                 else if (voteType == "play")

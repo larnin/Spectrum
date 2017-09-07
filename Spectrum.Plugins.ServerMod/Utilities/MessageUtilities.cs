@@ -186,6 +186,28 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             popMessageOptions();
         }
 
+        static string[][] tagPairs = new string[][]
+        {
+            new string[] {@"\[[A-Za-z0-9]{6}\]", "[FFFFFF]", @"\[\-\]", "[-]"},
+            new string[] {@"\[b\]", "[b]", @"\[\/b\]", "[/b]"},
+            new string[] {@"\[i\]", "[i]", @"\[\/i\]", "[/i]"},
+            new string[] {@"\[u\]", "[u]", @"\[\/u\]", "[/u]"},
+        };
+        public static string closeTags(string input)
+        {
+            string logName = input;
+            foreach (string[] tagPair in tagPairs)
+            {
+                var openingTagMatches = Regex.Matches(input, tagPair[0]);
+                var closingTagMatches = Regex.Matches(input, tagPair[3]);
+                for (int i = 0; i < closingTagMatches.Count - openingTagMatches.Count; i++)
+                    logName = tagPair[1] + logName;
+                for (int i = 0; i < openingTagMatches.Count - closingTagMatches.Count; i++)
+                    logName += tagPair[4];
+            }
+            return logName;
+        }
+
         public static CommandInfo getCommandInfo(string input)
         {
             var match = Regex.Match(input, @"^(([!%])\2?)(\S+)\s*(.*)\s*$");

@@ -88,6 +88,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         {
             this.list = list;
 
+            Events.Network.ConnectedToServer.Subscribe(data =>
+            {
+                autoMode = false;
+            });
+
             Events.Network.ServerInitialized.Subscribe(data =>
             {
                 autoMode = false;

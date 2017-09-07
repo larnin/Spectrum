@@ -270,7 +270,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             {
                 playlist.filters.Insert(0, new LevelFilterMode(GameModeID.Sprint));
                 if (shouldSave)
-                    LevelFilterLast.SaveFilter(p, "-m sprint " + filters);
+                    LevelFilterLast.SaveFilter(p, filters + "-m sprint");
             }
             else if (shouldSave)
                 LevelFilterLast.SaveFilter(p, filters);

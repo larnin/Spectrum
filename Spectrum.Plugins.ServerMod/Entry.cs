@@ -114,7 +114,7 @@ namespace Spectrum.Plugins.ServerMod
                     sendingClientToAllClientsMessage = true;
                     var author = GeneralUtilities.ExtractMessageAuthor(data.message_);
                     
-                    if (!GeneralUtilities.IsSystemMessage(data.message_) && !sendingLocalChat)
+                    if (!GeneralUtilities.IsSystemMessage(data.message_) && !sendingLocalChat && !string.IsNullOrEmpty(author))
                         Chat_MessageReceived(author, GeneralUtilities.ExtractMessageBody(data.message_), data);
                     else
                     {
@@ -278,9 +278,9 @@ namespace Spectrum.Plugins.ServerMod
 
             if (!showRegularChat)
             {
-                MessageUtilities.sendMessage(client, $"[00FFFF]{message}[-]");
-                chatReplicationManager.MarkAllForReplication();
                 logMessage = $"[00FFFF]{message}[-]";
+                MessageUtilities.sendMessage(client, logMessage);
+                chatReplicationManager.MarkAllForReplication();
             }
 
             MessageStateOptionLog cmdLog = new MessageStateOptionLog(new List<string>());
@@ -323,6 +323,24 @@ namespace Spectrum.Plugins.ServerMod
             chatReplicationManager.ReplicateNeeded();
             LogCmd.AddLog(client, logMessage, cmdLog.GetLogString());
             MessageUtilities.popAllMessageOptions();
+            if (LogCmd.showHostAllCommands || LogCmd.showHostAllResults)
+            {
+                var hostClient = GeneralUtilities.localClient();
+                if (hostClient == null)
+                {
+                    Console.WriteLine("Error: Local client can't be found !");
+                    return;
+                }
+                if (LogCmd.showHostAllCommands)
+                {
+                    string usedCmd = MessageUtilities.closeTags(client.GetChatName()) + " used " + logMessage;
+                    MessageUtilities.sendMessage(hostClient, usedCmd);
+                }
+                if (LogCmd.showHostAllResults)
+                {
+                    MessageUtilities.sendMessage(hostClient, cmdLog.GetLogString());
+                }
+            }
         }
 
         private void exec(Cmd c, ClientPlayerInfo p, string message)
