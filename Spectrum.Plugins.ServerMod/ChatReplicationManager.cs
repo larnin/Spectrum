@@ -84,11 +84,11 @@ namespace Spectrum.Plugins.ServerMod
                 DebugLog($"Client {data.client_.guid} joined, replicating logs.");
                 ReplicatePersonal(data.client_);
             });
-            RemovePlayerFromClientList.Subscribe(data =>
+            ClientDisconnected.Subscribe(data =>
             {
-                DebugLog($"Client {data.player_.guid} left, removing logs.");
-                personalChatBuffers.Remove(GeneralUtilities.getUniquePlayerString(data.player_));
-                needsReplication.Remove(GeneralUtilities.getUniquePlayerString(data.player_));
+                DebugLog($"Client {data.networkPlayer_.guid} left, removing logs.");
+                personalChatBuffers.Remove(GeneralUtilities.getUniquePlayerString(data.networkPlayer_));
+                needsReplication.Remove(GeneralUtilities.getUniquePlayerString(data.networkPlayer_));
             });
             // fix remote logs
             SetServerChat.Subscribe(data =>
