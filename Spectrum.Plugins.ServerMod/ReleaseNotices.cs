@@ -10,6 +10,9 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.0.2",
+                "• Fixed ServerMod<->ServerMod chat log replication"
+            ),
             new ReleaseNotice("C.8.0.1",
                 "• Added [FFFFFF]!server mod <setting>[-] which makes it easier to modify settings\n" +
                 "• Various bugfixes"
