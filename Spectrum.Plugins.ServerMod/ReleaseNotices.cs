@@ -10,6 +10,10 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.0.1",
+                "• Added [FFFFFF]!server mod <setting>[-] which makes it easier to modify settings\n" +
+                "• Various bugfixes"
+            ),
             new ReleaseNotice("C.8.0.0",
                 "• Commands, and their results, now show up only to you or the player that used it.\n" +
                 "• [70AAAA]Blue colored text[-] is local text.\n" +
