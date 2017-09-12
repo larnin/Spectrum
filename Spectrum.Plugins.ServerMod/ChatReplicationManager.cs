@@ -335,22 +335,22 @@ namespace Spectrum.Plugins.ServerMod
                 if (currentDiffLine.Original != line)
                 {
                     int foundInnerIndex = -1;
-                    if (!addOnly)
-                        for (int indexInner = currentDiffLineIndex + 1; indexInner < personalDiff.Count; indexInner++)
+                    for (int indexInner = currentDiffLineIndex + 1; indexInner < personalDiff.Count; indexInner++)
+                    {
+                        DiffLine currentDiffLineInner = personalDiff[indexInner];
+                        if (currentDiffLineInner.Original.TrimEnd() == line.TrimEnd())
                         {
-                            DiffLine currentDiffLineInner = personalDiff[indexInner];
-                            if (currentDiffLineInner.Original.TrimEnd() == line.TrimEnd())
-                            {
-                                foundInnerIndex = indexInner;
-                                break;
-                            }
+                            foundInnerIndex = indexInner;
+                            break;
                         }
+                    }
                     if (foundInnerIndex != -1)
                     {
-                        for (int indexInner = foundInnerIndex - 1; indexInner >= currentDiffLineIndex; indexInner--)
-                        {
-                            personalDiff[indexInner].Remove = true;
-                        }
+                        if (!addOnly)
+                            for (int indexInner = foundInnerIndex - 1; indexInner >= currentDiffLineIndex; indexInner--)
+                            {
+                                personalDiff[indexInner].Remove = true;
+                            }
                         currentDiffLineIndex = foundInnerIndex + 1;
                         currentLineAddIndex = 0;
                     }
