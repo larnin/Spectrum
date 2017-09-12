@@ -136,6 +136,30 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     }
                     MessageUtilities.sendMessage(p, $"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
                 }
+                else if (setting == "mod")
+                {
+                    UIExInputGeneric<string> inputBox = UIExInputGeneric<string>.current_;
+                    string settingHelp = msgMatch.Groups[2].Value.ToLower();
+                    if (settingHelp.Length == 0)
+                    {
+                        help(p);
+                        return;
+                    }
+                    foreach (Cmd Command in Cmd.all.list())
+                    {
+                        foreach (CmdSetting Setting in Command.settings)
+                        {
+                            if (Setting.SettingsId.ToLower() == settingHelp.ToLower())
+                            {
+                                MessageUtilities.sendMessage(p, $"Editing settings {Setting.SettingsId}");
+                                inputBox.Value_ = $"!settings {Setting.SettingsId} {Setting.ValueTypeless}";
+                                PrivateUtilities.callPrivateMethod(inputBox, "StartEdit");
+                                return;
+                            }
+                        }
+                    }
+                    MessageUtilities.sendMessage(p, $"Could not find setting by the name of `{msgMatch.Groups[2].Value}`");
+                }
                 else if (setting == "reset")
                 {
                     string settingHelp = msgMatch.Groups[2].Value.ToLower();
