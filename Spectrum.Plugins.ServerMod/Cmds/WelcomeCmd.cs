@@ -73,6 +73,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     if (current.NetworkPlayer_ == client)
                     {
                         MessageUtilities.sendMessage(current, welcomeMessage.Replace("%USERNAME%", current.Username_));
+                        Entry.Instance.chatReplicationManager.ReplicateNeeded();
                         return;
                     }
                 }
