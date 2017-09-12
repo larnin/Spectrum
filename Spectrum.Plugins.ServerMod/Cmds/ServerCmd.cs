@@ -81,7 +81,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         {
             G.Sys.NetworkingManager_.serverTitle_ = name;
             updateMaster();
-            MessageUtilities.sendMessage("The server is renamed to " + name);
+            MessageUtilities.sendMessage("The server is renamed to " + GUtils.TruncateWithEllipsis(name, 23));
         }
 
         private void updateMaster()

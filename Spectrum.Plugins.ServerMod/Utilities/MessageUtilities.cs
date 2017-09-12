@@ -12,6 +12,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
     class MessageState
     {
         public List<string> log = null;
+        public bool closeTags = true;
         public bool shown = true;
         public bool showToHost = false;
         public bool forPlayer = false;
@@ -21,6 +22,18 @@ namespace Spectrum.Plugins.ServerMod.Utilities
     abstract class MessageStateOption
     {
         public abstract void Apply(MessageState messageState);
+    }
+    class MessageStateOptionCloseTags : MessageStateOption
+    {
+        bool closeTags;
+        public MessageStateOptionCloseTags(bool closeTags)
+        {
+            this.closeTags = closeTags;
+        }
+        public override void Apply(MessageState messageState)
+        {
+            messageState.closeTags = closeTags;
+        }
     }
     class MessageStateOptionShowToHost : MessageStateOption
     {
@@ -151,6 +164,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 currentState = null;
                 return;
             }
+            if (currentState.closeTags)
+                message = closeTags(message);
             if (currentState.forPlayer)
             {
                 // slightly blue text for local-only messages
