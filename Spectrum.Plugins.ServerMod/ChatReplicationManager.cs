@@ -32,6 +32,7 @@ namespace Spectrum.Plugins.ServerMod
 
         public int RemoveEventListeners()
         {
+            DebugLog("Removing event listeners...");
             ChatLog chatLog = ChatLog.Instance_;
             PrivateUtilities.removeParticularSubscriber<WelcomeClient.Data>(chatLog);
             PrivateUtilities.removeParticularSubscriber<SetServerChat.Data>(chatLog);
@@ -47,9 +48,19 @@ namespace Spectrum.Plugins.ServerMod
             {
                 count = RemoveEventListeners();
                 if (count == 0)
+                {
                     yield return new WaitForSeconds(0.1f);
+                    DebugLog("Cannot find ChatInputV2 to remove event listeners from...");
+                }
             }
+            DebugLog($"Removed event listeners from {count} ChatInputV2s.");
             yield break;
+        }
+
+        public void DebugLog(string txt)
+        {
+            if (Cmds.LogCmd.debugChatLogs)
+                Console.WriteLine(txt);
         }
 
         public void Setup()
@@ -58,20 +69,24 @@ namespace Spectrum.Plugins.ServerMod
 
             ServerInitialized.Subscribe(data =>
             {
+                DebugLog("Started server, clearing logs and removing event listeners.");
                 Clear();
                 G.Sys.GameManager_.StartCoroutine(RemoveEventListenersCoroutine());
             });
             ConnectedToServer.Subscribe(data =>
             {
+                DebugLog("Connected to server, clearing logs and removing event listeners.");
                 Clear();
             });
             
             WelcomeClient.Subscribe(data =>
             {
+                DebugLog($"Client {data.client_.guid} joined, replicating logs.");
                 ReplicatePersonal(data.client_);
             });
             RemovePlayerFromClientList.Subscribe(data =>
             {
+                DebugLog($"Client {data.player_.guid} left, removing logs.");
                 personalChatBuffers.Remove(GeneralUtilities.getUniquePlayerString(data.player_));
                 needsReplication.Remove(GeneralUtilities.getUniquePlayerString(data.player_));
             });
@@ -80,6 +95,7 @@ namespace Spectrum.Plugins.ServerMod
             {
                 GeneralUtilities.testFunc(() =>
                 {
+                    DebugLog($"Replicating remote log from SetServerChat...");
                     RemoveEventListeners();
 
                     AddRemoteLog(data.chatText_);
@@ -89,15 +105,18 @@ namespace Spectrum.Plugins.ServerMod
 
         public void AddRemoteLog(string remoteLog)
         {
+            DebugLog("Adding remote log...");
             var localClient = GeneralUtilities.localClient();
             if (localClient == null)
             {
+                DebugLog("No local client. Clearing logs and setting logs directly.");
                 Clear();
                 AddPublic(remoteLog);
                 ChatLog.SetLog(remoteLog);
                 G.Sys.GameManager_.StartCoroutine(RemoveEventListenersCoroutine());
                 return;
             }
+            DebugLog("Adding logs from the server:");
 
             string[] remoteLogArray = System.Text.RegularExpressions.Regex.Split(remoteLog, $"\r\n|\n|\r");
 
@@ -108,6 +127,8 @@ namespace Spectrum.Plugins.ServerMod
             DiffLine.ExecuteDiff(publicDiff, remoteLogArray);
             string publicLog = DiffLine.DiffLinesToString(publicDiff);
 
+            DebugLog($"\nPublic diff:\n{DiffLine.DiffLinesToStringInfo(publicDiff)}");
+
             List<DiffLine> personalDiff = publicDiff;
             DiffLine.ExecuteDiff(personalDiff, personalBuffer, true, true);  // true, true: only add lines, add lines before any other previously added lines
             string personalLog = DiffLine.DiffLinesToString(personalDiff);
@@ -117,6 +138,8 @@ namespace Spectrum.Plugins.ServerMod
 
             personalBuffer.Clear();
             AddPersonalNoAddLocal(localNetworkPlayer, personalLog);
+
+            DebugLog($"\nFinal diff:\n{DiffLine.DiffLinesToStringInfo(personalDiff)}");
 
             ChatLog.SetLog(personalLog);
             foreach (var chatInput in PrivateUtilities.getComponents<ChatInputV2>())

@@ -57,6 +57,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             new CmdSettingLocalHostResults(),
             new CmdSettingLocalClientCommand(),
             new CmdSettingLocalClientResults(),
+            new CmdSettingDebugChatLogs(),
         };
 
         static public int logCount
@@ -93,6 +94,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         {
             get { return Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingLocalClientResults>().Value; }
             set { Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingLocalClientResults>().Value = value; }
+        }
+        static public bool debugChatLogs
+        {
+            get { return Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingDebugChatLogs>().Value; }
+            set { Cmd.all.getCommand<LogCmd>().getSetting<CmdSettingDebugChatLogs>().Value = value; }
         }
 
         public static void AddLog(ClientPlayerInfo FromPlayer, string Command, string Results)
@@ -292,5 +298,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.0.0");
 
         public override bool Default { get; } = true;
+    }
+    class CmdSettingDebugChatLogs : CmdSettingBool
+    {
+        public override string FileId { get; } = "debugChatLogs";
+        public override string SettingsId { get; } = "debugChatLogs";
+
+        public override string DisplayName { get; } = "Chat Log Debug Info";
+        public override string HelpShort { get; } = "Show chat log debug information in the console";
+        public override string HelpLong { get { return HelpShort; } }
+
+        public override bool Default { get; } = false;
     }
 }
