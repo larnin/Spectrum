@@ -47,10 +47,12 @@ namespace Spectrum.Plugins.ServerMod
             while (count == 0)
             {
                 count = RemoveEventListeners();
+                if (!GeneralUtilities.isOnline())
+                    DebugLog("Tried to remove event listeners, but not online. Not trying again.");
                 if (count == 0)
                 {
+                    DebugLog("Cannot find ChatInputV2 to remove event listeners from, trying again.");
                     yield return new WaitForSeconds(0.1f);
-                    DebugLog("Cannot find ChatInputV2 to remove event listeners from...");
                 }
             }
             DebugLog($"Removed event listeners from {count} ChatInputV2s.");
@@ -70,12 +72,6 @@ namespace Spectrum.Plugins.ServerMod
             ServerInitialized.Subscribe(data =>
             {
                 DebugLog("Started server, clearing logs and removing event listeners.");
-                Clear();
-                G.Sys.GameManager_.StartCoroutine(RemoveEventListenersCoroutine());
-            });
-            ConnectedToServer.Subscribe(data =>
-            {
-                DebugLog("Connected to server, clearing logs and removing event listeners.");
                 Clear();
             });
             
@@ -101,6 +97,17 @@ namespace Spectrum.Plugins.ServerMod
                     AddRemoteLog(data.chatText_);
                 });
             });
+            ConnectedToServer.Subscribe(data =>
+            {
+                DebugLog("Connected to server, clearing logs and removing event listeners.");
+                Clear();
+                G.Sys.GameManager_.StartCoroutine(RemoveEventListenersCoroutine());
+            });
+            StartMode.Subscribe(data =>
+            {
+                DebugLog("Started mode from server, removing event listeners.");
+                G.Sys.GameManager_.StartCoroutine(RemoveEventListenersCoroutine());
+            });
         }
 
         public void AddRemoteLog(string remoteLog)
@@ -122,6 +129,11 @@ namespace Spectrum.Plugins.ServerMod
 
             var localNetworkPlayer = localClient.NetworkPlayer_;
             var personalBuffer = GetPersonalBuffer(localNetworkPlayer);
+
+
+            DebugLog($"\nPublic log:\n{GetBufferString(publicChatBuffer)}");
+            DebugLog($"\nPersonal log:\n{GetBufferString(personalBuffer)}");
+            DebugLog($"\nRemote log:\n{remoteLog}");
 
             List<DiffLine> publicDiff = DiffLine.GetDiffLines(publicChatBuffer);
             DiffLine.ExecuteDiff(publicDiff, remoteLogArray);
