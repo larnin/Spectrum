@@ -224,7 +224,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                     }
                 }
             }
-            Console.WriteLine($"\nTested {count} DiffBranches");
+            if (Cmds.LogCmd.debugChatLogs)
+                Console.WriteLine($"\nTested {count} DiffBranches");
             return bestBranch;
         }
 
