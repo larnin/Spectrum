@@ -252,6 +252,7 @@ namespace Spectrum.Plugins.ServerMod
             if (!GeneralUtilities.isHost())
             {
                 addMessageFromRemote(original);
+                chatReplicationManager.AddPublic(original.message_);
                 return;
             }
 

@@ -195,7 +195,10 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                                 inputIndexNext = nextIndex + 1,
                             };
                             if (addBranch.BetterThan(bestBranch))
-                                currentBranches.Insert(0, addBranch);
+                                if (addBranch.inputIndexNext == inputLines.Count)
+                                    bestBranch = addBranch;
+                                else
+                                    currentBranches.Insert(branchIndex, addBranch);
                         }
                         else if (inputIndex != inputLines.Count - 1)
                         {
@@ -213,12 +216,15 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                                 inputIndexNext = inputIndex + 1,
                             };
                             if (addBranch.BetterThan(bestBranch))
-                                currentBranches.Insert(0, addBranch);
+                                if (addBranch.inputIndexNext == inputLines.Count)
+                                    bestBranch = addBranch;
+                                else
+                                    currentBranches.Insert(branchIndex, addBranch);
                         }
                     }
                 }
             }
-            Console.WriteLine($"Tested {count} DiffBranches");
+            Console.WriteLine($"\nTested {count} DiffBranches");
             return bestBranch;
         }
 
