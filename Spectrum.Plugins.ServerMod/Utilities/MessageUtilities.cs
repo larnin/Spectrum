@@ -245,8 +245,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             try
             {
                 Match msgMatch = Regex.Match(message, authorMessageRegex);
-
-                return NGUIText.StripSymbols(msgMatch.Groups[1].Value).Trim();
+                return msgMatch.Success ? msgMatch.Groups[1].Value : string.Empty;
             }
             catch (Exception e)
             {
@@ -265,9 +264,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             try
             {
                 Match msgMatch = Regex.Match(message, authorMessageRegex);
-                if (!msgMatch.Success)
-                    return string.Empty;
-                return msgMatch.Groups[2].Value;
+                return msgMatch.Success ? msgMatch.Groups[2].Value : string.Empty;
             }
             catch
             {
@@ -281,8 +278,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             if (!match.Success)
                 return new CommandInfo();
             else
-                return new CommandInfo(match.Groups[2].Value == "%", match.Groups[1].Value.Length == 2,
-                    match.Groups[3].Value, match.Groups[4].Value);
+                return new CommandInfo(match.Groups[2].Value == "%" || match.Groups[2].Value == "%%",
+                    match.Groups[1].Value.Length == 2, match.Groups[3].Value, match.Groups[4].Value);
         }
     }
     public class CommandInfo
