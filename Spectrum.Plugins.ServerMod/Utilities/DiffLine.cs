@@ -98,8 +98,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             public bool BetterThan(DiffBranch branch)
             {
                 return branch == null
-                    //|| cumulativeDeletions + cumulativeAdds < branch.cumulativeDeletions + branch.cumulativeAdds;
-                    //*
+                    || cumulativeDeletions + cumulativeAdds < branch.cumulativeDeletions + branch.cumulativeAdds;
+                    /*
                     || cumulativeDeletions < branch.cumulativeDeletions
                     || (cumulativeDeletions == branch.cumulativeDeletions
                         && cumulativeAdds < branch.cumulativeAdds);
