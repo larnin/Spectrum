@@ -16,6 +16,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             MessageUtilities.sendMessage(p, GeneralUtilities.formatCmd("!scores") + ": depending to the gamemode, it will show the current distances, times or points of players.");
         }
 
+        public static FinishType[] finishTypeValues = new FinishType[]
+        {
+            FinishType.Normal,
+            FinishType.None,
+            FinishType.DNF,
+            FinishType.Spectate,
+            FinishType.JoinedLate,
+            FinishType.LeavingLevel,
+            FinishType.ViewingReplay,
+        };
         public override void use(ClientPlayerInfo p, string message)
         {
             if(GeneralUtilities.isOnLobby())
@@ -28,25 +38,48 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             {
                 var methode = G.Sys.GameManager_.Mode_.GetType().GetMethod("GetSortedListOfModeInfos", BindingFlags.Instance | BindingFlags.NonPublic);
                 List<ModePlayerInfoBase> playersInfos = (List<ModePlayerInfoBase>)methode.Invoke(G.Sys.GameManager_.Mode_, new object[] { });
+                playersInfos.Sort((a, b) =>
+                {
+                    if (a.finishType_ == FinishType.Normal && b.finishType_ == FinishType.Normal)
+                    {
+                        double diff = a.modeData_ - b.modeData_;
+                        return diff < 0 ? -1 : diff > 0 ? 1 : 0;
+                    }
+                    else if (a.finishType_ == FinishType.None && b.finishType_ == FinishType.None)
+                    {
+                        if (a is TimeBasedModePlayerInfo)
+                        {
+                            double diff = ((TimeBasedModePlayerInfo)a).distanceToFinish_ - ((TimeBasedModePlayerInfo)b).distanceToFinish_;
+                            return diff < 0 ? -1 : diff > 0 ? 1 : 0;
+                        }
+                        else
+                        {
+                            double diff = a.modeData_ - b.modeData_;
+                            return diff < 0 ? -1 : diff > 0 ? 1 : 0;
+                        }
+                    }
+                    else
+                        return Array.IndexOf(finishTypeValues, a.finishType_) - Array.IndexOf(finishTypeValues, b.finishType_);
+                });
                 foreach(var pI in playersInfos)
                 {
                     string playerStr = pI.Name_ + " : ";
                     switch(pI.finishType_)
                     {
                         case FinishType.None:
-                            playerStr += textInfoOf(pI);
+                            playerStr += $"[FFFFFF]{textInfoOf(pI, false)}[-]";
                             break;
                         case FinishType.DNF:
-                            playerStr += "DNF";
+                            playerStr += "[FF2222]DNF[-]";
                             break;
                         case FinishType.JoinedLate:
-                            playerStr += "Joined late";
+                            playerStr += "[FFFF22]Joined late[-]";
                             break;
                         case FinishType.Normal:
-                            playerStr += "Finished";
+                            playerStr += $"[22FF22]Finished {textInfoOf(pI, true)}[-]";
                             break;
                         case FinishType.Spectate:
-                            playerStr += "Spectator";
+                            playerStr += "[88FF88]Spectator[-]";
                             break;
                         default:
                             playerStr += "None";
@@ -62,10 +95,13 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             }
         }
 
-        public string textInfoOf(ModePlayerInfoBase playerInfo)
+        public string textInfoOf(ModePlayerInfoBase playerInfo, bool isFinished)
         {
-            if(playerInfo is TimeBasedModePlayerInfo)
-                return ((int)((TimeBasedModePlayerInfo)playerInfo).distanceToFinish_).ToString() + "m";
+            if (playerInfo is TimeBasedModePlayerInfo)
+                if (isFinished)
+                    return GUtils.GetFormattedMS((double)playerInfo.modeData_);
+                else
+                    return ((int)((TimeBasedModePlayerInfo)playerInfo).distanceToFinish_).ToString() + "m";
             if(playerInfo is SoccerMode.SoccerModePlayerInfo)
                 return "Team " + ((SoccerMode.SoccerModePlayerInfo)playerInfo).team_.ID_ + " - score " + ((SoccerMode.SoccerModePlayerInfo)playerInfo).team_.points_;
             if(G.Sys.GameManager_.ModeID_ == GameModeID.ReverseTag)
