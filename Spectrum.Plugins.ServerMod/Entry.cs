@@ -38,7 +38,7 @@ namespace Spectrum.Plugins.ServerMod
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
             {
                 var author = Utilities.ExtractMessageAuthor(data.message_);
-                var steamName = G.Sys.SteamworksManager_.GetUserName().ToLower().Trim();
+                var steamName = SteamworksManager.GetUserName().ToLower().Trim();
                 var profileName = G.Sys.PlayerManager_.Current_.profile_.Name_.ToLower().Trim();
 
                 if (!Utilities.IsSystemMessage(data.message_) && (author.ToLower().Trim() != steamName && author.ToLower().Trim() != profileName))

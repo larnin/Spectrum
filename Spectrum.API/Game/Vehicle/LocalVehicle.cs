@@ -32,7 +32,7 @@ namespace Spectrum.API.Game.Vehicle
             {
                 UpdateObjectReferences();
                 if (CanOperateOnVehicle)
-                    return VehicleLogic.CarStats_.GetKilometersPerHour();
+                     return VehicleLogic.CarStats_.GetKilometersPerHour();
 
                 return 0f;
             }
@@ -240,9 +240,11 @@ namespace Spectrum.API.Game.Vehicle
                 var jets = Utilities.Utilities.GetPrivate<JetsGadget>(VehicleLogic.CarLogicLocal_, "jetsGadget_");
                 if (jets != null)
                 {
-                    foreach (var flame in jets.flames_)
+                    var flames = Utilities.Utilities.GetPrivate<JetFlame[]>(jets, "flames_");
+                        
+                    foreach (var flame in flames)
                     {
-                        flame.flame_.SetCustomColor(hexColor.ToColor());
+                        flame.SetCustomColor(hexColor.ToColor());
                     }
                 }
             }
@@ -288,9 +290,32 @@ namespace Spectrum.API.Game.Vehicle
             }
         }
 
+        public static void EnableInfectionVisuals()
+        {
+            VehicleLogic.ShowInfection(true);
+        }
+
+        public static void DisableInfectionVisuals()
+        {
+            VehicleLogic.ShowInfection(false);
+        }
+
+        public static void EnableInfiniteCooldown()
+        {
+            VehicleLogic.SetInfiniteCooldown(true);
+        }
+
+        public static void DisableInfiniteCooldown()
+        {
+            VehicleLogic.SetInfiniteCooldown(false);
+        }
+
         private static void UpdateObjectReferences()
         {
-            VehicleLogic = Utilities.Utilities.FindLocalCar().GetComponent<CarLogic>();
+            VehicleLogic = Utilities.Utilities.FindLocalCar()?.GetComponent<CarLogic>();
+
+            if (VehicleLogic == null)
+                VehicleLogic = Utilities.Utilities.FindLocalCarLogic();
         }
     }
 }

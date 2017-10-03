@@ -26,7 +26,7 @@ namespace Spectrum.API.Game.Network
 
                 var author = ExtractMessageAuthor(data.message_);
 
-                if (author != G.Sys.PlayerManager_.Current_.profile_.Name_ && !IsSystemMessage(data.message_))
+                if (author != G.Sys.GameManager_.GetOnlineProfileName(G.Sys.PlayerManager_.Current_.profile_.Index_) && !IsSystemMessage(data.message_))
                 {
                     var eventArgs = new ChatMessageEventArgs(author, ExtractMessageBody(data.message_));
                     MessageReceived?.Invoke(null, eventArgs);
@@ -64,7 +64,7 @@ namespace Spectrum.API.Game.Network
             ChatLog.ClearLog();
         }
 
-        private static string ExtractMessageAuthor(string message)
+        public static string ExtractMessageAuthor(string message)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace Spectrum.API.Game.Network
             }
         }
 
-        private static string ExtractMessageBody(string message)
+        public static string ExtractMessageBody(string message)
         {
             try
             {
