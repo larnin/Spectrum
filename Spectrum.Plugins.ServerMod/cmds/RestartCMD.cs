@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using Events.ClientToServer;
 
 namespace Spectrum.Plugins.ServerMod.cmds
 {
@@ -13,6 +14,32 @@ namespace Spectrum.Plugins.ServerMod.cmds
         public override string name { get { return "restart"; } }
         public override PermType perm { get { return PermType.ALL; } }
         public override bool canUseAsClient { get { return false; } }
+
+        public RestartCMD()
+        {
+            CompletedRequest.Subscribe(data =>
+            {
+                onRequest(data);
+            });
+        }
+
+        void onRequest(CompletedRequest.Data data)
+        {
+            Console.Out.WriteLine("Request :" + data.request_);
+
+            try
+            {
+                var server = G.Sys.GameManager_.GetComponent<ServerLogic>();
+                var client = server.GetType().GetMethod("GetClientInfo", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(server, new object[] { data.networkPlayer_, false });
+                if (client == null)
+                    Console.Out.WriteLine("Client null !");
+                else Console.Out.WriteLine("Current state " + client.GetType().GetField("state_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(client));
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
 
         public override void help(ClientPlayerInfo p)
         {
