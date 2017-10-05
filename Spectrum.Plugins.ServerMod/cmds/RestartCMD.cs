@@ -28,7 +28,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
             }
 
             var serverLogic = G.Sys.GameManager_.GetComponent<ServerLogic>();
-            Console.Out.WriteLine("" + serverLogic.GetType().GetField("waitingForClientsToSwitchLevels_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(serverLogic));
+            //Console.Out.WriteLine("waiting " + serverLogic.GetType().GetField("waitingForClientsToSwitchLevels_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(serverLogic));
 
             if (serverLogic == null)
             {
@@ -40,7 +40,8 @@ namespace Spectrum.Plugins.ServerMod.cmds
             
             foreach(var c in clients)
             {
-                var init = (bool)c.GetType().GetField("IsInitialized_", BindingFlags.Instance).GetValue(c);
+                //var init = (bool)c.GetType().GetProperty("IsInitialized_", BindingFlags.Public | BindingFlags.Instance).GetGetMethod().Invoke(c, null);
+                //Console.Out.WriteLine("init " + init);
                 if (p.NetworkPlayer_.Equals(c.GetType().GetField("networkPlayer_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(c)))
                 {
                     exec(serverLogic, c);
