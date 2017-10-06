@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using UnityEngine;
 
 namespace Spectrum.Plugins.ServerMod
 {
@@ -34,7 +35,7 @@ namespace Spectrum.Plugins.ServerMod
             return G.Sys.NetworkingManager_.IsServer_;
         }
 
-        public static void Shuffle<T>(this IList<T> list, Random rnd)
+        public static void Shuffle<T>(this IList<T> list, System.Random rnd)
         {
             for (var i = 0; i < list.Count; i++)
                 list.Swap(i, rnd.Next(i, list.Count));
@@ -72,6 +73,16 @@ namespace Spectrum.Plugins.ServerMod
             foreach(ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
             {
                 if (current.Index_ == id)
+                    return current;
+            }
+            return null;
+        }
+
+        public static ClientPlayerInfo clientFromNetworkPlayer(NetworkPlayer player)
+        {
+            foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
+            {
+                if (current.NetworkPlayer_ == player)
                     return current;
             }
             return null;

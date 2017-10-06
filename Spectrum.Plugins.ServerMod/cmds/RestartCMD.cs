@@ -30,10 +30,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
             try
             {
                 var server = G.Sys.GameManager_.GetComponent<ServerLogic>();
+                Console.Out.WriteLine("Name " + Utilities.clientFromNetworkPlayer(data.networkPlayer_).GetChatName());
                 var client = server.GetType().GetMethod("GetClientInfo", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(server, new object[] { data.networkPlayer_, false });
                 if (client == null)
                     Console.Out.WriteLine("Client null !");
                 else Console.Out.WriteLine("Current state " + client.GetType().GetField("state_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(client));
+                Console.Out.WriteLine((bool)server.GetType().GetMethod("HasModeStarted", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(server, new object[] {}));
             }
             catch(Exception e)
             {
