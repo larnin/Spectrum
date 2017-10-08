@@ -6,17 +6,22 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using Events.ClientToServer;
+using Events;
+using Events.ServerToClient;
 
 namespace Spectrum.Plugins.ServerMod.cmds
 {
     class RestartCMD : cmd
     {
+        List<NetworkPlayer> restartingPlayers;
+
         public override string name { get { return "restart"; } }
         public override PermType perm { get { return PermType.ALL; } }
         public override bool canUseAsClient { get { return false; } }
 
         public RestartCMD()
         {
+            restartingPlayers = new List<NetworkPlayer>();
             CompletedRequest.Subscribe(data =>
             {
                 onRequest(data);
@@ -36,11 +41,49 @@ namespace Spectrum.Plugins.ServerMod.cmds
                     Console.Out.WriteLine("Client null !");
                 else Console.Out.WriteLine("Current state " + client.GetType().GetField("state_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(client));
                 Console.Out.WriteLine((bool)server.GetType().GetMethod("HasModeStarted", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(server, new object[] {}));
+            
+
+                if(data.request_ == ServerRequest.SubmitGameModeInfo && restartingPlayers.Contains(data.networkPlayer_))
+                {
+                    restartingPlayers.Remove(data.networkPlayer_);
+                    Console.WriteLine("Player restarting !");
+
+                    G.Sys.GameManager_.StartCoroutine(startCoroutine(data.networkPlayer_));
+                    //StaticTargetedEvent<StartMode.Data>.Broadcast(data.networkPlayer_, new StartMode.Data(0, true));
+
+                    /*var mode = G.Sys.GameManager_.Mode_;
+                    if (mode == null)
+                    {
+                        Console.WriteLine("Game mode null");
+                        StaticTargetedEvent<StartMode.Data>.Broadcast(data.networkPlayer_, new StartMode.Data(0, true));
+                    }
+                    else
+                    {
+                        try
+                        {
+                            double startTime = (double)(mode.GetType().GetMethod("CalcStartTime", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(mode, new object[] { }));
+                            Console.WriteLine("Send time !");
+                            StaticTargetedEvent<StartMode.Data>.Broadcast(data.networkPlayer_, new StartMode.Data(startTime, true));
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine("Start time null !");
+                            Console.WriteLine(e);
+                        }
+                    }*/
+                }
+
             }
             catch(Exception e)
             {
                 Console.WriteLine(e);
             }
+        }
+
+        IEnumerator startCoroutine(NetworkPlayer player)
+        {
+            yield return new WaitForSeconds(1);
+            StaticTargetedEvent<StartMode.Data>.Broadcast(player, new StartMode.Data(0, true));
         }
 
         public override void help(ClientPlayerInfo p)
@@ -53,6 +96,12 @@ namespace Spectrum.Plugins.ServerMod.cmds
             if(!Utilities.isOnGamemode())
             {
                 Utilities.sendMessage("Can't restart on lobby !");
+                return;
+            }
+
+            if(p.IsLocal_)
+            {
+                Utilities.sendMessage("Can't restart as Host !");
                 return;
             }
 
@@ -73,6 +122,7 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 //Console.Out.WriteLine("init " + init);
                 if (p.NetworkPlayer_.Equals(c.GetType().GetField("networkPlayer_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(c)))
                 {
+                    restartingPlayers.Add(p.NetworkPlayer_);
                     exec(serverLogic, c);
                     break;
                 }
