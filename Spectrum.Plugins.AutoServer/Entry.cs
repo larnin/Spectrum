@@ -9,9 +9,11 @@ using System.Linq;
 using Events.MainMenu;
 using Events.Network;
 using Events.Player;
+using Events.Local;
 using UnityEngine;
 using System.Collections;
 using Events;
+using System.Reflection;
 
 namespace Spectrum.Plugins.AutoServer
 {
@@ -22,7 +24,7 @@ namespace Spectrum.Plugins.AutoServer
         public string Contact => "SteamID: larnin";
         public APILevel CompatibleAPILevel => APILevel.XRay;
 
-
+        ClientPlayerInfo client;
 
         public void Initialize(IManager manager)
         {
@@ -116,10 +118,32 @@ namespace Spectrum.Plugins.AutoServer
         {
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
-            StaticEvent<ClientDisconnected.Data>.Broadcast(new ClientDisconnected.Data(Network.player, DisconnectionType.Quit));
+            yield return new WaitForSeconds(1);
+            var clientLogic = G.Sys.PlayerManager_.GetComponent<ClientLogic>(); ;
+            if (clientLogic != null)
+            {
+                var clientList = clientLogic.ClientPlayerList_;
+                int i = 0;
+                while (i < clientList.Count)
+                {
+                    var clientPlayerInfo = clientList[i];
+                    if (clientPlayerInfo.NetworkPlayer_ == Network.player)
+                    {
+                        client = clientPlayerInfo;
+                        clientList.RemoveAt(i);
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+                StaticEvent<PlayerListChanged.Data>.Broadcast(new PlayerListChanged.Data(clientList));
+            }
+            /*StaticEvent<ClientDisconnected.Data>.Broadcast(new ClientDisconnected.Data(Network.player, DisconnectionType.Quit));*/
             Console.WriteLine("serverInitialized");
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(1);
             G.Sys.GameManager_.GoToCurrentLevel();
         }
 
