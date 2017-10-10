@@ -122,6 +122,14 @@ namespace Spectrum.Plugins.ServerMod.cmds
                 //Console.Out.WriteLine("init " + init);
                 if (p.NetworkPlayer_.Equals(c.GetType().GetField("networkPlayer_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(c)))
                 {
+                    NetworkEx.SetSendingEnabled(p.NetworkPlayer_, NetworkGroup.GlobalGroup, true);
+                    NetworkEx.SetSendingEnabled(p.NetworkPlayer_, NetworkGroup.LobbyGroup, true);
+                    NetworkEx.SetSendingEnabled(p.NetworkPlayer_, NetworkGroup.GameModeGroup, true);
+
+                    NetworkEx.SetReceivingEnabled(p.NetworkPlayer_, NetworkGroup.GlobalGroup, true);
+                    NetworkEx.SetReceivingEnabled(p.NetworkPlayer_, NetworkGroup.LobbyGroup, true);
+                    NetworkEx.SetReceivingEnabled(p.NetworkPlayer_, NetworkGroup.GameModeGroup, true);
+
                     restartingPlayers.Add(p.NetworkPlayer_);
                     exec(serverLogic, c);
                     break;
