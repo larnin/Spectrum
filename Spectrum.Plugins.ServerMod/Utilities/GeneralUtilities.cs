@@ -146,6 +146,38 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             return null;
         }
 
+        public static ClientPlayerInfo getClientFromNetworkPlayer(NetworkPlayer player)
+        {
+            foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
+                if (current.NetworkPlayer_ == player)
+                    return current;
+            return null;
+        }
+
+        public static PlayerDataBase getPlayerDataFromClient(ClientPlayerInfo player)
+        {
+            var methode = G.Sys.GameManager_.Mode_.GetType().GetMethod("GetSortedListOfModeInfos", BindingFlags.Instance | BindingFlags.NonPublic);
+            List<ModePlayerInfoBase> playersInfos = (List<ModePlayerInfoBase>)methode.Invoke(G.Sys.GameManager_.Mode_, new object[] { });
+            foreach (var info in playersInfos)
+            {
+                var data = info.pData_;
+                if (data.PlayerInfo_ == player)
+                    return data;
+            }
+            return null;
+        }
+
+        public static float getTimeSinceLastMove(PlayerDataBase player)
+        {
+            var screen = player.CarScreenLogic_;
+            if (screen == null)
+                return -1f;
+            var isScreensaverOn = (bool)PrivateUtilities.getPrivateField(screen, "showingScreensaver_");
+            var timeSinceMove = (float)PrivateUtilities.getPrivateField(screen, "timeSinceCarMove_");
+            var screensaverTimeout = (float)PrivateUtilities.getPrivateField(screen, "screensaverTimeoutTime_");
+            return timeSinceMove + (isScreensaverOn ? screensaverTimeout : 0f);
+        }
+
         public static LevelNameAndPathPair getLevel(int index)
         {
             var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_.Playlist_;

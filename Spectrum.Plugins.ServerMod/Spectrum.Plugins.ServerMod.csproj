@@ -88,6 +88,7 @@
     <Compile Include="Cmds\VoteHandler.cs" />
     <Compile Include="Cmds\WelcomeCmd.cs" />
     <Compile Include="Cmds\UpdateCmd.cs" />
+    <Compile Include="Cmds\StuckCmd.cs" />
     <Compile Include="Cmds\WinCmd.cs" />
     <Compile Include="Entry.cs" />
     <Compile Include="PlaylistTools\LevelFilterResult.cs" />

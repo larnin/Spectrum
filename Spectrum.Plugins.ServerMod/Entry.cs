@@ -25,9 +25,29 @@ using Events.ClientToAllClients;
 
 namespace Spectrum.Plugins.ServerMod
 {
-    public class Entry : IPlugin
+    public class PlayerInfo
     {
-        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.0.2");
+        public PlayerDataBase playerData;
+        public long lastMove = 0;
+        public PlayerInfo(PlayerDataBase playerData)
+        {
+            this.playerData = playerData;
+            lastMove = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+        }
+        public long millisSinceLastMove { get
+            {
+                return lastMove <= 0 ? 0 : (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - lastMove;
+            }
+        }
+        public float timeSinceLastMove {  get
+            {
+                return millisSinceLastMove / 1000f;
+            }
+        }
+    }
+    public class Entry : IPlugin, IUpdatable
+    {
+        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.1.0");
         private static Settings Settings = new Settings(typeof(Entry));
         public static bool IsFirstRun = false;
         public static Entry Instance = null;
@@ -37,6 +57,7 @@ namespace Spectrum.Plugins.ServerMod
         public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
         public APILevel CompatibleAPILevel => APILevel.XRay;
 
+        public List<PlayerInfo> playerInfos = new List<PlayerInfo>();
 
         StaticEvent<ChatSubmitMessage.Data>.Delegate replicateLocalChatFunc = null;
         StaticEvent<ChatMessage.Data>.Delegate addMessageFromRemote = null;
@@ -91,6 +112,18 @@ namespace Spectrum.Plugins.ServerMod
             load();  // load existing data
             save();  // save defaults that were not loaded
 
+            // player data list stuff
+
+            Events.Player.AddRemovePlayerData.Subscribe((data) =>
+            {
+                if (data.added_)
+                    playerInfos.Add(new PlayerInfo(data.player_));
+                else
+                    playerInfos.RemoveAll((info) => info.playerData == data.player_);
+            });
+
+            // chat stuff
+
             Events.Local.ChatSubmitMessage.Subscribe(data =>
             {
                 GeneralUtilities.testFunc(() =>
@@ -138,6 +171,14 @@ namespace Spectrum.Plugins.ServerMod
 
             chatReplicationManager = new ChatReplicationManager();
             chatReplicationManager.Setup();
+        }
+
+        public void Update()
+        {
+            long now = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+            foreach (var info in playerInfos)
+                if (info.playerData.CarLogic_ != null && info.playerData.CarLogic_.CarDirectives_ != null && !info.playerData.CarLogic_.CarDirectives_.IsZero())
+                    info.lastMove = now;
         }
 
         IEnumerator serverInit()

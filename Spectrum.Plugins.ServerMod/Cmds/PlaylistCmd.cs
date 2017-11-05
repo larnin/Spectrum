@@ -83,18 +83,35 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             {
                 playlists.Add("current");
                 playlists.Add("upcoming");
+                playlists.Add("active");
             }
             playlists.RemoveAll(playlist => !Regex.IsMatch(playlist, searchRegex, RegexOptions.IgnoreCase));
             return playlists;
         }
 
-        public LevelPlaylist getPlaylistLevels(string search)
+        public LevelPlaylist getActivePlaylist(ClientPlayerInfo p)
         {
-            int ignored;
-            return getPlaylistLevels(search, out ignored);
+            if (p == null)
+                return null;
+            return getActivePlaylist(GeneralUtilities.getUniquePlayerString(p));
         }
 
-        public LevelPlaylist getPlaylistLevels(string search, out int count)
+        public LevelPlaylist getActivePlaylist(string uniquePlayerString)
+        {
+            if (uniquePlayerString == null)
+                return null;
+            LevelPlaylist selectedPlaylist;
+            selectedPlaylists.TryGetValue(uniquePlayerString, out selectedPlaylist);
+            return selectedPlaylist;
+        }
+
+        public LevelPlaylist getPlaylistLevels(string search, LevelPlaylist activePlaylist)
+        {
+            int ignored;
+            return getPlaylistLevels(search, out ignored, activePlaylist);
+        }
+
+        public LevelPlaylist getPlaylistLevels(string search, out int count, LevelPlaylist activePlaylist)
         {
             var searchRegex = GeneralUtilities.getSearchRegex(search);
             List<string> playlists = GeneralUtilities.playlists();
@@ -106,6 +123,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 List<string> miniList = new List<string>();
                 miniList.Add("current");
                 miniList.Add("upcoming");
+                miniList.Add("active");
                 miniList.RemoveAll(playlist => !Regex.IsMatch(playlist, searchRegex, RegexOptions.IgnoreCase));
                 playlists.AddRange(miniList);
             }
@@ -132,6 +150,15 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             playlistComp.Playlist_.Add(currentList.Playlist_[i]);
                         }
                         playlistComp.Name_ = "upcoming";
+                        break;
+                    }
+                case "active":
+                    {
+                        if (activePlaylist == null)
+                            return null;
+                        playlistComp = LevelPlaylist.Create(true);
+                        playlistComp.Copy(activePlaylist);
+                        playlistComp.Name_ = activePlaylist.Name_;
                         break;
                     }
                 default:
@@ -187,6 +214,10 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         else
                             return false;
                     }
+                case "active":
+                    {
+                        return true;
+                    }
                 default:
                     {
                         selectedPlaylist.Name_ = name;
@@ -240,7 +271,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 case "load":
                     {
                         int matchingCount = 0;
-                        LevelPlaylist selectedPlaylist = getPlaylistLevels(playlistCmdData, out matchingCount);
+                        LevelPlaylist selectedPlaylist = getPlaylistLevels(playlistCmdData, out matchingCount, getActivePlaylist(p));
                         if (matchingCount == 0)
                         {
                             MessageUtilities.sendMessage("[A00000]Could not find any playlists with that search[-]");
@@ -286,6 +317,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                                     MessageUtilities.sendMessage("Set upcoming levels to active playlist.");
                                 else
                                     MessageUtilities.sendMessage("You cannot save to the current playlist right now.");
+                                break;
+                            case "active":
+                                MessageUtilities.sendMessage("No changes made.");
                                 break;
                             default:
                                 selectedPlaylist.Name_ = playlistCmdData;

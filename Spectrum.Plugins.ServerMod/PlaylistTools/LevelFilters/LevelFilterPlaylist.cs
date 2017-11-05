@@ -32,7 +32,7 @@ namespace Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters
         {
             PlaylistCmd playlistCmd = Cmd.all.getCommand<PlaylistCmd>("playlist");
             int count;
-            LevelPlaylist list = playlistCmd.getPlaylistLevels(chatString, out count);
+            LevelPlaylist list = playlistCmd.getPlaylistLevels(chatString, out count, playlistCmd.getActivePlaylist(LevelFilterLast.activePlayerString));
             if (count == 0)
                 return new LevelFilterResult($"Could not find any matching playlist for `{chatString}`");
             else  // TODO: allow messages and results at the same time, for case count > 1

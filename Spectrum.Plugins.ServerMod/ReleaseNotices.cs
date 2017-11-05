@@ -10,6 +10,12 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.1.0",
+                "• !scores now shows times for finished players\n" +
+                "• Added !stuck to help debug what's going on when the server gets stuck on the loading screen\n" +
+                "• Added AutospecIdleTimeout: after the timeout, idle players will go into autospec automatically\n" +
+                "• Autospec now tells players how to leave autospec mode at the beginning of every level"
+            ),
             new ReleaseNotice("C.8.0.2",
                 "• Fixed ServerMod<->ServerMod chat log replication"
             ),

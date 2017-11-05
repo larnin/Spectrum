@@ -31,6 +31,16 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override bool Default { get; } = true;
     }
+    class CmdSettingAutoSpecIdleTimeout : CmdSettingInt
+    {
+        public override string FileId { get; } = "autoSpecIdleTimeout";
+
+        public override string DisplayName { get; } = "Auto-Spec Idle Timeout";
+        public override string HelpShort { get; } = "!autospec: turn on autospec for idle players after this time. -1 to disable.";
+        public override string HelpLong { get; } = "The amount of time after which idle (non-moving) players will have autospec turned on automatically. Set to -1 to disable.";
+
+        public override int Default { get; } = -1;
+    }
     class AutoSpecCmd : Cmd
     {
         public bool autoSpecMode
@@ -58,6 +68,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             get { return getSetting<CmdSettingAutoSpecAllowPlayers>().Value; }
             set { getSetting<CmdSettingAutoSpecAllowPlayers>().Value = value; }
         }
+        public int autoSpecIdleTimeout
+        {
+            get { return getSetting<CmdSettingAutoSpecIdleTimeout>().Value; }
+            set { getSetting<CmdSettingAutoSpecIdleTimeout>().Value = value; }
+        }
 
         public override string name { get { return "autospec"; } }
         public override PermType perm { get { return autoSpecAllowPlayers ? PermType.ALL : PermType.LOCAL; } }
@@ -66,7 +81,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override CmdSetting[] settings { get; } =
         {
             new CmdSettingAutoSpecLobby(),
-            new CmdSettingAutoSpecAllowPlayers()
+            new CmdSettingAutoSpecAllowPlayers(),
+            new CmdSettingAutoSpecIdleTimeout(),
         };
 
         List<string> spectators = new List<string>();
@@ -80,6 +96,37 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     onModeStart();
                 });
             });
+            G.Sys.GameManager_.StartCoroutine(autoAutoSpectate());
+        }
+
+        IEnumerator autoAutoSpectate()
+        {
+            while (true)
+            {
+                try
+                {
+                    if (autoSpecIdleTimeout > 0 && GeneralUtilities.isHost() && GeneralUtilities.isOnline() && !GeneralUtilities.isOnLobby())
+                    {
+                        var unfinished = G.Sys.GameManager_.Mode_.GetSortedListOfUnfinishedPlayers();
+                        foreach (var info in Entry.Instance.playerInfos)
+                        {
+                            var client = info.playerData;
+                            var timeSinceLastMove = info.timeSinceLastMove;
+                            var uniq = GeneralUtilities.getUniquePlayerString(client.PlayerInfo_);
+                            if (timeSinceLastMove > 0f && timeSinceLastMove > autoSpecIdleTimeout && !spectators.Contains(uniq) && unfinished.Contains(client))
+                            {
+                                spectators.Add(uniq);
+                                MessageUtilities.sendMessage($"{MessageUtilities.closeTags(client.PlayerInfo_.GetChatName())} has been set to auto-spec for being idle.");
+                                spectatePlayer(client.PlayerInfo_, force: true);
+                            }
+                        }
+                    }
+                } catch (Exception e)
+                {
+                    Console.WriteLine($"Error auto-specing idle players: {e}");
+                }
+                yield return new WaitForSeconds(1f);
+            }
         }
 
         public override void help(ClientPlayerInfo p)
@@ -180,12 +227,14 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         }
 
-        private void spectatePlayer(ClientPlayerInfo player)
+        private void spectatePlayer(ClientPlayerInfo player, bool force = false)
         {
             if (!GeneralUtilities.isOnGamemode())
                 return;
-            if (!autoSpecAllowPlayers && !player.IsLocal_)
+            if (!autoSpecAllowPlayers && !player.IsLocal_ && !force)
                 return;
+            MessageUtilities.sendMessage(player, "You are in auto-spectate mode. Say " + GeneralUtilities.formatCmd("!autospec") + " to turn it off.");
+            Entry.Instance.chatReplicationManager.ReplicateNeeded();
             if (player.IsLocal_)
             {
                 if (G.Sys.PlayerManager_.PlayerList_.Count == 1 && GeneralUtilities.isHost() && autoSpecReturnToLobby)

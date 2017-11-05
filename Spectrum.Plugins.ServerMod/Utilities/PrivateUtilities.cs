@@ -20,6 +20,16 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 )
                 .GetValue(obj);
         }
+        public static object getPrivateProperty(object obj, string propertyName)
+        {
+            return obj
+                .GetType()
+                .GetProperty(
+                    propertyName,
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
+                )
+                .GetGetMethod().Invoke(obj, null);
+        }
 
         public static object callPrivateMethod(Type tp, object obj, string methodName, params object[] args)
         {

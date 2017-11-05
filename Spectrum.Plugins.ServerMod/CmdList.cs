@@ -40,6 +40,7 @@ namespace Spectrum.Plugins.ServerMod
                 new SettingsCmd(),
                 new ShuffleCmd(),
                 new SpecCmd(),
+                new StuckCmd(),
                 new TimelimitCmd(),
                 new UpdateCmd(),
                 new WelcomeCmd(),
