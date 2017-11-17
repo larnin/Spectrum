@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrum.Bootstrap", "Spectrum.Bootstrap\Spectrum.Bootstrap.csproj", "{F395A1D7-EA41-4DB5-A192-04EB5449E141}"
 EndProject
@@ -34,6 +34,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A183AD18-B1EC-4C39-B3A8-4969B0D5B084}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrum.Plugins.AutoServer", "Spectrum.Plugins.AutoServer\Spectrum.Plugins.AutoServer.csproj", "{1BCEFF0B-4D54-488A-895E-8449E4680686}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spectrum.Plugins.DiscordIntegration", "Spectrum.Plugins.DiscordIntegration\Spectrum.Plugins.DiscordIntegration.csproj", "{69E28CE6-F044-4CE9-8A8A-CCB96064F67C}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -97,8 +99,15 @@ Global
 		{1BCEFF0B-4D54-488A-895E-8449E4680686}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1BCEFF0B-4D54-488A-895E-8449E4680686}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1BCEFF0B-4D54-488A-895E-8449E4680686}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69E28CE6-F044-4CE9-8A8A-CCB96064F67C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69E28CE6-F044-4CE9-8A8A-CCB96064F67C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69E28CE6-F044-4CE9-8A8A-CCB96064F67C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69E28CE6-F044-4CE9-8A8A-CCB96064F67C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2C49B699-A6EF-4B13-8023-15CC5FD1DF10}
 	EndGlobalSection
 EndGlobal
