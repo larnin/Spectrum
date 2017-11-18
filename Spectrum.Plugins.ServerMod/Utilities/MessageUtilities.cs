@@ -278,7 +278,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             if (!match.Success)
                 return new CommandInfo();
             else
-                return new CommandInfo(match.Groups[2].Value == "%" || match.Groups[2].Value == "%%",
+                return new CommandInfo(match.Groups[2].Value == "%",
                     match.Groups[1].Value.Length == 2, match.Groups[3].Value, match.Groups[4].Value);
         }
     }

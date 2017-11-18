@@ -40,6 +40,18 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpLong { get; } = "The amount of time after which idle (non-moving) players will have autospec turned on automatically. Set to -1 to disable.";
 
         public override int Default { get; } = -1;
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.1.0");
+    }
+    class CmdSettingAutoSpecIdleSingle : CmdSettingBool
+    {
+        public override string FileId { get; } = "autoSpecIdleSingle";
+
+        public override string DisplayName { get; } = "Auto-Spec Idle Auto";
+        public override string HelpShort { get; } = "!autospec: if idle should be a single spec or autospec";
+        public override string HelpLong { get; } = "Whether not the autospec idle timeout should apply spectate only once.";
+
+        public override bool Default { get; } = true;
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.1.1");
     }
     class AutoSpecCmd : Cmd
     {
@@ -73,6 +85,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             get { return getSetting<CmdSettingAutoSpecIdleTimeout>().Value; }
             set { getSetting<CmdSettingAutoSpecIdleTimeout>().Value = value; }
         }
+        public bool autoSpecIdleSingle
+        {
+            get { return getSetting<CmdSettingAutoSpecIdleSingle>().Value; }
+            set { getSetting<CmdSettingAutoSpecIdleSingle>().Value = value; }
+        }
 
         public override string name { get { return "autospec"; } }
         public override PermType perm { get { return autoSpecAllowPlayers ? PermType.ALL : PermType.LOCAL; } }
@@ -83,6 +100,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             new CmdSettingAutoSpecLobby(),
             new CmdSettingAutoSpecAllowPlayers(),
             new CmdSettingAutoSpecIdleTimeout(),
+            new CmdSettingAutoSpecIdleSingle(),
         };
 
         List<string> spectators = new List<string>();
@@ -115,8 +133,15 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                             var uniq = GeneralUtilities.getUniquePlayerString(client.PlayerInfo_);
                             if (timeSinceLastMove > 0f && timeSinceLastMove > autoSpecIdleTimeout && !spectators.Contains(uniq) && unfinished.Contains(client))
                             {
-                                spectators.Add(uniq);
-                                MessageUtilities.sendMessage($"{MessageUtilities.closeTags(client.PlayerInfo_.GetChatName())} has been set to auto-spec for being idle.");
+                                if (!autoSpecIdleSingle)
+                                {
+                                    spectators.Add(uniq);
+                                    MessageUtilities.sendMessage($"{MessageUtilities.closeTags(client.PlayerInfo_.GetChatName())} has been set to auto-spec for being idle.");
+                                }
+                                else
+                                {
+                                    MessageUtilities.sendMessage($"{MessageUtilities.closeTags(client.PlayerInfo_.GetChatName())} has been set to spectate for being idle.");
+                                }
                                 spectatePlayer(client.PlayerInfo_, force: true);
                             }
                         }
@@ -233,7 +258,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 return;
             if (!autoSpecAllowPlayers && !player.IsLocal_ && !force)
                 return;
-            MessageUtilities.sendMessage(player, "You are in auto-spectate mode. Say " + GeneralUtilities.formatCmd("!autospec") + " to turn it off.");
+            if (spectators.Contains(GeneralUtilities.getUniquePlayerString(player)))
+                MessageUtilities.sendMessage(player, "You are in auto-spectate mode. Say " + GeneralUtilities.formatCmd("!autospec") + " to turn it off.");
             Entry.Instance.chatReplicationManager.ReplicateNeeded();
             if (player.IsLocal_)
             {

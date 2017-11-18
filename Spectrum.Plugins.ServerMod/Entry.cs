@@ -47,7 +47,7 @@ namespace Spectrum.Plugins.ServerMod
     }
     public class Entry : IPlugin, IUpdatable
     {
-        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.1.0");
+        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.1.1");
         private static Settings Settings = new Settings(typeof(Entry));
         public static bool IsFirstRun = false;
         public static Entry Instance = null;
@@ -286,6 +286,9 @@ namespace Spectrum.Plugins.ServerMod
         private void Chat_MessageReceived(string author, string message, ChatMessage.Data original)
         {
             var commandInfo = MessageUtilities.getCommandInfo(message);
+
+            if (commandInfo.local)
+                return;  // these messages only come from non-local
 
             if (commandInfo.matches && commandInfo.commandName.ToLower() == "plugin")
                 printClient();

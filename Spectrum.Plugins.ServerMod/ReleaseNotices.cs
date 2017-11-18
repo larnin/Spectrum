@@ -10,6 +10,10 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.1.1",
+                "• Servers now ignore when players use % commands\n" +
+                "• Added AutospecIdleSingle: choose whether or not to enable regular spectate mode or auto spectate mode on idle timeout"
+            ),
             new ReleaseNotice("C.8.1.0",
                 "• !scores now shows times for finished players\n" +
                 "• Added !stuck to help debug what's going on when the server gets stuck on the loading screen\n" +
