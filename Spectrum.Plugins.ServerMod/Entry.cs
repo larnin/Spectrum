@@ -287,9 +287,6 @@ namespace Spectrum.Plugins.ServerMod
         {
             var commandInfo = MessageUtilities.getCommandInfo(message);
 
-            if (commandInfo.local)
-                return;  // these messages only come from non-local
-
             if (commandInfo.matches && commandInfo.commandName.ToLower() == "plugin")
                 printClient();
 
@@ -320,7 +317,7 @@ namespace Spectrum.Plugins.ServerMod
                 return;
             }
 
-            if (!commandInfo.matches || commandInfo.commandName.ToLower() == "plugin")
+            if (!commandInfo.matches || commandInfo.commandName.ToLower() == "plugin" || commandInfo.local)
                 return;
 
             if (!showRegularChat)
