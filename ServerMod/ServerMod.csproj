@@ -143,13 +143,12 @@
   </Target>
   -->
   <ItemGroup>
-    <ProjectReference Include="..\Spectrum.API\Spectrum.API.csproj">
-      <Project>{A9CFD86D-1604-4C80-B02B-E60AD98BA86F}</Project>
+    <ProjectReference Include="..\Spectrum\Spectrum.API\Spectrum.API.csproj">
+      <Project>{a9cfd86d-1604-4c80-b02b-e60ad98ba86f}</Project>
       <Name>Spectrum.API</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
 </Project>
