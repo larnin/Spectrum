@@ -59,7 +59,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override string DisplayName { get; } = "Play Filter";
         public override string HelpShort { get; } = "!play: limit addable maps to a filter. Also affects !level and !vote play";
-        public override string HelpLong { get; } = "For non-hosts, !play will only allow mpas to be added if they match a filter. Use `!settings playFilter clear` to clear.";
+        public override string HelpLong { get; } = "For non-hosts, !play will only allow maps to be added if they match a filter. Use `!settings playFilter clear` to clear.";
 
         public override string Default { get; } = "";
     }
