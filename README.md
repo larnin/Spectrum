@@ -2,9 +2,9 @@
 # Modified ServerMod for Distance
 [Latest Release (.DLL)](https://github.com/Corecii/Spectrum/releases)
 
-[ServerMod Help, Documentation, and README](https://github.com/Corecii/Spectrum/blob/master/Spectrum.Plugins.ServerMod/Readme.md)
+[ServerMod Help, Documentation, and README](wiki) (recently update)
 
-This is a modified version of the ServerMod from [here](https://github.com/larnin/Spectrum).
+This is a modified version of Nico's ServerMod from [here](https://github.com/larnin/Spectrum).
 
 You need [Spectrum](https://github.com/Ciastex/Spectrum) to use this.
 
