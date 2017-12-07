@@ -2,7 +2,7 @@
 # Modified ServerMod for Distance
 [Latest Release (.DLL)](https://github.com/Corecii/Spectrum/releases)
 
-[ServerMod Help, Documentation, and README](wiki) (recently update)
+[ServerMod Help, Documentation, and README](https://github.com/Corecii/ServerMod/wiki) (recently updated)
 
 This is a modified version of Nico's ServerMod from [here](https://github.com/larnin/Spectrum).
 
