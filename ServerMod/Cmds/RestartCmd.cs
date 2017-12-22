@@ -35,11 +35,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 return;
             }
 
-            var clients = (IEnumerable)(serverLogic.GetType().GetField("clientInfoList_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(serverLogic));
+            var clients = (IEnumerable)PrivateUtilities.getPrivateField(serverLogic, "clientInfoList_");
             
             foreach(var c in clients)
             {
-                if (p.NetworkPlayer_.Equals(c.GetType().GetField("networkPlayer_", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(c)))
+                if (p.NetworkPlayer_ == (UnityEngine.NetworkPlayer)PrivateUtilities.getPrivateField(c, "networkPlayer_"))
                 {
                     exec(serverLogic, c);
                     break;
@@ -49,7 +49,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         void exec(ServerLogic server, object client)
         {
-            server.GetType().GetMethod("SendClientToCurrentLevel", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(server, new object[] { client });
+            PrivateUtilities.callPrivateMethod(server, "SendClientToCurrentLevel", client);
         }
     }
 }

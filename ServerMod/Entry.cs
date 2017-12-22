@@ -47,7 +47,7 @@ namespace Spectrum.Plugins.ServerMod
     }
     public class Entry : IPlugin, IUpdatable
     {
-        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.1.1");
+        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.1.2");
         private static Settings Settings = new Settings(typeof(Entry));
         public static bool IsFirstRun = false;
         public static Entry Instance = null;

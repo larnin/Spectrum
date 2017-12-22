@@ -84,6 +84,7 @@
     <Compile Include="Cmds\ShuffleCmd.cs" />
     <Compile Include="Cmds\PlayersCmd.cs" />
     <Compile Include="Cmds\SpecCmd.cs" />
+    <Compile Include="Cmds\UnstuckCmd.cs" />
     <Compile Include="Cmds\TimelimitCmd.cs" />
     <Compile Include="Cmds\VoteHandler.cs" />
     <Compile Include="Cmds\WelcomeCmd.cs" />

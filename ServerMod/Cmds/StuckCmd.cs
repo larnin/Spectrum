@@ -29,6 +29,19 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override void use(ClientPlayerInfo p, string message)
         {
+            var gameMode = G.Sys.GameManager_.Mode_;
+            if (gameMode == null)
+            {
+                MessageUtilities.sendMessage("Mode_ is null! Something is very wrong!");
+                Console.WriteLine("Mode_ is null! Something is very wrong!");
+            }
+            else
+            {
+                MessageUtilities.sendMessage($"GameMode Name_: {gameMode.Name_}");
+                Console.WriteLine($"GameMode Name_: {gameMode.Name_}");
+                MessageUtilities.sendMessage($"IsStarted_: {gameMode.IsStarted_}");
+                Console.WriteLine($"IsStarted_: {gameMode.IsStarted_}");
+            }
             MessageUtilities.sendMessage("Connected players:");
             MessageUtilities.sendMessage("gui : name : state : ready");
             Console.WriteLine("guid : name : state : ready : levelVersion");
@@ -52,7 +65,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 MessageUtilities.sendMessage($"{networkPlayer.guid} : {name} : {state} : {ready}");
                 Console.WriteLine($"{networkPlayer.guid} : {rawName} : {state} : {ready} : {levelVersion}");
             }
-
+            MessageUtilities.sendMessage("Try using !unstuck");
+            Console.WriteLine("Try using !unstuck");
         }
     }
 }
