@@ -167,17 +167,6 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             return null;
         }
 
-        public static float getTimeSinceLastMove(PlayerDataBase player)
-        {
-            var screen = player.CarScreenLogic_;
-            if (screen == null)
-                return -1f;
-            var isScreensaverOn = (bool)PrivateUtilities.getPrivateField(screen, "showingScreensaver_");
-            var timeSinceMove = (float)PrivateUtilities.getPrivateField(screen, "timeSinceCarMove_");
-            var screensaverTimeout = (float)PrivateUtilities.getPrivateField(screen, "screensaverTimeoutTime_");
-            return timeSinceMove + (isScreensaverOn ? screensaverTimeout : 0f);
-        }
-
         public static LevelNameAndPathPair getLevel(int index)
         {
             var currentPlaylist = G.Sys.GameManager_.LevelPlaylist_.Playlist_;
