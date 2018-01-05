@@ -36,8 +36,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             try
             {
-                var methode = G.Sys.GameManager_.Mode_.GetType().GetMethod("GetSortedListOfModeInfos", BindingFlags.Instance | BindingFlags.NonPublic);
-                List<ModePlayerInfoBase> playersInfos = (List<ModePlayerInfoBase>)methode.Invoke(G.Sys.GameManager_.Mode_, new object[] { });
+                var playersInfos = (List<ModePlayerInfoBase>)PrivateUtilities.getPrivateField(G.Sys.GameManager_.Mode_, "modePlayerInfos_");
                 playersInfos.Sort((a, b) =>
                 {
                     if (a.finishType_ == FinishType.Normal && b.finishType_ == FinishType.Normal)

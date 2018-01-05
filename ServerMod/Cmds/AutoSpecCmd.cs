@@ -125,7 +125,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 {
                     if (autoSpecIdleTimeout > 0 && GeneralUtilities.isHost() && GeneralUtilities.isOnline() && !GeneralUtilities.isOnLobby())
                     {
-                        var unfinished = G.Sys.GameManager_.Mode_.GetSortedListOfUnfinishedPlayers();
+                        var unfinished = new List<PlayerDataBase>();
+                        G.Sys.GameManager_.Mode_.GetSortedListOfUnfinishedPlayers(unfinished);
                         foreach (var info in Entry.Instance.playerInfos)
                         {
                             var client = info.playerData;

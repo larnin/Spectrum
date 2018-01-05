@@ -10,6 +10,9 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.1.3",
+                "• Fixed AutoSpecIdleTimeout and !scores compatibility with most recent update"
+            ),
             new ReleaseNotice("C.8.1.2",
                 "• Added " + GeneralUtilities.formatCmd("!unstuck [mode] [param]") + " to try to fix stuck loading screens.\n" +
                 "• Added more debugging info to !stuck"
