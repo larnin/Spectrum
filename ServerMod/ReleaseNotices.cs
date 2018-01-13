@@ -10,6 +10,9 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.1.4",
+                "• Added AutoSpecIdleTimeout debug to console"
+            ),
             new ReleaseNotice("C.8.1.3",
                 "• Fixed AutoSpecIdleTimeout and !scores compatibility with most recent update"
             ),

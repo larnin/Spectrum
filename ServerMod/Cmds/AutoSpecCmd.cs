@@ -125,27 +125,47 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 {
                     if (autoSpecIdleTimeout > 0 && GeneralUtilities.isHost() && GeneralUtilities.isOnline() && !GeneralUtilities.isOnLobby())
                     {
+                        var debug_playerInfo = "";
+                        var debug_didSpectate = false;
                         var unfinished = new List<PlayerDataBase>();
                         G.Sys.GameManager_.Mode_.GetSortedListOfUnfinishedPlayers(unfinished);
+                        debug_playerInfo += $"Unfinished list size: {unfinished.Count}\n";
+                        debug_playerInfo += $"Spectators list size: {spectators.Count}\n";
+                        debug_playerInfo += $"autoSpecIdleTimeout: {autoSpecIdleTimeout}\n";
+                        debug_playerInfo += $"Players:\n";
                         foreach (var info in Entry.Instance.playerInfos)
                         {
                             var client = info.playerData;
                             var timeSinceLastMove = info.timeSinceLastMove;
                             var uniq = GeneralUtilities.getUniquePlayerString(client.PlayerInfo_);
+                            debug_playerInfo += $"\t{client.Name_}:\n";
+                            debug_playerInfo += $"\t\ttimeSinceLastMove: {timeSinceLastMove}\n";
+                            debug_playerInfo += $"\t\tguid: {uniq}\n";
+                            debug_playerInfo += $"\t\tIn auto-spectators list: {spectators.Contains(uniq)}\n";
+                            debug_playerInfo += $"\t\tIn unfinished list: {unfinished.Contains(client)}\n";
                             if (timeSinceLastMove > 0f && timeSinceLastMove > autoSpecIdleTimeout && !spectators.Contains(uniq) && unfinished.Contains(client))
                             {
+                                debug_didSpectate = true;
                                 if (!autoSpecIdleSingle)
                                 {
+                                    debug_playerInfo += "\t\tSet to auto-spectate\n";
                                     spectators.Add(uniq);
                                     MessageUtilities.sendMessage($"{MessageUtilities.closeTags(client.PlayerInfo_.GetChatName())} has been set to auto-spec for being idle.");
                                 }
                                 else
                                 {
+                                    debug_playerInfo += "\t\tSet to regular spectate\n";
                                     MessageUtilities.sendMessage($"{MessageUtilities.closeTags(client.PlayerInfo_.GetChatName())} has been set to spectate for being idle.");
                                 }
                                 spectatePlayer(client.PlayerInfo_, force: true);
                             }
+                            else
+                            {
+                                debug_playerInfo += "\t\tNo action\n";
+                            }
                         }
+                        if (debug_didSpectate)
+                            Console.WriteLine(debug_playerInfo);
                     }
                 } catch (Exception e)
                 {
