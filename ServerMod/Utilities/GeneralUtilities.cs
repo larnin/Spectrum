@@ -171,15 +171,22 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             return null;
         }
 
+        public static List<PlayerDataBase> getPlayerInfos()
+        {
+            var result = new List<PlayerDataBase>();
+            foreach (PlayerInfo info in Entry.Instance.playerInfos)
+            {
+                result.Add(info.playerData);
+            }
+            return result;
+        }
+
         public static PlayerDataBase getPlayerDataFromClient(ClientPlayerInfo player)
         {
-            var methode = G.Sys.GameManager_.Mode_.GetType().GetMethod("GetSortedListOfModeInfos", BindingFlags.Instance | BindingFlags.NonPublic);
-            List<ModePlayerInfoBase> playersInfos = (List<ModePlayerInfoBase>)methode.Invoke(G.Sys.GameManager_.Mode_, new object[] { });
-            foreach (var info in playersInfos)
+            foreach (PlayerInfo info in Entry.Instance.playerInfos)
             {
-                var data = info.pData_;
-                if (data.PlayerInfo_ == player)
-                    return data;
+                if (info.playerData.PlayerInfo_ == player)
+                    return info.playerData;
             }
             return null;
         }
@@ -388,17 +395,6 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             return Math.Floor(diff.TotalSeconds);
         }
 
-        public static object getPrivateField(object obj, string fieldName)
-        {
-            return obj
-                .GetType()
-                .GetField(
-                    fieldName,
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
-                )
-                .GetValue(obj);
-        }
-
         public static bool isLevelOnline(LevelNameAndPathPair TestLevel)
         {
             if (!SteamworksManager.IsSteamBuild_)
@@ -412,7 +408,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 }
             }
             // Checking the private field appears to be the only way to go about this :(
-            var retrievedPublishedFileIds =  (List<ulong>) getPrivateField(G.Sys.SteamworksManager_.UGC_, "retrievedPublishedFileIds_");
+            var retrievedPublishedFileIds =  (List<ulong>) PrivateUtilities.getPrivateField(G.Sys.SteamworksManager_.UGC_, "retrievedPublishedFileIds_");
             foreach (var Level in levelSetsManager.WorkshopLevelNameAndPathPairs_)
             {
                 if (Level.levelPath_ == TestLevel.levelPath_)

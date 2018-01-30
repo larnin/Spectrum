@@ -30,8 +30,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 var client = clientLogic.GetLocalPlayerInfo();
                 var oldName = client.Username_;
 
-                var name = client.GetType().GetField("username_", BindingFlags.NonPublic | BindingFlags.Instance);
-                name.SetValue(client, message);
+                PrivateUtilities.setPrivateField(client, "username_", message);
 
                 MessageUtilities.sendMessage(p, oldName + " renamed to " + client.Username_);
             }

@@ -38,6 +38,34 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 throw e;
             }
         }
+        public static void setPrivateField(object obj, string fieldName, object value)
+        {
+            try
+            {
+                obj
+                    .GetType()
+                    .GetField(
+                        fieldName,
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
+                    )
+                    .SetValue(obj, value);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error setting private field {fieldName}. Has it been removed?");
+                Console.WriteLine($"Error: {e}");
+                if (GeneralUtilities.isHost())
+                {
+                    MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(GeneralUtilities.localClient()));
+                    MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                    MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                    MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    MessageUtilities.sendMessage($"[FF1010]Error setting private field {fieldName}. Has it been removed?[-]");
+                    MessageUtilities.popMessageOptions();
+                }
+                throw e;
+            }
+        }
         public static object getPrivateProperty(object obj, string propertyName)
         {
             try
@@ -53,6 +81,34 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             catch (Exception e)
             {
                 Console.WriteLine($"Error accessing private property {propertyName}. Has it been removed?");
+                Console.WriteLine($"Error: {e}");
+                if (GeneralUtilities.isHost())
+                {
+                    MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(GeneralUtilities.localClient()));
+                    MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                    MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                    MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    MessageUtilities.sendMessage($"[FF1010]Error setting private property {propertyName}. Has it been removed?[-]");
+                    MessageUtilities.popMessageOptions();
+                }
+                throw e;
+            }
+        }
+        public static void setPrivateProperty(object obj, string propertyName, object value)
+        {
+            try
+            {
+                obj
+                    .GetType()
+                    .GetProperty(
+                        propertyName,
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
+                    )
+                    .GetSetMethod().Invoke(obj, new object[] { value });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error setting private property {propertyName}. Has it been removed?");
                 Console.WriteLine($"Error: {e}");
                 if (GeneralUtilities.isHost())
                 {
