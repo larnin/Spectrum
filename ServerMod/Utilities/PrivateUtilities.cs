@@ -12,39 +12,111 @@ namespace Spectrum.Plugins.ServerMod.Utilities
     {
         public static object getPrivateField(object obj, string fieldName)
         {
-            return obj
-                .GetType()
-                .GetField(
-                    fieldName,
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
-                )
-                .GetValue(obj);
+            try
+            {
+                return obj
+                    .GetType()
+                    .GetField(
+                        fieldName,
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
+                    )
+                    .GetValue(obj);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error accessing private field {fieldName}. Has it been removed?");
+                Console.WriteLine($"Error: {e}");
+                if (GeneralUtilities.isHost())
+                {
+                    MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(GeneralUtilities.localClient()));
+                    MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                    MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                    MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    MessageUtilities.sendMessage($"[FF1010]Error accessing private field {fieldName}. Has it been removed?[-]");
+                    MessageUtilities.popMessageOptions();
+                }
+                throw e;
+            }
         }
         public static object getPrivateProperty(object obj, string propertyName)
         {
-            return obj
-                .GetType()
-                .GetProperty(
-                    propertyName,
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
-                )
-                .GetGetMethod().Invoke(obj, null);
+            try
+            {
+                return obj
+                    .GetType()
+                    .GetProperty(
+                        propertyName,
+                        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static
+                    )
+                    .GetGetMethod().Invoke(obj, null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error accessing private property {propertyName}. Has it been removed?");
+                Console.WriteLine($"Error: {e}");
+                if (GeneralUtilities.isHost())
+                {
+                    MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(GeneralUtilities.localClient()));
+                    MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                    MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                    MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    MessageUtilities.sendMessage($"[FF1010]Error accessing private property {propertyName}. Has it been removed?[-]");
+                    MessageUtilities.popMessageOptions();
+                }
+                throw e;
+            }
         }
 
         public static object callPrivateMethod(Type tp, object obj, string methodName, params object[] args)
         {
-            return tp.GetMethod(
-                methodName,
-                BindingFlags.NonPublic | BindingFlags.Instance
-            ).Invoke(obj, args);
+            try
+            {
+                return tp.GetMethod(
+                    methodName,
+                    BindingFlags.NonPublic | BindingFlags.Instance
+                ).Invoke(obj, args);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error calling private method {methodName}. Has it been removed?");
+                Console.WriteLine($"Error: {e}");
+                if (GeneralUtilities.isHost())
+                {
+                    MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(GeneralUtilities.localClient()));
+                    MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                    MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                    MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    MessageUtilities.sendMessage($"[FF1010]Error calling private method {methodName}. Has it been removed?[-]");
+                    MessageUtilities.popMessageOptions();
+                }
+                throw e;
+            }
         }
 
         public static object callPrivateMethod(object obj, string methodName, params object[] args)
         {
-            return obj.GetType().GetMethod(
-                methodName,
-                BindingFlags.NonPublic | BindingFlags.Instance
-            ).Invoke(obj, args);
+            try
+            {
+                return obj.GetType().GetMethod(
+                    methodName,
+                    BindingFlags.NonPublic | BindingFlags.Instance
+                ).Invoke(obj, args);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error calling private method {methodName}. Has it been removed?");
+                Console.WriteLine($"Error: {e}");
+                if (GeneralUtilities.isHost())
+                {
+                    MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(GeneralUtilities.localClient()));
+                    MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                    MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                    MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    MessageUtilities.sendMessage($"[FF1010]Error calling private method {methodName}. Has it been removed?[-]");
+                    MessageUtilities.popMessageOptions();
+                }
+                throw e;
+            }
         }
 
         public static T getComponent<T>() where T : MonoBehaviour

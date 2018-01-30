@@ -53,6 +53,17 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override bool Default { get; } = true;
         public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.1.1");
     }
+    class CmdSettingAutoSpecDebug : CmdSettingBool
+    {
+        public override string FileId { get; } = "autoSpecDebug";
+
+        public override string DisplayName { get; } = "Auto-Spec Debug";
+        public override string HelpShort { get; } = "!autospec: if debug info should be sent to console output";
+        public override string HelpLong { get; } = "!autospec: if debug info should be sent to console output";
+
+        public override bool Default { get; } = true;
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.1.5");
+    }
     class AutoSpecCmd : Cmd
     {
         public bool autoSpecMode
@@ -90,6 +101,11 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             get { return getSetting<CmdSettingAutoSpecIdleSingle>().Value; }
             set { getSetting<CmdSettingAutoSpecIdleSingle>().Value = value; }
         }
+        public bool autoSpecDebug
+        {
+            get { return getSetting<CmdSettingAutoSpecDebug>().Value; }
+            set { getSetting<CmdSettingAutoSpecDebug>().Value = value; }
+        }
 
         public override string name { get { return "autospec"; } }
         public override PermType perm { get { return autoSpecAllowPlayers ? PermType.ALL : PermType.LOCAL; } }
@@ -101,6 +117,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             new CmdSettingAutoSpecAllowPlayers(),
             new CmdSettingAutoSpecIdleTimeout(),
             new CmdSettingAutoSpecIdleSingle(),
+            new CmdSettingAutoSpecDebug(),
         };
 
         List<string> spectators = new List<string>();
@@ -109,7 +126,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         {
             Events.GameMode.Go.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     onModeStart();
                 });
@@ -164,7 +181,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                                 debug_playerInfo += "\t\tNo action\n";
                             }
                         }
-                        if (debug_didSpectate)
+                        if (debug_didSpectate && autoSpecDebug)
                             Console.WriteLine(debug_playerInfo);
                     }
                 } catch (Exception e)

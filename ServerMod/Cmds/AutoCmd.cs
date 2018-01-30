@@ -100,7 +100,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     onModeFinish();
                 });
@@ -108,7 +108,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             Events.GameMode.ModeStarted.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     onModeStart();
                 });
@@ -116,7 +116,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             Events.GameMode.Go.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     onGo();
                 });
@@ -124,7 +124,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             Events.ClientToAllClients.ChatMessage.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     onChatEvent(data.message_);
                 });
@@ -165,7 +165,9 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 if (GeneralUtilities.isOnLobby())
                     G.Sys.GameManager_.StartCoroutine(startFromLobby());
                 else if (GeneralUtilities.isModeFinished())
+                {
                     G.Sys.GameManager_.StartCoroutine(waitAndGoNext());
+                }
                 else onModeStart();
             }
             else
@@ -323,17 +325,23 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         IEnumerator waitAndGoNext()
         {
-            if (!GeneralUtilities.isOnLobby())
+            if (GeneralUtilities.isOnLobby())
             {
-                int myIndex = index; // index and myIndex are used to check if the level advances before auto does it.
-                foreach (float f in waitForMinPlayers())
-                {
-                    yield return new WaitForSeconds(f);
-                }
+                autoMode = false;
+                yield break;
+            }
+
+            int myIndex = index; // index and myIndex are used to check if the level advances before auto does it.
+            foreach (float f in waitForMinPlayers())
+            {
+                yield return new WaitForSeconds(f);
                 if (index != myIndex)
                     yield break;
+            }
 
-                int nextLevelIndex;
+            int nextLevelIndex = 0;
+            GeneralUtilities.logExceptionsThrow(() =>
+            {
                 if (GeneralUtilities.isCurrentLastLevel())
                 {
                     if (shuffleAtEnd)
@@ -353,41 +361,41 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 {
                     nextLevelIndex = G.Sys.GameManager_.LevelPlaylist_.Index_ + 1;
                 }
+            });
 
-                if (skipOffline)
+            if (skipOffline)
+            {
+                nextLevelIndex = getFirstOnlineLevelIndex(nextLevelIndex);
+                if (nextLevelIndex == -1)
                 {
-                    nextLevelIndex = getFirstOnlineLevelIndex(nextLevelIndex);
-                    if (nextLevelIndex == -1)
-                    {
-                        autoMode = false;
-                        MessageUtilities.sendMessage("The only levels available are offline levels (not official and not on the workshop).");
-                        MessageUtilities.sendMessage("Qutting auto mode...");
-                        MessageUtilities.sendMessage("You can disable this behavior with " + GeneralUtilities.formatCmd("!settings autoSkipOffline false"));
-                        yield break;
-                    }
-                }
-
-                currentMapInsertIndex = nextLevelIndex + 1;
-
-                var level = GeneralUtilities.getLevel(nextLevelIndex);
-                MessageUtilities.sendMessage("Going to the next level in 10 seconds...");
-                MessageUtilities.sendMessage("Next level is: " + level.levelName_);
-                myIndex = index;
-                yield return new WaitForSeconds(10.0f);
-                if (index != myIndex)
+                    autoMode = false;
+                    MessageUtilities.sendMessage("The only levels available are offline levels (not official and not on the workshop).");
+                    MessageUtilities.sendMessage("Qutting auto mode...");
+                    MessageUtilities.sendMessage("You can disable this behavior with " + GeneralUtilities.formatCmd("!settings autoSkipOffline false"));
                     yield break;
-                if (autoMode && !GeneralUtilities.isOnLobby())
-                {
-                    GeneralUtilities.testFunc(() =>
-                    {
-                        G.Sys.GameManager_.LevelPlaylist_.SetIndex(nextLevelIndex - 1);
-                        G.Sys.GameManager_.GoToNextLevel(true);
-                    });
                 }
-                else autoMode = false;
+            }
+
+            currentMapInsertIndex = nextLevelIndex + 1;
+
+            var level = GeneralUtilities.getLevel(nextLevelIndex);
+            MessageUtilities.sendMessage("Going to the next level in 10 seconds...");
+            MessageUtilities.sendMessage("Next level is: " + level.levelName_);
+            myIndex = index;
+            yield return new WaitForSeconds(10.0f);
+            if (index != myIndex)
+                yield break;
+            if (autoMode && !GeneralUtilities.isOnLobby())
+            {
+                GeneralUtilities.logExceptions(() =>
+                {
+                    G.Sys.GameManager_.LevelPlaylist_.SetIndex(nextLevelIndex - 1);
+                    G.Sys.GameManager_.GoToNextLevel(true);
+                });
             }
             else autoMode = false;
-            yield return null;
+
+            yield break;
         }
 
         IEnumerator voteAndGoNext()
@@ -483,7 +491,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         
                     if (autoMode && !GeneralUtilities.isOnLobby())
                     {
-                        GeneralUtilities.testFunc(() =>
+                        GeneralUtilities.logExceptions(() =>
                         {
                             setToNextMap(voteLevels[index], voteLevels[voteLevels.Count - 1]);
                             G.Sys.GameManager_.GoToNextLevel(true);
@@ -601,7 +609,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         int bestVote()
         {
             var choice = 1;
-            GeneralUtilities.testFunc(() =>
+            GeneralUtilities.logExceptions(() =>
             {
                 List<int> values = new List<int>();
                 for (int i = 0; i <= maxtVoteValue; i++)

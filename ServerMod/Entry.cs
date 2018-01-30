@@ -47,7 +47,7 @@ namespace Spectrum.Plugins.ServerMod
     }
     public class Entry : IPlugin, IUpdatable
     {
-        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.1.4");
+        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.1.5");
         private static Settings Settings = new Settings(typeof(Entry));
         public static bool IsFirstRun = false;
         public static Entry Instance = null;
@@ -72,7 +72,7 @@ namespace Spectrum.Plugins.ServerMod
                 throw new Exception("There should only be one Entry");
             }
             Instance = this;
-            GeneralUtilities.testFunc(() =>
+            GeneralUtilities.logExceptions(() =>
             {
                 var levelFilters = new LevelFilter[]
                 {
@@ -126,7 +126,7 @@ namespace Spectrum.Plugins.ServerMod
 
             Events.Local.ChatSubmitMessage.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     Chat_MessageSent(data);
                 });
@@ -142,7 +142,7 @@ namespace Spectrum.Plugins.ServerMod
 
             ChatMessage.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     sendingClientToAllClientsMessage = true;
                     var author = MessageUtilities.ExtractMessageAuthor(data.message_);

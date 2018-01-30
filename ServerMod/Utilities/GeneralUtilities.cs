@@ -23,7 +23,28 @@ namespace Spectrum.Plugins.ServerMod.Utilities
         }
 
         public delegate void TestFuncD();
-        public static void testFunc(TestFuncD f)
+        public static bool logExceptions(TestFuncD f)
+        {
+            try
+            {
+                f();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e}");
+                if (isHost())
+                {
+                    MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(GeneralUtilities.localClient()));
+                    MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                    MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                    MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    MessageUtilities.popMessageOptions();
+                }
+                return false;
+            }
+        }
+        public static void logExceptionsThrow(TestFuncD f)
         {
             try
             {
@@ -32,19 +53,15 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             catch (Exception e)
             {
                 Console.WriteLine($"Error: {e}");
-                try
+                if (isHost())
                 {
-                    if (isHost())
-                    {
-                        MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
-                        MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
-                        MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
-                    }
+                    MessageUtilities.pushMessageOption(new MessageStateOptionPlayer(GeneralUtilities.localClient()));
+                    MessageUtilities.sendMessage("[FF1010]ServerMod encountered an error and could not complete a task.[-]");
+                    MessageUtilities.sendMessage("[FF1010]ServerMod might not work properly from this point onwards.[-]");
+                    MessageUtilities.sendMessage("[FF1010]Check the console for information. You can turn on the console with the -console launch parameter.[-]");
+                    MessageUtilities.popMessageOptions();
                 }
-                catch (Exception e2)
-                {
-                    Console.WriteLine($"Could not send message: {e2}");
-                }
+                throw e;
             }
         }
 
@@ -227,24 +244,9 @@ namespace Spectrum.Plugins.ServerMod.Utilities
 
         public static bool isModeFinished()
         {
-            try
-            {
-                var methode = G.Sys.GameManager_.Mode_.GetType().GetMethod("GetSortedListOfModeInfos", BindingFlags.Instance | BindingFlags.NonPublic);
-                List<ModePlayerInfoBase> playersInfos = (List<ModePlayerInfoBase>)methode.Invoke(G.Sys.GameManager_.Mode_, new object[] { });
-                foreach (var pI in playersInfos)
-                {
-                    if (pI.finishType_ != FinishType.Normal)
-                        return false;
-                }
-            }
-            catch (Exception e)
-            {
-                MessageUtilities.sendMessage("Error !");
-                Console.WriteLine(e);
-                return false;
-            }
-
-            return true;
+            var playerInfos = new List<PlayerDataBase>();
+            G.Sys.GameManager_.Mode_.GetSortedListOfUnfinishedPlayers(playerInfos);
+            return playerInfos.Count == 0;
         }
 
         public static List<string> playlists()
@@ -460,7 +462,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
         public static string formatLevelInfoText(LevelNameAndPathPair level, GameModeID mode, int index, string levelInfoText)
         {
             var resText = levelInfoText;
-            GeneralUtilities.testFunc(() =>
+            GeneralUtilities.logExceptions(() =>
             {
                 bool isPointsMode = G.Sys.GameManager_.Mode_ is PointsBasedMode;
                 var levelSetsManager = G.Sys.LevelSets_;

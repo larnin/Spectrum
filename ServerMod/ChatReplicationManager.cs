@@ -89,7 +89,7 @@ namespace Spectrum.Plugins.ServerMod
             // fix remote logs
             SetServerChat.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     DebugLog($"Replicating remote log from SetServerChat...");
                     RemoveEventListeners();

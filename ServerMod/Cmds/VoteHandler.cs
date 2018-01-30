@@ -217,7 +217,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
                 Events.GameMode.ModeStarted.Subscribe(data =>
                 {
-                    GeneralUtilities.testFunc(() =>
+                    GeneralUtilities.logExceptions(() =>
                     {
                         parent.votes["skip"].Clear();
                         parent.votes["stop"].Clear();

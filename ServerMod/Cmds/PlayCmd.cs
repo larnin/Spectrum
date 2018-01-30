@@ -115,7 +115,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         {
             Events.GameMode.ModeStarted.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     playerVotesThisRound.Clear();
                 });

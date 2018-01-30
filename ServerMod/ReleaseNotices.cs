@@ -10,6 +10,11 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.1.5",
+                "• Fix !auto from end of match and isModeFinished\n" +
+                "• Add more error detection\n" +
+                "• Add AutoSpecDebug setting. AutoSpec debug info is on by default, turn it off with AutoSpecDebug."
+            ),
             new ReleaseNotice("C.8.1.4",
                 "• Added AutoSpecIdleTimeout debug to console"
             ),

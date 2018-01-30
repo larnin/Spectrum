@@ -19,7 +19,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         {
             Events.ServerToClient.ModeFinished.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     onModeFinish();
                 });
@@ -27,7 +27,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             Events.RaceMode.FinalCountdownCancel.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     onCountdownStop();
                 });
@@ -35,7 +35,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             Events.Server.StartClientLate.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     if (GeneralUtilities.isOnline() && GeneralUtilities.isHost())
                         onClientJoin(data.client_);

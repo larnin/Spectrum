@@ -40,7 +40,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             Events.Server.StartClientLate.Subscribe(data =>
             {
-                GeneralUtilities.testFunc(() =>
+                GeneralUtilities.logExceptions(() =>
                 {
                     if (GeneralUtilities.isOnline() && GeneralUtilities.isHost())
                         onClientJoin(data.client_);
