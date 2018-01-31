@@ -48,7 +48,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override string DisplayName { get; } = "Auto-Spec Idle Auto";
         public override string HelpShort { get; } = "!autospec: if idle should be a single spec or autospec";
-        public override string HelpLong { get; } = "Whether not the autospec idle timeout should apply spectate only once.";
+        public override string HelpLong { get { return HelpShort; } }
 
         public override bool Default { get; } = true;
         public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.1.1");
@@ -59,7 +59,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
         public override string DisplayName { get; } = "Auto-Spec Debug";
         public override string HelpShort { get; } = "!autospec: if debug info should be sent to console output";
-        public override string HelpLong { get; } = "!autospec: if debug info should be sent to console output";
+        public override string HelpLong { get { return HelpShort; } }
 
         public override bool Default { get; } = true;
         public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.1.5");

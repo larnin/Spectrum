@@ -94,6 +94,8 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string HelpShort { get; } = "Level format string replacements";
         public override string HelpLong { get { return HelpShort; } }
 
+        public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.2.0");
+
         public override UpdateResult<Dictionary<string, string>> UpdateFromString(string input)
         {
             throw new NotImplementedException();
