@@ -10,6 +10,9 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.2.0",
+                "• Add level format regex replacements."
+            ),
             new ReleaseNotice("C.8.1.5",
                 "• Fix !auto from end of match and isModeFinished\n" +
                 "• Add more error detection\n" +
