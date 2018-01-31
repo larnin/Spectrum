@@ -14,13 +14,19 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             get { return getSetting<CmdSettingLevelFormat>().Value; }
             set { getSetting<CmdSettingLevelFormat>().Value = value; }
         }
+        public Dictionary<string, string> levelFormatReplacements
+        {
+            get { return getSetting<CmdSettingLevelFormatReplacements>().Value; }
+            set { getSetting<CmdSettingLevelFormatReplacements>().Value = value; }
+        }
         public override string name { get { return "level"; } }
         public override PermType perm { get { return PermType.ALL; } }
         public override bool canUseLocal { get { return true; } }
 
         public override CmdSetting[] settings { get; } =
         {
-            new CmdSettingLevelFormat()
+            new CmdSettingLevelFormat(),
+            new CmdSettingLevelFormatReplacements(),
         };
 
         public override void help(ClientPlayerInfo p)
@@ -78,5 +84,49 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override string Default { get; } = "%INDEX% %MODE%: [FFFFFF]%NAME%[-] by %AUTHOR%";
 
         public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.7.4.0");
+    }
+    class CmdSettingLevelFormatReplacements : CmdSetting<Dictionary<string, string>>
+    {
+        public override string FileId { get; } = "levelFormatReplacements";
+        public override string SettingsId { get; } = "";
+
+        public override string DisplayName { get; } = "Level format string replacements";
+        public override string HelpShort { get; } = "Level format string replacements";
+        public override string HelpLong { get { return HelpShort; } }
+
+        public override UpdateResult<Dictionary<string, string>> UpdateFromString(string input)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override UpdateResult<Dictionary<string, string>> UpdateFromObject(object input)
+        {
+            if (input.GetType() != typeof(Dictionary<string, object>))
+            {
+                return new UpdateResult<Dictionary<string, string>>(false, Default, "Invalid dictionary. Resetting to default.");
+            }
+            try
+            {
+                var data = new Dictionary<string, string>();
+                foreach (KeyValuePair<string, object> entry in (Dictionary<string, object>)input)
+                {
+                    data[entry.Key] = (string)entry.Value;
+                }
+                return new UpdateResult<Dictionary<string, string>>(true, data);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error reading dictionary: {e}");
+                return new UpdateResult<Dictionary<string, string>>(false, Default, "Error reading dictionary. Resetting to default.");
+            }
+        }
+
+        public override Dictionary<string, string> Default
+        {
+            get
+            {
+                return new Dictionary<string, string>();
+            }
+        }
     }
 }

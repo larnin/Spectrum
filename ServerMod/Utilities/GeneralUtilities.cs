@@ -508,6 +508,19 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                         .Replace("%CREATED%", "")
                         .Replace("%UPDATED%", "");
                 }
+                var replacements = Cmds.Cmd.all.getCommand<Cmds.LevelCmd>().levelFormatReplacements;
+                foreach (var pair in replacements)
+                {
+                    try
+                    {
+                        resText = Regex.Replace(resText, pair.Key, pair.Value);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        Console.WriteLine($"Invalid regex replace ({pair.Key}) => ({pair.Value}). You can test your regex at regex101.com.");
+                        MessageUtilities.sendMessage(GeneralUtilities.localClient(), $"Invalid regex replace ({pair.Key}) => ({pair.Value}).\nYou can test your regex at regex101.com.");
+                    }
+                }
             });
             return resText;
         }
