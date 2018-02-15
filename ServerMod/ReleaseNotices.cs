@@ -10,6 +10,9 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.2.1",
+                "• Performance bug fix: stop checking for chat windows when offline."
+            ),
             new ReleaseNotice("C.8.2.0",
                 "• Add level format regex replacements."
             ),
