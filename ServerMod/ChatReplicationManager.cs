@@ -48,7 +48,10 @@ namespace Spectrum.Plugins.ServerMod
             {
                 count = RemoveEventListeners();
                 if (!GeneralUtilities.isOnline())
+                {
                     DebugLog("Tried to remove event listeners, but not online. Not trying again.");
+                    yield break;
+                }
                 if (count == 0)
                 {
                     DebugLog("Cannot find ChatInputV2 to remove event listeners from, trying again.");
