@@ -56,6 +56,18 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 return;
             }
 
+            if (message == "CHECK" && p == GeneralUtilities.localClient())
+            {
+                var index = 0;
+                foreach (var a in GeneralUtilities.getAllLevelsAndModes())
+                {
+                    GeneralUtilities.formatLevelInfoText(a, index++, "%NAME% %DIFFICULTY% %MODE% %AUTHOR% %INDEX% %MBRONZE% %MSILVER% %MGOLD% %MDIAMOND% %STARS% %STARSINT% %STARSDEC% %STARSPCT% %CREATED% %UPDATED%");
+                }
+                Console.WriteLine($"Tried to format {index} levels. Errors are in the console. If you see no errors, it means all levels formatted successfully.");
+                MessageUtilities.sendMessage(GeneralUtilities.localClient(), $"Tried to format {index} levels. Errors are in the console. If you see no errors, it means all levels formatted successfully.");
+                return;
+            }
+
             FilteredPlaylist filterer = new FilteredPlaylist(GeneralUtilities.getAllLevelsAndModes());
 
             if (!p.IsLocal_)
