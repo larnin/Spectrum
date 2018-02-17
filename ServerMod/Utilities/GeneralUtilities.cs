@@ -140,6 +140,13 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 if (current.Username_ == name)
                     return current;
             }
+            var noFormatClientname = MessageUtilities.clearTags(name);
+            foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
+            {
+                var noFormatUsername = MessageUtilities.clearTags(current.Username_);
+                if (noFormatUsername == noFormatClientname)
+                    return current;
+            }
             return null;
         }
 
@@ -458,7 +465,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
         public static string formatLevelInfoText(LevelNameAndPathPair level, GameModeID mode, int index, string levelInfoText)
         {
             var resText = levelInfoText;
-            GeneralUtilities.logExceptions(() =>
+            var success = GeneralUtilities.logExceptions(() =>
             {
                 bool isPointsMode = G.Sys.GameManager_.Mode_ is PointsBasedMode;
                 var levelSetsManager = G.Sys.LevelSets_;
@@ -522,6 +529,28 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                     }
                 }
             });
+            if (!success)
+            {
+                logExceptions(() =>
+                {
+                    MessageUtilities.sendMessage(GeneralUtilities.localClient(), "Please check your console and report the level format debug info to a ServerMod developer.");
+                    Console.WriteLine("Level format debug info:");
+                    Console.WriteLine($"    produced string: {resText}");
+                    Console.WriteLine($"    level: {level}; {level?.levelName_}; {level?.levelPath_}");
+                    Console.WriteLine($"    mode: {mode};");
+                    Console.WriteLine($"    index: {index};");
+                    Console.WriteLine($"    levelInfoText: {levelInfoText};");
+                    Console.WriteLine($"    G.Sys.GameManager_.Mode_: {G.Sys?.GameManager_?.Mode_};");
+                    Console.WriteLine($"    G.Sys.LevelSets_: {G.Sys?.LevelSets_};");
+                    var levelSetsManager = G.Sys?.LevelSets_;
+                    var levelInfo = levelSetsManager?.GetLevelInfo(level.levelPath_);
+                    Console.WriteLine($"    levelInfo: {levelInfo};");
+                    WorkshopLevelInfo workshopLevelInfo = null;
+                    if (SteamworksManager.IsSteamBuild_)
+                        G.Sys.SteamworksManager_.UGC_.TryGetWorkshopLevelData(levelInfo.relativePath_, out workshopLevelInfo);
+                    Console.WriteLine($"    workshopLevelInfo: {workshopLevelInfo};");
+                });
+            }
             return resText;
         }
     }

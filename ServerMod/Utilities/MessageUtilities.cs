@@ -222,6 +222,8 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             new string[] {@"\[b\]", "[b]", @"\[\/b\]", "[/b]"},
             new string[] {@"\[i\]", "[i]", @"\[\/i\]", "[/i]"},
             new string[] {@"\[u\]", "[u]", @"\[\/u\]", "[/u]"},
+            new string[] {@"\[sup\]", "[sup]", @"\[\/sup\]", "[/sup]"},
+            new string[] {@"\[sub\]", "[sub]", @"\[\/sub\]", "[/sub]"},
         };
         public static string closeTags(string input)
         {
@@ -234,6 +236,16 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                     logName = tagPair[1] + logName;
                 for (int i = 0; i < openingTagMatches.Count - closingTagMatches.Count; i++)
                     logName += tagPair[3];
+            }
+            return logName;
+        }
+        public static string clearTags(string input)
+        {
+            string logName = input;
+            foreach (string[] tagPair in tagPairs)
+            {
+                logName = Regex.Replace(logName, tagPair[0], "");
+                logName = Regex.Replace(logName, tagPair[2], "");
             }
             return logName;
         }
