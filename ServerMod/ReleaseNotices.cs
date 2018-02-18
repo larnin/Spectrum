@@ -10,6 +10,10 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.2.3",
+                "• Properly strip symbols/tags for usernames\n" +
+                "• Recognize strikethrough symbols/tags"
+            ),
             new ReleaseNotice("C.8.2.2",
                 "• Allow clients that use the chat name colorizer to use commands\n" +
                 "• Added debug info for when level text fails to format\n" +

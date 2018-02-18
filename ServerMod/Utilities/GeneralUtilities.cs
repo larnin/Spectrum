@@ -140,11 +140,10 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                 if (current.Username_ == name)
                     return current;
             }
-            var noFormatClientname = MessageUtilities.clearTags(name);
+            var noFormatClientname = NGUIText.StripSymbols(name);
             foreach (ClientPlayerInfo current in G.Sys.PlayerManager_.PlayerList_)
             {
-                var noFormatUsername = MessageUtilities.clearTags(current.Username_);
-                if (noFormatUsername == noFormatClientname)
+                if (NGUIText.StripSymbols(current.Username_) == noFormatClientname)
                     return current;
             }
             return null;

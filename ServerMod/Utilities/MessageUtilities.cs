@@ -222,6 +222,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             new string[] {@"\[b\]", "[b]", @"\[\/b\]", "[/b]"},
             new string[] {@"\[i\]", "[i]", @"\[\/i\]", "[/i]"},
             new string[] {@"\[u\]", "[u]", @"\[\/u\]", "[/u]"},
+            new string[] {@"\[s\]", "[s]", @"\[\/s\]", "[/s]"},
             new string[] {@"\[sup\]", "[sup]", @"\[\/sup\]", "[/sup]"},
             new string[] {@"\[sub\]", "[sub]", @"\[\/sub\]", "[/sub]"},
         };
@@ -239,16 +240,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
             }
             return logName;
         }
-        public static string clearTags(string input)
-        {
-            string logName = input;
-            foreach (string[] tagPair in tagPairs)
-            {
-                logName = Regex.Replace(logName, tagPair[0], "");
-                logName = Regex.Replace(logName, tagPair[2], "");
-            }
-            return logName;
-        }
+        // clearTags: Use NGUIText.StripSymbols(input);
 
         static string authorMessageRegex = @"^\[[A-Fa-f0-9]{6}\](.+?)\[FFFFFF\]: (.*)$";
         //take from newer spectrum version (stable can't use messages events)
