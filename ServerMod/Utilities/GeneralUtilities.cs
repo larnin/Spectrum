@@ -521,7 +521,7 @@ namespace Spectrum.Plugins.ServerMod.Utilities
                     {
                         resText = Regex.Replace(resText, pair.Key, pair.Value);
                     }
-                    catch (ArgumentException e)
+                    catch (ArgumentException)
                     {
                         Console.WriteLine($"Invalid regex replace ({pair.Key}) => ({pair.Value}). You can test your regex at regex101.com.");
                         MessageUtilities.sendMessage(GeneralUtilities.localClient(), $"Invalid regex replace ({pair.Key}) => ({pair.Value}).\nYou can test your regex at regex101.com.");
