@@ -7,19 +7,14 @@ using UnityEngine;
 using Spectrum.Plugins.ServerMod.Cmds;
 using System;
 using Spectrum.API.Configuration;
-using System.Linq;
 using System.IO;
 using Spectrum.Plugins.ServerMod.CmdSettings;
 using Spectrum.Plugins.ServerMod.PlaylistTools;
 using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters;
 using Spectrum.Plugins.ServerMod.PlaylistTools.LevelFilters.Sorts;
 using Spectrum.Plugins.ServerMod.Utilities;
-using System.Reflection;
 using Events;
 using Events.Local;
-using Events.Server;
-using Events.ServerToClient;
-using System.Text;
 using Events.ChatLog;
 using Events.ClientToAllClients;
 
@@ -39,7 +34,7 @@ namespace Spectrum.Plugins.ServerMod
                 return lastMove <= 0 ? 0 : (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - lastMove;
             }
         }
-        public float timeSinceLastMove {  get
+        public float timeSinceLastMove { get
             {
                 return millisSinceLastMove / 1000f;
             }
@@ -47,7 +42,7 @@ namespace Spectrum.Plugins.ServerMod
     }
     public class Entry : IPlugin, IUpdatable
     {
-        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.2.3");
+        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.3.0");
         private static Settings Settings = new Settings(typeof(Entry));
         public static bool IsFirstRun = false;
         public static Entry Instance = null;
@@ -171,14 +166,22 @@ namespace Spectrum.Plugins.ServerMod
 
             chatReplicationManager = new ChatReplicationManager();
             chatReplicationManager.Setup();
+            
+            Events.Game.LevelLoaded.Subscribe(data =>
+            {
+                UnstuckCmd.PatchLoadSequence();
+            });
         }
 
         public void Update()
         {
             long now = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
             foreach (var info in playerInfos)
-                if (info.playerData.CarLogic_ != null && info.playerData.CarLogic_.CarDirectives_ != null && !info.playerData.CarLogic_.CarDirectives_.IsZero())
+            {
+                //Console.WriteLine($"CarLogic_; CarDirectives_, IsZero(): {info.playerData.CarLogic_}; {info.playerData.CarLogic_.CarDirectives_}; {info.playerData.CarLogic_?.CarDirectives_?.IsZero()}");
+                if (info.playerData.CarLogic_?.CarDirectives_ != null && !info.playerData.CarLogic_.CarDirectives_.IsZero())
                     info.lastMove = now;
+            }
         }
 
         IEnumerator serverInit()

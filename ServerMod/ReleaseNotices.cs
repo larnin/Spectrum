@@ -10,6 +10,10 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.3.0",
+                "• Add InfiniteLoadingPatch on level load\n" +
+                "• Add InfiniteLoadingTimeoutPatch at 45 seconds (configurable)"
+            ),
             new ReleaseNotice("C.8.2.3",
                 "• Properly strip symbols/tags for usernames\n" +
                 "• Recognize strikethrough symbols/tags"

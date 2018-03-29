@@ -18,10 +18,142 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             return true;
         }
 
+        class CmdSettingInfiniteLoadingPatchEnabled : CmdSettingBool
+        {
+            public override string FileId { get; } = "infiniteLoadingPatch";
+            public override string SettingsId { get; } = "infiniteLoadingPatch";
+
+            public override string DisplayName { get; } = "Infinite Loading Patch";
+            public override string HelpShort { get; } = "Toggles the infinite loading screen patch";
+            public override string HelpLong { get { return HelpShort; } }
+            public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.3.0");
+
+            public override bool Default { get; } = true;
+        }
+
+        class CmdSettingInfiniteLoadingTimeoutPatch : CmdSettingInt
+        {
+            public override string FileId { get; } = "infiniteLoadingTimeout";
+            public override string SettingsId { get; } = "infiniteLoadingTimeout";
+
+            public override string DisplayName { get; } = "Infinite Loading Timeout Patch";
+            public override string HelpShort { get; } = "The amount of time before loading is forced. Set to 0 or below to disable.";
+            public override string HelpLong { get { return HelpShort; } }
+            public override ServerModVersion UpdatedOnVersion { get; } = new ServerModVersion("C.8.3.0");
+
+            public override int Default { get; } = 45;
+        }
+
         public override CmdSetting[] settings { get; } =
         {
-            new CmdSettingWinList()
+            new CmdSettingInfiniteLoadingPatchEnabled(),
+            new CmdSettingInfiniteLoadingTimeoutPatch(),
         };
+
+        public bool infiniteLoadingPatchEnabled
+        {
+            get { return getSetting<CmdSettingInfiniteLoadingPatchEnabled>().Value; }
+            set { getSetting<CmdSettingInfiniteLoadingPatchEnabled>().Value = value; }
+        }
+
+        public int infiniteLoadingTimeout
+        {
+            get { return getSetting<CmdSettingInfiniteLoadingTimeoutPatch>().Value; }
+            set { getSetting<CmdSettingInfiniteLoadingTimeoutPatch>().Value = value; }
+        }
+
+        public static int loadCounter = 0;
+        public static void PatchLoadSequence()
+        {
+            try
+            {
+                StartGameIfReady();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"StartGameIfReady errors:\n{e}");
+            }
+            loadCounter++;
+            var timeout = all.getCommand<UnstuckCmd>().infiniteLoadingTimeout;
+            if (timeout > 0)
+            {
+                G.Sys.GameManager_.StartCoroutine(StartGameAfterTimeout(loadCounter, timeout));
+            }
+        }
+        public static System.Collections.IEnumerator StartGameAfterTimeout(int id, int timeout)
+        {
+            yield return new UnityEngine.WaitForSeconds(timeout);
+            Console.WriteLine("InfinteLoadingTimeoutPatch Log:");
+            if (loadCounter != id)
+            {
+                Console.WriteLine("\tCancelled because: new level loaded");
+                yield break;
+            }
+            if (Utilities.GeneralUtilities.isOnLobby())
+            {
+                Console.WriteLine("\tCancelled because: on lobby");
+                yield break;
+            }
+            var serverLogic = G.Sys.GameManager_.GetComponent<ServerLogic>();
+            if (serverLogic == null)
+            {
+                Console.WriteLine("\tCould not get ServerLogic! It does not exist!");
+                yield break;
+            }
+            var screens = PrivateUtilities.getComponents<OnlineMatchWaitingScreen>();
+            if (screens.Count == 0)
+            {
+                Console.WriteLine("\tNo loading screens. Game must be loaded.");
+                yield break;
+            }
+            Console.WriteLine("\tLoading screen detected after timeout. Force-starting server.");
+            var startPlayers = new List<UnityEngine.NetworkPlayer>();
+            var clientInfoList = (System.Collections.IEnumerable)PrivateUtilities.getPrivateField(serverLogic, "clientInfoList_");
+            foreach (object clientInfo in clientInfoList)
+            {
+                var networkPlayer = (UnityEngine.NetworkPlayer)PrivateUtilities.getPrivateField(clientInfo, "networkPlayer_");
+                startPlayers.Add(networkPlayer);
+            }
+            Events.Server.ReadyToStartGameMode.Broadcast(new Events.Server.ReadyToStartGameMode.Data(startPlayers.ToArray()));
+            Utilities.MessageUtilities.sendMessage("Force-started match after timeout");
+        }
+        public static bool StartGameIfReady()
+        {
+            Console.WriteLine("InfinteLoadingPatch Log:");
+            if (!GeneralUtilities.isHost() || !GeneralUtilities.isOnline())
+            {
+                Console.WriteLine("\tNot host");
+                return false;
+            }
+            if (!all.getCommand<UnstuckCmd>().infiniteLoadingPatchEnabled)
+            {
+                Console.WriteLine("\tNot enabled");
+                return false;
+            }
+            var serverLogic = G.Sys.GameManager_.GetComponent<ServerLogic>();
+            if (serverLogic == null)
+            {
+                Console.WriteLine("\tCould not get ServerLogic! It does not exist!");
+                return false;
+            }
+            var hasStarted = (bool)PrivateUtilities.callPrivateMethod(serverLogic, "HasModeStarted");
+            if (!hasStarted)
+            {
+                Console.WriteLine("\tMatch has not started yet. Will wait for started event...");
+                return false;
+            }
+            Console.WriteLine("\tMatch has already started. Firing ReadyToStartGameMode to simulate a proper start. This is the same as !unstuck 1 all.");
+            var startPlayers = new List<UnityEngine.NetworkPlayer>();
+            var clientInfoList = (System.Collections.IEnumerable)PrivateUtilities.getPrivateField(serverLogic, "clientInfoList_");
+            foreach (object clientInfo in clientInfoList)
+            {
+                var networkPlayer = (UnityEngine.NetworkPlayer)PrivateUtilities.getPrivateField(clientInfo, "networkPlayer_");
+                startPlayers.Add(networkPlayer);
+            }
+            Events.Server.ReadyToStartGameMode.Broadcast(new Events.Server.ReadyToStartGameMode.Data(startPlayers.ToArray()));
+            Utilities.MessageUtilities.sendMessage("Force-started match on load");
+            return true;
+        }
 
         public override void help(ClientPlayerInfo p)
         {
