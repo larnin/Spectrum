@@ -42,15 +42,12 @@ namespace Spectrum.Plugins.ServerMod
     }
     public class Entry : IPlugin, IUpdatable
     {
-        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.3.0");
-        private static Settings Settings = new Settings(typeof(Entry));
+        public static ServerModVersion PluginVersion = new ServerModVersion("C.8.3.1");
+        private static Settings Settings = new Settings("ServerMod.plugin");
         public static bool IsFirstRun = false;
         public static Entry Instance = null;
 
-        public string FriendlyName => "Server commands Mod";
-        public string Author => "Corecii";
-        public string Contact => "SteamID: Corecii; Discord: Corecii#3019";
-        public APILevel CompatibleAPILevel => APILevel.XRay;
+        public string IPCIdentifier { get; set; }
 
         public List<PlayerInfo> playerInfos = new List<PlayerInfo>();
 
@@ -416,45 +413,10 @@ namespace Spectrum.Plugins.ServerMod
 
         private static void reloadSettingsFromFile()
         {
-            // NOTE: Code from Spectrum's Settings. Used because there is no provided method to reload settings.
-            Type type = typeof(Entry);
-            string postfix = "";
-            string FileName;
-            if (string.IsNullOrEmpty(postfix))
+            var settings = new Settings("ServerMod.plugin");
+            foreach(var pair in settings)
             {
-                FileName = $"{type.Assembly.GetName().Name}.json";
-            }
-            else
-            {
-                FileName = $"{type.Assembly.GetName().Name}.{postfix}.json";
-            }
-            string FilePath = Path.Combine(Defaults.SettingsDirectory, FileName);
-
-            if (File.Exists(FilePath))
-            {
-                using (var sr = new StreamReader(FilePath))
-                {
-                    var json = sr.ReadToEnd();
-                    var reader = new JsonFx.Json.JsonReader();
-
-                    Section sec = null;
-
-                    try
-                    {
-                        sec = reader.Read<Section>(json);
-                    }
-                    catch
-                    {
-                    }
-
-                    if (sec != null)
-                    {
-                        foreach (string k in sec.Keys)
-                        {
-                            Settings[k] = sec[k];
-                        }
-                    }
-                }
+                Settings[pair.Key] = pair.Value;
             }
         }
 

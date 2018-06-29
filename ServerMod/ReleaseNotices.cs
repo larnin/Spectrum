@@ -10,6 +10,9 @@ namespace Spectrum.Plugins.ServerMod
     {
         public static List<ReleaseNotice> Notices = new List<ReleaseNotice>
         {
+            new ReleaseNotice("C.8.3.1",
+                "• Update for Spectrum Gamma"
+            ),
             new ReleaseNotice("C.8.3.0",
                 "• Add InfiniteLoadingPatch on level load\n" +
                 "• Add InfiniteLoadingTimeoutPatch at 45 seconds (configurable)"

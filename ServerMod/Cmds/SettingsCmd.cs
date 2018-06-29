@@ -65,6 +65,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     reload(p);
                     return;
                 }
+                /*  // TODO: fix this to use new FileSystem stuff
                 else if (setting == "writemarkdown")
                 {  // command used to generate markdown help for settings. not shown to user.
                     string style = msgMatch.Groups[2].Value.ToLower();
@@ -114,6 +115,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         Console.WriteLine("Unknown style type. Styles: command, file, both");
                     return;
                 }
+                */
                 else if (setting == "help")
                 {
                     string settingHelp = msgMatch.Groups[2].Value.ToLower();
