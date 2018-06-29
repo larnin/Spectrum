@@ -56,8 +56,9 @@ namespace Spectrum.Plugins.ServerMod
         public ChatReplicationManager chatReplicationManager = null;
         bool sendingLocalChat = false;
 
-        public void Initialize(IManager manager)
+        public void Initialize(IManager manager, string ipcIdentifier)
         {
+            IPCIdentifier = ipcIdentifier;
             if (Instance != null)
             {
                 Console.WriteLine("Attempt to create a second Entry");
