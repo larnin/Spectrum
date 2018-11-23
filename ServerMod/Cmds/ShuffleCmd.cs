@@ -17,7 +17,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
         public override void use(ClientPlayerInfo p, string message)
         {
             LevelPlaylist playlist = new LevelPlaylist();
-            playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
+            playlist.CopyFrom(G.Sys.GameManager_.LevelPlaylist_);
 
             if (G.Sys.GameManager_.ModeID_ == GameModeID.Trackmogrify)
             {

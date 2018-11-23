@@ -18,7 +18,6 @@ namespace Spectrum.Plugins.ServerMod
                 new DelCmd(),
                 new DelsCmd(),
                 new FilterCmd(),
-                new ForceStartCmd(),
                 new HelpCmd(),
                 new InfoCmd(),
                 new KickCmd(),

@@ -468,7 +468,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     double threshold = voteThresholds["play"];
 
                     LevelPlaylist playlist = new LevelPlaylist();
-                    playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
+                    playlist.CopyFrom(G.Sys.GameManager_.LevelPlaylist_);
                     var currentPlaylist = playlist.Playlist_;
                     AutoCmd autoCmd = Cmd.all.getCommand<AutoCmd>("auto");
                     int origIndex = G.Sys.GameManager_.LevelPlaylist_.Index_;
@@ -656,7 +656,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         G.Sys.GameManager_.GoToLobby();
                         MessageUtilities.sendMessage("No more levels in the playlist.");
                     }
-                    else G.Sys.GameManager_.GoToNextLevel(true);
+                    else G.Sys.GameManager_.GoToNextLevel();
                 }
             }
             yield return null;

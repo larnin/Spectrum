@@ -44,14 +44,14 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             int index = G.Sys.GameManager_.LevelPlaylist_.Index_;
 
             int playListSize = G.Sys.GameManager_.LevelPlaylist_.Playlist_.Count - index - 1;
-            if(id > playListSize)
+            if(id >= playListSize)
             {
                 MessageUtilities.sendMessage(p, "The playlist has only " + playListSize + " maps.");
                 return;
             }
 
             LevelPlaylist playlist = new LevelPlaylist();
-            playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
+            playlist.CopyFrom(G.Sys.GameManager_.LevelPlaylist_);
             var currentPlaylist = playlist.Playlist_;
             currentPlaylist.RemoveAt(index + id + 1);
 

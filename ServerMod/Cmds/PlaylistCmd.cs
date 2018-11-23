@@ -137,7 +137,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 case "current":
                     {
                         playlistComp = LevelPlaylist.Create(true);
-                        playlistComp.Copy(G.Sys.GameManager_.LevelPlaylist_);
+                        playlistComp.CopyFrom(G.Sys.GameManager_.LevelPlaylist_);
                         playlistComp.Name_ = "current";
                         break;
                     }
@@ -157,7 +157,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         if (activePlaylist == null)
                             return null;
                         playlistComp = LevelPlaylist.Create(true);
-                        playlistComp.Copy(activePlaylist);
+                        playlistComp.CopyFrom(activePlaylist);
                         playlistComp.Name_ = activePlaylist.Name_;
                         break;
                     }
@@ -177,7 +177,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             // when a new level loads, all existing game objects are destroyed so we cannot properly save them
             // instead, we make a new one and copy the old playlist into the new object.
             LevelPlaylist list = LevelPlaylist.Create(true);
-            list.Copy(selectedPlaylist);
+            list.CopyFrom(selectedPlaylist);
             list.IsCustom_ = true;
             selectedPlaylist = list;
             switch (name)
@@ -186,7 +186,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     {
                         if (canUseCurrentPlaylist)
                         {
-                            G.Sys.GameManager_.LevelPlaylist_.Copy(selectedPlaylist);
+                            G.Sys.GameManager_.LevelPlaylist_.CopyFrom(selectedPlaylist);
                             G.Sys.GameManager_.LevelPlaylist_.SetIndex(0);
                             GeneralUtilities.updateGameManagerCurrentLevel();
                             StaticTargetedEvent<Events.ServerToClient.SetLevelName.Data>.Broadcast(RPCMode.All, G.Sys.GameManager_.CreateSetLevelNameEventData());

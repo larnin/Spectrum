@@ -75,7 +75,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             }
 
             LevelPlaylist playlist = new LevelPlaylist();
-            playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
+            playlist.CopyFrom(G.Sys.GameManager_.LevelPlaylist_);
             var currentPlaylist = playlist.Playlist_;
             for (int id = id1; id <= id2; id++)
             {

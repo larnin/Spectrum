@@ -172,7 +172,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
             }
 
             LevelPlaylist playlist = new LevelPlaylist();
-            playlist.Copy(G.Sys.GameManager_.LevelPlaylist_);
+            playlist.CopyFrom(G.Sys.GameManager_.LevelPlaylist_);
 
             var currentPlaylist = playlist.Playlist_;
             AutoCmd autoCmd = Cmd.all.getCommand<AutoCmd>("auto");

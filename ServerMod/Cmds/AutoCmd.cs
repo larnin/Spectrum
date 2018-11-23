@@ -390,7 +390,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                 GeneralUtilities.logExceptions(() =>
                 {
                     G.Sys.GameManager_.LevelPlaylist_.SetIndex(nextLevelIndex - 1);
-                    G.Sys.GameManager_.GoToNextLevel(true);
+                    G.Sys.GameManager_.GoToNextLevel();
                 });
             }
             else autoMode = false;
@@ -494,7 +494,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                         GeneralUtilities.logExceptions(() =>
                         {
                             setToNextMap(voteLevels[index], voteLevels[voteLevels.Count - 1]);
-                            G.Sys.GameManager_.GoToNextLevel(true);
+                            G.Sys.GameManager_.GoToNextLevel();
                         });
                     }
                     else autoMode = false;
@@ -573,7 +573,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
                     }
                     G.Sys.GameManager_.LevelPlaylist_.SetIndex(firstOnlineLevelIndex);
                 }
-                G.Sys.GameManager_.GoToCurrentLevel();
+                G.Sys.GameManager_.GoToCurrentLevel(GameManager.OpenOnMainMenuInit.UsePrevious, false);
             }
             yield return null;
         }

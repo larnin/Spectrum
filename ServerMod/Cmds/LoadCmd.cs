@@ -39,7 +39,7 @@ namespace Spectrum.Plugins.ServerMod.Cmds
 
             var gameObject = LevelPlaylist.Load(name);
             var playlistComp = gameObject.GetComponent<LevelPlaylist>();
-            G.Sys.GameManager_.LevelPlaylist_.Copy(playlistComp);
+            G.Sys.GameManager_.LevelPlaylist_.CopyFrom(playlistComp);
 
             MessageUtilities.sendMessage(p, "Playlist Loaded : " + G.Sys.GameManager_.LevelPlaylist_.Count_ + " levels.");
 
